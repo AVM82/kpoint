@@ -1,0 +1,79 @@
+{
+  "name": "kpoint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mdi/js": "^7.4.47",
+    "@mui/icons-material": "^5.15.6",
+    "@mui/material": "^5.15.6",
+    "@react-oauth/google": "^0.12.1",
+    "@reduxjs/toolkit": "^1.9.7",
+    "i18next": "^23.7.18",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-google-button": "^0.7.2",
+    "react-hook-form": "^7.49.3",
+    "react-i18next": "^14.0.1",
+    "react-redux": "^8.1.0",
+    "react-router-dom": "^6.21.3",
+    "react-scripts": "^5.0.1",
+    "react-toastify": "^10.0.3",
+    "web-vitals": "^3.5.1"
+  },
+  "devDependencies": {
+    "@ls-lint/ls-lint": "^2.2.2",
+    "@mui/lab": "^5.0.0-alpha.162",
+    "@testing-library/jest-dom": "^6.2.0",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.5",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "editorconfig-checker": "^4.0.2",
+    "eslint": "8.22.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-simple-import-sort": "^8.0.0",
+    "prettier": "^2.7.1",
+    "sass": "^1.70.0",
+    "stylelint": "^14.14.0",
+    "stylelint-config-standard": "^29.0.0",
+    "stylelint-config-standard-scss": "^5.0.0",
+    "stylelint-order": "^5.0.0",
+    "typescript": "^4.9.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "start:dev": "env-cmd -f .env.development react-scripts start",
+    "start:prod": "env-cmd -f .env.production react-scripts start",
+    "build": "react-scripts build",
+    "build:dev": "env-cmd -f .env.development react-scripts build",
+    "build:prod": "env-cmd -f .env.production react-scripts build && npm run postbuild",
+    "postbuild": "rimraf build/static/**/*.map",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint:editorconfig": "editorconfig-checker",
+    "lint:fs": "ls-lint",
+    "lint:css": "npx stylelint \"src/**/*.scss\"",
+    "lint:js": "eslint \"src/**/*.{ts,tsx}\" .",
+    "lint:type": "npx tsc --noEmit",
+    "lint:fix": "npm run lint -- --fix",
+    "lint": "npm run lint:editorconfig && npm run lint:fs && npm run lint:css && npm run lint:js && npm run lint:type"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
