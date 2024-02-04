@@ -1,5 +1,0 @@
-enum NotificationMessage {
-
-}
-
-export { NotificationMessage };
