@@ -1,0 +1,5 @@
+enum NotificationMessage {
+
+}
+
+export { NotificationMessage };

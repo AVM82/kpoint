@@ -1,0 +1,17 @@
+FROM --platform=linux/amd64 node:18.18.0-alpine AS build
+
+ARG REACT_APP_API_PATH
+ARG REACT_APP_OAUTH2_GOOGLE_CLIENT_ID
+
+ENV REACT_APP_API_PATH $REACT_APP_API_PATH
+ENV REACT_APP_OAUTH2_GOOGLE_CLIENT_ID $REACT_APP_OAUTH2_GOOGLE_CLIENT_ID
+
+WORKDIR /app
+
+COPY package.json /app
+
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "start"]
