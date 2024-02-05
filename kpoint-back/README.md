@@ -49,8 +49,22 @@ Feedback1
 
 
 Environment variables:
-`DB_URL` - PostgreSQL coinnection url
-`DB_USERNAME` - PostgreSQL username
-`DB_PASSWORD` - PostgreSQL password
+
 `SERVER_PORT` - server port (5001)
+
+`DB_URL` - PostgreSQL coinnection url
+
+`DB_USERNAME` - PostgreSQL username
+
+`DB_PASSWORD` - PostgreSQL password
+
+`GOOGLE_CLIENT_ID` - OAuth2 ClientId from GoogleCloud project page
+
+`GOOGLE_CLIENT_SECRET` - OAuth2 ClientSecret from GoogleCloud project page
+
+`OAUTH2_REDIRECT_URI` - Frontend uri
+
+`JWT_SECRET` - Line of text for secret key generation (min 256 bit)
+
+
 

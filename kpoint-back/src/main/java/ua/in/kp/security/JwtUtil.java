@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import ua.in.kp.exception.SubjectEncryptionException;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -57,7 +58,11 @@ public class JwtUtil {
     }
 
     public String getSubjectFromToken(String token) {
-        return Encryptor.decrypt(getClaims(token).getSubject());
+        try {
+            return Encryptor.decrypt(getClaims(token).getSubject());
+        } catch (Exception e) {
+            throw new SubjectEncryptionException("Can't decrypt subject from token", e);
+        }
     }
 
     private Date mapToDate(LocalDateTime currentDateTime) {
