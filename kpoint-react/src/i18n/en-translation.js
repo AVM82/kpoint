@@ -73,6 +73,7 @@ const enTranslation = {
   errors: {
     project_title: 'The project name cannot be empty or have more than 30 characters',
     project_tags: 'The number of tags can be from 1 to 5',
+    user_tags: 'The number of tags can be from 1 to 10',
     project_summary: 'Short description and purpose cannot be empty or have more than 150 characters',
     project_description: 'The project description cannot be empty or have more than 512 characters',
     project_deadline: 'The collection deadline cannot be later than the goal deadline',
