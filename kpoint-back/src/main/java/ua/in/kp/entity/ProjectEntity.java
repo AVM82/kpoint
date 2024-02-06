@@ -16,7 +16,6 @@ import java.util.Set;
 
 @Entity
 @Data
-@Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "projects")

@@ -22,6 +22,7 @@ const enTranslation = {
   share_button: 'Share',
   learn_more_button: 'Learn more',
   footer_sign: 'All rights reserved',
+  suggestions: 'Suggestions',
   statuses: {
     NEW: 'New',
     GATHERING_FOR_START: 'Gathering for start',

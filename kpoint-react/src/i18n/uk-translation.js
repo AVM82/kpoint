@@ -69,6 +69,7 @@ const ukTranslation = {
   goal_deadline: 'Дата закінчення',
   stages_implementation: 'Задачі та Етапи Реалізації',
   stage: 'Етап',
+  suggestions: 'Пропозиції',
   errors: {
     project_title: 'Назва проєкту не може бути пуста або мати більше 30 символів',
     project_tags: 'Кількість тегів може бути від 1 до 5',

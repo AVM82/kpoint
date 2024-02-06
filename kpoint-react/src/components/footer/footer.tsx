@@ -10,6 +10,8 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import TextField from "@mui/material/TextField";
+import * as React from "react";
 
 const Footer: FC = () => {
 
@@ -47,7 +49,10 @@ const Footer: FC = () => {
           <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Twelve</Link>
           <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Thirteen</Link>
           <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Fourteen</Link>
-          <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Fifteen</Link>
+          {/*<Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Fifteen</Link>*/}
+          <Link href="/suggestions" underline="none" color="black" sx={{margin: 1}}>
+            {t('suggestions')}
+          </Link>
         </Grid>
       </Grid>
     </Container>
