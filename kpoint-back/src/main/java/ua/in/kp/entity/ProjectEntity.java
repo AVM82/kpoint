@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SoftDelete;
 import org.springframework.format.annotation.DateTimeFormat;
 import ua.in.kp.enumeration.ProjectState;
 
@@ -16,10 +19,10 @@ import java.util.Set;
 
 @Entity
 @Data
-@Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "projects")
+@SoftDelete
 public class ProjectEntity {
 
     @Id
@@ -44,6 +47,7 @@ public class ProjectEntity {
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Set<TagEntity> tags;
 
     @Column(name = "logo_img_url", columnDefinition = "TEXT")

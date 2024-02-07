@@ -1,25 +1,31 @@
 package ua.in.kp.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.enumeration.UserRole;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.ApplicantRepository;
 import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -44,7 +50,17 @@ public class UserService {
     }
 
     public List<UserResponseDto> getAll(Pageable pageable) {
-        return userRepository.findAll(pageable).stream().map(userMapper::toDto).toList();
+        log.info("getAll");
+        UserEntity currentUser = getAuthenticated();
+        Page<UserEntity> allUsers;
+        if (currentUser.getRoles().contains(UserRole.ADMIN)) {
+            allUsers = userRepository.findAllByAdmin(pageable);
+        } else {
+            allUsers = userRepository.findAll(pageable);
+        }
+        return allUsers.stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 
     public boolean existsByEmail(String email) {
@@ -61,5 +77,15 @@ public class UserService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("Can't find user by email " + email));
         return userMapper.toDto(userFromDb);
+    }
+
+    @Transactional
+    public void deleteUserById(UUID id) {
+        log.info("deleteUserById {}", id);
+        UserEntity userFromDb = userRepository.findById(id).orElseThrow(() -> {
+            log.warn("Can't find user by id {}", id);
+            return new UsernameNotFoundException("Can't find user by id " + id);
+        });
+        userRepository.delete(userFromDb);
     }
 }
