@@ -7,7 +7,7 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mdi/js": "^7.4.47",
-    "@mui/icons-material": "^5.15.6",
+    "@mui/icons-material": "^5.15.8",
     "@mui/material": "^5.15.6",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^1.9.7",
