@@ -3,6 +3,10 @@ package ua.in.kp.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SoftDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +19,8 @@ import java.util.*;
 @Table(name = "users")
 @Getter
 @Setter
-
+@SoftDelete
+@Slf4j
 public class UserEntity implements UserDetails {
 
     @Id
@@ -45,6 +50,7 @@ public class UserEntity implements UserDetails {
     private String description;
 
     @ManyToMany
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Set<TagEntity> tags;
 
     @ElementCollection
@@ -58,7 +64,7 @@ public class UserEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<UserRole> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
     private Set<ProjectEntity> projectsOwned;
 
     @Override

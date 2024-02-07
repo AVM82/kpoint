@@ -21,4 +21,8 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     @EntityGraph(attributePaths = {"socialNetworks", "roles"})
     Page<UserEntity> findAll(Pageable pageable);
+
+    @Query(value = "SELECT * FROM kpoint.public.users AS u "
+            + "LEFT JOIN kpoint.public.user_roles AS r ON u.id = r.user_id", nativeQuery = true)
+    Page<UserEntity> findAllByAdmin(Pageable pageable);
 }
