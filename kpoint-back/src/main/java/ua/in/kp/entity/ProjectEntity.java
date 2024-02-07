@@ -34,6 +34,9 @@ public class ProjectEntity {
     @Column(columnDefinition = "VARCHAR(30)", nullable = false, unique = true)
     private String title;
 
+    @Column(columnDefinition = "VARCHAR(30)", nullable = false, unique = true)
+    private String url;
+
     @Column(columnDefinition = "VARCHAR(150)", nullable = false)
     private String summary;
 
