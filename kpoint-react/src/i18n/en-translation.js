@@ -62,6 +62,7 @@ const enTranslation = {
   implementation_plan: 'Implementation plan',
   new_project: 'New project',
   project_name: 'Project name',
+  project_url: 'Project URL',
   city: 'City',
   category: 'Category',
   tag_placeholder: 'Enter tag and press [Enter]',
