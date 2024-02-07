@@ -46,7 +46,7 @@ const ProjectsPage: FC = () => {
       <Grid container spacing={5} direction="row" justifyContent="center" alignItems="center">
         {projects?.content.map((project) =>
           <Grid item >
-            <ProjectCard project_id={project.projectId} title={project.title} summary={project.summary}
+            <ProjectCard url={project.url} title={project.title} summary={project.summary}
               logoImgUrl={project.logoImgUrl} tags={project.tags}/>
           </Grid>)}
       </Grid>

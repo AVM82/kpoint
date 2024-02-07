@@ -18,6 +18,10 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
     Optional<ProjectEntity> findBy(String id);
 
     @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
+            + "LEFT JOIN FETCH p.networksLinks WHERE p.url=:url")
+    Optional<ProjectEntity> findByProjectURL(String url);
+
+    @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
             + "LEFT JOIN FETCH p.networksLinks")
     Page<ProjectEntity> findAll(Pageable pageable);
 
