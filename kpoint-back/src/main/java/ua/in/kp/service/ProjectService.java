@@ -58,11 +58,11 @@ public class ProjectService {
 
     @Transactional
     public ProjectResponseDto getProjectByURL(String url) {
-        log.info("Get by URL project method started");
+        log.info("Trying to get project by URL...");
         ProjectEntity projectEntity = projectRepository.findByProjectURL(url)
                 .orElseThrow(() ->
-                        new ProjectNotFoundException("Project not found with URL: " + url));
-        log.info("Project retrieved with url {}", projectEntity.getUrl());
+                        new ProjectNotFoundException("Project with URL " + url + " not found."));
+        log.info("Project with url {} retrieved.", projectEntity.getUrl());
         return projectMapper.toDto(projectEntity);
     }
 }
