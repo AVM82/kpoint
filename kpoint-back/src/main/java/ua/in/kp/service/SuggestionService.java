@@ -1,11 +1,11 @@
 package ua.in.kp.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.suggestion.SuggestionCreateRequestDto;
 import ua.in.kp.dto.suggestion.SuggestionResponseDto;
 import ua.in.kp.entity.LikeEntity;
@@ -14,6 +14,8 @@ import ua.in.kp.entity.UserEntity;
 import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +39,10 @@ public class SuggestionService {
     }
 
     public Page<SuggestionResponseDto> getAllSuggestions(Pageable pageable) {
+        // Like counter not implemented
         Page<SuggestionEntity> page = suggestionRepository.findAll(pageable);
         log.info("Got all suggestions from suggestionRepository.");
+        // set like counter
         Page<SuggestionResponseDto> toReturn = page.map(suggestionMapper::toDto);
         log.info("Map all SuggestionEntity to DTO and return page with them.");
         return toReturn;
@@ -53,16 +57,17 @@ public class SuggestionService {
             likeEntity.setUser(user);
             likeEntity.setSuggestion(suggestion);
             likeRepository.save(likeEntity);
-
-            suggestion.setLikeCount(suggestion.getLikeCount() + 1);
         } else {
             likeRepository.delete(optionalLike.get());
-            suggestion.setLikeCount(suggestion.getLikeCount() - 1);
         }
-        return suggestionMapper.toDto(suggestionRepository.save(suggestion));
+        SuggestionResponseDto dto = suggestionMapper.toDto(suggestion);
+        dto.setLikeCount(likeRepository.countAllBySuggestionId(suggestionId));
+        return dto;
     }
 
+    @Transactional
     public void deleteSuggestion(String suggestionId) {
+        likeRepository.deleteAllBySuggestionId(suggestionId);
         suggestionRepository.deleteById(suggestionId);
     }
 }

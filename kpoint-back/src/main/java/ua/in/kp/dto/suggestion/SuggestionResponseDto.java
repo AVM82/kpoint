@@ -1,7 +1,14 @@
 package ua.in.kp.dto.suggestion;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
-public record SuggestionResponseDto(String id, SuggestionUserDto user, String suggestion, int likeCount,
-        LocalDateTime createdAt) {
+@Data
+public class SuggestionResponseDto {
+    private String id;
+    private SuggestionUserDto user;
+    private String suggestion;
+    private int likeCount;
+    private LocalDateTime createdAt;
 }
