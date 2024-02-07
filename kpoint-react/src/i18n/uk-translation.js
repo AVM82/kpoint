@@ -22,6 +22,7 @@ const ukTranslation = {
   share_button: 'Поділитися',
   learn_more_button: 'Дізнатися більше',
   footer_sign: 'Всі права захищені',
+  add_suggestion: 'Додати пропозицію',
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',
@@ -47,6 +48,7 @@ const ukTranslation = {
     next: 'ДАЛІ',
     log_out: 'Вийти',
     create_project: 'Створити проєкт',
+    suggestions: 'Пропозиції',
   },
   owner: 'Власник',
   description: 'Опис',

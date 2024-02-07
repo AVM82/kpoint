@@ -22,7 +22,7 @@ const enTranslation = {
   share_button: 'Share',
   learn_more_button: 'Learn more',
   footer_sign: 'All rights reserved',
-  suggestions: 'Suggestions',
+  add_suggestion: 'Add Suggestion',
   statuses: {
     NEW: 'New',
     GATHERING_FOR_START: 'Gathering for start',
@@ -48,6 +48,7 @@ const enTranslation = {
     next: 'NEXT',
     log_out: 'Log out',
     create_project: 'Create project',
+    suggestions: 'Suggestions',
   },
   owner: 'Owner',
   description: 'Description',
