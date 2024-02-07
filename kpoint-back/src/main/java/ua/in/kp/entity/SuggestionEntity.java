@@ -32,8 +32,8 @@ public class SuggestionEntity {
     @Column(columnDefinition = "VARCHAR(200)", nullable = false)
     private String suggestion;
 
-    @Column(name = "vote-count")
-    private int voteCount = 0;
+    @Column(name = "like-count")
+    private int likeCount = 0;
 
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -1,5 +1,6 @@
 package ua.in.kp.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -7,8 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.in.kp.dto.suggestion.SuggestionCreateRequestDto;
 import ua.in.kp.dto.suggestion.SuggestionResponseDto;
+import ua.in.kp.entity.LikeEntity;
 import ua.in.kp.entity.SuggestionEntity;
+import ua.in.kp.entity.UserEntity;
 import ua.in.kp.mapper.SuggestionMapper;
+import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
 
 @Service
@@ -16,6 +20,7 @@ import ua.in.kp.repository.SuggestionRepository;
 @Slf4j
 public class SuggestionService {
     private final SuggestionRepository suggestionRepository;
+    private final LikeRepository likeRepository;
     private final SuggestionMapper suggestionMapper;
     private final UserService userService;
 
@@ -37,5 +42,27 @@ public class SuggestionService {
         Page<SuggestionResponseDto> toReturn = page.map(suggestionMapper::toDto);
         log.info("Map all SuggestionEntity to DTO and return page with them.");
         return toReturn;
+    }
+
+    public SuggestionResponseDto updateLike(String suggestionId) {
+        UserEntity user = userService.getAuthenticated();
+        SuggestionEntity suggestion = suggestionRepository.findById(suggestionId).orElseThrow();
+        Optional<LikeEntity> optionalLike = likeRepository.findByUserAndSuggestion(user, suggestion);
+        if (optionalLike.isEmpty()) {
+            LikeEntity likeEntity = new LikeEntity();
+            likeEntity.setUser(user);
+            likeEntity.setSuggestion(suggestion);
+            likeRepository.save(likeEntity);
+
+            suggestion.setLikeCount(suggestion.getLikeCount() + 1);
+        } else {
+            likeRepository.delete(optionalLike.get());
+            suggestion.setLikeCount(suggestion.getLikeCount() - 1);
+        }
+        return suggestionMapper.toDto(suggestionRepository.save(suggestion));
+    }
+
+    public void deleteSuggestion(String suggestionId) {
+        suggestionRepository.deleteById(suggestionId);
     }
 }
