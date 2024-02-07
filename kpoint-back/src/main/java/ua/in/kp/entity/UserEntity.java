@@ -61,6 +61,9 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "owner")
     private Set<ProjectEntity> projectsOwned;
 
+    @ManyToMany
+    private Set<ProjectEntity> projectsFavourite;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
