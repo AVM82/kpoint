@@ -36,9 +36,15 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.getAllProjects(pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/{projectId}")
+    @GetMapping("/id/{projectId}")
     public ResponseEntity<ProjectResponseDto> getProjectById(@PathVariable String projectId) {
         ProjectResponseDto projectDto = projectService.getProjectById(projectId);
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/{url}")
+    public ResponseEntity<ProjectResponseDto> getProjectByURL(@PathVariable String url) {
+        ProjectResponseDto projectDto = projectService.getProjectByURL(url);
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 }
