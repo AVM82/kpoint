@@ -36,8 +36,8 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.getAllProjects(pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/id")
-    public ResponseEntity<ProjectResponseDto> getProjectById(String projectId) {
+    @GetMapping("/id/{projectId}")
+    public ResponseEntity<ProjectResponseDto> getProjectById(@PathVariable String projectId) {
         ProjectResponseDto projectDto = projectService.getProjectById(projectId);
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
