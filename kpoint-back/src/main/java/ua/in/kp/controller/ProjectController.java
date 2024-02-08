@@ -43,8 +43,8 @@ public class ProjectController {
     }
 
     @GetMapping("/{url}")
-    public ResponseEntity<ProjectResponseDto> getProjectByURL(@PathVariable String url) {
-        ProjectResponseDto projectDto = projectService.getProjectByURL(url);
+    public ResponseEntity<ProjectResponseDto> getProjectByUrl(@PathVariable String url) {
+        ProjectResponseDto projectDto = projectService.getProjectByUrl(url);
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 }
