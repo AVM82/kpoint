@@ -6,15 +6,16 @@ import { useState } from 'react';
 
 import styles from '../app/style.module.scss';
 import { AddSuggestionModal } from './add_suggestions_modale';
+import { CommentCard } from './comment_card';
 
-const SuggestionsPage : React.FC= () => {
+const SuggestionsPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const handleOpenModal = (): void  => {
+  const handleOpenModal = (): void => {
     setModalOpen(true);
   };
 
-  const handleCloseModal = (): void  => {
+  const handleCloseModal = (): void => {
     setModalOpen(false);
   };
 
@@ -28,6 +29,9 @@ const SuggestionsPage : React.FC= () => {
       </Grid>
 
       {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal}/>}
+      <Grid item>
+        <CommentCard createdAt="time" likeCount={0} logoImgUrl="kjv" suggestion="suggestion" user="user"/>
+      </Grid>
     </div>
   );
 };
