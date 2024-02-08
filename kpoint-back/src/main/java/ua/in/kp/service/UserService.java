@@ -1,6 +1,7 @@
 package ua.in.kp.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
+import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.ApplicantRepository;
@@ -72,8 +74,12 @@ public class UserService {
                 new UsernameNotFoundException("Can't find user by username " + username));
     }
 
-    public UserEntity getUserEntityByUsernameFetchedFavouriteProjects(String username) {
-        return userRepository.findByUsernameFetchProjectsFavourite(username).orElseThrow(() ->
+    public Page<ProjectEntity> getUserEntityByUsernameFetchedFavouriteProjects(String username, Pageable pageable) {
+        return userRepository.findByUsernameFetchProjectsFavourite(username, pageable);
+    }
+
+    public UserEntity getByUsername(String username) {
+        return userRepository.findByUsernameFetchNothing(username).orElseThrow(() ->
                 new UsernameNotFoundException("Can't find user by username " + username));
     }
 }

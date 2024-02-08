@@ -10,16 +10,16 @@ import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
+import ua.in.kp.entity.TagEntity;
+import ua.in.kp.entity.UserEntity;
 import ua.in.kp.exception.ProjectNotFoundException;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.TagRepository;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Service
@@ -73,9 +73,9 @@ public class ProjectService {
     }
 
     public Page<ProjectEntity> retrieveRecommendedProjects(
-            Set<String> tags, Set<String> projectsOwnedIds, Set<String> projectsFavouriteIds, Pageable pageable) {
+            Set<TagEntity> tags, Set<String> userProjectsIds, Pageable pageable) {
         return projectRepository.findByTagsExceptOwnedAndFavourite(
-                tags, projectsOwnedIds, projectsFavouriteIds, pageable);
+                tags, userProjectsIds, pageable);
     }
 
     public Set<String> retrieveProjectsIds(Collection<ProjectEntity> projects) {
@@ -84,10 +84,7 @@ public class ProjectService {
                 .collect(Collectors.toSet());
     }
 
-    public List<GetAllProjectsDto> mapProjectsToListDtos(Iterable<ProjectEntity> projects, int size) {
-        return StreamSupport.stream(projects.spliterator(), false)
-                .map(projectMapper::getAllToDto)
-                .limit(size)
-                .toList();
+    public Page<ProjectEntity> getProjectsByUser(UserEntity userEntity, Pageable pageable) {
+        return projectRepository.findAllByOwner(userEntity, pageable);
     }
 }

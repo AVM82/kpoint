@@ -4,63 +4,51 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ua.in.kp.dto.profile.FavouriteProjectsProfileResponseDto;
-import ua.in.kp.dto.profile.MyProjectsProfileResponseDto;
-import ua.in.kp.dto.profile.RecommendedProjectsProfileResponseDto;
+import org.springframework.transaction.annotation.Transactional;
+import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.mapper.ProjectMapper;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
     private final UserService userService;
     private final ProjectService projectService;
+    private final ProjectMapper projectMapper;
 
-    public MyProjectsProfileResponseDto getMyProjects(String username, Pageable pageable) {
-        UserEntity userEntityWithFetchedOwnedProjects =
-                userService.getUserEntityByUsernameFetchedOwnedProjects(username);
-        Set<ProjectEntity> projectsOwned = userEntityWithFetchedOwnedProjects.getProjectsOwned();
-        int size = pageable.getPageSize();
-        String userId = userEntityWithFetchedOwnedProjects.getId().toString();
-        List<GetAllProjectsDto> projectsOwnedDtos = projectService.mapProjectsToListDtos(projectsOwned, size);
-        return new MyProjectsProfileResponseDto(userId, projectsOwnedDtos);
+    public ProjectsProfileResponseDto getMyProjects(String username, Pageable pageable) {
+        UserEntity userEntity = userService.getByUsername(username);
+        Page<GetAllProjectsDto> ownedProjectsDtos = projectService.getProjectsByUser(userEntity, pageable)
+                .map(projectMapper::getAllToDto);
+        return new ProjectsProfileResponseDto(userEntity.getId().toString(),
+                ownedProjectsDtos);
     }
 
-    public FavouriteProjectsProfileResponseDto getFavouriteProjects(String username, Pageable pageable) {
-        UserEntity userEntityWithFetchedFavouriteProjects =
-                userService.getUserEntityByUsernameFetchedFavouriteProjects(username);
-        Set<ProjectEntity> projectsFavourite =
-                userEntityWithFetchedFavouriteProjects.getProjectsFavourite();
-        int size = pageable.getPageSize();
-        String userId = userEntityWithFetchedFavouriteProjects.getId().toString();
-        List<GetAllProjectsDto> projectsFavouriteDtos =
-                projectService.mapProjectsToListDtos(projectsFavourite, size);
-        return new FavouriteProjectsProfileResponseDto(userId, projectsFavouriteDtos);
+    @Transactional
+    public ProjectsProfileResponseDto getFavouriteProjects(String username, Pageable pageable) {
+        UserEntity userEntity = userService.getByUsername(username);
+        Page<GetAllProjectsDto> favouriteProjectsDtos =
+                userService.getUserEntityByUsernameFetchedFavouriteProjects(username, pageable)
+                        .map(projectMapper::getAllToDto);
+        return new ProjectsProfileResponseDto(userEntity.getId().toString(),
+                favouriteProjectsDtos);
     }
 
-    public RecommendedProjectsProfileResponseDto getRecommendedProjects(String username, Pageable pageable) {
-        UserEntity userEntityWithFetchedTagsFavouriteAndOwnedProjects =
+    public ProjectsProfileResponseDto getRecommendedProjects(String username, Pageable pageable) {
+        UserEntity userEntity =
                 userService.getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(username);
-        Set<String> tags = userEntityWithFetchedTagsFavouriteAndOwnedProjects.getTags().stream()
-                .map(TagEntity::getName)
-                .collect(Collectors.toSet());
-        Set<ProjectEntity> projectsOwned = userEntityWithFetchedTagsFavouriteAndOwnedProjects.getProjectsOwned();
-        Set<String> projectsOwnedIds = projectService.retrieveProjectsIds(projectsOwned);
-        Set<ProjectEntity> projectsFavourite =
-                userEntityWithFetchedTagsFavouriteAndOwnedProjects.getProjectsFavourite();
-        Set<String> projectsFavouriteIds = projectService.retrieveProjectsIds(projectsFavourite);
-        Page<ProjectEntity> recommendedProjects =
-                projectService.retrieveRecommendedProjects(tags, projectsOwnedIds, projectsFavouriteIds, pageable);
-        int size = pageable.getPageSize();
-        String userId = userEntityWithFetchedTagsFavouriteAndOwnedProjects.getId().toString();
-        List<GetAllProjectsDto> projectsRecommendedDtos =
-                projectService.mapProjectsToListDtos(recommendedProjects, size);
-        return new RecommendedProjectsProfileResponseDto(userId, projectsRecommendedDtos);
+        Set<TagEntity> tags = userEntity.getTags();
+        Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
+        allProjects.addAll(userEntity.getProjectsFavourite());
+        Set<String> projectsIds = projectService.retrieveProjectsIds(allProjects);
+        Page<GetAllProjectsDto> recommendedProjectsDtos =
+                projectService.retrieveRecommendedProjects(tags, projectsIds, pageable)
+                        .map(projectMapper::getAllToDto);
+        return new ProjectsProfileResponseDto(userEntity.getId().toString(), recommendedProjectsDtos);
     }
 }
