@@ -21,7 +21,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
 
     @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
             + "LEFT JOIN FETCH p.networksLinks WHERE p.url=:url")
-    Optional<ProjectEntity> findByProjectURL(String url);
+    Optional<ProjectEntity> findByProjectUrl(String url);
 
     @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
             + "LEFT JOIN FETCH p.networksLinks")

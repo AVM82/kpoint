@@ -63,9 +63,9 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectResponseDto getProjectByURL(String url) {
+    public ProjectResponseDto getProjectByUrl(String url) {
         log.info("Trying to get project by URL...");
-        ProjectEntity projectEntity = projectRepository.findByProjectURL(url)
+        ProjectEntity projectEntity = projectRepository.findByProjectUrl(url)
                 .orElseThrow(() ->
                         new ProjectNotFoundException("Project with URL " + url + " not found."));
         log.info("Project with url {} retrieved.", projectEntity.getUrl());

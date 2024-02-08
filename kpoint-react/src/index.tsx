@@ -16,6 +16,7 @@ import { Header } from './components/header/header';
 import { ProfilePage } from './components/profile-page/profile-page';
 import { ProjectDetailsPage } from './components/project-page/project-details-page';
 import { ProjectCreate } from './components/projects/project-create/project-create';
+import { SuggestionsPage } from './components/suggestions-page/suggestions-page';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
@@ -38,11 +39,13 @@ root.render(
             <Route path="/projects/new" element={<ProjectCreate/>}/>
             <Route path="/sign-in" element={<SignInPage/>}/>
             <Route path="/sign-up" element={<SignUpPage/>}/>
+            <Route path="/suggestions" element={<SuggestionsPage/>}/>
+            {/*<Route path="/add-suggestions" element={<AddSuggestionModal/>}/>*/}
           </Routes>
         </BrowserRouter>
       </Box>
       <Footer/>
-      <Toast />
+      <Toast/>
     </Provider>
   </StrictMode>,
 );
