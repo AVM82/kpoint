@@ -72,26 +72,26 @@ class ProjectServiceTest {
     }
 
     @Test
-    void getProjectByURL_shouldReturnProjectDto_whenProjectExists() {
-        String projectURL = "url123";
+    void getProjectByUrl_shouldReturnProjectDto_whenProjectExists() {
+        String projectUrl = "url123";
         ProjectEntity projectEntity = new ProjectEntity();
         ProjectResponseDto projectResponseDto = new ProjectResponseDto();
 
-        when(projectRepository.findByProjectURL(projectURL)).thenReturn(Optional.of(projectEntity));
+        when(projectRepository.findByProjectUrl(projectUrl)).thenReturn(Optional.of(projectEntity));
         when(projectMapper.toDto(projectEntity)).thenReturn(projectResponseDto);
 
-        assertEquals(projectResponseDto, projectService.getProjectByURL(projectURL));
-        verify(projectRepository).findByProjectURL(projectURL);
+        assertEquals(projectResponseDto, projectService.getProjectByUrl(projectUrl));
+        verify(projectRepository).findByProjectUrl(projectUrl);
         verify(projectMapper).toDto(projectEntity);
     }
 
     @Test
-    void getProjectByURL_shouldThrowException_whenProjectDoesNotExist() {
-        String projectURL = "url123";
+    void getProjectByUrl_shouldThrowException_whenProjectDoesNotExist() {
+        String projectUrl = "url123";
 
         assertThrows(ProjectNotFoundException.class, () -> {
-            projectService.getProjectByURL(projectURL);
+            projectService.getProjectByUrl(projectUrl);
         });
-        verify(projectRepository).findByProjectURL(projectURL);
+        verify(projectRepository).findByProjectUrl(projectUrl);
     }
 }

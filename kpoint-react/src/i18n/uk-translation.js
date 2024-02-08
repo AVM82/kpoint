@@ -61,6 +61,7 @@ const ukTranslation = {
   implementation_plan: 'План реалізації',
   new_project: 'Новий проєкт',
   project_name: 'Назва проєкту',
+  project_url: 'URL проєкту',
   city: 'Місто',
   category: 'Категорія',
   tag_placeholder: 'Введіть тег і натисніть [Enter]',
