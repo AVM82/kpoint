@@ -25,13 +25,13 @@ const style = {
 
 const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handleCloseModal }) => {
   const [inputText, setInputText] = React.useState('');
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setInputText(event.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    console.log('Введено: ', inputText);
     setInputText('');
     handleCloseModal();
   };

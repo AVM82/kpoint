@@ -1,5 +1,7 @@
+import { ContentType } from '../../common/enums/file/content-type.enum';
 import { HttpMethod } from '../../common/enums/http/http-method.enum';
 import { SuggestionType } from '../../common/types/suggestions/suggestion.type';
+import { SuggestionCreateType } from '../../common/types/suggestions/suggestion-create.type';
 import { Http } from '../http/http.service';
 
 type Constructor = {
@@ -29,6 +31,17 @@ class SuggestionApi {
       },
     );
   }
+
+  public createNew(payload: SuggestionCreateType): Promise<SuggestionType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/suggestions`, {
+        method: HttpMethod.POST,
+        payload: JSON.stringify(payload),
+        contentType: ContentType.JSON,
+      },
+    );
+  }
+
 }
 
 export { SuggestionApi };
