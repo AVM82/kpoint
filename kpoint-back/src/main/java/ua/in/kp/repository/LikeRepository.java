@@ -5,10 +5,11 @@ import ua.in.kp.entity.LikeEntity;
 import ua.in.kp.entity.SuggestionEntity;
 import ua.in.kp.entity.UserEntity;
 
-import java.util.Optional;
-
 public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
-    Optional<LikeEntity> findByUserAndSuggestion(UserEntity user, SuggestionEntity suggestion);
+    void deleteAllById(String suggestionId);
 
-    void deleteAllBySuggestionId(String suggestionId);
+    boolean existsByUserAndSuggestion(UserEntity user, SuggestionEntity suggestion);
+
+    void deleteBySuggestionAndUser(SuggestionEntity suggestion, UserEntity user);
+
 }
