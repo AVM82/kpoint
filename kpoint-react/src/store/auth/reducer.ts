@@ -2,22 +2,27 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { login } from './actions';
 
-type State={
-  token: string | null,
-
+type State = {
+  token: string | null;
+  islogin: boolean;
 };
 
 const initialState: State = {
   token: null,
+  islogin: false,
 };
 
 const authSlice = createSlice({
   name: 'token',
   initialState,
-  reducers: {},
+  reducers: {
+    setIsLogin: (state) => {
+      state.islogin = true;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(login.rejected, (state ) => {
+      .addCase(login.rejected, (state) => {
         state.token = null;
       })
       .addCase(login.fulfilled, (state, { payload }) => {
@@ -26,6 +31,7 @@ const authSlice = createSlice({
   },
 });
 
+const { setIsLogin } = authSlice.actions;
 const authReducer = authSlice.reducer;
 
-export { authReducer };
+export { authReducer, setIsLogin };

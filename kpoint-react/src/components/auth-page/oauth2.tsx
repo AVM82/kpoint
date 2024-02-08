@@ -1,13 +1,16 @@
 import { useGoogleLogin } from '@react-oauth/google';
+import { useAppDispatch } from 'hooks/hooks';
 import { FC, useEffect } from 'react';
 import GoogleButton from 'react-google-button';
 import { useNavigate } from 'react-router-dom';
+import { setIsLogin } from 'store/auth/reducer';
 
 import { ENV } from '../../common/enums/app/env.enum';
 import { StorageKey } from '../../common/enums/app/storage-key.enum';
 import { storage } from '../../services/services';
 
 const OAuth2: FC = () => {
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
@@ -41,6 +44,7 @@ const OAuth2: FC = () => {
           storage.setItem(StorageKey.TOKEN, backendData.token);
           navigate('/');
         }
+        dispatch(setIsLogin());
       } catch (error) {
         error('Error making POST request to backend:', error.message);
       }
