@@ -3,6 +3,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import getSlug from 'speakingurl';
 
 import { CitiesType,EditProjectsPropsType } from '../../../../common/types/projects/projects';
 import { cities } from './cities';
@@ -70,9 +71,14 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
               // defaultValue={project.title}
               onChange={(e): void => {
                 handleChange('title', e.target.value);
-                setProjectURL(e.target.value);
-                projectData.url = e.target.value;
+                const slug = getSlug(e.target.value, {
+                  separator: '_',
+                  maintainCase: true,
+                });
+                handleChange('url', slug);
+                setProjectURL(slug);
               }}
+              inputProps={{ maxLength: 15 }}
               onFocus={(): void => handleFieldFocus('title')}
               error={!!errors.title}
               helperText={errors.title}
@@ -93,8 +99,13 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
               // defaultValue={defaultURL}
               onChange={(e): void => {
                 handleChange('url', e.target.value);
-                setProjectURL(e.target.value);
+                const slug = getSlug(e.target.value, {
+                  separator: '_',
+                  maintainCase: true,
+                });
+                setProjectURL(slug);
               }}
+              inputProps={{ maxLength: 15 }}
               onFocus={(): void => handleFieldFocus('url')}
               error={!!errors.url}
               helperText={errors.url}
