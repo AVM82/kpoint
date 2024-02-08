@@ -1,6 +1,5 @@
 package ua.in.kp.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
 import ua.in.kp.entity.UserEntity;
@@ -40,7 +40,6 @@ public class UserService {
                     applicantRepository.delete(a);
                 });
         return userMapper.toDto(userRepository.save(mappedEntity));
-
     }
 
     public List<UserResponseDto> getAll(Pageable pageable) {
@@ -61,5 +60,20 @@ public class UserService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("Can't find user by email " + email));
         return userMapper.toDto(userFromDb);
+    }
+
+    public UserEntity getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by username " + username));
+    }
+
+    public UserEntity getUserEntityByUsernameFetchedOwnedProjects(String username) {
+        return userRepository.findByUsernameFetchProjectsOwned(username).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by username " + username));
+    }
+
+    public UserEntity getUserEntityByUsernameFetchedFavouriteProjects(String username) {
+        return userRepository.findByUsernameFetchProjectsFavourite(username).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by username " + username));
     }
 }

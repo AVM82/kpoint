@@ -21,4 +21,13 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     @EntityGraph(attributePaths = {"socialNetworks", "roles"})
     Page<UserEntity> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"tags", "projectsOwned", "projectsFavourite"})
+    Optional<UserEntity> findByUsername(String username);
+
+    @Query("FROM UserEntity u LEFT JOIN FETCH u.projectsOwned WHERE u.username=:username")
+    Optional<UserEntity> findByUsernameFetchProjectsOwned(String username);
+
+    @Query("FROM UserEntity u LEFT JOIN FETCH u.projectsFavourite WHERE u.username=:username")
+    Optional<UserEntity> findByUsernameFetchProjectsFavourite(String username);
 }

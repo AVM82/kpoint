@@ -1,6 +1,5 @@
 package ua.in.kp.repository;
 
-import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,7 +30,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
 
     @Query("SELECT DISTINCT p FROM ProjectEntity p LEFT JOIN FETCH p.tags t "
             + "LEFT JOIN FETCH p.networksLinks WHERE t.name IN :tags "
-            + "AND p.projectId NOT IN :ownedProjectUUIDs AND p.projectId NOT IN :favouriteProjectUUIDs")
+            + "AND p.projectId NOT IN :ownedProjectIds AND p.projectId NOT IN :favouriteProjectIds")
     Page<ProjectEntity> findByTagsExceptOwnedAndFavourite(
-            Set<String> tags, Set<String> ownedProjectUUIDs, Set<String> favouriteProjectUUIDs, Pageable pageable);
+            Set<String> tags, Set<String> ownedProjectIds, Set<String> favouriteProjectIds, Pageable pageable);
 }

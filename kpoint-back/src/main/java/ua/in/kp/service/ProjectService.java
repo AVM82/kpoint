@@ -15,6 +15,12 @@ import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.TagRepository;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @AllArgsConstructor
 @Service
 @Slf4j
@@ -64,5 +70,24 @@ public class ProjectService {
                         new ProjectNotFoundException("Project with URL " + url + " not found."));
         log.info("Project with url {} retrieved.", projectEntity.getUrl());
         return projectMapper.toDto(projectEntity);
+    }
+
+    public Page<ProjectEntity> retrieveRecommendedProjects(
+            Set<String> tags, Set<String> projectsOwnedIds, Set<String> projectsFavouriteIds, Pageable pageable) {
+        return projectRepository.findByTagsExceptOwnedAndFavourite(
+                tags, projectsOwnedIds, projectsFavouriteIds, pageable);
+    }
+
+    public Set<String> retrieveProjectsIds(Collection<ProjectEntity> projects) {
+        return projects.stream()
+                .map(ProjectEntity::getProjectId)
+                .collect(Collectors.toSet());
+    }
+
+    public List<GetAllProjectsDto> mapProjectsToListDtos(Iterable<ProjectEntity> projects, int size) {
+        return StreamSupport.stream(projects.spliterator(), false)
+                .map(projectMapper::getAllToDto)
+                .limit(size)
+                .toList();
     }
 }
