@@ -27,7 +27,7 @@ public class SuggestionEntity {
     private String suggestion;
 
     @Column(name = "like_count")
-    private int likeCount = 0;
+    private Integer likeCount = 0;
 
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
