@@ -47,7 +47,7 @@ const SuggestionsPage: FC = () => {
   };
 
   return (
-    <Box sx={{ minWidth: 900, margin: 'auto', padding: 2 }}>
+    <Box sx={{ width: 900, margin: 'auto', padding: 2 }}>
       <Typography variant="h3" align="center">{t('suggestions')}</Typography>
       <Grid container justifyContent="flex-end">
         <Button onClick={handleOpenModal} variant="contained" color="primary" className="mb-2">
@@ -59,7 +59,7 @@ const SuggestionsPage: FC = () => {
         {suggestions?.content.map((suggestion) =>
           <Grid item >
             <SuggestionCard createdAt={suggestion.createdAt} likeCount={suggestion.likeCount} logoImgUrl="kjv"
-              suggestion={suggestion.suggestion} user="user"/>
+              suggestion={suggestion.suggestion} user={suggestion.user}/>
 
           </Grid>)}
       </Grid>
