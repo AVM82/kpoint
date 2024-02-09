@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { suggestionAction } from 'store/actions';
 
@@ -29,11 +29,18 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handle
   const [inputText, setInputText] = React.useState('');
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    dispatch(suggestionAction.createNew({ suggestionData: { suggestion: inputText } }));
-    handleCloseModal();
+    const formErrors = validateForm(inputText);
+
+    if (Object.keys(formErrors).length === 0) {
+      dispatch(suggestionAction.createNew({ suggestionData: { suggestion: inputText } }));
+      handleCloseModal();
+    } else {
+      setErrors(formErrors);
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -43,6 +50,16 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handle
   useEffect(() => {
     setInputText('');
   }, []);
+
+  const validateForm = (data: string): Record<string, string>=> {
+    const errors: Record<string, string> = {};
+
+    if (data.trim().length === 0 || data.trim().length > 200) {
+      errors.suggestion = 'Поле повинне містити від 1 до 200 символів';
+    }
+
+    return Object.keys(errors).length > 0 ? errors : {};
+  };
 
   return (
     <div>
@@ -78,13 +95,13 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handle
               value={inputText}
               onChange={handleChange}
             />
+            {errors.suggestion && <Typography color="error">{errors.suggestion}</Typography>}
             <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" sx={{ mt: 2 }}>
                 {t('send_suggestion')}
               </Button>
             </Grid>
           </form>
-
         </Box>
       </Modal>
     </div>
