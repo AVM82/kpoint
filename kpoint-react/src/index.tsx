@@ -13,6 +13,7 @@ import { SignUpPage } from './components/auth-page/sign-up-page';
 import { Toast } from './components/common/common';
 import { Footer } from './components/footer/footer';
 import { Header } from './components/header/header';
+import { ProfilePage } from './components/profile-page/profile-page';
 import { ProjectDetailsPage } from './components/project-page/project-details-page';
 import { ProjectCreate } from './components/projects/project-create/project-create';
 import { SuggestionsPage } from './components/suggestions-page/suggestions-page';
@@ -33,6 +34,7 @@ root.render(
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<ProjectsPage/>}/>
+            <Route path="/:username" element={<ProfilePage/>}/>
             <Route path="/projects/:projectId" element={<ProjectDetailsPage/>}/>
             <Route path="/projects/new" element={<ProjectCreate/>}/>
             <Route path="/sign-in" element={<SignInPage/>}/>

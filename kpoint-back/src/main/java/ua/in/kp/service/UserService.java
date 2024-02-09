@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
+import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.enumeration.UserRole;
 import ua.in.kp.mapper.UserMapper;
@@ -46,7 +47,6 @@ public class UserService {
                     applicantRepository.delete(a);
                 });
         return userMapper.toDto(userRepository.save(mappedEntity));
-
     }
 
     public List<UserResponseDto> getAll(Pageable pageable) {
@@ -87,5 +87,24 @@ public class UserService {
             return new UsernameNotFoundException("Can't find user by id " + id);
         });
         userRepository.delete(userFromDb);
+    }
+
+    public UserEntity getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by username " + username));
+    }
+
+    public UserEntity getUserEntityByUsernameFetchedOwnedProjects(String username) {
+        return userRepository.findByUsernameFetchProjectsOwned(username).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by username " + username));
+    }
+
+    public Page<ProjectEntity> getUserEntityByUsernameFetchedFavouriteProjects(String username, Pageable pageable) {
+        return userRepository.findByUsernameFetchProjectsFavourite(username, pageable);
+    }
+
+    public UserEntity getByUsername(String username) {
+        return userRepository.findByUsernameFetchNothing(username).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by username " + username));
     }
 }
