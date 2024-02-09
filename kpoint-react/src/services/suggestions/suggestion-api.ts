@@ -2,6 +2,7 @@ import { ContentType } from '../../common/enums/file/content-type.enum';
 import { HttpMethod } from '../../common/enums/http/http-method.enum';
 import { SuggestionType } from '../../common/types/suggestions/suggestion.type';
 import { SuggestionCreateType } from '../../common/types/suggestions/suggestion-create.type';
+import { SuggestionsPageType } from '../../common/types/suggestions/suggestions-page.type';
 import { Http } from '../http/http.service';
 
 type Constructor = {
@@ -19,7 +20,20 @@ class SuggestionApi {
     this.#apiPrefix = apiPrefix;
   }
 
-  public getAllSuggestions(payload:{ size: number, number: number }): Promise<SuggestionType> {
+  public getAllSuggestionsDefault(payload:{ size: number, number: number }): Promise<SuggestionType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
+        method: HttpMethod.GET,
+        hasAuth: false,
+        queryString: {
+          size: payload.size,
+          page: payload.number,
+        },
+      },
+    );
+  }
+
+  public getAllSuggestionsAddMore(payload:{ size: number, number: number }): Promise<SuggestionsPageType> {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
         method: HttpMethod.GET,
@@ -38,6 +52,15 @@ class SuggestionApi {
         method: HttpMethod.POST,
         payload: JSON.stringify(payload),
         contentType: ContentType.JSON,
+      },
+    );
+  }
+
+  public getById(payload: { id: string }): Promise<SuggestionType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/suggestions/${payload.id}`, {
+        method: HttpMethod.GET,
+        hasAuth: false,
       },
     );
   }
