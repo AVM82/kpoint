@@ -1,5 +1,10 @@
 package ua.in.kp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -31,11 +36,43 @@ public class UserController {
         return ResponseEntity.ok(userService.getAll(pageable));
     }
 
-    @DeleteMapping("/{id}")
+    @Operation(summary = "Banning the user" )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User banned",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Wrong credentials",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Prohibited",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content)})
+    @PatchMapping("/{id}/ban")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<UserResponseDto> deleteUser(@PathVariable UUID id) {
-        log.info("delete user by id {}", id);
-        userService.deleteUserById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<UserResponseDto> banUser(@PathVariable UUID id) {
+        log.info("banning user by id {}", id);
+        return ResponseEntity.ok(userService.banUserById(id.toString()));
+    }
+
+    @Operation(summary = "Unbanning the user" )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User unbanned",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Wrong credentials",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Prohibited",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content)})
+    @PatchMapping("/{id}/unban")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<UserResponseDto> unbanUser(@PathVariable UUID id) {
+        log.info("banning user by id {}", id);
+        return ResponseEntity.ok(userService.unBanUserById(id.toString()));
     }
 }

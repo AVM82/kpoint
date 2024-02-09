@@ -80,13 +80,26 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUserById(UUID id) {
-        log.info("deleteUserById {}", id);
+    public UserResponseDto banUserById(String id) {
+        log.info("banUserById {}", id);
         UserEntity userFromDb = userRepository.findById(id).orElseThrow(() -> {
             log.warn("Can't find user by id {}", id);
             return new UsernameNotFoundException("Can't find user by id " + id);
         });
         userRepository.delete(userFromDb);
+        return userMapper.toDto(userFromDb);
+    }
+
+    @Transactional
+    public UserResponseDto unBanUserById(String id) {
+        log.info("banUserById {}", id);
+        UserEntity userFromDb = userRepository.findByIdByAdmin(id).orElseThrow(() -> {
+            log.warn("Can't find user by id {}", id);
+            return new UsernameNotFoundException("Can't find user by id " + id);
+        });
+//        userFromDb.setDeleted(false);
+        userRepository.save(userFromDb);
+        return userMapper.toDto(userFromDb);
     }
 
     public UserEntity getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(String username) {

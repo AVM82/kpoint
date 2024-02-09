@@ -65,9 +65,7 @@ public class SuggestionService {
         return suggestionMapper.toDto(suggestionRepository.save(suggestion));
     }
 
-    @Transactional
     public void deleteSuggestion(String suggestionId) {
-        likeRepository.deleteAllById(suggestionId);
         suggestionRepository.deleteById(suggestionId);
     }
 }
