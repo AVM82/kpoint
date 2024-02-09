@@ -26,11 +26,20 @@ const getAllSuggestionsAddMore = createAsyncThunk<SuggestionsPageType,
     },
   );
 const createNew = createAsyncThunk<SuggestionType, { suggestionData: SuggestionCreateType }, AsyncThunkConfig>(
-  ActionType.POST_NEW,
+  ActionType.POST_NEW_SUGGESTION,
   async (payload, { extra }) => {
     const { suggestionApi } = extra;
 
     return suggestionApi.createNew(payload.suggestionData);
+  },
+);
+
+const updateLikeById = createAsyncThunk<SuggestionType, { id: string }, AsyncThunkConfig>(
+  ActionType.UPDATE_LIKES_BY_ID,
+  async (payload, { extra }) => {
+    const { suggestionApi } = extra;
+
+    return suggestionApi.updateById(payload);
   },
 );
 
@@ -42,4 +51,4 @@ const deleteById = createAsyncThunk<void, string, AsyncThunkConfig>(
   },
 );
 
-export { createNew,deleteById,getAllSuggestionsAddMore,getAllSuggestionsDefault };
+export { createNew,deleteById,getAllSuggestionsAddMore,getAllSuggestionsDefault, updateLikeById };

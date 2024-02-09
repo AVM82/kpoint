@@ -1,18 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SuggestionCreateType, SuggestionsPageType,SuggestionType } from 'common/types/types';
 
-import { createNew, deleteById,getAllSuggestionsAddMore, getAllSuggestionsDefault } from './actions';
+import { createNew, deleteById,getAllSuggestionsAddMore, getAllSuggestionsDefault, updateLikeById } from './actions';
 
 type State={
   suggestion: SuggestionType | null,
   suggestions: SuggestionsPageType | null,
   editSuggestion: SuggestionCreateType | null,
+  status: boolean,
 };
 
 const initialState: State = {
   suggestion: null,
   suggestions: null,
   editSuggestion: null,
+  status: false,
 };
 
 const suggestionSlice = createSlice({
@@ -41,8 +43,17 @@ const suggestionSlice = createSlice({
       .addCase(createNew.fulfilled, (state, { payload }) => {
         state.editSuggestion = payload;
       })
+      .addCase(updateLikeById.rejected, (state) => {
+        state.editSuggestion = null;
+      })
+      .addCase(updateLikeById.fulfilled, (state, { payload }) => {
+        state.editSuggestion = payload;
+      })
+      .addCase(deleteById.rejected, (state) => {
+        state.status = false;
+      })
       .addCase(deleteById.fulfilled, (state) => {
-        state.suggestions = null;
+        state.status = true;
       },
       );
   },

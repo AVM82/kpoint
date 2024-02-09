@@ -5,12 +5,15 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import { FC, useState } from 'react';
+import { FC } from 'react';
+import { suggestionAction } from 'store/actions';
 
 import { UserType } from '../../common/types/suggestions/user.type';
+import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { formatDateTime } from '../../utils/function-format-date-time';
 
 interface CommentProps {
+  id: string,
   user: UserType,
   suggestion: string
   likeCount: number,
@@ -23,11 +26,21 @@ const iconStyles = {
   color: 'grey',
 };
 
-const SuggestionCard: FC<CommentProps> = ({ user, suggestion, likeCount, createdAt, logoImgUrl }) => {
-  const [liked, setLiked] = useState(false);
+const SuggestionCard: FC<CommentProps> = ({ id, user, suggestion, likeCount, createdAt, logoImgUrl }) => {
+  const dispatch = useAppDispatch();
 
-  const handleLike = ():void => {
-    setLiked(!liked);
+  const handleLike = async (): Promise<void> => {
+    try {
+      const actionResult = await dispatch(suggestionAction.updateLikeById({ id }));
+
+      const updatedSuggestion = actionResult.payload;
+
+      console.log('Suggestion updated:', updatedSuggestion);
+
+    } catch (error) {
+      console.error('Error updating like:', error);
+
+    }
   };
 
   return (
@@ -52,19 +65,17 @@ const SuggestionCard: FC<CommentProps> = ({ user, suggestion, likeCount, created
               <p className="comment-text">{suggestion}</p>
             </div>
             <CardActions disableSpacing>
-              <IconButton onClick={handleLike} color={liked ? 'primary' : 'default'} style={iconStyles}>
+              <IconButton onClick={handleLike} color={ 'primary' }>
                 <ThumbUpIcon style={iconStyles}/>
                 &nbsp;
                 <p>{ likeCount }</p>
               </IconButton>
             </CardActions>
           </Grid>
-
         </Grid>
       </CardContent>
     </Card>
   );
-
 };
 
 export { SuggestionCard };

@@ -56,11 +56,18 @@ class SuggestionApi {
     );
   }
 
+  public updateById(payload: { id: string }): Promise<SuggestionType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/suggestions/${payload.id}/likes`, {
+        method: HttpMethod.PUT,
+      },
+    );
+  }
+
   public deleteById(payload: { id: string }): Promise<SuggestionType> {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions/${payload.id}`, {
         method: HttpMethod.DELETE,
-        hasAuth: true,
       },
     );
   }
