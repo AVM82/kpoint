@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "speakingurl": "^14.0.1"
-  },
-  "devDependencies": {
-    "@types/speakingurl": "^13.0.6"
-  }
-}
