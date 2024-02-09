@@ -15,7 +15,7 @@ interface CommentProps {
   logoImgUrl: string,
 }
 
-const CommentCard: FC<CommentProps> = ({ user, suggestion, likeCount, createdAt, logoImgUrl }) => {
+const SuggestionCard: FC<CommentProps> = ({ user, suggestion, likeCount, createdAt, logoImgUrl }) => {
   const [liked, setLiked] = useState(false);
 
   const handleLike = ():void => {
@@ -57,4 +57,4 @@ const CommentCard: FC<CommentProps> = ({ user, suggestion, likeCount, createdAt,
 
 };
 
-export { CommentCard };
+export { SuggestionCard };

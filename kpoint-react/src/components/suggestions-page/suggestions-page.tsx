@@ -1,4 +1,5 @@
 import SyncTwoToneIcon from '@mui/icons-material/SyncTwoTone';
+import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
@@ -9,9 +10,8 @@ import { suggestionAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-import styles from '../app/style.module.scss';
 import { AddSuggestionModal } from './add-suggestions-modale';
-import { CommentCard } from './suggestion-card';
+import { SuggestionCard } from './suggestion-card';
 
 const SuggestionsPage: FC = () => {
   const { t } = useTranslation();
@@ -47,7 +47,7 @@ const SuggestionsPage: FC = () => {
   };
 
   return (
-    <div className={styles.div}>
+    <Box sx={{ minWidth: 900, margin: 'auto', padding: 2 }}>
       <Typography variant="h3" align="center">{t('suggestions')}</Typography>
       <Grid container justifyContent="flex-end">
         <Button onClick={handleOpenModal} variant="contained" color="primary" className="mb-2">
@@ -58,7 +58,7 @@ const SuggestionsPage: FC = () => {
       <Grid item>
         {suggestions?.content.map((suggestion) =>
           <Grid item >
-            <CommentCard createdAt={suggestion.createdAt} likeCount={suggestion.likeCount} logoImgUrl="kjv"
+            <SuggestionCard createdAt={suggestion.createdAt} likeCount={suggestion.likeCount} logoImgUrl="kjv"
               suggestion={suggestion.suggestion} user="user"/>
 
           </Grid>)}
@@ -73,7 +73,7 @@ const SuggestionsPage: FC = () => {
       <Pagination count={suggestions?.totalPages} page={page}
         onChange={handleChange} showFirstButton showLastButton
         sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}/>
-    </div>
+    </Box>
   );
 };
 
