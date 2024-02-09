@@ -71,14 +71,17 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
               // defaultValue={project.title}
               onChange={(e): void => {
                 handleChange('title', e.target.value);
-                const slug = getSlug(e.target.value, {
-                  separator: '_',
+                let slug = getSlug(e.target.value, {
                   maintainCase: true,
                 });
+
+                if(slug.length > 30) {
+                  slug = slug.slice(0,30);
+                }
                 handleChange('url', slug);
                 setProjectURL(slug);
               }}
-              inputProps={{ maxLength: 15 }}
+              inputProps={{ maxLength: 30 }}
               onFocus={(): void => handleFieldFocus('title')}
               error={!!errors.title}
               helperText={errors.title}
@@ -95,17 +98,17 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
             <TextField
               label={t('project_url')}
               fullWidth
+              placeholder={t('url_placeholder')}
               value={projectData.url}
               // defaultValue={defaultURL}
               onChange={(e): void => {
-                handleChange('url', e.target.value);
                 const slug = getSlug(e.target.value, {
-                  separator: '_',
                   maintainCase: true,
                 });
+                handleChange('url', slug);
                 setProjectURL(slug);
               }}
-              inputProps={{ maxLength: 15 }}
+              inputProps={{ maxLength: 30 }}
               onFocus={(): void => handleFieldFocus('url')}
               error={!!errors.url}
               helperText={errors.url}

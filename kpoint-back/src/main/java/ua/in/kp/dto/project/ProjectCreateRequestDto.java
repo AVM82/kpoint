@@ -21,7 +21,7 @@ public class ProjectCreateRequestDto {
 
     @NotBlank(message = "{project.url.not.blank}")
     @Size(min = 5, max = 30, message = "{project.url.min.max}")
-    @Pattern(regexp = "[a-zA-Z0-9]+", message = "{project.url.pattern}")
+    @Pattern(regexp = "[a-zA-Z0-9-]+", message = "{project.url.pattern}")
     private String url;
 
     @NotBlank
