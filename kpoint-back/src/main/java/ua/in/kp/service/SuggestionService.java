@@ -15,8 +15,6 @@ import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,7 +29,7 @@ public class SuggestionService {
 
         SuggestionEntity suggestionEntity = suggestionMapper.toEntity(suggestionCreateRequestDto);
         suggestionEntity.setUser(userService.getAuthenticated());
-        log.info(userService.getAuthenticated().toString());
+
         suggestionRepository.save(suggestionEntity);
         log.info("SuggestionEntity saved, id {}", suggestionEntity.getId());
 
@@ -46,27 +44,30 @@ public class SuggestionService {
         return toReturn;
     }
 
+    @Transactional
     public SuggestionResponseDto updateLike(String suggestionId) {
         UserEntity user = userService.getAuthenticated();
         SuggestionEntity suggestion = suggestionRepository.findById(suggestionId).orElseThrow();
-        Optional<LikeEntity> optionalLike = likeRepository.findByUserAndSuggestion(user, suggestion);
-        if (optionalLike.isEmpty()) {
+
+        boolean userLiked = likeRepository.existsByUserAndSuggestion(user, suggestion);
+
+        if (userLiked) {
+            likeRepository.deleteBySuggestionAndUser(suggestion, user);
+            suggestion.setLikeCount(suggestion.getLikeCount() - 1);
+        } else {
             LikeEntity likeEntity = new LikeEntity();
             likeEntity.setUser(user);
             likeEntity.setSuggestion(suggestion);
             likeRepository.save(likeEntity);
 
             suggestion.setLikeCount(suggestion.getLikeCount() + 1);
-        } else {
-            likeRepository.delete(optionalLike.get());
-            suggestion.setLikeCount(suggestion.getLikeCount() - 1);
         }
         return suggestionMapper.toDto(suggestionRepository.save(suggestion));
     }
 
     @Transactional
     public void deleteSuggestion(String suggestionId) {
-        likeRepository.deleteAllBySuggestionId(suggestionId);
+        likeRepository.deleteAllById(suggestionId);
         suggestionRepository.deleteById(suggestionId);
     }
 }
