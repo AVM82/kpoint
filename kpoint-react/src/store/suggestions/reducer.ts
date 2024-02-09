@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SuggestionCreateType, SuggestionsPageType,SuggestionType } from 'common/types/types';
 
-import { createNew } from './actions';
+import { createNew, getAllSuggestionsAddMore, getAllSuggestionsDefault } from './actions';
 
 type State={
   suggestion: SuggestionType | null,
@@ -21,20 +21,20 @@ const suggestionSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // .addCase(getAllSuggestionsDefault.rejected, (state ) => {
-      //   state.suggestions = null;
-      // })
-      // .addCase(getAllSuggestionsDefault.fulfilled, (state, { payload }) => {
-      //   state.suggestions = payload;
-      // })
-      // .addCase(getAllSuggestionsAddMore.rejected, (state ) => {
-      //   state.suggestions = null;
-      // })
-      // .addCase(getAllSuggestionsAddMore.fulfilled, (state, { payload }) => {
-      //   if(state.suggestions != null) {
-      //     state.suggestions.content = [...state.suggestions.content, ...payload?.content ?? []];
-      //   }
-      // })
+      .addCase(getAllSuggestionsDefault.rejected, (state ) => {
+        state.suggestions = null;
+      })
+      .addCase(getAllSuggestionsDefault.fulfilled, (state, { payload }) => {
+        state.suggestions = payload;
+      })
+      .addCase(getAllSuggestionsAddMore.rejected, (state ) => {
+        state.suggestions = null;
+      })
+      .addCase(getAllSuggestionsAddMore.fulfilled, (state, { payload }) => {
+        if(state.suggestions != null) {
+          state.suggestions.content = [...state.suggestions.content, ...payload?.content ?? []];
+        }
+      })
       .addCase(createNew.rejected, (state) => {
         state.editSuggestion = null;
       })
