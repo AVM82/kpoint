@@ -65,7 +65,7 @@ const SuggestionCard: FC<CommentProps> = ({ id, user, suggestion, likeCount, cre
               <p className="comment-text">{suggestion}</p>
             </div>
             <CardActions disableSpacing>
-              <IconButton onClick={handleLike} color={ 'primary' }>
+              <IconButton onClick={handleLike} style={iconStyles}>
                 <ThumbUpIcon style={iconStyles}/>
                 &nbsp;
                 <p>{ likeCount }</p>
