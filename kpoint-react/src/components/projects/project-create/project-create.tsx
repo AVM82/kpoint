@@ -80,6 +80,8 @@ export const ProjectCreate: FC = () => {
     case 1: {
       if (!data.title.trim() || data.title.trim().length > 30) {
         errors.title = t('errors.project_title');
+      } else if (data.url.trim().length < 5) {
+        errors.url = t('errors.project_url');
       } else if (data.tags.length < 1 || data.tags.length > 5) {
         errors.tags = t('errors.project_tags');
       } else if (!data.summary.trim() || data.summary.trim().length > 150) {
