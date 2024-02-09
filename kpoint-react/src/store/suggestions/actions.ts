@@ -12,7 +12,7 @@ const getAllSuggestionsDefault = createAsyncThunk<SuggestionsPageType,
     async (payload, { extra }) => {
       const { suggestionApi } = extra;
 
-      return suggestionApi.getAllSuggestions(payload);
+      return suggestionApi.getAllSuggestionsDefault(payload);
     },
   );
 
@@ -22,7 +22,7 @@ const getAllSuggestionsAddMore = createAsyncThunk<SuggestionsPageType,
     async (payload, { extra }) => {
       const { suggestionApi } = extra;
 
-      return suggestionApi.getAllSuggestions(payload);
+      return suggestionApi.getAllSuggestionsAddMore(payload);
     },
   );
 const createNew = createAsyncThunk<SuggestionType, { suggestionData: SuggestionCreateType }, AsyncThunkConfig>(
@@ -34,4 +34,12 @@ const createNew = createAsyncThunk<SuggestionType, { suggestionData: SuggestionC
   },
 );
 
-export { createNew,getAllSuggestionsAddMore,getAllSuggestionsDefault };
+const deleteById = createAsyncThunk<void, string, AsyncThunkConfig>(
+  ActionType.DELETE_BY_ID,
+  async (id, { extra }) => {
+    const { suggestionApi } = extra;
+    await suggestionApi.deleteById({ id });
+  },
+);
+
+export { createNew,deleteById,getAllSuggestionsAddMore,getAllSuggestionsDefault };

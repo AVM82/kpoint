@@ -20,7 +20,20 @@ class SuggestionApi {
     this.#apiPrefix = apiPrefix;
   }
 
-  public getAllSuggestions(payload:{ size: number, number: number }): Promise<SuggestionsPageType> {
+  public getAllSuggestionsDefault(payload:{ size: number, number: number }): Promise<SuggestionsPageType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
+        method: HttpMethod.GET,
+        hasAuth: false,
+        queryString: {
+          size: payload.size,
+          page: payload.number,
+        },
+      },
+    );
+  }
+
+  public getAllSuggestionsAddMore(payload:{ size: number, number: number }): Promise<SuggestionsPageType> {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
         method: HttpMethod.GET,
@@ -39,6 +52,15 @@ class SuggestionApi {
         method: HttpMethod.POST,
         payload: JSON.stringify(payload),
         contentType: ContentType.JSON,
+      },
+    );
+  }
+
+  public deleteById(payload: { id: string }): Promise<SuggestionType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/suggestions/${payload.id}`, {
+        method: HttpMethod.DELETE,
+        hasAuth: true,
       },
     );
   }
