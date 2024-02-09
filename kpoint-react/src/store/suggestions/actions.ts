@@ -3,25 +3,35 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AsyncThunkConfig } from '../../common/types/app/async-thunk-config.type';
 import { SuggestionType } from '../../common/types/suggestions/suggestion.type';
 import { SuggestionCreateType } from '../../common/types/suggestions/suggestion-create.type';
+// import { SuggestionsPageType } from '../../common/types/suggestions/suggestions-page.type';
 import { ActionType } from './common';
 
-const getAllSuggestions = createAsyncThunk<SuggestionType,
-  { size: number, number: number }, AsyncThunkConfig>(
-    ActionType.GET_ALL_SUGGESTIONS,
-    async (payload, { extra }) => {
-      const { suggestionApi } = extra;
+// const getAllSuggestionsDefault = createAsyncThunk<SuggestionsPageType,
+//   { size: number, number: number }, AsyncThunkConfig>(
+//     ActionType.GET_ALL_SUGGESTIONS_DEFAULT,
+//     async (payload, { extra }) => {
+//       const { suggestionApi } = extra;
+//
+//       return suggestionApi.getAllSuggestions(payload);
+//     },
+//   );
 
-      return suggestionApi.getAllSuggestions(payload);
-    },
-  );
-
-const createNew = createAsyncThunk<SuggestionType, { projectData: SuggestionCreateType }, AsyncThunkConfig>(
+// const getAllSuggestionsAddMore = createAsyncThunk<SuggestionsPageType,
+//   { size: number, number: number }, AsyncThunkConfig>(
+//     ActionType.GET_ALL_PROJECTS_ADD_MORE,
+//     async (payload, { extra }) => {
+//       const { projectApi } = extra;
+//
+//       return projectApi.getAllProjectsAddMore(payload);
+//     },
+//   );
+const createNew = createAsyncThunk<SuggestionType, { suggestionData: SuggestionCreateType }, AsyncThunkConfig>(
   ActionType.POST_NEW,
   async (payload, { extra }) => {
     const { suggestionApi } = extra;
 
-    return suggestionApi.createNew(payload.projectData);
+    return suggestionApi.createNew(payload.suggestionData);
   },
 );
 
-export { createNew,getAllSuggestions };
+export { createNew };
