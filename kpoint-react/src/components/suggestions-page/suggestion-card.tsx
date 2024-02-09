@@ -1,4 +1,4 @@
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -32,14 +32,14 @@ const CommentCard: FC<CommentProps> = ({ user, suggestion, likeCount, createdAt,
           <Grid item xs={10}>
             <div className="user-info" style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div style={{ flex: 1 }}>
-                <h3 className="user">Користувач {user}</h3>
+                <h3 className="user"> {user}</h3>
               </div>
               <div style={{ flex: 1 }}>
-                <p className="datetime">Дата і час {createdAt} {likeCount}</p>
+                <p className="datetime">{createdAt}</p>
               </div>
             </div>
             <div className="comment">
-              <p className="comment-text">Коментар користувача {suggestion}</p>
+              <p className="comment-text">{suggestion}</p>
             </div>
 
           </Grid>
@@ -48,7 +48,8 @@ const CommentCard: FC<CommentProps> = ({ user, suggestion, likeCount, createdAt,
       </CardContent>
       <CardActions disableSpacing>
         <IconButton onClick={handleLike} color={liked ? 'primary' : 'default'}>
-          <FavoriteIcon />
+          <ThumbUpIcon />
+          <p>{ likeCount }</p>
         </IconButton>
       </CardActions>
     </Card>
