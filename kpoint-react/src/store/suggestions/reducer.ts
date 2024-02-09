@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SuggestionCreateType, SuggestionsPageType,SuggestionType } from 'common/types/types';
 
-import { createNew, getAllSuggestionsAddMore, getAllSuggestionsDefault } from './actions';
+import { createNew, deleteById,getAllSuggestionsAddMore, getAllSuggestionsDefault } from './actions';
 
 type State={
   suggestion: SuggestionType | null,
@@ -40,7 +40,11 @@ const suggestionSlice = createSlice({
       })
       .addCase(createNew.fulfilled, (state, { payload }) => {
         state.editSuggestion = payload;
-      });
+      })
+      .addCase(deleteById.fulfilled, (state) => {
+        state.suggestions = null;
+      },
+      );
   },
 });
 
