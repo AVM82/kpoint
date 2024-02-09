@@ -18,6 +18,11 @@ interface CommentProps {
   logoImgUrl: string,
 }
 
+const iconStyles = {
+  fontSize: 16,
+  color: 'grey',
+};
+
 const SuggestionCard: FC<CommentProps> = ({ user, suggestion, likeCount, createdAt, logoImgUrl }) => {
   const [liked, setLiked] = useState(false);
 
@@ -47,8 +52,9 @@ const SuggestionCard: FC<CommentProps> = ({ user, suggestion, likeCount, created
               <p className="comment-text">{suggestion}</p>
             </div>
             <CardActions disableSpacing>
-              <IconButton onClick={handleLike} color={liked ? 'primary' : 'default'}>
-                <ThumbUpIcon />
+              <IconButton onClick={handleLike} color={liked ? 'primary' : 'default'} style={iconStyles}>
+                <ThumbUpIcon style={iconStyles}/>
+                &nbsp;
                 <p>{ likeCount }</p>
               </IconButton>
             </CardActions>
