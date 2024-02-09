@@ -36,7 +36,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getAll(pageable));
     }
 
-    @Operation(summary = "Banning the user" )
+    @Operation(summary = "Banning the user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User banned",
                     content = { @Content(mediaType = "application/json",
@@ -56,7 +56,7 @@ public class UserController {
         return ResponseEntity.ok(userService.banUserById(id.toString()));
     }
 
-    @Operation(summary = "Unbanning the user" )
+    @Operation(summary = "Unbanning the user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User unbanned",
                     content = { @Content(mediaType = "application/json",

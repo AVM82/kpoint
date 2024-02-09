@@ -21,7 +21,6 @@ import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -97,7 +96,7 @@ public class UserService {
             log.warn("Can't find user by id {}", id);
             return new UsernameNotFoundException("Can't find user by id " + id);
         });
-//        userFromDb.setDeleted(false);
+        //userFromDb.setDeleted(false);
         userRepository.save(userFromDb);
         return userMapper.toDto(userFromDb);
     }

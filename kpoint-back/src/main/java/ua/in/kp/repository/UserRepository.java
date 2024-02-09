@@ -10,7 +10,6 @@ import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.UserEntity;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Query("FROM UserEntity u LEFT JOIN FETCH u.roles WHERE u.email=:email")
