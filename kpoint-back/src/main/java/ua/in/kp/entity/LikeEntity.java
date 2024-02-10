@@ -9,11 +9,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SoftDelete;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "likes")
+@SoftDelete
 public class LikeEntity {
 
     @Id

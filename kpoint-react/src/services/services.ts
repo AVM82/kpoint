@@ -5,6 +5,7 @@ import { Notification } from './notification/notification.service';
 import { ProfileApi } from './profile/profile-api';
 import { ProjectApi } from './projects/project-api';
 import { Storage } from './storage/storage.service';
+import { SuggestionApi } from './suggestions/suggestion-api';
 
 const storage = new Storage({ storage: sessionStorage });
 
@@ -19,3 +20,6 @@ const projectApi = new ProjectApi({ http, apiPrefix: ENV.API_PATH });
 const notification = new Notification();
 
 export { authApi, notification, profileApi, projectApi, storage };
+const suggestionApi = new SuggestionApi({ http, apiPrefix: ENV.API_PATH });
+
+export { authApi, notification, projectApi, storage, suggestionApi };

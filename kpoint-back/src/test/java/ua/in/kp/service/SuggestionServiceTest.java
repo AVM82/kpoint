@@ -99,12 +99,10 @@ class SuggestionServiceTest {
     @Test
     void deleteSuggestion() {
         String id = "id";
-        doNothing().when(likeRepository).deleteAllById(id);
         doNothing().when(suggestionRepository).deleteById(id);
 
         testObject.deleteSuggestion(id);
 
-        verify(likeRepository).deleteAllById(id);
         verify(suggestionRepository).deleteById(id);
     }
 

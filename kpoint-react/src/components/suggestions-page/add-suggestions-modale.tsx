@@ -6,8 +6,11 @@ import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { t } from 'i18next';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { suggestionAction } from 'store/actions';
+
+import { useAppDispatch } from '../../hooks/hooks';
 
 const style = {
   position: 'absolute' as const,
@@ -20,25 +23,43 @@ const style = {
   p: 4,
   width: '540px',
   height: '275px',
-
 };
 
 const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handleCloseModal }) => {
   const [inputText, setInputText] = React.useState('');
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setInputText(event.target.value);
-  };
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    console.log('Введено: ', inputText);
-    setInputText('');
-    handleCloseModal();
+    const formErrors = validateForm(inputText);
+
+    if (Object.keys(formErrors).length === 0) {
+      dispatch(suggestionAction.createNew({ suggestionData: { suggestion: inputText } }));
+      handleCloseModal();
+    } else {
+      setErrors(formErrors);
+    }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setInputText(event.target.value);
   };
 
   useEffect(() => {
     setInputText('');
   }, []);
+
+  const validateForm = (data: string): Record<string, string>=> {
+    const errors: Record<string, string> = {};
+
+    if (data.trim().length === 0 || data.trim().length > 200) {
+      errors.suggestion = 'Поле повинне містити від 1 до 200 символів';
+    }
+
+    return Object.keys(errors).length > 0 ? errors : {};
+  };
 
   return (
     <div>
@@ -66,28 +87,21 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handle
           <form onSubmit={handleSubmit}>
             <TextField
               id="outlined-basic"
-              label="300 символів"
+              label="200 символів"
               variant="outlined"
               fullWidth
               multiline
               rows={6}
               value={inputText}
               onChange={handleChange}
-              onKeyDown={(event):void => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  setInputText((prevText) => prevText + '\n');
-                }}}
-              sx={{ mt: 2, height: '3rem' }}
-              defaultValue=""
             />
-            <Grid container justifyContent="flex-end" sx={{ mt: 16 }}>
+            {errors.suggestion && <Typography color="error">{errors.suggestion}</Typography>}
+            <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" sx={{ mt: 2 }}>
                 {t('send_suggestion')}
               </Button>
             </Grid>
           </form>
-
         </Box>
       </Modal>
     </div>

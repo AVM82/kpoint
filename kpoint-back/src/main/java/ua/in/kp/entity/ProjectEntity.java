@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SoftDelete;
 import org.springframework.format.annotation.DateTimeFormat;
 import ua.in.kp.enumeration.ProjectState;
@@ -14,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -46,7 +45,7 @@ public class ProjectEntity {
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @SoftDelete
     private Set<TagEntity> tags;
 
     @Column(name = "logo_img_url", columnDefinition = "TEXT")
@@ -85,6 +84,23 @@ public class ProjectEntity {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Column(name = "networks_links")
+    @SoftDelete
     private Map<String, String> networksLinks;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ProjectEntity that = (ProjectEntity) o;
+        return Objects.equals(projectId, that.projectId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(projectId);
+    }
 }

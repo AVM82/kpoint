@@ -21,6 +21,7 @@
     "react-router-dom": "^6.21.3",
     "react-scripts": "^5.0.1",
     "react-toastify": "^10.0.3",
+    "speakingurl": "^14.0.1",
     "web-vitals": "^3.5.1"
   },
   "devDependencies": {
@@ -33,6 +34,7 @@
     "@types/node": "^20.11.5",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
+    "@types/speakingurl": "^13.0.6",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "editorconfig-checker": "^4.0.2",
     "eslint": "8.22.0",
