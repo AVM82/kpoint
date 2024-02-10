@@ -31,8 +31,8 @@ class ProjectServiceTest {
 
     @Test
     void getAllProjectsTest() {
-        Pageable pageable = Mockito.mock(Pageable.class);
-        Page<ProjectEntity> page = Mockito.mock(Page.class);
+        Pageable pageable = mock(Pageable.class);
+        Page<ProjectEntity> page = mock(Page.class);
         when(projectRepository.findAll(pageable)).thenReturn(page);
         projectService.getAllProjects(pageable);
         verify(projectRepository, times(1)).findAll(pageable);
@@ -62,9 +62,7 @@ class ProjectServiceTest {
 
         when(projectRepository.findBy(projectId)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> {
-            projectService.getProjectById(projectId);
-        });
+        assertThrows(NoSuchElementException.class, () -> projectService.getProjectById(projectId));
 
         verify(projectRepository).findBy(projectId);
         verify(projectMapper, never()).toDto(any());
@@ -88,9 +86,7 @@ class ProjectServiceTest {
     void getProjectByUrl_shouldThrowException_whenProjectDoesNotExist() {
         String projectUrl = "url123";
 
-        assertThrows(NoSuchElementException.class, () -> {
-            projectService.getProjectByUrl(projectUrl);
-        });
+        assertThrows(NoSuchElementException.class, () -> projectService.getProjectByUrl(projectUrl));
         verify(projectRepository).findByProjectUrl(projectUrl);
     }
 }
