@@ -19,7 +19,13 @@ const projectApi = new ProjectApi({ http, apiPrefix: ENV.API_PATH });
 
 const notification = new Notification();
 
-export { authApi, notification, profileApi, projectApi, storage };
 const suggestionApi = new SuggestionApi({ http, apiPrefix: ENV.API_PATH });
 
-export { authApi, notification, projectApi, storage, suggestionApi };
+export {
+  authApi,
+  notification,
+  profileApi,
+  projectApi,
+  storage,
+  suggestionApi,
+};
