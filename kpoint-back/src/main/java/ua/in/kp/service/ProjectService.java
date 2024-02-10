@@ -12,12 +12,12 @@ import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
-import ua.in.kp.exception.ProjectNotFoundException;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.TagRepository;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,7 +57,7 @@ public class ProjectService {
         log.info("Get by id project method started");
         ProjectEntity projectEntity = projectRepository.findBy(projectId)
                 .orElseThrow(() ->
-                        new ProjectNotFoundException("Project not found with ID: " + projectId));
+                        new NoSuchElementException("Project not found with ID: " + projectId));
         log.info("Project retrieved, id {}", projectEntity.getProjectId());
         return projectMapper.toDto(projectEntity);
     }
@@ -67,7 +67,7 @@ public class ProjectService {
         log.info("Trying to get project by URL...");
         ProjectEntity projectEntity = projectRepository.findByProjectUrl(url)
                 .orElseThrow(() ->
-                        new ProjectNotFoundException("Project with URL " + url + " not found."));
+                        new NoSuchElementException("Project with URL " + url + " not found."));
         log.info("Project with url {} retrieved.", projectEntity.getUrl());
         return projectMapper.toDto(projectEntity);
     }

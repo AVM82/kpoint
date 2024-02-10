@@ -15,6 +15,8 @@ import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -66,6 +68,9 @@ public class SuggestionService {
     }
 
     public void deleteSuggestion(String suggestionId) {
+        if (!suggestionRepository.existsById(suggestionId)) {
+            throw new NoSuchElementException("Suggestion not found with ID: " + suggestionId);
+        }
         suggestionRepository.deleteById(suggestionId);
     }
 }
