@@ -17,6 +17,7 @@ import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { authAction } from 'store/actions';
+import { setIsLogin } from 'store/auth/reducer';
 
 import { ENV, StorageKey } from '../../common/enums/enums';
 import { ResponseType } from '../../common/types/response/response';
@@ -54,6 +55,8 @@ const SignInPage: FC = () => {
         console.error('Помилка під час входу:', error);
         setLoginError('Невірний логін або пароль');
       });
+
+    dispatch(setIsLogin());
   };
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
