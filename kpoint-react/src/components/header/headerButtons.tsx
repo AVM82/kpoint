@@ -6,7 +6,7 @@ import { storage } from 'services/services';
 
 export function HeaderButtons(): JSX.Element {
   const { t } = useTranslation();
-  const log = useAppSelector((state) => state.token.islogin);
+  const loggedIn = useAppSelector((state) => state.token.isloggedIn);
 
   function handleLogout(): void {
     storage.removeItem(StorageKey.TOKEN);
@@ -16,7 +16,7 @@ export function HeaderButtons(): JSX.Element {
 
   return (
     <>
-      {log ? (
+      {loggedIn ? (
         <>
           <Button href="/projects/new" variant="outlined" sx={{ margin: 1 }}>
             {t('buttons.create_project')}

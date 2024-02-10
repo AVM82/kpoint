@@ -4,12 +4,12 @@ import { login } from './actions';
 
 type State = {
   token: string | null;
-  islogin: boolean;
+  isloggedIn: boolean;
 };
 
 const initialState: State = {
   token: null,
-  islogin: false,
+  isloggedIn: false,
 };
 
 const authSlice = createSlice({
@@ -17,7 +17,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setIsLogin: (state) => {
-      state.islogin = true;
+      state.isloggedIn = true;
     },
   },
   extraReducers: (builder) => {
