@@ -42,5 +42,8 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     @Query(value = "SELECT * FROM kpoint.public.users AS u "
             + "WHERE u.id=:id", nativeQuery = true)
-    Optional<UserEntity> findByIdByAdmin(@Param("id") String id);
+    Optional<UserEntity> findByIdForAdmin(@Param("id") String userId);
+
+    @Query(value = "UPDATE kpoint.public.users SET deleted=false WHERE id=:id", nativeQuery = true)
+    void unBanUserByIdForAdmin(@Param("id") String userId);
 }
