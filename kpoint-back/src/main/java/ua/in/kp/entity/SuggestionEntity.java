@@ -3,15 +3,18 @@ package ua.in.kp.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SoftDelete;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "suggestions")
+@SoftDelete
 public class SuggestionEntity {
 
     @Id
@@ -32,5 +35,8 @@ public class SuggestionEntity {
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now(ZoneOffset.UTC);
+
+    @OneToMany(mappedBy = "suggestion", cascade = CascadeType.REMOVE)
+    private Set<LikeEntity> likes;
 
 }

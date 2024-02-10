@@ -18,6 +18,8 @@ import ua.in.kp.dto.suggestion.SuggestionCreateRequestDto;
 import ua.in.kp.dto.suggestion.SuggestionResponseDto;
 import ua.in.kp.service.SuggestionService;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/suggestions")
@@ -37,13 +39,13 @@ public class SuggestionController {
     }
 
     @PutMapping("/{id}/likes")
-    public ResponseEntity<SuggestionResponseDto> updateSuggestionLikes(@PathVariable String id) {
-        return new ResponseEntity<>(suggestionService.updateLike(id), HttpStatus.OK);
+    public ResponseEntity<SuggestionResponseDto> updateSuggestionLikes(@PathVariable UUID id) {
+        return new ResponseEntity<>(suggestionService.updateLike(id.toString()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSuggestion(@PathVariable String id) {
-        suggestionService.deleteSuggestion(id);
+    public ResponseEntity<String> deleteSuggestion(@PathVariable UUID id) {
+        suggestionService.deleteSuggestion(id.toString());
         return new ResponseEntity<>("Suggestion was deleted", HttpStatus.OK);
     }
 }
