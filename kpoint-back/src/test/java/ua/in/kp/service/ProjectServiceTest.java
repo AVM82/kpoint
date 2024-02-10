@@ -1,5 +1,7 @@
 package ua.in.kp.service;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,11 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
-import ua.in.kp.exception.NotFoundException;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -63,7 +62,7 @@ class ProjectServiceTest {
 
         when(projectRepository.findBy(projectId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             projectService.getProjectById(projectId);
         });
 
@@ -89,7 +88,7 @@ class ProjectServiceTest {
     void getProjectByUrl_shouldThrowException_whenProjectDoesNotExist() {
         String projectUrl = "url123";
 
-        assertThrows(NotFoundException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             projectService.getProjectByUrl(projectUrl);
         });
         verify(projectRepository).findByProjectUrl(projectUrl);

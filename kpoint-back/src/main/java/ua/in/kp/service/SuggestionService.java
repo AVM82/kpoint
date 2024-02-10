@@ -1,6 +1,7 @@
 package ua.in.kp.service;
 
 import jakarta.transaction.Transactional;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,6 @@ import ua.in.kp.dto.suggestion.SuggestionResponseDto;
 import ua.in.kp.entity.LikeEntity;
 import ua.in.kp.entity.SuggestionEntity;
 import ua.in.kp.entity.UserEntity;
-import ua.in.kp.exception.NotFoundException;
 import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
@@ -68,7 +68,7 @@ public class SuggestionService {
 
     public void deleteSuggestion(String suggestionId) {
         if (!suggestionRepository.existsById(suggestionId)) {
-            throw new NotFoundException("Suggestion not found with ID: " + suggestionId);
+            throw new NoSuchElementException("Suggestion not found with ID: " + suggestionId);
         }
         suggestionRepository.deleteById(suggestionId);
     }

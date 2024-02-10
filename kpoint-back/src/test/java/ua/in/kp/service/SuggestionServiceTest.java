@@ -1,5 +1,7 @@
 package ua.in.kp.service;
 
+import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -15,10 +17,7 @@ import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
 
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -97,13 +96,13 @@ class SuggestionServiceTest {
     }
 
     @Test
-    void deleteSuggestion() {
+    void deleteSuggestion_whenNotFound_throwsException() {
         String id = "id";
-        doNothing().when(suggestionRepository).deleteById(id);
+        when(suggestionRepository.existsById(id)).thenReturn(false);
 
-        testObject.deleteSuggestion(id);
+        assertThrows(NoSuchElementException.class, () -> testObject.deleteSuggestion(id));
 
-        verify(suggestionRepository).deleteById(id);
+        verify(suggestionRepository).existsById(id);
     }
 
     private SuggestionResponseDto getResponseDto() {
