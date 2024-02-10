@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
-import ua.in.kp.exception.ProjectNotFoundException;
+import ua.in.kp.exception.NotFoundException;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 
@@ -63,7 +63,7 @@ class ProjectServiceTest {
 
         when(projectRepository.findBy(projectId)).thenReturn(Optional.empty());
 
-        assertThrows(ProjectNotFoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             projectService.getProjectById(projectId);
         });
 
@@ -89,7 +89,7 @@ class ProjectServiceTest {
     void getProjectByUrl_shouldThrowException_whenProjectDoesNotExist() {
         String projectUrl = "url123";
 
-        assertThrows(ProjectNotFoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             projectService.getProjectByUrl(projectUrl);
         });
         verify(projectRepository).findByProjectUrl(projectUrl);
