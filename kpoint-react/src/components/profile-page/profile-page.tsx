@@ -1,9 +1,15 @@
 import { FC } from 'react';
 
+import { Navbar } from './navbar';
+import { Sidebar } from './sidebar';
+
 const ProfilePage: FC = () => {
 
   return (
-    <div></div>
+    <div>
+      <Sidebar />
+      <Navbar />
+    </div>
   );
 };
 
