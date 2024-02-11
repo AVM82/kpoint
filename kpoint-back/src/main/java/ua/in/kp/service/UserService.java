@@ -21,7 +21,6 @@ import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -80,13 +79,25 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUserById(UUID id) {
-        log.info("deleteUserById {}", id);
-        UserEntity userFromDb = userRepository.findById(id).orElseThrow(() -> {
-            log.warn("Can't find user by id {}", id);
-            return new UsernameNotFoundException("Can't find user by id " + id);
+    public UserResponseDto banUserById(String userId) {
+        log.info("banUserById {}", userId);
+        UserEntity userFromDb = userRepository.findById(userId).orElseThrow(() -> {
+            log.warn("Can't find user by id {}", userId);
+            return new UsernameNotFoundException("Can't find user by id " + userId);
         });
         userRepository.delete(userFromDb);
+        return userMapper.toDto(userFromDb);
+    }
+
+    @Transactional
+    public UserResponseDto unBanUserById(String userId) {
+        log.info("banUserById {}", userId);
+        userRepository.unBanUserByIdForAdmin(userId);
+        UserEntity userFromDb = userRepository.findByIdForAdmin(userId).orElseThrow(() -> {
+            log.warn("Can't find user by id {}", userId);
+            return new UsernameNotFoundException("Can't find user by id " + userId);
+        });
+        return userMapper.toDto(userFromDb);
     }
 
     public UserEntity getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(String username) {
