@@ -43,6 +43,10 @@
                     <nodeVersion>${node.version}</nodeVersion>
                     <npmVersion>${npm.version}</npmVersion>
                     <installDirectory>target</installDirectory>
+                    <environmentVariables>
+                        <REACT_APP_API_PATH>${env.OAUTH2_REDIRECT_URI}</REACT_APP_API_PATH>
+                        <REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>${env.GOOGLE_CLIENT_ID}</REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>
+                    </environmentVariables>
                 </configuration>
                 <executions>
                     <execution>
@@ -50,14 +54,14 @@
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                     </execution>
                     <execution>
                         <id>npm install</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <arguments>install</arguments>
                         </configuration>
@@ -77,7 +81,7 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <arguments>run build</arguments>
                         </configuration>
