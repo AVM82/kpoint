@@ -5,7 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { suggestionAction } from 'store/actions';
 
 import { UserType } from '../../common/types/suggestions/user.type';
@@ -26,20 +26,23 @@ const iconStyles = {
   color: 'grey',
 };
 
-const SuggestionCard: FC<CommentProps> = ({ id, user, suggestion, likeCount, createdAt, logoImgUrl }) => {
+const SuggestionCard: FC<CommentProps> = ({ id, user,
+  suggestion, likeCount: initialLikeCount,
+  createdAt, logoImgUrl }) => {
   const dispatch = useAppDispatch();
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
 
   const handleLike = async (): Promise<void> => {
     try {
       const actionResult = await dispatch(suggestionAction.updateLikeById({ id }));
 
-      const updatedSuggestion = actionResult.payload;
+      const updatedSuggestion = actionResult.payload as { likeCount: number };
 
       console.log('Suggestion updated:', updatedSuggestion);
 
+      setLikeCount(updatedSuggestion.likeCount);
     } catch (error) {
       console.error('Error updating like:', error);
-
     }
   };
 
