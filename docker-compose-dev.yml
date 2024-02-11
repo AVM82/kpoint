@@ -7,7 +7,7 @@ services:
 
   storage:
     image: 'postgres:15.3'
-    container_name: storage
+    container_name: kp-storage
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -21,11 +21,12 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
 
   kpoint-back:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./kpoint-back
+      dockerfile: Dockerfile_dev
     container_name: kpoint-back
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
@@ -38,33 +39,18 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - OAUTH2_REDIRECT_URI=${OAUTH2_REDIRECT_URI}
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'curl -f http://localhost:${SERVER_PORT}/actuator/health || exit 1',
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 30s
+#    healthcheck:
+#      test:
+#        [
+#          'CMD-SHELL',
+#          'curl -f http://localhost:${SERVER_PORT}/actuator/health || exit 1',
+#        ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 20
+#      start_period: 30s
     depends_on:
       storage:
         condition: service_healthy
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
-
-  kpoint-react:
-    build:
-      context: ./../kpoint-react
-      dockerfile: Dockerfile.prod
-      args:
-        REACT_APP_API_PATH: ${BACK_API_PATH}
-        REACT_APP_OAUTH2_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-
-    container_name: kpoint-react
-    depends_on:
-      kpoint-back:
-        condition: service_healthy
-    ports:
-      - ${HTTP_PORT}:${HTTP_PORT}

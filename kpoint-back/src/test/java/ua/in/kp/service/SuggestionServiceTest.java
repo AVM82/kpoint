@@ -71,13 +71,13 @@ class SuggestionServiceTest {
         when(likeRepository.existsByUserAndSuggestion(user, suggestion)).thenReturn(true);
         doNothing().when(likeRepository).deleteBySuggestionAndUser(suggestion, user);
         when(suggestionRepository.save(any(SuggestionEntity.class))).thenReturn(suggestion);
-        when(suggestionMapper.toDto(suggestion)).thenReturn(suggestionResponseDto);
+        when(suggestionMapper.toDto(suggestion, user)).thenReturn(suggestionResponseDto);
 
         testObject.updateLike("id");
 
         verify(suggestionRepository).findById("id");
         verify(suggestionRepository).save(captor.capture());
-        verify(suggestionMapper).toDto(suggestion);
+        verify(suggestionMapper).toDto(suggestion,user);
         verify(likeRepository).deleteBySuggestionAndUser(suggestion, user);
 
         assertEquals(1, captor.getValue().getLikeCount());
@@ -107,12 +107,14 @@ class SuggestionServiceTest {
     }
 
     private SuggestionResponseDto getResponseDto() {
-        return new SuggestionResponseDto(
-                "id",
-                new SuggestionUserDto("userId", "John", "Doe"),
-                "Sample suggestion content",
-                5,
-                LocalDateTime.now()
-        );
+        SuggestionResponseDto responseDto = new SuggestionResponseDto();
+        responseDto.setId("id");
+        responseDto.setUser(new SuggestionUserDto("userId", "John", "Doe"));
+        responseDto.setSuggestion("Sample suggestion content");
+        responseDto.setLikeCount(5);
+        responseDto.setCreatedAt(LocalDateTime.now());
+        responseDto.setLiked(true);
+
+        return responseDto;
     }
 }
