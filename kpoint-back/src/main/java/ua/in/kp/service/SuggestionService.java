@@ -15,6 +15,8 @@ import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -37,9 +39,11 @@ public class SuggestionService {
     }
 
     public Page<SuggestionResponseDto> getAllSuggestions(Pageable pageable) {
+        UserEntity user = userService.getAuthenticated();
         Page<SuggestionEntity> page = suggestionRepository.findAll(pageable);
         log.info("Got all suggestions from suggestionRepository.");
-        Page<SuggestionResponseDto> toReturn = page.map(suggestionMapper::toDto);
+        Page<SuggestionResponseDto> toReturn = page.map(
+                suggestionEntity -> suggestionMapper.toDto(suggestionEntity, user));
         log.info("Map all SuggestionEntity to DTO and return page with them.");
         return toReturn;
     }
@@ -62,10 +66,18 @@ public class SuggestionService {
 
             suggestion.setLikeCount(suggestion.getLikeCount() + 1);
         }
-        return suggestionMapper.toDto(suggestionRepository.save(suggestion));
+
+        SuggestionResponseDto dto = suggestionMapper.toDto(suggestionRepository.save(suggestion), user);
+
+        dto.setLiked(!userLiked);
+
+        return dto;
     }
 
     public void deleteSuggestion(String suggestionId) {
+        if (!suggestionRepository.existsById(suggestionId)) {
+            throw new NoSuchElementException("Suggestion not found with ID: " + suggestionId);
+        }
         suggestionRepository.deleteById(suggestionId);
     }
 }

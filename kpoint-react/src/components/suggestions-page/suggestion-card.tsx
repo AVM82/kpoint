@@ -5,7 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { suggestionAction } from 'store/actions';
 
 import { UserType } from '../../common/types/suggestions/user.type';
@@ -19,27 +19,37 @@ interface CommentProps {
   likeCount: number,
   createdAt: string,
   logoImgUrl: string,
+  liked: boolean,
 }
 
-const iconStyles = {
+const iconStylesLiked = {
   fontSize: 16,
   color: 'grey',
 };
+const iconStylesNotLiked = {
+  fontSize: 16,
+  color: 'blue',
+};
 
-const SuggestionCard: FC<CommentProps> = ({ id, user, suggestion, likeCount, createdAt, logoImgUrl }) => {
+const SuggestionCard: FC<CommentProps> = ({ id, user,
+  suggestion, likeCount: initialLikeCount,
+  createdAt, logoImgUrl , liked: initialLiked }) => {
   const dispatch = useAppDispatch();
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [liked, setLiked] = useState(initialLiked);
 
   const handleLike = async (): Promise<void> => {
     try {
       const actionResult = await dispatch(suggestionAction.updateLikeById({ id }));
 
-      const updatedSuggestion = actionResult.payload;
+      const updatedSuggestion = actionResult.payload as { likeCount: number, liked: boolean };
 
       console.log('Suggestion updated:', updatedSuggestion);
 
+      setLikeCount(updatedSuggestion.likeCount);
+      setLiked(updatedSuggestion.liked);
     } catch (error) {
       console.error('Error updating like:', error);
-
     }
   };
 
@@ -65,8 +75,8 @@ const SuggestionCard: FC<CommentProps> = ({ id, user, suggestion, likeCount, cre
               <p className="comment-text">{suggestion}</p>
             </div>
             <CardActions disableSpacing>
-              <IconButton onClick={handleLike} color={ 'primary' }>
-                <ThumbUpIcon style={iconStyles}/>
+              <IconButton onClick={handleLike}>
+                <ThumbUpIcon style={ liked ? iconStylesLiked: iconStylesNotLiked } />
                 &nbsp;
                 <p>{ likeCount }</p>
               </IconButton>

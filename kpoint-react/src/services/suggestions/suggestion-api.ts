@@ -24,7 +24,6 @@ class SuggestionApi {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
         method: HttpMethod.GET,
-        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -37,7 +36,6 @@ class SuggestionApi {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
         method: HttpMethod.GET,
-        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,

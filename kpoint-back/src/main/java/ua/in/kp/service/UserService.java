@@ -79,25 +79,24 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto banUserById(String id) {
-        log.info("banUserById {}", id);
-        UserEntity userFromDb = userRepository.findById(id).orElseThrow(() -> {
-            log.warn("Can't find user by id {}", id);
-            return new UsernameNotFoundException("Can't find user by id " + id);
+    public UserResponseDto banUserById(String userId) {
+        log.info("banUserById {}", userId);
+        UserEntity userFromDb = userRepository.findById(userId).orElseThrow(() -> {
+            log.warn("Can't find user by id {}", userId);
+            return new UsernameNotFoundException("Can't find user by id " + userId);
         });
         userRepository.delete(userFromDb);
         return userMapper.toDto(userFromDb);
     }
 
     @Transactional
-    public UserResponseDto unBanUserById(String id) {
-        log.info("banUserById {}", id);
-        UserEntity userFromDb = userRepository.findByIdByAdmin(id).orElseThrow(() -> {
-            log.warn("Can't find user by id {}", id);
-            return new UsernameNotFoundException("Can't find user by id " + id);
+    public UserResponseDto unBanUserById(String userId) {
+        log.info("banUserById {}", userId);
+        userRepository.unBanUserByIdForAdmin(userId);
+        UserEntity userFromDb = userRepository.findByIdForAdmin(userId).orElseThrow(() -> {
+            log.warn("Can't find user by id {}", userId);
+            return new UsernameNotFoundException("Can't find user by id " + userId);
         });
-        //userFromDb.setDeleted(false);
-        userRepository.save(userFromDb);
         return userMapper.toDto(userFromDb);
     }
 
