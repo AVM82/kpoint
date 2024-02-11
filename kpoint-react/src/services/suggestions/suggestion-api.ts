@@ -62,7 +62,7 @@ class SuggestionApi {
     );
   }
 
-  public deleteById(payload: { id: string }): Promise<SuggestionType> {
+  public deleteById(payload: { id: string }): Promise<void> {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions/${payload.id}`, {
         method: HttpMethod.DELETE,

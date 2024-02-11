@@ -21,6 +21,8 @@ const SuggestionsPage: FC = () => {
     suggestions: suggestion.suggestions,
   }));
 
+  // const currentUserId = useAppSelector((state) => state.token.user?.userId) || null;
+
   const [page, setPage] = useState(1);
   useLayoutEffect(() => {
     dispatch(suggestionAction.getAllSuggestionsDefault({ size: maxPageElements, number: (page - 1) }));
@@ -49,8 +51,7 @@ const SuggestionsPage: FC = () => {
   const handleDeleteSuggestion = async (id: string): Promise<void> => {
     try {
       console.log('Deleting suggestion with id:', id);
-      const actionResult = await dispatch(suggestionAction.deleteById({ id }));
-      console.log('Suggestion deleted:', actionResult);
+      await dispatch(suggestionAction.deleteById({ id }));
     } catch (error) {
       console.error('Error deleting suggestion:', error);
     }

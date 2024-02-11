@@ -11,6 +11,7 @@ import { suggestionAction } from 'store/actions';
 
 import { UserType } from '../../common/types/suggestions/user.type';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
+import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
 import { formatDateTime } from '../../utils/function-format-date-time';
 
 interface CommentProps {
@@ -22,6 +23,7 @@ interface CommentProps {
   logoImgUrl: string,
   liked: boolean,
   onDelete: (id: string) => void,
+  // currentUserId: string | null,
 }
 
 const iconStylesLiked = {
@@ -39,7 +41,9 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
   const dispatch = useAppDispatch();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [liked, setLiked] = useState(initialLiked);
-
+  const currentUserId = useAppSelector((state) => state.token.user?.userId);
+  console.log('USER_', user.userId);
+  console.log('USER_Current', currentUserId);
   const handleLike = async (): Promise<void> => {
     try {
       const actionResult = await dispatch(suggestionAction.updateLikeById({ id }));
@@ -71,15 +75,19 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
                 <Grid item style={{ flex: 1 }}>
                   <h3  className="datetime"  style={{ fontWeight: 'normal' }}>{formatDateTime(createdAt)}</h3>
                 </Grid>
-                <CardActions>
-                  <IconButton
-                    aria-label="Delete"
-                    onClick={():void => onDelete(id)}
-                    style={{ marginLeft: 'auto' }}
-                  >
-                    <CloseIcon/>
-                  </IconButton>
-                </CardActions>
+
+                {currentUserId === user.userId && (
+                  <CardActions>
+                    <IconButton
+                      aria-label="Delete"
+                      onClick={():void => onDelete(id)}
+                      style={{ marginLeft: 'auto' }}
+                    >
+                      <CloseIcon/>
+                    </IconButton>
+                  </CardActions>
+                )}
+
               </Grid>
             </div>
             <div className="comment">

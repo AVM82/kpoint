@@ -43,13 +43,12 @@ const updateLikeById = createAsyncThunk<SuggestionType, { id: string }, AsyncThu
   },
 );
 
-const deleteById = createAsyncThunk<string, { id: string }, AsyncThunkConfig>(
+const deleteById = createAsyncThunk<void, { id: string }, AsyncThunkConfig>(
   ActionType.DELETE_BY_ID,
   async (payload, { extra }) => {
     const { suggestionApi } = extra;
-    await suggestionApi.deleteById(payload);
 
-    return 'success';
+    return await suggestionApi.deleteById(payload);
   },
 );
 
