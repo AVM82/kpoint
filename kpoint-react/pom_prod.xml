@@ -43,6 +43,10 @@
                     <nodeVersion>${node.version}</nodeVersion>
                     <npmVersion>${npm.version}</npmVersion>
                     <installDirectory>target</installDirectory>
+                    <environmentVariables>
+                        <REACT_APP_API_PATH>http://localhost:3000/api</REACT_APP_API_PATH>
+                        <REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>95773710437-per0n2kjs8v1438vahr6bp0htrka5bvm.apps.googleusercontent.com</REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>
+                    </environmentVariables>
                 </configuration>
                 <executions>
                     <execution>
