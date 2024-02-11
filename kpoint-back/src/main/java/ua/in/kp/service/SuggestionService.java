@@ -28,6 +28,7 @@ public class SuggestionService {
 
     public SuggestionResponseDto createSuggestion(SuggestionCreateRequestDto suggestionCreateRequestDto) {
         log.info("Create suggestion method started");
+        UserEntity user = userService.getAuthenticated();
 
         SuggestionEntity suggestionEntity = suggestionMapper.toEntity(suggestionCreateRequestDto);
         suggestionEntity.setUser(userService.getAuthenticated());
@@ -35,13 +36,29 @@ public class SuggestionService {
         suggestionRepository.save(suggestionEntity);
         log.info("SuggestionEntity saved, id {}", suggestionEntity.getId());
 
-        return suggestionMapper.toDto(suggestionEntity);
+        return suggestionMapper.toDto(suggestionEntity, user);
     }
 
     public Page<SuggestionResponseDto> getAllSuggestions(Pageable pageable) {
+        // if authenticated trying to grab likes if not just taking everything
+        UserEntity user = userService.getAuthenticated();
         Page<SuggestionEntity> page = suggestionRepository.findAll(pageable);
         log.info("Got all suggestions from suggestionRepository.");
-        Page<SuggestionResponseDto> toReturn = page.map(suggestionMapper::toDto);
+        Page<SuggestionResponseDto> toReturn = page.map(suggestionEntity -> suggestionMapper.toDto(suggestionEntity, user));
+
+//        for (SuggestionEntity suggestionEntity : page.getContent()) {
+//            for (LikeEntity likeEntity : suggestionEntity.getLikes()) {
+//                log.info("Like ID: {}", likeEntity.getId());
+//                log.info("Like User email: {}", likeEntity.getUser().getEmail());
+//                log.info("ContextUser email: {}", user.getEmail());
+//
+//                if ( likeEntity.getUser().getEmail().equals(user.getEmail())){
+//                   toReturn = page.map(suggestionMapper::toDto);
+//                }
+//
+//            }
+//        }
+
         log.info("Map all SuggestionEntity to DTO and return page with them.");
         return toReturn;
     }
@@ -64,7 +81,7 @@ public class SuggestionService {
 
             suggestion.setLikeCount(suggestion.getLikeCount() + 1);
         }
-        return suggestionMapper.toDto(suggestionRepository.save(suggestion));
+        return suggestionMapper.toDto(suggestionRepository.save(suggestion), user);
     }
 
     public void deleteSuggestion(String suggestionId) {

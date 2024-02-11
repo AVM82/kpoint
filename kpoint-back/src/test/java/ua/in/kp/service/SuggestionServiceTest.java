@@ -47,13 +47,13 @@ class SuggestionServiceTest {
         when(suggestionMapper.toEntity(suggestionCreateRequestDto)).thenReturn(suggestion);
         when(userService.getAuthenticated()).thenReturn(user);
         when(suggestionRepository.save(suggestion)).thenReturn(suggestion);
-        when(suggestionMapper.toDto(suggestion)).thenReturn(suggestionResponseDto);
+        when(suggestionMapper.toDto(suggestion, user)).thenReturn(suggestionResponseDto);
 
         SuggestionResponseDto responseDto = testObject.createSuggestion(suggestionCreateRequestDto);
 
         assertNotNull(responseDto);
         verify(suggestionMapper).toEntity(suggestionCreateRequestDto);
-        verify(suggestionMapper).toDto(suggestion);
+        verify(suggestionMapper).toDto(suggestion, user);
         verify(userService).getAuthenticated();
         verify(suggestionRepository).save(suggestion);
     }
@@ -71,13 +71,13 @@ class SuggestionServiceTest {
         when(likeRepository.existsByUserAndSuggestion(user, suggestion)).thenReturn(true);
         doNothing().when(likeRepository).deleteBySuggestionAndUser(suggestion, user);
         when(suggestionRepository.save(any(SuggestionEntity.class))).thenReturn(suggestion);
-        when(suggestionMapper.toDto(suggestion)).thenReturn(suggestionResponseDto);
+        when(suggestionMapper.toDto(suggestion, user)).thenReturn(suggestionResponseDto);
 
         testObject.updateLike("id");
 
         verify(suggestionRepository).findById("id");
         verify(suggestionRepository).save(captor.capture());
-        verify(suggestionMapper).toDto(suggestion);
+        verify(suggestionMapper).toDto(suggestion,user);
         verify(likeRepository).deleteBySuggestionAndUser(suggestion, user);
 
         assertEquals(1, captor.getValue().getLikeCount());
@@ -112,7 +112,8 @@ class SuggestionServiceTest {
                 new SuggestionUserDto("userId", "John", "Doe"),
                 "Sample suggestion content",
                 5,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                true
         );
     }
 }
