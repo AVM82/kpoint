@@ -8,7 +8,6 @@ RUN mvn -f /home/app/pom.xml dependency:go-offline
 COPY kpoint-back/src /home/app/kpoint-back/src
 COPY kpoint-react/src /home/app/kpoint-react/src
 COPY kpoint-react/package.json /home/app/kpoint-react/package.json
-COPY kpoint-react/node_modules /home/app/kpoint-react/node_modules
 COPY kpoint-react/public /home/app/kpoint-react/public
 COPY kpoint-react/.eslintrc /home/app/kpoint-react/.eslintrc
 COPY kpoint-react/tsconfig.json /home/app/kpoint-react/tsconfig.json

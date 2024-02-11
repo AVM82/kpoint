@@ -49,12 +49,23 @@
                     </environmentVariables>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                    </execution>
+                  <execution>
+                    <id>install node and npm</id>
+                    <goals>
+                      <goal>install-node-and-npm</goal>
+                    </goals>
+                    <phase>generate-resources</phase>
+                  </execution>
+                  <execution>
+                    <id>npm install</id>
+                    <goals>
+                      <goal>npm</goal>
+                    </goals>
+                    <phase>generate-resources</phase>
+                    <configuration>
+                      <arguments>install</arguments>
+                    </configuration>
+                  </execution>
 <!--                    <execution>-->
 <!--                        <id>npm run lint</id>-->
 <!--                        <goals>-->
