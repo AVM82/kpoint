@@ -96,10 +96,6 @@ public class UserEntity implements UserDetails {
         return true;
     }
 
-    public String getUsername() {
-        return email;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
