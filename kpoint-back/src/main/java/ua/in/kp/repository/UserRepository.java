@@ -43,4 +43,8 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Query(value = "SELECT * FROM kpoint.public.users AS u "
             + "WHERE u.id=:id", nativeQuery = true)
     Optional<UserEntity> findByIdByAdmin(@Param("id") String id);
+
+    @Query("FROM UserEntity u LEFT JOIN FETCH u.tags LEFT JOIN FETCH u.socialNetworks "
+            + "WHERE u.username=:username")
+    Optional<UserEntity> findByUsernameFetchTagsSocials(String username);
 }
