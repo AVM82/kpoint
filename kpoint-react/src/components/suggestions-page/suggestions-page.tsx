@@ -59,7 +59,7 @@ const SuggestionsPage: FC = () => {
         {suggestions?.content.map((suggestion) =>
           <Grid item >
             <SuggestionCard createdAt={suggestion.createdAt} likeCount={suggestion.likeCount} logoImgUrl="kjv"
-              suggestion={suggestion.suggestion} user={suggestion.user} id={suggestion.id}/>
+              suggestion={suggestion.suggestion} user={suggestion.user} id={suggestion.id} liked={suggestion.liked}/>
 
           </Grid>)}
       </Grid>

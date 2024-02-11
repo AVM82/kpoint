@@ -47,13 +47,13 @@ class SuggestionServiceTest {
         when(suggestionMapper.toEntity(suggestionCreateRequestDto)).thenReturn(suggestion);
         when(userService.getAuthenticated()).thenReturn(user);
         when(suggestionRepository.save(suggestion)).thenReturn(suggestion);
-        when(suggestionMapper.toDto(suggestion, user)).thenReturn(suggestionResponseDto);
+        when(suggestionMapper.toDto(suggestion)).thenReturn(suggestionResponseDto);
 
         SuggestionResponseDto responseDto = testObject.createSuggestion(suggestionCreateRequestDto);
 
         assertNotNull(responseDto);
         verify(suggestionMapper).toEntity(suggestionCreateRequestDto);
-        verify(suggestionMapper).toDto(suggestion, user);
+        verify(suggestionMapper).toDto(suggestion);
         verify(userService).getAuthenticated();
         verify(suggestionRepository).save(suggestion);
     }
@@ -107,13 +107,14 @@ class SuggestionServiceTest {
     }
 
     private SuggestionResponseDto getResponseDto() {
-        return new SuggestionResponseDto(
-                "id",
-                new SuggestionUserDto("userId", "John", "Doe"),
-                "Sample suggestion content",
-                5,
-                LocalDateTime.now(),
-                true
-        );
+        SuggestionResponseDto responseDto = new SuggestionResponseDto();
+        responseDto.setId("id");
+        responseDto.setUser(new SuggestionUserDto("userId", "John", "Doe"));
+        responseDto.setSuggestion("Sample suggestion content");
+        responseDto.setLikeCount(5);
+        responseDto.setCreatedAt(LocalDateTime.now());
+        responseDto.setLiked(true);
+
+        return responseDto;
     }
 }

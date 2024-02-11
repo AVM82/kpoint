@@ -17,9 +17,12 @@ public interface SuggestionMapper {
     @Mapping(target = "liked", expression = "java(checkIfLiked(suggestionEntity, user))")
     SuggestionResponseDto toDto(SuggestionEntity suggestionEntity, @Context UserEntity user);
 
+    @Mapping(target = "user.userId", source = "user.id")
+    SuggestionResponseDto toDto(SuggestionEntity suggestionEntity);
+
     default boolean checkIfLiked(SuggestionEntity suggestionEntity, UserEntity user) {
         for (LikeEntity likeEntity : suggestionEntity.getLikes()) {
-            if (likeEntity.getUser().getId().equals(user.getId())) {
+            if (likeEntity.getUser().getEmail().equals(user.getEmail())) {
                 return true;
             }
         }

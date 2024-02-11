@@ -71,8 +71,6 @@ public class UserService {
         return (UserEntity) customUserDetailsService.loadUserByUsername(email);
     }
 
-
-
     public UserResponseDto getByEmailFetchTagsSocialsRoles(String email) {
         UserEntity userFromDb = userRepository.findByEmail(email)
                 .orElseThrow(() ->
