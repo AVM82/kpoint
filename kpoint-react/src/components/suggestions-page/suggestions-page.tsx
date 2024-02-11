@@ -46,6 +46,16 @@ const SuggestionsPage: FC = () => {
     setModalOpen(false);
   };
 
+  const handleDeleteSuggestion = async (id: string): Promise<void> => {
+    try {
+      console.log('Deleting suggestion with id:', id);
+      const actionResult = await dispatch(suggestionAction.deleteById({ id }));
+      console.log('Suggestion deleted:', actionResult);
+    } catch (error) {
+      console.error('Error deleting suggestion:', error);
+    }
+  };
+
   return (
     <Box sx={{ width: 900, margin: 'auto', padding: 2 }}>
       <Typography variant="h3" align="center">{t('suggestions')}</Typography>
@@ -57,9 +67,10 @@ const SuggestionsPage: FC = () => {
       {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal}/>}
       <Grid item>
         {suggestions?.content.map((suggestion) =>
-          <Grid item >
+          <Grid item key={suggestion.id}>
             <SuggestionCard createdAt={suggestion.createdAt} likeCount={suggestion.likeCount} logoImgUrl="kjv"
-              suggestion={suggestion.suggestion} user={suggestion.user} id={suggestion.id} liked={suggestion.liked}/>
+              suggestion={suggestion.suggestion} user={suggestion.user} id={suggestion.id} liked={suggestion.liked}
+              onDelete={handleDeleteSuggestion} />
 
           </Grid>)}
       </Grid>
