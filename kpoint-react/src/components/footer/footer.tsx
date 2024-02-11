@@ -12,9 +12,12 @@ import { FC } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
+
 const Footer: FC = () => {
 
   const { t } = useTranslation();
+  const loggedIn = useAppSelector((state) => state.token.isloggedIn);
 
   return (
     <Container maxWidth={false} sx={{
@@ -35,6 +38,7 @@ const Footer: FC = () => {
           <Link  href="#" underline="none" color="black"><TwitterIcon sx={{ margin: 1 }}/></Link>
           <Link  href="#" underline="none" color="black"><InstagramIcon sx={{ margin: 1 }}/></Link>
           <Link  href="#" underline="none" color="black"><LinkedInIcon sx={{ margin: 1 }}/></Link>
+
         </Grid>
       </Grid>
       <Divider variant="fullWidth" orientation="horizontal" sx={{ bgcolor: 'black', marginTop: 1, marginBottom: 3 }}/>
@@ -48,9 +52,12 @@ const Footer: FC = () => {
           <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Twelve</Link>
           <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Thirteen</Link>
           <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Fourteen</Link>
-          <Link href="/suggestions" underline="none" color="black" sx={{ margin: 1 }}>
-            {t('suggestions')}
-          </Link>
+
+          {loggedIn && (
+            <Link href="/suggestions" underline="none" color="black" sx={{ margin: 1 }}>
+              {t('suggestions')}
+            </Link>
+          )}
         </Grid>
       </Grid>
     </Container>
