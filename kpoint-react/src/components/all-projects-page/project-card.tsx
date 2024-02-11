@@ -19,14 +19,14 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ProjectsProps {
-  project_id: string;
+  url: string;
   title: string;
   summary: string;
   logoImgUrl: string;
   tags: [];
 }
 
-const ProjectCard: FC<ProjectsProps> = ({ project_id, title, summary,
+const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
   logoImgUrl, tags }) => {
 
   const { t } = useTranslation();
@@ -68,7 +68,7 @@ const ProjectCard: FC<ProjectsProps> = ({ project_id, title, summary,
         <Stack direction="row" spacing={1}>
           {tags.map((tag) => <Chip label={'#'.concat(tag)} />)}
         </Stack>
-        <Button size="small" endIcon={ <ArrowForwardTwoToneIcon/> } href={'projects/'.concat(project_id)}>
+        <Button size="small" endIcon={ <ArrowForwardTwoToneIcon/> } href={'projects/'.concat(url)}>
           {t('buttons.learn_more')}
         </Button>
       </CardActions>

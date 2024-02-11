@@ -1,5 +1,5 @@
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Chip } from '@mui/material';
+import { Chip, ListItem } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -7,7 +7,6 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -31,6 +30,7 @@ const SignUpPage: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [registerError, setRegisterError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<SignUpType>({
     firstName: '',
@@ -45,12 +45,14 @@ const SignUpPage: FC = () => {
   });
 
   const location = useLocation();
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [userData, setUserData] = useState({
     email: '',
     avatarImgUrl: '',
   });
 
   useEffect(() => {
+    console.log('location.state', location.state);
 
     if (location.state && location.state.userData) {
       const { email, avatarImgUrl } = location.state.userData;
@@ -58,10 +60,7 @@ const SignUpPage: FC = () => {
     }
   }, [location.state]);
 
-  const [
-    tag,
-    setTag,
-  ] = useState('');
+  const [tag, setTag] = useState('');
 
   const getChipTags = (): ChipTag[] => {
     const result: ChipTag[] = [];
@@ -74,7 +73,26 @@ const SignUpPage: FC = () => {
 
   const [chipTags, setChipTags] = useState<ChipTag[]>(getChipTags());
 
+  const validateForm = (data: SignUpType): Record<string, string> => {
+    const errors: Record<string, string> = {};
+    console.log('data.tags.length');
+    console.log(data.tags.length);
+
+    if (data.tags.length === 0 || data.tags.length > 10) {
+      console.log('add error');
+      errors.tags = t('errors.user_tags');
+      setErrors(errors);
+    }
+
+    return errors;
+  };
+
   const handleDeleteTag = (chipToDelete: ChipTag) => () => {
+    if (tag.length > 0 || tag.length === 10) {
+      console.log('delete errors');
+      errors.tags = '';
+    }
+
     setChipTags((chips) =>
       chips.filter((chip) => chip.key !== chipToDelete.key),
     );
@@ -83,6 +101,22 @@ const SignUpPage: FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    console.log('formData');
+    console.log(formData);
+
+    const formErrors = validateForm(formData);
+    setErrors(formErrors);
+
+    console.log('errors');
+    console.log(errors);
+
+    if (Object.keys(formErrors).length !== 0 || Object.keys(errors).length !== 0) {
+      console.log(Object.keys(formErrors).length);
+      console.log(Object.keys(errors).length);
+      console.log('return');
+
+      return;
+    }
     const dataToSend = {
       ...formData,
       email: userData.email || formData.email,
@@ -92,10 +126,15 @@ const SignUpPage: FC = () => {
     dispatch(authAction.register(dataToSend))
       .unwrap()
       .then((user) => {
+        console.log(user);
 
         if (user != null) {
           navigate('/sign-in');
         }
+      })
+      .catch((error) => {
+        console.error('Невірно введені дані:', error);
+        setRegisterError('Невірно введені дані');
       });
   };
 
@@ -126,11 +165,7 @@ const SignUpPage: FC = () => {
           <Typography component="h1" variant="h5">
             {t('sign_up')}
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
-          >
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -222,6 +257,8 @@ const SignUpPage: FC = () => {
                   value={tag}
                   label="Теги"
                   fullWidth
+                  error={!!errors.tags}
+                  helperText={errors.tags || 'Введіть від 1 до 10 тегів, розділяючи їх \'ENTER\''}
                   variant="outlined"
                   onChange={(event): void => {
                     event.preventDefault();
@@ -229,11 +266,26 @@ const SignUpPage: FC = () => {
                   }}
                   onKeyDown={(event): void => {
                     if (event.key === 'Enter') {
-                      if (tag.trim().length > 0 && formData.tags.indexOf(tag.trim()) === -1) {
+                      if (formData.tags.length === 10) {
+                        errors.tags = 'Тегів не може бути більше 10';
+
+                        return;
+                      }
+
+                      if (tag.length > 0 || tag.length === 10) {
+                        errors.tags = '';
+                      }
+
+                      if (
+                        tag.trim().length > 0 &&
+                        formData.tags.indexOf(tag.trim()) === -1
+                      ) {
+                        console.log('push tag');
                         formData.tags.push(tag);
                         setChipTags(getChipTags);
                         setTag('');
                       }
+                      console.log(formData.tags);
                       event.preventDefault();
                     }
                   }}
@@ -251,11 +303,10 @@ const SignUpPage: FC = () => {
                 >
                   {chipTags.map((data) => {
                     return (
-                      <Stack alignItems={'center'} key={data.key}>
+                      <ListItem alignItems={'center'} key={data.key}>
                         <Chip
                           sx={{
                             height: 'auto',
-                            mt: 2, mr: 2,
                             '& .MuiChip-label': {
                               display: 'block',
                               whiteSpace: 'normal',
@@ -264,11 +315,12 @@ const SignUpPage: FC = () => {
                           label={data.tag}
                           onDelete={handleDeleteTag(data)}
                         />
-                      </Stack>
+                      </ListItem>
                     );
                   })}
                 </Grid>
               </Grid>
+              {registerError && <Typography color="error">{registerError}</Typography>}
             </Grid>
             <Button
               type="submit"

@@ -1,7 +1,9 @@
 import { Autocomplete, Avatar, Chip, Grid, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import getSlug from 'speakingurl';
 
 import { CitiesType,EditProjectsPropsType } from '../../../../common/types/projects/projects';
 import { cities } from './cities';
@@ -40,6 +42,8 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
     setChipTags,
   ] = useState<ChipTag[]>(getChipTags());
 
+  const [projectURL, setProjectURL] = useState('');
+
   const handleDeleteTag = (chipToDelete: ChipTag) => () => {
     setChipTags((chips) => chips.filter((chip: ChipTag): boolean => chip.key !== chipToDelete.key));
     projectData.tags = projectData.tags.filter((tag: string): boolean => tag !== chipToDelete.tag);
@@ -65,7 +69,19 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
               fullWidth
               value={projectData.title}
               // defaultValue={project.title}
-              onChange={(e): void => handleChange('title', e.target.value)}
+              onChange={(e): void => {
+                handleChange('title', e.target.value);
+                let slug = getSlug(e.target.value, {
+                  maintainCase: true,
+                });
+
+                if(slug.length > 30) {
+                  slug = slug.slice(0,30);
+                }
+                handleChange('url', slug);
+                setProjectURL(slug);
+              }}
+              inputProps={{ maxLength: 30 }}
               onFocus={(): void => handleFieldFocus('title')}
               error={!!errors.title}
               helperText={errors.title}
@@ -77,23 +93,50 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
               variant="outlined"
             />
           </Grid>
+          <Typography>{'http://k-points.in.ua/projects/'.concat(projectURL)}</Typography>
           <Grid item xs={true}>
-            <Autocomplete
-              {...citiesProps}
-              // id="citi"
-              // name="citi"
-              // defaultValue={project.city}
-              renderInput={(params): ReactElement => (
-                <TextField
-                  label={t('city')}
-                  {...params}
-                  required
-                  fullWidth
-                />
-              )}
+            <TextField
+              label={t('project_url')}
+              fullWidth
+              placeholder={t('url_placeholder')}
+              value={projectData.url}
+              // defaultValue={defaultURL}
+              onChange={(e): void => {
+                const slug = getSlug(e.target.value, {
+                  maintainCase: true,
+                });
+                handleChange('url', slug);
+                setProjectURL(slug);
+              }}
+              inputProps={{ maxLength: 30 }}
+              onFocus={(): void => handleFieldFocus('url')}
+              error={!!errors.url}
+              helperText={errors.url}
+              // placeholder={'1234'}
+              // type={'text'}
+              required
+              margin={'normal'}
+              autoComplete="given-name"
+              variant="outlined"
             />
           </Grid>
         </Grid>
+      </Grid>
+      <Grid item xs={true}>
+        <Autocomplete
+          {...citiesProps}
+          // id="citi"
+          // name="citi"
+          // defaultValue={project.city}
+          renderInput={(params): ReactElement => (
+            <TextField
+              label={t('city')}
+              {...params}
+              required
+              fullWidth
+            />
+          )}
+        />
       </Grid>
       <Grid item xs={12}>
         <TextField

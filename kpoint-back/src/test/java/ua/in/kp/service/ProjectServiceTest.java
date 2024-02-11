@@ -4,16 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
-import ua.in.kp.exception.ProjectNotFoundException;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,8 +31,8 @@ class ProjectServiceTest {
 
     @Test
     void getAllProjectsTest() {
-        Pageable pageable = Mockito.mock(Pageable.class);
-        Page<ProjectEntity> page = Mockito.mock(Page.class);
+        Pageable pageable = mock(Pageable.class);
+        Page<ProjectEntity> page = mock(Page.class);
         when(projectRepository.findAll(pageable)).thenReturn(page);
         projectService.getAllProjects(pageable);
         verify(projectRepository, times(1)).findAll(pageable);
@@ -63,11 +62,31 @@ class ProjectServiceTest {
 
         when(projectRepository.findBy(projectId)).thenReturn(Optional.empty());
 
-        assertThrows(ProjectNotFoundException.class, () -> {
-            projectService.getProjectById(projectId);
-        });
+        assertThrows(NoSuchElementException.class, () -> projectService.getProjectById(projectId));
 
         verify(projectRepository).findBy(projectId);
         verify(projectMapper, never()).toDto(any());
+    }
+
+    @Test
+    void getProjectByUrl_shouldReturnProjectDto_whenProjectExists() {
+        String projectUrl = "url123";
+        ProjectEntity projectEntity = new ProjectEntity();
+        ProjectResponseDto projectResponseDto = new ProjectResponseDto();
+
+        when(projectRepository.findByProjectUrl(projectUrl)).thenReturn(Optional.of(projectEntity));
+        when(projectMapper.toDto(projectEntity)).thenReturn(projectResponseDto);
+
+        assertEquals(projectResponseDto, projectService.getProjectByUrl(projectUrl));
+        verify(projectRepository).findByProjectUrl(projectUrl);
+        verify(projectMapper).toDto(projectEntity);
+    }
+
+    @Test
+    void getProjectByUrl_shouldThrowException_whenProjectDoesNotExist() {
+        String projectUrl = "url123";
+
+        assertThrows(NoSuchElementException.class, () -> projectService.getProjectByUrl(projectUrl));
+        verify(projectRepository).findByProjectUrl(projectUrl);
     }
 }

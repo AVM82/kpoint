@@ -1,5 +1,5 @@
 # k-Points: точки кристалізації, або ключові точки.
-![K-Points logo](fishes.jpg "K-Points logo from GPTchat")
+![K-Points logo](../kpoint-back/fishes.jpg "K-Points logo from GPTchat")
 
                                 "Oдин не може зробити все,
                     але багато людей можуть зробити щось"
@@ -66,5 +66,23 @@ Environment variables:
 
 `JWT_SECRET` - Line of text for secret key generation (min 256 bit)
 
+
+## Запуск тільки бек локально в докері
+```
+docker compose -f docker-compose-dev.yml up --build -d
+```
+Зупинка
+```
+docker compose -f docker-compose-dev.yml down 
+```
+
+## Запуск проєкта локально 2in1
+```
+docker compose up --build -d
+```
+Зупинка
+```
+docker compose down 
+```
 
 
