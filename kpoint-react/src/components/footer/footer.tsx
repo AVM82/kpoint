@@ -18,7 +18,6 @@ const Footer: FC = () => {
 
   const { t } = useTranslation();
   const loggedIn = useAppSelector((state) => state.token.isloggedIn);
-  console.log('Log footer', loggedIn);
 
   return (
     <Container maxWidth={false} sx={{

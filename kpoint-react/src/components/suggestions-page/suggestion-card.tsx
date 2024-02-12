@@ -57,12 +57,12 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
 
       const updatedSuggestion = actionResult.payload as { likeCount: number, liked: boolean };
 
-      console.log('Suggestion updated:', updatedSuggestion);
-
       setLikeCount(updatedSuggestion.likeCount);
       setLiked(updatedSuggestion.liked);
-    } catch (error) {
-      console.error('Error updating like:', error);
+    }
+    catch (error) {
+      error.toString();
+      // console.error('Error updating like:', error);
     }
   };
 

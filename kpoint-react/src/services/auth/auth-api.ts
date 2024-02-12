@@ -22,7 +22,6 @@ class AuthApi {
   }
 
   public register(payload: SignUpType): Promise<string> {
-    console.log(payload);
 
     return this.#http.load(`${this.#apiPrefix}/auth/register`, {
       method: HttpMethod.POST,

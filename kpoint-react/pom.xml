@@ -14,7 +14,7 @@
 
     <properties>
         <app.name>kpoint-react</app.name>
-        <node.version>v20.11.0</node.version>
+        <node.version>v18.19.0</node.version>
         <npm.version>10.4.0</npm.version>
         <frontend-maven-plugin.version>1.14.2</frontend-maven-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
@@ -43,10 +43,10 @@
                     <nodeVersion>${node.version}</nodeVersion>
                     <npmVersion>${npm.version}</npmVersion>
                     <installDirectory>target</installDirectory>
-                    <environmentVariables>
-                        <REACT_APP_API_PATH>${env.BACKEND_API}</REACT_APP_API_PATH>
-                        <REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>${env.GOOGLE_CLIENT_ID}</REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>
-                    </environmentVariables>
+<!--                    <environmentVariables>-->
+<!--                        <REACT_APP_API_PATH>${env.BACKEND_API}</REACT_APP_API_PATH>-->
+<!--                        <REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>${env.GOOGLE_CLIENT_ID}</REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>-->
+<!--                    </environmentVariables>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -54,34 +54,38 @@
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
+                        <phase>prepare-package</phase>
                     </execution>
                     <execution>
                         <id>npm install</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
                     </execution>
+<!--                    <execution>-->
+<!--                        <id>npm run lint</id>-->
+<!--                        <goals>-->
+<!--                            <goal>npm</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>test</phase>-->
+<!--                        <configuration>-->
+<!--                            <arguments>run lint</arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                     <execution>
                         <id>npm run build</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <arguments>run build</arguments>
                         </configuration>
                     </execution>
-
-                    <!--                    <execution>-->
-                    <!--                        <id>npm run lint</id>-->
-                    <!--                        <goals>-->
-                    <!--                            <goal>npm</goal>-->
-                    <!--                        </goals>-->
-                    <!--                        <phase>test</phase>-->
-                    <!--                        <configuration>-->
-                    <!--                            <arguments>run lint</arguments>-->
-                    <!--                        </configuration>-->
-                    <!--                    </execution>-->
-
                 </executions>
             </plugin>
 
