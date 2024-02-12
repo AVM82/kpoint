@@ -7,13 +7,25 @@ import { NavbarButton } from './navbarButton';
 
 const Navbar: FC = () => {
   const dispatch = useAppDispatch();
+  // const [testUser, setTestUser] = useState<UserType>();
   const [page, setPage] = useState(1);
 
   const maxPageElements = 4;
 
-  const handleMyProjectsClick = (): void => {
+  // useEffect(() => {
+  //   const user = storage.getItem(StorageKey.USER);
+
+  //   if (user) setTestUser(JSON.parse(user));
+  // }, []);
+
+  const handleMyProjectsClick = async (): Promise<void> => {
     const value = 0;
-    dispatch(profileAction.getMyProjects({ size: maxPageElements, number: 0 }));
+    await dispatch(
+      profileAction.getMyProjects({
+        size: maxPageElements,
+        number: 0,
+      }),
+    );
     setPage(value);
   };
   console.log(page);
@@ -40,15 +52,15 @@ const Navbar: FC = () => {
     >
       <NavbarButton
         label="Мої Проєкти"
-        onClick={(): void => handleMyProjectsClick()}
+        onClick={(): Promise<void> => handleMyProjectsClick()}
       ></NavbarButton>
       <NavbarButton
         label="Улюблені проєкти"
-        onClick={(): void => handleMyProjectsClick()}
+        onClick={(): Promise<void> => handleMyProjectsClick()}
       ></NavbarButton>
       <NavbarButton
         label="Рекомендовані проєкти"
-        onClick={(): void => handleMyProjectsClick()}
+        onClick={(): Promise<void> => handleMyProjectsClick()}
       ></NavbarButton>
     </Box>
   );

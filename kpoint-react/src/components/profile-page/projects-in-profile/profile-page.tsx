@@ -1,6 +1,9 @@
 import { Box } from '@mui/material';
+import { StorageKey } from 'common/enums/app/storage-key.enum';
+import { UserType } from 'common/types/user/user';
 import { useAppDispatch } from 'hooks/hooks';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { storage } from 'services/services';
 import { profileAction } from 'store/actions';
 
 import { MyProjects } from './my-projects';
@@ -8,11 +11,31 @@ import { ProfileMenu } from './profile-menu';
 
 const ProfilePage: FC = () => {
   const dispatch = useAppDispatch();
+  const [testUser, setTestUser] = useState<UserType>();
   const maxPageElements = 4;
 
   useEffect(() => {
-    dispatch(profileAction.getMyProjects({ size: maxPageElements, number: 0 }));
-  }, [dispatch]);
+    const user = storage.getItem(StorageKey.USER);
+
+    if (user) setTestUser(JSON.parse(user));
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async (): Promise<void> => {
+      if (testUser) {
+        await dispatch(
+          profileAction.getMyProjects({
+            size: maxPageElements,
+            number: 0,
+          }),
+        );
+      }
+    };
+
+    fetchData();
+  }, [dispatch, testUser]);
+
+  console.log(testUser);
 
   return (
     <Box

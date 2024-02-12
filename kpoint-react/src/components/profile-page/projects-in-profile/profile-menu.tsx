@@ -21,7 +21,7 @@ const ProfileMenu: FC = () => {
         break;
       case 'newProject':
         setSelectedItem(itemName);
-        // navigate('/projects/new');
+        navigate('/projects/new');
         break;
       case 'settings':
         setSelectedItem(itemName);
