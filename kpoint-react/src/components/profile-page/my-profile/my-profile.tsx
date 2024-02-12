@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { storage } from 'services/services';
 
 import profileImg from '../../../profile-img-test.svg';
@@ -23,6 +23,14 @@ const MyProfile: FC = () => {
     firstName: string;
     lastName: string;
   }>({ firstName: '', lastName: '' });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setTestEditForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
   useEffect(() => {
     const user = storage.getItem(StorageKey.USER);
 
@@ -45,13 +53,90 @@ const MyProfile: FC = () => {
     }
   };
 
+  // const handleSubmit = async (e: React.MouseEvent): Promise<void> => {
+  //   e.preventDefault();
+
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:5001/api/profile/${testUser?.username}/settings`,
+  //       {
+  //         method: 'PUT',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify(testEditForm),
+  //       },
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error('Failed to update profile settings');
+  //     }
+
+  //     console.log('Profile settings updated successfully');
+  //   } catch (error) {
+  //     console.error('Error updating profile settings:', error.message);
+  //   }
+  // };
+
+  const handleSubmit = async (e: React.MouseEvent): Promise<void> => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        `http://localhost:5001/api/profile/${testUser?.username}/settings`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(testEditForm),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile settings');
+      }
+
+      // Parse the response JSON
+      const updatedSettings = await response.json();
+
+      // Update the state with the new values
+
+      setTestEditForm((prev) => ({
+        ...prev!,
+        firstName: updatedSettings.firstName,
+        lastName: updatedSettings.lastName,
+      }));
+
+      const storedUserString = storage.getItem(StorageKey.USER);
+
+      if (storedUserString) {
+        // Parse the user object from the stored string
+        let storedUser: UserType = JSON.parse(storedUserString);
+
+        // Update the firstName and lastName properties using destructuring
+        storedUser = {
+          ...storedUser,
+          firstName: updatedSettings.firstName,
+          lastName: updatedSettings.lastName,
+        };
+
+        // Store the updated user object back in storage
+        storage.setItem(StorageKey.USER, JSON.stringify(storedUser));
+      }
+
+      console.log(testEditForm);
+      console.log('Profile settings updated successfully');
+    } catch (error) {
+      console.error('Error updating profile settings:', error.message);
+    }
+  };
+
   const handleLogout = (): void => {
     storage.removeItem(StorageKey.TOKEN);
     storage.removeItem(StorageKey.USER);
     window.location.href = '/';
   };
-
-  console.log(testUser);
 
   return (
     <Box
@@ -120,41 +205,58 @@ const MyProfile: FC = () => {
         </Box>
         <Box display={'flex'}>
           <FormControl>
-            <Grid container spacing={2}>
-              <Grid item xs={3} md={6}>
-                <FormLabel>Ім'я</FormLabel>
-                <TextField
-                  fullWidth
-                  placeholder={testUser && testUser.firstName}
-                />
+            <form
+              onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
+                handleSubmit(e)
+              }
+            >
+              <Grid container spacing={2}>
+                <Grid item xs={3} md={6}>
+                  <FormLabel>Ім'я</FormLabel>
+                  <TextField
+                    fullWidth
+                    name="firstName"
+                    placeholder={testUser?.firstName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                      handleChange(e)
+                    }
+                  />
+                </Grid>
+                <Grid item xs={3} md={6}>
+                  <FormLabel>Прізвище</FormLabel>
+                  <TextField
+                    fullWidth
+                    name="lastName"
+                    placeholder={testUser?.lastName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                      handleChange(e)
+                    }
+                  />
+                </Grid>
+                <Grid item xs={3} md={6}>
+                  <FormLabel>Email</FormLabel>
+                  <TextField fullWidth placeholder={testUser?.email} />
+                </Grid>
+                <Grid item xs={3} md={6}>
+                  <FormLabel>Пароль</FormLabel>
+                  <TextField fullWidth defaultValue={'Password'} />
+                </Grid>
+                <Grid item xs={3} md={6}>
+                  <FormLabel>Країна</FormLabel>
+                  <TextField fullWidth defaultValue={'Країна'} />
+                </Grid>
+                <Grid item xs={3} md={6}>
+                  <FormLabel>Місто</FormLabel>
+                  <TextField fullWidth defaultValue={'Місто'} />
+                </Grid>
               </Grid>
-              <Grid item xs={3} md={6}>
-                <FormLabel>Прізвище</FormLabel>
-                <TextField
-                  fullWidth
-                  placeholder={testUser && testUser.lastName}
-                />
-              </Grid>
-              <Grid item xs={3} md={6}>
-                <FormLabel>Email</FormLabel>
-                <TextField fullWidth placeholder={testUser && testUser.email} />
-              </Grid>
-              <Grid item xs={3} md={6}>
-                <FormLabel>Пароль</FormLabel>
-                <TextField fullWidth defaultValue={'Password'} />
-              </Grid>
-              <Grid item xs={3} md={6}>
-                <FormLabel>Країна</FormLabel>
-                <TextField fullWidth defaultValue={'Країна'} />
-              </Grid>
-              <Grid item xs={3} md={6}>
-                <FormLabel>Місто</FormLabel>
-                <TextField fullWidth defaultValue={'Місто'} />
-              </Grid>
-            </Grid>
-            <Button sx={{ alignSelf: 'end', marginTop: '56px' }}>
-              Зберегти
-            </Button>
+              <Button
+                sx={{ alignSelf: 'end', marginTop: '56px' }}
+                type="submit"
+              >
+                Зберегти
+              </Button>
+            </form>
           </FormControl>
         </Box>
       </Box>
