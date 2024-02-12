@@ -21,6 +21,8 @@ const SuggestionsPage: FC = () => {
     suggestions: suggestion.suggestions,
   }));
 
+  // const currentUserId = useAppSelector((state) => state.token.user?.userId) || null;
+
   const [page, setPage] = useState(1);
   useLayoutEffect(() => {
     dispatch(suggestionAction.getAllSuggestionsDefault({ size: maxPageElements, number: (page - 1) }));
@@ -46,6 +48,15 @@ const SuggestionsPage: FC = () => {
     setModalOpen(false);
   };
 
+  const handleDeleteSuggestion = async (id: string): Promise<void> => {
+    try {
+      console.log('Deleting suggestion with id:', id);
+      await dispatch(suggestionAction.deleteById({ id }));
+    } catch (error) {
+      console.error('Error deleting suggestion:', error);
+    }
+  };
+
   return (
     <Box sx={{ width: 900, margin: 'auto', padding: 2 }}>
       <Typography variant="h3" align="center">{t('suggestions')}</Typography>
@@ -57,9 +68,10 @@ const SuggestionsPage: FC = () => {
       {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal}/>}
       <Grid item>
         {suggestions?.content.map((suggestion) =>
-          <Grid item >
+          <Grid item key={suggestion.id}>
             <SuggestionCard createdAt={suggestion.createdAt} likeCount={suggestion.likeCount} logoImgUrl="kjv"
-              suggestion={suggestion.suggestion} user={suggestion.user} id={suggestion.id} liked={suggestion.liked}/>
+              suggestion={suggestion.suggestion} user={suggestion.user} id={suggestion.id} liked={suggestion.liked}
+              onDelete={handleDeleteSuggestion} />
 
           </Grid>)}
       </Grid>

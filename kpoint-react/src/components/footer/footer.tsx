@@ -11,10 +11,13 @@ import { FC } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
+
 import footerImg from '../../footer-rect.png';
 
 const Footer: FC = () => {
   const { t } = useTranslation();
+  const loggedIn = useAppSelector((state) => state.token.isloggedIn);
 
   return (
     <Box
@@ -88,14 +91,11 @@ const Footer: FC = () => {
           <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
             Fourteen
           </Link>
-          <Link
-            href="/suggestions"
-            underline="none"
-            color="#FFFFFF"
-            sx={{ margin: 1 }}
-          >
-            {t('suggestions')}
-          </Link>
+          {loggedIn && (
+            <Link href="/suggestions" underline="none" color="black" sx={{ margin: 1 }}>
+              {t('suggestions')}
+            </Link>
+          )}
         </Box>
       </Box>
     </Box>
