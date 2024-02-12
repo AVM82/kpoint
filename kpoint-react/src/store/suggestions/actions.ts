@@ -7,7 +7,7 @@ import { SuggestionsPageType } from '../../common/types/suggestions/suggestions-
 import { ActionType } from './common';
 
 const getAllSuggestionsDefault = createAsyncThunk<SuggestionsPageType,
-  { size: number, number: number }, AsyncThunkConfig>(
+  { size: number, number: number, sort?: string }, AsyncThunkConfig>(
     ActionType.GET_ALL_SUGGESTIONS_DEFAULT,
     async (payload, { extra }) => {
       const { suggestionApi } = extra;
@@ -17,7 +17,7 @@ const getAllSuggestionsDefault = createAsyncThunk<SuggestionsPageType,
   );
 
 const getAllSuggestionsAddMore = createAsyncThunk<SuggestionsPageType,
-  { size: number, number: number }, AsyncThunkConfig>(
+  { size: number, number: number, sort?: string }, AsyncThunkConfig>(
     ActionType.GET_ALL_SUGGESTIONS_ADD_MORE,
     async (payload, { extra }) => {
       const { suggestionApi } = extra;
@@ -43,11 +43,12 @@ const updateLikeById = createAsyncThunk<SuggestionType, { id: string }, AsyncThu
   },
 );
 
-const deleteById = createAsyncThunk<void, string, AsyncThunkConfig>(
+const deleteById = createAsyncThunk<void, { id: string }, AsyncThunkConfig>(
   ActionType.DELETE_BY_ID,
-  async (id, { extra }) => {
+  async (payload, { extra }) => {
     const { suggestionApi } = extra;
-    await suggestionApi.deleteById({ id });
+
+    return await suggestionApi.deleteById(payload);
   },
 );
 

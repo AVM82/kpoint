@@ -20,13 +20,13 @@ create table if not exists public.applicants (
     roles           smallint[]
 );
 
-alter table public.applicants owner to postgres;
+alter table public.applicants owner to postgre_shpp;
 
 create table if not exists public.tags_index (
     name            varchar(10) not null primary key
 );
 
-alter table public.tags_index owner to postgres;
+alter table public.tags_index owner to postgre_shpp;
 
 create table if not exists public.users (
     id              varchar(36) not null primary key,
@@ -44,7 +44,7 @@ create table if not exists public.users (
 
 comment on column public.users.deleted is 'Soft-delete indicator';
 
-alter table public.users owner to postgres;
+alter table public.users owner to postgre_shpp;
 
 create table if not exists public.projects (
     project_id       varchar(36) not null primary key,
@@ -71,7 +71,7 @@ create table if not exists public.projects (
     deleted          boolean not null default false
 );
 
-alter table public.projects owner to postgres;
+alter table public.projects owner to postgre_shpp;
 
 create table if not exists public.project_entity_networks_links (
     project_entity_project_id varchar(36) not null
@@ -83,7 +83,7 @@ create table if not exists public.project_entity_networks_links (
     primary key (project_entity_project_id, networks_links_key)
 );
 
-alter table public.project_entity_networks_links owner to postgres;
+alter table public.project_entity_networks_links owner to postgre_shpp;
 
 create table if not exists public.projects_tags (
     project_entity_project_id varchar(36) not null
@@ -96,7 +96,7 @@ create table if not exists public.projects_tags (
     primary key (project_entity_project_id, tags_name)
 );
 
-alter table public.projects_tags owner to postgres;
+alter table public.projects_tags owner to postgre_shpp;
 
 create table if not exists public.suggestions (
     suggestion_id varchar(36) not null primary key,
@@ -109,7 +109,7 @@ create table if not exists public.suggestions (
     deleted       boolean  not null default false
 );
 
-alter table public.suggestions owner to postgres;
+alter table public.suggestions owner to postgre_shpp;
 
 create table if not exists public.likes (
     id            varchar(36) not null primary key,
@@ -122,7 +122,7 @@ create table if not exists public.likes (
     deleted       boolean  not null default false
 );
 
-alter table public.likes owner to postgres;
+alter table public.likes owner to postgre_shpp;
 
 create table if not exists public.user_roles (
     user_id         varchar(36) not null
@@ -132,7 +132,7 @@ create table if not exists public.user_roles (
     deleted         boolean  not null default false
 );
 
-alter table public.user_roles owner to postgres;
+alter table public.user_roles owner to postgre_shpp;
 
 create table if not exists public.user_socials (
     user_id             varchar(36) not null
@@ -144,7 +144,7 @@ create table if not exists public.user_socials (
     primary key (user_id, social_networks_key)
 );
 
-alter table public.user_socials owner to postgres;
+alter table public.user_socials owner to postgre_shpp;
 
 create table if not exists public.users_projects_favourite (
     user_entity_id                varchar(36) not null
@@ -157,7 +157,7 @@ create table if not exists public.users_projects_favourite (
     primary key (user_entity_id, projects_favourite_project_id)
 );
 
-alter table public.users_projects_favourite owner to postgres;
+alter table public.users_projects_favourite owner to postgre_shpp;
 
 create table if not exists public.users_tags (
     user_entity_id varchar(36) not null
@@ -170,4 +170,4 @@ create table if not exists public.users_tags (
     primary key (user_entity_id, tags_name)
 );
 
-alter table public.users_tags owner to postgres;
+alter table public.users_tags owner to postgre_shpp;

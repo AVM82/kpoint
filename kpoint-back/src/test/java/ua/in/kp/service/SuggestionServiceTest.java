@@ -16,9 +16,9 @@ import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -71,13 +71,13 @@ class SuggestionServiceTest {
         when(likeRepository.existsByUserAndSuggestion(user, suggestion)).thenReturn(true);
         doNothing().when(likeRepository).deleteBySuggestionAndUser(suggestion, user);
         when(suggestionRepository.save(any(SuggestionEntity.class))).thenReturn(suggestion);
-        when(suggestionMapper.toDto(suggestion)).thenReturn(suggestionResponseDto);
+        when(suggestionMapper.toDto(suggestion, user)).thenReturn(suggestionResponseDto);
 
         testObject.updateLike("id");
 
         verify(suggestionRepository).findById("id");
         verify(suggestionRepository).save(captor.capture());
-        verify(suggestionMapper).toDto(suggestion);
+        verify(suggestionMapper).toDto(suggestion,user);
         verify(likeRepository).deleteBySuggestionAndUser(suggestion, user);
 
         assertEquals(1, captor.getValue().getLikeCount());
@@ -97,22 +97,24 @@ class SuggestionServiceTest {
     }
 
     @Test
-    void deleteSuggestion() {
+    void deleteSuggestion_whenNotFound_throwsException() {
         String id = "id";
-        doNothing().when(suggestionRepository).deleteById(id);
+        when(suggestionRepository.existsById(id)).thenReturn(false);
 
-        testObject.deleteSuggestion(id);
+        assertThrows(NoSuchElementException.class, () -> testObject.deleteSuggestion(id));
 
-        verify(suggestionRepository).deleteById(id);
+        verify(suggestionRepository).existsById(id);
     }
 
     private SuggestionResponseDto getResponseDto() {
-        return new SuggestionResponseDto(
-                "id",
-                new SuggestionUserDto("userId", "John", "Doe"),
-                "Sample suggestion content",
-                5,
-                LocalDateTime.now()
-        );
+        SuggestionResponseDto responseDto = new SuggestionResponseDto();
+        responseDto.setId("id");
+        responseDto.setUser(new SuggestionUserDto("userId", "John", "Doe"));
+        responseDto.setSuggestion("Sample suggestion content");
+        responseDto.setLikeCount(5);
+        responseDto.setCreatedAt(LocalDateTime.now());
+        responseDto.setLiked(true);
+
+        return responseDto;
     }
 }

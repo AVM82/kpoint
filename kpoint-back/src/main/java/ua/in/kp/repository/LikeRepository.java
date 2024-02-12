@@ -6,7 +6,6 @@ import ua.in.kp.entity.SuggestionEntity;
 import ua.in.kp.entity.UserEntity;
 
 public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
-    void deleteAllById(String suggestionId);
 
     boolean existsByUserAndSuggestion(UserEntity user, SuggestionEntity suggestion);
 

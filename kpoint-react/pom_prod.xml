@@ -44,28 +44,28 @@
                     <npmVersion>${npm.version}</npmVersion>
                     <installDirectory>target</installDirectory>
                     <environmentVariables>
-                        <REACT_APP_API_PATH>${env.BACKEND_API}</REACT_APP_API_PATH>
-                        <REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>${env.GOOGLE_CLIENT_ID}</REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>
+                        <REACT_APP_API_PATH>http://localhost:3000/api</REACT_APP_API_PATH>
+                        <REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>95773710437-per0n2kjs8v1438vahr6bp0htrka5bvm.apps.googleusercontent.com</REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>
                     </environmentVariables>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                    <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
+                  <execution>
+                    <id>install node and npm</id>
+                    <goals>
+                      <goal>install-node-and-npm</goal>
+                    </goals>
+                    <phase>prepare-package</phase>
+                  </execution>
+                  <execution>
+                    <id>npm install</id>
+                    <goals>
+                      <goal>npm</goal>
+                    </goals>
+                    <phase>prepare-package</phase>
+                    <configuration>
+                      <arguments>install</arguments>
+                    </configuration>
+                  </execution>
 <!--                    <execution>-->
 <!--                        <id>npm run lint</id>-->
 <!--                        <goals>-->

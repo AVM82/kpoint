@@ -24,7 +24,6 @@ class SuggestionApi {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
         method: HttpMethod.GET,
-        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -37,7 +36,6 @@ class SuggestionApi {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
         method: HttpMethod.GET,
-        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -64,7 +62,7 @@ class SuggestionApi {
     );
   }
 
-  public deleteById(payload: { id: string }): Promise<SuggestionType> {
+  public deleteById(payload: { id: string }): Promise<void> {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions/${payload.id}`, {
         method: HttpMethod.DELETE,
