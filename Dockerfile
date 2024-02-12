@@ -1,8 +1,14 @@
 FROM maven:3.9.6-amazoncorretto-17-debian AS build
 
+ARG BACKEND_API
+ARG GOOGLE_CLIENT_ID
+
+ENV BACKEND_API $BACKEND_API
+ENV GOOGLE_CLIENT_ID $GOOGLE_CLIENT_ID
+
 COPY pom.xml /home/app/pom.xml
 COPY kpoint-back/pom.xml /home/app/kpoint-back/pom.xml
-COPY kpoint-react/pom_prod.xml /home/app/kpoint-react/pom.xml
+COPY kpoint-react/pom.xml /home/app/kpoint-react/pom.xml
 RUN mvn -f /home/app/pom.xml dependency:go-offline
 
 COPY kpoint-back/src /home/app/kpoint-back/src
