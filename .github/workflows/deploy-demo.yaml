@@ -20,6 +20,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
+        env:
+          BACKEND_API: http://kpoint-test.eu-north-1.elasticbeanstalk.com/api
+          GOOGLE_CLIENT_ID: 95773710437-per0n2kjs8v1438vahr6bp0htrka5bvm.apps.googleusercontent.com
         run: mvn clean package
 
       - name: Find JAR file
