@@ -11,9 +11,8 @@ import { FC } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-
 import footerImg from '../../footer-rect.png';
+import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
 
 const Footer: FC = () => {
   const { t } = useTranslation();
