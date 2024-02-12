@@ -1,4 +1,4 @@
-import { UserTypeSuggestion } from './userTypeSuggestion';
+import { UserTypeSuggestion } from './user-type-suggestion';
 
 export type SuggestionType = {
   id: string,
