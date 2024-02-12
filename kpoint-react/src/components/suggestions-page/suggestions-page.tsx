@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { suggestionAction } from 'store/actions';
+import { deleteData } from 'store/suggestions/reducer';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
@@ -20,8 +21,6 @@ const SuggestionsPage: FC = () => {
   const { suggestions } = useAppSelector(({ suggestion } ) => ({
     suggestions: suggestion.suggestions,
   }));
-
-  // const currentUserId = useAppSelector((state) => state.token.user?.userId) || null;
 
   const [page, setPage] = useState(1);
   useLayoutEffect(() => {
@@ -52,6 +51,7 @@ const SuggestionsPage: FC = () => {
     try {
       console.log('Deleting suggestion with id:', id);
       await dispatch(suggestionAction.deleteById({ id }));
+      dispatch(deleteData({ id }));
     } catch (error) {
       console.error('Error deleting suggestion:', error);
     }

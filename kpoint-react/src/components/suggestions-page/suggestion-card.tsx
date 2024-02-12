@@ -6,24 +6,25 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { suggestionAction } from 'store/actions';
 
-import { UserType } from '../../common/types/suggestions/user.type';
+import { StorageKey } from '../../common/enums/enums';
+import { UserTypeSuggestion } from '../../common/types/suggestions/userTypeSuggestion';
+import { UserType } from '../../common/types/user/user';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
-import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
+import { storage } from '../../services/services';
 import { formatDateTime } from '../../utils/function-format-date-time';
 
 interface CommentProps {
   id: string,
-  user: UserType,
+  user: UserTypeSuggestion,
   suggestion: string
   likeCount: number,
   createdAt: string,
   logoImgUrl: string,
   liked: boolean,
   onDelete: (id: string) => void,
-  // currentUserId: string | null,
 }
 
 const iconStylesLiked = {
@@ -41,9 +42,15 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
   const dispatch = useAppDispatch();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [liked, setLiked] = useState(initialLiked);
-  const currentUserId = useAppSelector((state) => state.token.user?.userId);
-  console.log('USER_', user.userId);
-  console.log('USER_Current', currentUserId);
+
+  const [testUser, setTestUser] = useState<UserType>();
+
+  useEffect(() => {
+    const userID = storage.getItem(StorageKey.USER);
+
+    if (userID) setTestUser(JSON.parse(userID));
+  }, []);
+
   const handleLike = async (): Promise<void> => {
     try {
       const actionResult = await dispatch(suggestionAction.updateLikeById({ id }));
@@ -76,7 +83,7 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
                   <h3  className="datetime"  style={{ fontWeight: 'normal' }}>{formatDateTime(createdAt)}</h3>
                 </Grid>
 
-                {currentUserId === user.userId && (
+                {testUser && testUser.id === user.userId && (
                   <CardActions>
                     <IconButton
                       aria-label="Delete"

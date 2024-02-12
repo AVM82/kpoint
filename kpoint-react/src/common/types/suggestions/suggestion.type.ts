@@ -1,8 +1,8 @@
-import { UserType } from './user.type';
+import { UserTypeSuggestion } from './userTypeSuggestion';
 
 export type SuggestionType = {
   id: string,
-  user: UserType,
+  user: UserTypeSuggestion,
   suggestion: string
   likeCount: number,
   createdAt: string,
