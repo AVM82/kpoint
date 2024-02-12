@@ -11,7 +11,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
+import { UserType } from 'common/types/user/user';
 import * as React from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { storage } from 'services/services';
 
@@ -19,13 +21,22 @@ interface MenuProps {
   onClick: (param: boolean) => void;
 }
 
-const AccountMenu: React.FC<MenuProps> = ({ onClick }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+const AccountMenu: FC<MenuProps> = ({ onClick }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const [userData, setUserData] = useState<UserType>();
+
+  useEffect(() => {
+    const user = storage.getItem(StorageKey.USER);
+
+    if (user) setUserData(JSON.parse(user));
+  }, []);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = (): void => {
     setAnchorEl(null);
   };
@@ -54,11 +65,13 @@ const AccountMenu: React.FC<MenuProps> = ({ onClick }) => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar sx={{ width: 32, height: 32 }}>
+              {userData && userData.username.substring(0, 2).toUpperCase()}
+            </Avatar>
           </IconButton>
         </Tooltip>
         <Typography sx={{ minWidth: 100 }} color={'black'}>
-          Profile
+          {userData && userData.username}
         </Typography>
       </Box>
       <Menu

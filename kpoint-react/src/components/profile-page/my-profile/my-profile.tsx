@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable indent */
 import {
   Box,
@@ -18,7 +19,10 @@ import { MyProfileMenuButton } from './my-profile-button';
 
 const MyProfile: FC = () => {
   const [testUser, setTestUser] = useState<UserType>();
-
+  const [testEditForm, setTestEditForm] = useState<{
+    firstName: string;
+    lastName: string;
+  }>({ firstName: '', lastName: '' });
   useEffect(() => {
     const user = storage.getItem(StorageKey.USER);
 
@@ -119,15 +123,21 @@ const MyProfile: FC = () => {
             <Grid container spacing={2}>
               <Grid item xs={3} md={6}>
                 <FormLabel>Ім'я</FormLabel>
-                <TextField fullWidth defaultValue={testUser?.firstName} />
+                <TextField
+                  fullWidth
+                  placeholder={testUser && testUser.firstName}
+                />
               </Grid>
               <Grid item xs={3} md={6}>
                 <FormLabel>Прізвище</FormLabel>
-                <TextField fullWidth defaultValue={testUser?.lastName} />
+                <TextField
+                  fullWidth
+                  placeholder={testUser && testUser.lastName}
+                />
               </Grid>
               <Grid item xs={3} md={6}>
                 <FormLabel>Email</FormLabel>
-                <TextField fullWidth defaultValue={testUser?.email} />
+                <TextField fullWidth placeholder={testUser && testUser.email} />
               </Grid>
               <Grid item xs={3} md={6}>
                 <FormLabel>Пароль</FormLabel>
