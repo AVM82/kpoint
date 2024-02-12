@@ -22,7 +22,7 @@ const style = {
   boxShadow: 24,
   p: 4,
   width: '540px',
-  height: '275px',
+  height: '340px',
 };
 
 const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handleCloseModal }) => {
