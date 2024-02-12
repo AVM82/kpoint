@@ -26,8 +26,8 @@ root.render(
   <StrictMode>
     <Provider store={store}>
       <CssBaseline>
-        <Header />
         <BrowserRouter>
+          <Header />
           <Routes>
             <Route path="/" element={<ProjectsPage />} />
             <Route path="/:username" element={<ProfilePage />} />
@@ -42,8 +42,8 @@ root.render(
             <Route path="/settings/profile" element={<MyProfile />}></Route>
             {/*<Route path="/add-suggestions" element={<AddSuggestionModal/>}/>*/}
           </Routes>
+          <Footer />
         </BrowserRouter>
-        <Footer />
         <Toast />
       </CssBaseline>
     </Provider>

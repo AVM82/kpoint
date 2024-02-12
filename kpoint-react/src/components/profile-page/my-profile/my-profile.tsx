@@ -19,14 +19,10 @@ import { MyProfileMenuButton } from './my-profile-button';
 const MyProfile: FC = () => {
   const [testUser, setTestUser] = useState<UserType>();
 
-  console.log(testUser);
-
   useEffect(() => {
-    setTimeout(() => {
-      const user = storage.getItem(StorageKey.USER);
+    const user = storage.getItem(StorageKey.USER);
 
-      if (user) setTestUser(JSON.parse(user));
-    }, 0);
+    if (user) setTestUser(JSON.parse(user));
   }, []);
 
   const handleClick = (itemName: string): void => {
@@ -51,11 +47,14 @@ const MyProfile: FC = () => {
     window.location.href = '/';
   };
 
+  console.log(testUser);
+
   return (
     <Box
       display={'flex'}
       flexDirection={'column'}
-      sx={{ height: '100vh', width: '100%', padding: '0 80px' }}
+      sx={{ width: '100%', padding: '0 80px', margin: '75px 0 220px 0' }}
+      flexGrow={1}
     >
       <Box
         display={'flex'}

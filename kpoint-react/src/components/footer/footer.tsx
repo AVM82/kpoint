@@ -24,6 +24,7 @@ const Footer: FC = () => {
     <Box
       component={'footer'}
       sx={{ backgroundColor: '#474242', padding: '48px 80px' }}
+      flexShrink={0}
     >
       <Box
         display={'flex'}

@@ -24,7 +24,7 @@ const ProfilePage: FC = () => {
       justifyContent={'space-around'}
       width={'100%'}
       bgcolor={'#e9eff4'}
-      height={'100dvh'}
+      flexGrow={1}
     >
       <ProfileMenu />
       <MyProjects />
