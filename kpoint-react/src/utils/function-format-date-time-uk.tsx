@@ -1,44 +1,57 @@
+
 export function formatDateTimeUk(dateTime: string): string {
   const currentDate = new Date();
-  const previousDate = new Date(dateTime);
-  const timeDifference = currentDate.getTime() - previousDate.getTime();
+  const inputDate = new Date(dateTime);
+  const timeDifferenceInSeconds = Math.floor((currentDate.getTime() - inputDate.getTime()) / 1000);
 
-  const minute = 60 * 1000;
-  const hour = minute * 60;
-  const day = hour * 24;
-  const month = day * 30;
-  const year = day * 365;
+  const roundToNearestMultiple = (value: number, multiple: number): number => {
+    return Math.floor(value / multiple) * multiple;
+  };
 
-  if (timeDifference < minute) {
-    const seconds = Math.floor(timeDifference / 1000);
-
-    return `${seconds} секунд${seconds !== 1 ? '' : 'а'} тому`;
+  if (timeDifferenceInSeconds < 60) {
+    // Less than a minute
+    return '1 секунду тому';
   }
 
-  if (timeDifference < hour) {
-    const minutes = Math.floor(timeDifference / minute);
+  if (timeDifferenceInSeconds < 3600) {
+    // Less than an hour
+    const minutesAgo = roundToNearestMultiple(Math.floor(timeDifferenceInSeconds / 60), 5);
 
-    return `${minutes} хвилин${minutes !== 1 ? '' : 'а'} тому`;
+    return `${minutesAgo} хвилин тому`;
   }
 
-  if (timeDifference < day) {
-    const hours = Math.floor(timeDifference / hour);
+  if (timeDifferenceInSeconds < 86400) {
+    // Less than a day
+    const hoursAgo = Math.floor(timeDifferenceInSeconds / 3600); // 3600 seconds in an hour
 
-    return `${hours} годин${hours !== 1 ? '' : 'а'} тому`;
+    if (hoursAgo === 1) {
+      return '1 година тому';
+    }
+
+    if (hoursAgo >= 2 && hoursAgo <= 4) {
+      return `${hoursAgo} години тому`;
+    }
+
+    return `${hoursAgo} годин тому`;
+
   }
 
-  if (timeDifference < month) {
-    const days = Math.floor(timeDifference / day);
+  if (timeDifferenceInSeconds < 2592000) {
+    // Less than a month (30 days)
+    const daysAgo = roundToNearestMultiple(Math.floor(timeDifferenceInSeconds / 86400), 5);
 
-    return `${days} днів тому`;
+    return `${daysAgo} днів тому`;
   }
 
-  if (timeDifference < year) {
-    const months = Math.floor(timeDifference / month);
+  if (timeDifferenceInSeconds < 31536000) {
+    // Less than a year
+    const monthsAgo = roundToNearestMultiple(Math.floor(timeDifferenceInSeconds / 2592000), 5);
 
-    return `${months} місяців тому`;
+    return `${monthsAgo} місяців тому`;
   }
-  const years = Math.floor(timeDifference / year);
+  // Over a year
+  const yearsAgo = roundToNearestMultiple(Math.floor(timeDifferenceInSeconds / 31536000), 5);
 
-  return `${years} років тому`;
+  return `${yearsAgo} років тому`;
+
 }
