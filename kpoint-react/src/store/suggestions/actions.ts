@@ -7,7 +7,7 @@ import { SuggestionsPageType } from '../../common/types/suggestions/suggestions-
 import { ActionType } from './common';
 
 const getAllSuggestionsDefault = createAsyncThunk<SuggestionsPageType,
-  { size: number, number: number }, AsyncThunkConfig>(
+  { size: number, number: number, sort?: string }, AsyncThunkConfig>(
     ActionType.GET_ALL_SUGGESTIONS_DEFAULT,
     async (payload, { extra }) => {
       const { suggestionApi } = extra;
@@ -17,7 +17,7 @@ const getAllSuggestionsDefault = createAsyncThunk<SuggestionsPageType,
   );
 
 const getAllSuggestionsAddMore = createAsyncThunk<SuggestionsPageType,
-  { size: number, number: number }, AsyncThunkConfig>(
+  { size: number, number: number, sort?: string }, AsyncThunkConfig>(
     ActionType.GET_ALL_SUGGESTIONS_ADD_MORE,
     async (payload, { extra }) => {
       const { suggestionApi } = extra;

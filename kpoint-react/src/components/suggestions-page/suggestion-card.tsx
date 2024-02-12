@@ -14,7 +14,7 @@ import { UserTypeSuggestion } from '../../common/types/suggestions/user-type-sug
 import { UserType } from '../../common/types/user/user';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { storage } from '../../services/services';
-import { formatDateTime } from '../../utils/function-format-date-time';
+import { formatDateTimeUk } from '../../utils/function-format-date-time-uk';
 
 interface CommentProps {
   id: string,
@@ -80,7 +80,7 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
                   <h3 className="user and time">{`${user.firstName} ${user.lastName}`}</h3>
                 </Grid>
                 <Grid item style={{ flex: 1 }}>
-                  <h3  className="datetime"  style={{ fontWeight: 'normal' }}>{formatDateTime(createdAt)}</h3>
+                  <h3  className="datetime"  style={{ fontWeight: 'normal' }}>{formatDateTimeUk(createdAt)}</h3>
                 </Grid>
 
                 {testUser && testUser.id === user.userId && (
