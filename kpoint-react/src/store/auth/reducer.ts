@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { UserTypeSuggestion } from '../../common/types/suggestions/userTypeSuggestion';
+import { UserTypeSuggestion } from '../../common/types/suggestions/user-type-suggestion';
 import { login } from './actions';
 
 type State = {
