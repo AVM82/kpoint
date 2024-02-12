@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
-        run: mvn -e -X clean package
+        run: mvn clean package
 
       - name: Find JAR file
         id: find-jar
