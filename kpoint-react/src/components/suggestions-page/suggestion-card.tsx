@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
@@ -5,11 +6,12 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { suggestionAction } from 'store/actions';
 
 import { UserType } from '../../common/types/suggestions/user.type';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
+import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
 import { formatDateTime } from '../../utils/function-format-date-time';
 
 interface CommentProps {
@@ -20,6 +22,8 @@ interface CommentProps {
   createdAt: string,
   logoImgUrl: string,
   liked: boolean,
+  onDelete: (id: string) => void,
+  // currentUserId: string | null,
 }
 
 const iconStylesLiked = {
@@ -33,11 +37,13 @@ const iconStylesNotLiked = {
 
 const SuggestionCard: FC<CommentProps> = ({ id, user,
   suggestion, likeCount: initialLikeCount,
-  createdAt, logoImgUrl , liked: initialLiked }) => {
+  createdAt, logoImgUrl , liked: initialLiked, onDelete  }) => {
   const dispatch = useAppDispatch();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [liked, setLiked] = useState(initialLiked);
-
+  const currentUserId = useAppSelector((state) => state.token.user?.userId);
+  console.log('USER_', user.userId);
+  console.log('USER_Current', currentUserId);
   const handleLike = async (): Promise<void> => {
     try {
       const actionResult = await dispatch(suggestionAction.updateLikeById({ id }));
@@ -66,9 +72,22 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
                 <Grid item>
                   <h3 className="user and time">{`${user.firstName} ${user.lastName}`}</h3>
                 </Grid>
-                <Grid item>
+                <Grid item style={{ flex: 1 }}>
                   <h3  className="datetime"  style={{ fontWeight: 'normal' }}>{formatDateTime(createdAt)}</h3>
                 </Grid>
+
+                {currentUserId === user.userId && (
+                  <CardActions>
+                    <IconButton
+                      aria-label="Delete"
+                      onClick={():void => onDelete(id)}
+                      style={{ marginLeft: 'auto' }}
+                    >
+                      <CloseIcon/>
+                    </IconButton>
+                  </CardActions>
+                )}
+
               </Grid>
             </div>
             <div className="comment">
