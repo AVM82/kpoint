@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { UserType } from '../../common/types/suggestions/user.type';
+import { UserTypeSuggestion } from '../../common/types/suggestions/userTypeSuggestion';
 import { login } from './actions';
 
 type State = {
   token: string | null;
   isloggedIn: boolean;
-  user: UserType | null;
+  user: UserTypeSuggestion | null;
 };
 
 const initialState: State = {
