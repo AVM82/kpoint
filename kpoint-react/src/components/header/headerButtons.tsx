@@ -1,14 +1,22 @@
+/* eslint-disable indent */
 import Button from '@mui/material/Button';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
-import { useEffect, useState } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { storage } from 'services/services';
 
-export function HeaderButtons(): JSX.Element {
+import { AccountMenu } from './tempMenu';
+
+interface HeaderButtonsProps {
+  isTitleClicked: boolean;
+}
+
+const HeaderButtons: FC<HeaderButtonsProps> = ({ isTitleClicked }) => {
   const { t } = useTranslation();
   const [isStillLoggedIn, setStillLoggedIn] = useState(false);
   const loggedIn = useAppSelector((state) => state.token.isloggedIn);
+  const [isProfileClicked, setProfileClicked] = useState(false);
 
   function handleLogout(): void {
     storage.removeItem(StorageKey.TOKEN);
@@ -20,12 +28,17 @@ export function HeaderButtons(): JSX.Element {
     const token = storage.getItem(StorageKey.TOKEN);
 
     if (token) setStillLoggedIn(true);
-  }, []);
 
-  return (
-    <>
-      {loggedIn || isStillLoggedIn ? (
+    if (isTitleClicked) setProfileClicked(false);
+  }, [isTitleClicked]);
+
+  let buttonsBlock: ReactNode;
+
+  switch (true) {
+    case loggedIn || isStillLoggedIn:
+      buttonsBlock = (
         <>
+          <AccountMenu onClick={setProfileClicked} />
           <Button href="/projects/new" variant="outlined" sx={{ margin: 1 }}>
             {t('buttons.create_project')}
           </Button>
@@ -33,7 +46,11 @@ export function HeaderButtons(): JSX.Element {
             {t('buttons.log_out')}
           </Button>
         </>
-      ) : (
+      );
+      break;
+
+    default:
+      buttonsBlock = (
         <>
           <Button href="/sign-in" variant="outlined" sx={{ margin: 1 }}>
             {t('buttons.log_in')}
@@ -42,7 +59,19 @@ export function HeaderButtons(): JSX.Element {
             {t('buttons.sign_in')}
           </Button>
         </>
+      );
+      break;
+  }
+
+  return (
+    <>
+      {isProfileClicked && isStillLoggedIn ? (
+        <AccountMenu onClick={setProfileClicked} />
+      ) : (
+        buttonsBlock
       )}
     </>
   );
-}
+};
+
+export { HeaderButtons };
