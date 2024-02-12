@@ -91,7 +91,7 @@ public class UserService {
 
     @Transactional
     public UserResponseDto unBanUserById(String userId) {
-        log.info("banUserById {}", userId);
+        log.info("unBanUserById {}", userId);
         userRepository.unBanUserByIdForAdmin(userId);
         UserEntity userFromDb = userRepository.findByIdForAdmin(userId).orElseThrow(() -> {
             log.warn("Can't find user by id {}", userId);
