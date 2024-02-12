@@ -118,4 +118,9 @@ public class UserService {
         return userRepository.findByUsernameFetchNothing(username).orElseThrow(() ->
                 new UsernameNotFoundException("Can't find user by username " + username));
     }
+
+    public UserEntity getByUsernameFetchTagsSocials(String username) {
+        return userRepository.findByUsernameFetchTagsSocials(username).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by username " + username));
+    }
 }
