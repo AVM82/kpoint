@@ -20,7 +20,17 @@ const initialState: State = {
 const suggestionSlice = createSlice({
   name: 'suggestion',
   initialState,
-  reducers: {},
+  reducers: {
+    deleteData: (state, action) => {
+      if (state.suggestions) {
+        state.suggestions.content = state.suggestions.content.filter((item) => item.id !== action.payload.id);
+      }
+
+      if (state.suggestion && state.suggestion.id === action.payload.id) {
+        state.suggestion = null;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllSuggestionsDefault.rejected, (state ) => {
@@ -59,6 +69,7 @@ const suggestionSlice = createSlice({
   },
 });
 
+const { deleteData } = suggestionSlice.actions;
 const suggestionReducer = suggestionSlice.reducer;
 
-export { suggestionReducer };
+export { deleteData,suggestionReducer };

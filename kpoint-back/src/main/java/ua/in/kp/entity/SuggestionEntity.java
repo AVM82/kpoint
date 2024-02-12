@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -37,6 +38,6 @@ public class SuggestionEntity {
     private LocalDateTime createdAt = LocalDateTime.now(ZoneOffset.UTC);
 
     @OneToMany(mappedBy = "suggestion", cascade = CascadeType.REMOVE)
-    private Set<LikeEntity> likes;
+    private Set<LikeEntity> likes = new HashSet<>();
 
 }

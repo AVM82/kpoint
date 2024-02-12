@@ -19,6 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
       - name: Build with Maven
         env:
           BACKEND_API: http://kpoint-test.eu-north-1.elasticbeanstalk.com/api

@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { suggestionAction } from 'store/actions';
+import { deleteData } from 'store/suggestions/reducer';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
@@ -46,6 +47,16 @@ const SuggestionsPage: FC = () => {
     setModalOpen(false);
   };
 
+  const handleDeleteSuggestion = async (id: string): Promise<void> => {
+    try {
+      console.log('Deleting suggestion with id:', id);
+      await dispatch(suggestionAction.deleteById({ id }));
+      dispatch(deleteData({ id }));
+    } catch (error) {
+      console.error('Error deleting suggestion:', error);
+    }
+  };
+
   return (
     <Box sx={{ width: 900, margin: 'auto', padding: 2 }}>
       <Typography variant="h3" align="center">{t('suggestions')}</Typography>
@@ -57,9 +68,10 @@ const SuggestionsPage: FC = () => {
       {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal}/>}
       <Grid item>
         {suggestions?.content.map((suggestion) =>
-          <Grid item >
+          <Grid item key={suggestion.id}>
             <SuggestionCard createdAt={suggestion.createdAt} likeCount={suggestion.likeCount} logoImgUrl="kjv"
-              suggestion={suggestion.suggestion} user={suggestion.user} id={suggestion.id}/>
+              suggestion={suggestion.suggestion} user={suggestion.user} id={suggestion.id} liked={suggestion.liked}
+              onDelete={handleDeleteSuggestion} />
 
           </Grid>)}
       </Grid>
