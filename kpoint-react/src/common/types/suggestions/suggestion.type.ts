@@ -6,4 +6,5 @@ export type SuggestionType = {
   suggestion: string
   likeCount: number,
   createdAt: string,
+  liked: boolean,
 };

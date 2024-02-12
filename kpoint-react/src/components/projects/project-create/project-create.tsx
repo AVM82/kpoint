@@ -53,7 +53,7 @@ export const ProjectCreate: FC = () => {
         .unwrap()
         .then((action): void => {
           console.log(action);
-          navigate('/projects/' + action.projectId);
+          navigate('/projects/' + action.url);
         })
         .catch((reason) => {
           console.log(reason);
