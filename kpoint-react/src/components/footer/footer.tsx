@@ -17,7 +17,6 @@ import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.ho
 const Footer: FC = () => {
   const { t } = useTranslation();
   const loggedIn = useAppSelector((state) => state.token.isloggedIn);
-  console.log('Log footer', loggedIn);
 
   return (
     <Box
@@ -93,7 +92,7 @@ const Footer: FC = () => {
             Fourteen
           </Link>
           {loggedIn && (
-            <Link href="/suggestions" underline="none" color="black" sx={{ margin: 1 }}>
+            <Link href="/suggestions" underline="none" color="#FFFFFF" sx={{ margin: 1 }}>
               {t('suggestions')}
             </Link>
           )}
