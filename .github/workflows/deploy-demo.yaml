@@ -24,6 +24,13 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build app
+        run: npm run build
+
+
       - name: Build with Maven
         env:
           BACKEND_API: http://kpoint-test.eu-north-1.elasticbeanstalk.com/api
