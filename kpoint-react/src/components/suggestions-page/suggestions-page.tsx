@@ -24,11 +24,13 @@ const SuggestionsPage: FC = () => {
 
   const [page, setPage] = useState(1);
   useLayoutEffect(() => {
-    dispatch(suggestionAction.getAllSuggestionsDefault({ size: maxPageElements, number: (page - 1) }));
+    dispatch(suggestionAction.getAllSuggestionsDefault({ size: maxPageElements, number: (page - 1),
+      sort: 'likeCount,desc' }));
   }, [dispatch]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
-    dispatch(suggestionAction.getAllSuggestionsDefault({ size: maxPageElements, number: (value - 1) }));
+    dispatch(suggestionAction.getAllSuggestionsDefault({ size: maxPageElements, number: (value - 1),
+      sort: 'likeCount,desc' }));
     setPage(value);
   };
 
