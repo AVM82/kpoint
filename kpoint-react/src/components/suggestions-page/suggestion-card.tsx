@@ -10,7 +10,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { suggestionAction } from 'store/actions';
 
 import { StorageKey } from '../../common/enums/enums';
-import { UserTypeSuggestion } from '../../common/types/suggestions/userTypeSuggestion';
+import { UserTypeSuggestion } from '../../common/types/suggestions/user-type-suggestion';
 import { UserType } from '../../common/types/user/user';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { storage } from '../../services/services';
@@ -83,7 +83,7 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
                   <h3  className="datetime"  style={{ fontWeight: 'normal' }}>{formatDateTimeUk(createdAt)}</h3>
                 </Grid>
 
-                {testUser && testUser.id === user.userId && (
+                {testUser && testUser.id === user.userId && likeCount === 0 && (
                   <CardActions>
                     <IconButton
                       aria-label="Delete"
