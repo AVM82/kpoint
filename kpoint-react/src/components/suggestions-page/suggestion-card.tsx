@@ -83,7 +83,7 @@ const SuggestionCard: FC<CommentProps> = ({ id, user,
                   <h3  className="datetime"  style={{ fontWeight: 'normal' }}>{formatDateTimeUk(createdAt)}</h3>
                 </Grid>
 
-                {testUser && testUser.id === user.userId && (
+                {testUser && testUser.id === user.userId && likeCount === 0 && (
                   <CardActions>
                     <IconButton
                       aria-label="Delete"
