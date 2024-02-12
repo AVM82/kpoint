@@ -27,6 +27,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        BACKEND_API: ${BACKEND_API}
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     container_name: kpoint
     ports:
       - ${PORT}:${PORT}
@@ -39,6 +42,7 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       OAUTH2_REDIRECT_URI: ${OAUTH2_REDIRECT_URI}
+
 #      BACKEND_API: ${BACKEND_API}
 #    healthcheck:
 #      test:
