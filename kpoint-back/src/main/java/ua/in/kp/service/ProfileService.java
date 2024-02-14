@@ -6,11 +6,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
+import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.exception.UserException;
 import ua.in.kp.mapper.ProjectMapper;
+import ua.in.kp.mapper.UserMapper;
+import ua.in.kp.repository.UserRepository;
 
 import java.util.Set;
 
@@ -20,6 +24,8 @@ public class ProfileService {
     private final UserService userService;
     private final ProjectService projectService;
     private final ProjectMapper projectMapper;
+    private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
     public ProjectsProfileResponseDto getMyProjects(String username, Pageable pageable) {
         UserEntity userEntity = userService.getByUsername(username);
@@ -50,5 +56,20 @@ public class ProfileService {
                 projectService.retrieveRecommendedProjects(tags, projectsIds, pageable)
                         .map(projectMapper::getAllToDto);
         return new ProjectsProfileResponseDto(userEntity.getId().toString(), recommendedProjectsDtos);
+    }
+
+    public UserChangeDto changeUserData(String username, UserChangeDto userDto) {
+        UserEntity userEntity = userService.getByUsernameFetchTagsSocials(username);
+        if (userEntity.getFirstName().equals(userDto.firstName())
+                && userEntity.getLastName().equals(userDto.lastName())) {
+            throw new UserException("No fields for change");
+        }
+        return changeData(userEntity, userDto);
+    }
+
+    private UserChangeDto changeData(UserEntity userEntity, UserChangeDto userDto) {
+        userEntity.setFirstName(userDto.firstName());
+        userEntity.setLastName(userDto.lastName());
+        return userMapper.toChangeDto(userRepository.save(userEntity));
     }
 }

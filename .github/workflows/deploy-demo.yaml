@@ -21,9 +21,9 @@ jobs:
 
       - name: Build with Maven
         env:
-          REACT_APP_API_PATH: ${{ secrets.REACT_APP_API_PATH }}
+          REACT_APP_API_PATH: ${{ secrets.REACT_APP_API_PATH_DEMO }}
           REACT_APP_OAUTH2_GOOGLE_CLIENT_ID: ${{ secrets.REACT_APP_OAUTH2_GOOGLE_CLIENT_ID }}
-        run: mvn -e -X clean package
+        run: mvn clean package
 
       - name: Find JAR file
         id: find-jar
