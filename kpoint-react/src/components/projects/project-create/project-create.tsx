@@ -1,15 +1,4 @@
-/* eslint-disable indent */
-import {
-  Box,
-  Button,
-  Container,
-  CssBaseline,
-  Paper,
-  Step,
-  StepLabel,
-  Stepper,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Container, CssBaseline, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
