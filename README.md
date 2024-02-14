@@ -48,7 +48,7 @@ Feedback1
 Тоді не тільки айтішники а і смертні зможуть розуміти і приймати участь ;)
 
 
-Environment variables:
+## Environment variables:
 
 `SERVER_PORT` - server port (5001)
 
@@ -84,5 +84,12 @@ docker compose up --build -d
 ```
 docker compose down 
 ```
+
+
+
+## Naming db.migration files
+
+> V{flyway version}_{application version}__{DESCRIPTION}.sql
+> V1_0_0_1__create_users_table.sql
 
 
