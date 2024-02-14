@@ -99,11 +99,12 @@ const MyProfile: FC = () => {
 
       // Parse the response JSON
       const updatedSettings = await response.json();
+      console.log('url', `http://localhost:5001/api/profile/${testUser?.username}/settings`);
 
       // Update the state with the new values
 
       setTestEditForm((prev) => ({
-        ...prev!,
+        ...prev,
         firstName: updatedSettings.firstName,
         lastName: updatedSettings.lastName,
       }));
@@ -235,19 +236,32 @@ const MyProfile: FC = () => {
                 </Grid>
                 <Grid item xs={3} md={6}>
                   <FormLabel>Email</FormLabel>
-                  <TextField fullWidth placeholder={testUser?.email} />
+                  <TextField fullWidth placeholder={testUser?.email}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                      handleChange(e)
+                    } />
                 </Grid>
                 <Grid item xs={3} md={6}>
                   <FormLabel>Пароль</FormLabel>
-                  <TextField fullWidth defaultValue={'Password'} />
+                  <TextField fullWidth  defaultValue={'Password'}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                      handleChange(e)
+                    }
+                 />
                 </Grid>
                 <Grid item xs={3} md={6}>
                   <FormLabel>Країна</FormLabel>
-                  <TextField fullWidth defaultValue={'Країна'} />
+                  <TextField fullWidth defaultValue={'Країна'}
+                   onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                      handleChange(e)
+                    } />
                 </Grid>
                 <Grid item xs={3} md={6}>
                   <FormLabel>Місто</FormLabel>
-                  <TextField fullWidth defaultValue={'Місто'} />
+                  <TextField fullWidth defaultValue={'Місто'}
+                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                      handleChange(e)
+                    } />
                 </Grid>
               </Grid>
               <Button
