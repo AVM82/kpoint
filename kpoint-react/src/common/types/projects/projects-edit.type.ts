@@ -1,5 +1,6 @@
 export type ProjectsEditType = {
   title: string,
+  url: string
   summary: string,
   description: string,
   tags: string[],

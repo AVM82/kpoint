@@ -22,7 +22,8 @@ const ukTranslation = {
   share_button: 'Поділитися',
   learn_more_button: 'Дізнатися більше',
   footer_sign: 'Всі права захищені',
-  add_suggestion: 'Додати пропозицію',
+  add_suggestion: 'Додати',
+  send_suggestion: 'Надіслати',
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',
@@ -60,9 +61,11 @@ const ukTranslation = {
   implementation_plan: 'План реалізації',
   new_project: 'Новий проєкт',
   project_name: 'Назва проєкту',
+  project_url: 'URL проєкту',
   city: 'Місто',
   category: 'Категорія',
   tag_placeholder: 'Введіть тег і натисніть [Enter]',
+  url_placeholder: 'В це поле можна вводити лише латинські літери та цифри',
   summary: 'Короткий опис і мета',
   project_idea: 'Ідея. Проблема, яку вирішує проєкт',
   financing: 'Фінансування',
@@ -74,11 +77,13 @@ const ukTranslation = {
   suggestions: 'Пропозиції',
   errors: {
     project_title: 'Назва проєкту не може бути пуста або мати більше 30 символів',
+    project_url: 'Довжина URL проекта має бути від 5 до 30 символів',
     project_tags: 'Кількість тегів може бути від 1 до 5',
     user_tags: 'Кількість тегів може бути від 1 до 10',
     project_summary: 'Короткий опис і мета не може бути пуста або мати більше 150 символів',
     project_description: 'Опис проєкта не може бути пуста або мати більше 512 символів',
     project_deadline: 'Дата дедлайну збору не може бути більшою за дату дедлайну повернення',
+    suggestion_size: 'Поле повинне містити від 1 до 200 символів',
   },
 };
 

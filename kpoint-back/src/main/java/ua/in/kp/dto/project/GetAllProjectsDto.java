@@ -7,7 +7,7 @@ import java.util.Set;
 @Data
 public class GetAllProjectsDto {
 
-    private String projectId;
+    private String url;
 
     private String title;
 
@@ -16,4 +16,5 @@ public class GetAllProjectsDto {
     private Set<String> tags;
 
     private String logoImgUrl;
+    private String state;
 }

@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ua.in.kp.enumeration.UserRole;
 
+import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -27,7 +27,7 @@ public class ApplicantEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
     @Column(unique = true)
     private String email;
@@ -37,4 +37,21 @@ public class ApplicantEntity {
     private String avatarImgUrl;
 
     private Set<UserRole> roles;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ApplicantEntity that = (ApplicantEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

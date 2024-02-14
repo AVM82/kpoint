@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
@@ -16,7 +15,9 @@ import * as React from 'react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { authAction } from 'store/actions';
+import { setIsLogin } from 'store/auth/reducer';
 
 import { ENV, StorageKey } from '../../common/enums/enums';
 import { ResponseType } from '../../common/types/response/response';
@@ -47,13 +48,15 @@ const SignInPage: FC = () => {
         const user = responseType.user;
         storage.setItem(StorageKey.TOKEN, responseType.token);
         storage.setItem(StorageKey.USER, JSON.stringify(user));
-        console.log(responseType.user);
+        toast(JSON.stringify(responseType.user));
         navigate('/');
       })
       .catch((error) => {
-        console.error('Помилка під час входу:', error);
+        toast.error(`Error while logging: ${error.message}`);
         setLoginError('Невірний логін або пароль');
       });
+
+    dispatch(setIsLogin());
   };
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -67,8 +70,7 @@ const SignInPage: FC = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
+      <Container component="main" maxWidth="xs" sx={{ flexGrow: 1 }}>
         <Box
           sx={{
             marginTop: 8,

@@ -19,48 +19,96 @@ const ProjectsPage: FC = () => {
 
   const maxPageElements = 5;
 
-  const { projects } = useAppSelector(({ project } ) => ({
+  const { projects } = useAppSelector(({ project }) => ({
     projects: project.projects,
   }));
 
   const [page, setPage] = useState(1);
 
   useLayoutEffect(() => {
-    dispatch(projectAction.getAllProjectsDefault({ size: maxPageElements, number: (page - 1) }));
-  }, [dispatch]);
+    dispatch(
+      projectAction.getAllProjectsDefault({
+        size: maxPageElements,
+        number: page - 1,
+      }),
+    );
+  }, [dispatch, page]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
-    dispatch(projectAction.getAllProjectsDefault({ size: maxPageElements, number: (value - 1) }));
+    dispatch(
+      projectAction.getAllProjectsDefault({
+        size: maxPageElements,
+        number: value - 1,
+      }),
+    );
     setPage(value);
   };
 
   const handleAddMoreClick = (): void => {
-    dispatch(projectAction.getAllProjectsAddMore({ size: maxPageElements, number: (page) }));
+    dispatch(
+      projectAction.getAllProjectsAddMore({
+        size: maxPageElements,
+        number: page,
+      }),
+    );
     setPage(page + 1);
   };
 
   return (
     <div className={styles.div}>
-      <Typography variant="h3" align="center">{t('projects')}</Typography>
-      <TextField label={t('search_field')} sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}></TextField>
-      <Grid container spacing={5} direction="row" justifyContent="center" alignItems="center">
-        {projects?.content.map((project) =>
-          <Grid item >
-            <ProjectCard project_id={project.projectId} title={project.title} summary={project.summary}
-              logoImgUrl={project.logoImgUrl} tags={project.tags}/>
-          </Grid>)}
+      <Typography variant="h3" align="center">
+        {t('projects')}
+      </Typography>
+      <TextField
+        label={t('search_field')}
+        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
+      ></TextField>
+      <Grid
+        container
+        spacing={5}
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+      >
+        {projects?.content.map((project) => (
+          <Grid item>
+            <ProjectCard
+              url={project.url}
+              title={project.title}
+              summary={project.summary}
+              logoImgUrl={project.logoImgUrl}
+              tags={project.tags}
+            />
+          </Grid>
+        ))}
       </Grid>
-      <Grid container direction="row" justifyContent="center" alignItems="center">
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+      >
         <Grid item>
-          <Button variant="text" onClick={handleAddMoreClick} startIcon={<SyncTwoToneIcon/>}
-            sx={{ margin: 2 }}>{t('buttons.show_more')}
+          <Button
+            variant="text"
+            onClick={handleAddMoreClick}
+            startIcon={<SyncTwoToneIcon />}
+            sx={{ margin: 2 }}
+          >
+            {t('buttons.show_more')}
           </Button>
         </Grid>
       </Grid>
-      <Pagination count={projects?.totalPages} page={page}
-        onChange={handleChange} showFirstButton showLastButton
-        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}/>
-    </div>);
+      <Pagination
+        count={projects?.totalPages}
+        page={page}
+        onChange={handleChange}
+        showFirstButton
+        showLastButton
+        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
+      />
+    </div>
+  );
 };
 
 export { ProjectsPage };

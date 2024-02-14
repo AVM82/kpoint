@@ -14,6 +14,8 @@ public class ProjectResponseDto {
 
     private String title;
 
+    private String url;
+
     private String summary;
 
     private String description;
