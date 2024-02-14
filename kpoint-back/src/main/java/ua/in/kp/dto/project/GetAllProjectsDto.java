@@ -16,4 +16,5 @@ public class GetAllProjectsDto {
     private Set<String> tags;
 
     private String logoImgUrl;
+    private String state;
 }

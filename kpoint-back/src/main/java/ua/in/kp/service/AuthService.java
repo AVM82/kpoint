@@ -12,6 +12,7 @@ import ua.in.kp.dto.user.UserLoginResponseDto;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
 import ua.in.kp.entity.ApplicantEntity;
+import ua.in.kp.entity.UserEntity;
 import ua.in.kp.mapper.ApplicantMapper;
 import ua.in.kp.repository.ApplicantRepository;
 import ua.in.kp.security.JwtUtil;
@@ -38,9 +39,10 @@ public class AuthService {
         Authentication authentication = authenticationManager
                 .authenticate(
                         new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         return new UserLoginResponseDto(
-                jwtUtil.generateToken(authentication.getName()),
-                userService.getByEmailFetchTagsSocialsRoles(authentication.getName())
+                jwtUtil.generateToken(userEntity.getEmail()),
+                userService.getByEmailFetchTagsSocialsRoles(userEntity.getEmail())
         );
     }
 

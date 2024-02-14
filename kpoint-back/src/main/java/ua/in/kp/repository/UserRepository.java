@@ -46,8 +46,12 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     Optional<UserEntity> findByIdForAdmin(@Param("id") String userId);
 
     @Modifying
-    @Query(value = "UPDATE public.users SET deleted=false WHERE id=:id ; "
+    @Query(value = "UPDATE public.users SET deleted=false WHERE id=:id ;"
             + "UPDATE public.user_roles SET deleted=false WHERE user_id=:id",
             nativeQuery = true)
     int unBanUserByIdForAdmin(@Param("id") String userId);
+
+    @Query("FROM UserEntity u LEFT JOIN FETCH u.tags LEFT JOIN FETCH u.socialNetworks "
+            + "WHERE u.username=:username")
+    Optional<UserEntity> findByUsernameFetchTagsSocials(String username);
 }

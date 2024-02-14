@@ -3,11 +3,9 @@ package ua.in.kp.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
+import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.service.ProfileService;
 
 @RestController
@@ -33,5 +31,11 @@ public class ProfileController {
     public ResponseEntity<ProjectsProfileResponseDto> getRecommendedProjects(
             @PathVariable String username, Pageable pageable) {
         return ResponseEntity.ok(profileService.getRecommendedProjects(username, pageable));
+    }
+
+    @PutMapping("/{username}/settings")
+    public ResponseEntity<UserChangeDto> changeUserData(@PathVariable String username,
+                                                        @RequestBody UserChangeDto userChangeDto) {
+        return ResponseEntity.ok(profileService.changeUserData(username, userChangeDto));
     }
 }
