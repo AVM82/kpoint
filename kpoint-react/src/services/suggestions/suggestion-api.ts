@@ -20,9 +20,15 @@ class SuggestionApi {
     this.#apiPrefix = apiPrefix;
   }
 
-  public getAllSuggestionsDefault(payload:{ size: number, number: number }): Promise<SuggestionsPageType> {
+  public getAllSuggestionsDefault(payload: {
+    size: number;
+    number: number;
+  }): Promise<SuggestionsPageType> {
     return this.#http.load(
-      `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
+      `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${
+        payload.number
+      }`,
+      {
         method: HttpMethod.GET,
         queryString: {
           size: payload.size,
@@ -32,9 +38,15 @@ class SuggestionApi {
     );
   }
 
-  public getAllSuggestionsAddMore(payload:{ size: number, number: number }): Promise<SuggestionsPageType> {
+  public getAllSuggestionsAddMore(payload: {
+    size: number;
+    number: number;
+  }): Promise<SuggestionsPageType> {
     return this.#http.load(
-      `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${payload.number}`, {
+      `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${
+        payload.number
+      }`,
+      {
         method: HttpMethod.GET,
         queryString: {
           size: payload.size,
@@ -45,31 +57,27 @@ class SuggestionApi {
   }
 
   public createNew(payload: SuggestionCreateType): Promise<SuggestionType> {
-    return this.#http.load(
-      `${this.#apiPrefix}/suggestions`, {
-        method: HttpMethod.POST,
-        payload: JSON.stringify(payload),
-        contentType: ContentType.JSON,
-      },
-    );
+    return this.#http.load(`${this.#apiPrefix}/suggestions`, {
+      method: HttpMethod.POST,
+      payload: JSON.stringify(payload),
+      contentType: ContentType.JSON,
+    });
   }
 
   public updateById(payload: { id: string }): Promise<SuggestionType> {
     return this.#http.load(
-      `${this.#apiPrefix}/suggestions/${payload.id}/likes`, {
+      `${this.#apiPrefix}/suggestions/${payload.id}/likes`,
+      {
         method: HttpMethod.PUT,
       },
     );
   }
 
   public deleteById(payload: { id: string }): Promise<void> {
-    return this.#http.load(
-      `${this.#apiPrefix}/suggestions/${payload.id}`, {
-        method: HttpMethod.DELETE,
-      },
-    );
+    return this.#http.load(`${this.#apiPrefix}/suggestions/${payload.id}`, {
+      method: HttpMethod.DELETE,
+    });
   }
-
 }
 
 export { SuggestionApi };

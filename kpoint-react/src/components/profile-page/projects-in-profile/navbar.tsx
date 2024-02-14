@@ -8,6 +8,7 @@ import { NavbarButton } from './navbarButton';
 const Navbar: FC = () => {
   const dispatch = useAppDispatch();
   // const [testUser, setTestUser] = useState<UserType>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [page, setPage] = useState(1);
 
   const maxPageElements = 4;
@@ -28,7 +29,7 @@ const Navbar: FC = () => {
     );
     setPage(value);
   };
-  console.log(page);
+
   /*const handleFavoritesClick = (event: ChangeEvent<unknown>): void => {
     const value = Number((event.currentTarget as HTMLButtonElement).value);
     dispatch(profileAction.getFavoritesProjects({ size: maxPageElements, number: (value - 1) }));
