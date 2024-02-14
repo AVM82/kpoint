@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.enumeration.SocialNetworkName;
 import ua.in.kp.validator.CollectionLength;
 
@@ -31,7 +32,7 @@ public class ProjectCreateRequestDto {
     @CollectionLength(min = 1, max = 5, message = "{project.tag.not.null}")
     private Set<String> tags;
 
-    private String logoImgUrl;
+    private MultipartFile logoImg;
 
     @DecimalMin(value = "-90.0", message = "{project.latitude.size}")
     @DecimalMax(value = "90.0", message = "{project.latitude.size}")

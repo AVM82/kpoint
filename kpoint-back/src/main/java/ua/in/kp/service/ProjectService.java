@@ -23,6 +23,7 @@ public class ProjectService {
     private final ProjectMapper projectMapper;
     private final UserService userService;
     private final TagRepository tagRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto) {
@@ -32,6 +33,7 @@ public class ProjectService {
 
         ProjectEntity projectEntity = projectMapper.toEntity(projectDto);
         projectEntity.setOwner(userService.getAuthenticated());
+        projectEntity.setLogoImgUrl(s3Service.uploadLogo(projectDto.getLogoImg()));
         projectRepository.save(projectEntity);
         log.info("ProjectEntity saved, id {}", projectEntity.getProjectId());
 
