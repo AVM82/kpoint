@@ -47,11 +47,10 @@ const SignInPage: FC = () => {
         const user = responseType.user;
         storage.setItem(StorageKey.TOKEN, responseType.token);
         storage.setItem(StorageKey.USER, JSON.stringify(user));
-        console.log(responseType.user);
         navigate('/');
       })
       .catch((error) => {
-        console.error('Помилка під час входу:', error);
+        error.toString();
         setLoginError('Невірний логін або пароль');
       });
 

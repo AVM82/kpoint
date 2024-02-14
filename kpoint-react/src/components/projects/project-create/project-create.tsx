@@ -52,11 +52,11 @@ export const ProjectCreate: FC = () => {
       dispatch(projectAction.createNew({ projectData }))
         .unwrap()
         .then((action): void => {
-          console.log(action);
           navigate('/projects/' + action.url);
         })
         .catch((reason) => {
-          console.log(reason);
+          reason.toString();
+          // console.log(reason);
         });
     }
   };

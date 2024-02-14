@@ -9,6 +9,7 @@ const resources = {
   uk: { translation: ukTranslation },
 };
 
+// eslint-disable-next-line import/no-named-as-default-member
 i18next
   .use(initReactI18next)
   .init({
