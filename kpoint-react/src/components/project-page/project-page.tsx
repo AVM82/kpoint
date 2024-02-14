@@ -13,6 +13,7 @@ import logo from 'logo.jpg';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
+// import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { CustomTabPanel } from '../../utils/function-custom-tab-panel';
 import { generateGoogleMapsLink } from '../../utils/function-generate-google-maps-link';
 import { getSocialMediaIcon } from '../../utils/function-social-media-icons';
@@ -35,11 +36,14 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
   const { t } = useTranslation();
   const projectImage: string = project.logoImgUrl === null ? { logo }.logo
     : `data:image/png;base64,${project.logoImgUrl}`;
-
+  // const dispatch = useAppDispatch();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number): void => {
     setValue(newValue);
   };
+  // const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    // dispatch(subscribeAction.subscribeToProject({}));
+  // };
 
   return (
     <Paper>
@@ -74,6 +78,7 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
                 backgroundImage: 'linear-gradient(0deg, #FFFFFF, #FFFFFF)',
                 color: '#828282',
               }}
+              // onClick={handleSubmit}
             >
               <AddIcon />
               {t('buttons.subscribe')}

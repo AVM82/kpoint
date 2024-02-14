@@ -91,6 +91,11 @@
             <version>${project.version}</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <version>3.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>

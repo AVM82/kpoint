@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
+import ua.in.kp.service.EmailServiceKp;
 import ua.in.kp.service.ProjectService;
 
 @RestController
@@ -23,6 +25,7 @@ import ua.in.kp.service.ProjectService;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final EmailServiceKp emailService;
 
     @PostMapping()
     public ResponseEntity<ProjectResponseDto> createProject(
@@ -46,5 +49,10 @@ public class ProjectController {
     public ResponseEntity<ProjectResponseDto> getProjectByUrl(@PathVariable String url) {
         ProjectResponseDto projectDto = projectService.getProjectByUrl(url);
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/{projectId}/subscribe")
+    private ResponseEntity<SubscribeResponseDto> subscribeToProject(@PathVariable String projectId) {
+        return new ResponseEntity<>(emailService.sendProjectSubscriptionMessage(projectId), HttpStatus.OK);
     }
 }

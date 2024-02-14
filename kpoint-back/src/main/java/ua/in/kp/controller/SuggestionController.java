@@ -2,6 +2,7 @@ package ua.in.kp.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.in.kp.dto.suggestion.SuggestionCreateRequestDto;
 import ua.in.kp.dto.suggestion.SuggestionResponseDto;
+import ua.in.kp.service.EmailServiceKp;
 import ua.in.kp.service.SuggestionService;
 
 import java.util.UUID;
@@ -23,13 +25,17 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/suggestions")
+@Slf4j
 public class SuggestionController {
 
     private final SuggestionService suggestionService;
+    private final EmailServiceKp emailService;
 
     @PostMapping()
     public ResponseEntity<SuggestionResponseDto> createSuggestion(
             @Valid @RequestBody SuggestionCreateRequestDto suggestionCreateRequestDto) {
+        emailService.sendProjectSubscriptionMessage("1");
+        log.info("Email to  was sent!");
         return new ResponseEntity<>(suggestionService.createSuggestion(suggestionCreateRequestDto), HttpStatus.CREATED);
     }
 
