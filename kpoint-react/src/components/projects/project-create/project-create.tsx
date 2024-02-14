@@ -68,7 +68,7 @@ export const ProjectCreate: FC = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleChange = (field: string, value: string): void => {
+  const handleChange = (field: string, value: string | File): void => {
     setProjectData((prevData) => ({ ...prevData, [field]: value }));
   };
 

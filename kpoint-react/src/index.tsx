@@ -3,6 +3,7 @@ import 'index.css';
 
 import { CssBaseline } from '@mui/material';
 import { MyProfile } from 'components/profile-page/my-profile/my-profile';
+import { ProjectReworked } from 'components/project-page/project-reworked';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -16,7 +17,6 @@ import { Toast } from './components/common/common';
 import { Footer } from './components/footer/footer';
 import { Header } from './components/header/header';
 import { ProfilePage } from './components/profile-page/projects-in-profile/profile-page';
-import { ProjectDetailsPage } from './components/project-page/project-details-page';
 import { ProjectCreate } from './components/projects/project-create/project-create';
 import { SuggestionsPage } from './components/suggestions-page/suggestions-page';
 
@@ -31,10 +31,7 @@ root.render(
           <Routes>
             <Route path="/" element={<ProjectsPage />} />
             <Route path="/:username" element={<ProfilePage />} />
-            <Route
-              path="/projects/:projectId"
-              element={<ProjectDetailsPage />}
-            />
+            <Route path="/projects/:projectId" element={<ProjectReworked />} />
             <Route path="/projects/new" element={<ProjectCreate />} />
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/sign-up" element={<SignUpPage />} />
