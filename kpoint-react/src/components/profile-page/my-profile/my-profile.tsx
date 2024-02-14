@@ -104,7 +104,7 @@ const MyProfile: FC = () => {
       // Update the state with the new values
 
       setTestEditForm((prev) => ({
-        ...prev!,
+        // ...prev!,
         firstName: updatedSettings.firstName,
         lastName: updatedSettings.lastName,
       }));
