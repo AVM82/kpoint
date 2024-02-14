@@ -100,7 +100,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <outputDirectory>${basedir}/../target</outputDirectory>
-                    <finalName>${name}-${project.version}</finalName>
+                    <finalName>${project.name}-${project.version}</finalName>
                     <skip>false</skip>
                     <excludes>
                         <exclude>

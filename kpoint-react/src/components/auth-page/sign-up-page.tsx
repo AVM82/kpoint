@@ -52,7 +52,6 @@ const SignUpPage: FC = () => {
   });
 
   useEffect(() => {
-    console.log('location.state', location.state);
 
     if (location.state && location.state.userData) {
       const { email, avatarImgUrl } = location.state.userData;
@@ -75,11 +74,8 @@ const SignUpPage: FC = () => {
 
   const validateForm = (data: SignUpType): Record<string, string> => {
     const errors: Record<string, string> = {};
-    console.log('data.tags.length');
-    console.log(data.tags.length);
 
     if (data.tags.length === 0 || data.tags.length > 10) {
-      console.log('add error');
       errors.tags = t('errors.user_tags');
       setErrors(errors);
     }
@@ -89,7 +85,6 @@ const SignUpPage: FC = () => {
 
   const handleDeleteTag = (chipToDelete: ChipTag) => () => {
     if (tag.length > 0 || tag.length === 10) {
-      console.log('delete errors');
       errors.tags = '';
     }
 
@@ -101,20 +96,11 @@ const SignUpPage: FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    console.log('formData');
-    console.log(formData);
 
     const formErrors = validateForm(formData);
     setErrors(formErrors);
 
-    console.log('errors');
-    console.log(errors);
-
     if (Object.keys(formErrors).length !== 0 || Object.keys(errors).length !== 0) {
-      console.log(Object.keys(formErrors).length);
-      console.log(Object.keys(errors).length);
-      console.log('return');
-
       return;
     }
     const dataToSend = {
@@ -126,14 +112,13 @@ const SignUpPage: FC = () => {
     dispatch(authAction.register(dataToSend))
       .unwrap()
       .then((user) => {
-        console.log(user);
 
         if (user != null) {
           navigate('/sign-in');
         }
       })
       .catch((error) => {
-        console.error('Невірно введені дані:', error);
+        error.toString();
         setRegisterError('Невірно введені дані');
       });
   };
@@ -280,12 +265,10 @@ const SignUpPage: FC = () => {
                         tag.trim().length > 0 &&
                         formData.tags.indexOf(tag.trim()) === -1
                       ) {
-                        console.log('push tag');
                         formData.tags.push(tag);
                         setChipTags(getChipTags);
                         setTag('');
                       }
-                      console.log(formData.tags);
                       event.preventDefault();
                     }
                   }}

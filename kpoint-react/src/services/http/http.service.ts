@@ -52,7 +52,6 @@ class Http {
     if (hasAuth) {
       const token = this.#storage.getItem(StorageKey.TOKEN);
       headers.append(HttpHeader.AUTHORIZATION, `Bearer ${token}`);
-      console.log(token);
     }
 
     return headers;
