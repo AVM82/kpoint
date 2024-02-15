@@ -56,7 +56,7 @@ public class ProfileController {
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content)})
-    @PatchMapping(path = "/{username}/password")
+    @PatchMapping(path = "/{username}/changePassword")
     public ResponseEntity<String> changePassword(@PathVariable String username, @RequestBody PasswordDto dto) {
         profileService.changePassword(username, dto);
         return ResponseEntity.ok("Password was changed successfully!");
