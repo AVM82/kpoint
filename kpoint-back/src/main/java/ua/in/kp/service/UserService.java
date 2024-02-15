@@ -123,4 +123,15 @@ public class UserService {
         return userRepository.findByUsernameFetchTagsSocials(username).orElseThrow(() ->
                 new UsernameNotFoundException("Can't find user by username " + username));
     }
+
+    public boolean checkIfValidOldPassword(UserEntity user, String oldPassword) {
+        return passwordEncoder.matches(oldPassword, user.getPassword());
+    }
+
+    @Transactional
+    public void changeUserPassword(UserEntity user, String newPassword) {
+        log.info("Change password for user {}", user.getUsername());
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }
