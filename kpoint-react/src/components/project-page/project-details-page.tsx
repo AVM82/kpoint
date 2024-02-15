@@ -1,6 +1,7 @@
 import { CircularProgress } from '@mui/material';
 import { FC, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/hooks';
@@ -12,12 +13,26 @@ const ProjectDetailsPage: FC = () => {
   const { projectId } = useParams();
 
   useEffect(() => {
-    if (projectId) {
-      dispatch(projectAction.getById({
-        id: projectId,
-      }));
-    }
+    const fetchData = async (): Promise<void> => {
+      try {
+        if (projectId) {
+          await dispatch(projectAction.getById({ id: projectId }));
+        }
+      } catch (error) {
+        toast.error('Error fetching project:', error);
+      }
+    };
+
+    fetchData();
   }, [dispatch, projectId]);
+
+  // useEffect(() => {
+  //   if (projectId) {
+  //     dispatch(projectAction.getById({
+  //       id: projectId,
+  //     }));
+  //   }
+  // }, [dispatch, projectId]);
 
   const { project } = useAppSelector(({ project }) => ({
     project: project.project,
@@ -28,7 +43,15 @@ const ProjectDetailsPage: FC = () => {
       {project ? (
         <ProjectPage
           project={project}
-          allStatuses={['NEW', 'GATHERING_FOR_START', 'EARNING', 'SUSPENDED', 'FAILED', 'SUCCESSFUL']} />
+          allStatuses={[
+            'NEW',
+            'GATHERING_FOR_START',
+            'EARNING',
+            'SUSPENDED',
+            'FAILED',
+            'SUCCESSFUL',
+          ]}
+        />
       ) : (
         <CircularProgress color="inherit" />
       )}

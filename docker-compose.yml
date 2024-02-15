@@ -1,0 +1,61 @@
+version: '3.9'
+
+volumes:
+  postgres_data:
+
+services:
+
+  storage:
+    image: 'postgres:15.3'
+    container_name: kp-storage
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:5432
+    healthcheck:
+      test: [ 'CMD-SHELL', 'su postgres', '&&', 'pg_isready' ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+
+  kpoint:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BACKEND_API: ${BACKEND_API}
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    container_name: kpoint
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      SERVER_PORT: ${PORT}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      OAUTH2_REDIRECT_URI: ${OAUTH2_REDIRECT_URI}
+
+#      BACKEND_API: ${BACKEND_API}
+#    healthcheck:
+#      test:
+#        [
+#          'CMD-SHELL',
+#          'curl -f http://localhost:${PORT}/actuator/health || exit 1',
+#        ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 20
+#      start_period: 30s
+    depends_on:
+      storage:
+        condition: service_healthy
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'

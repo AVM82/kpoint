@@ -22,6 +22,8 @@ const enTranslation = {
   share_button: 'Share',
   learn_more_button: 'Learn more',
   footer_sign: 'All rights reserved',
+  add_suggestion: 'Add',
+  send_suggestion: 'Send',
   statuses: {
     NEW: 'New',
     GATHERING_FOR_START: 'Gathering for start',
@@ -47,6 +49,7 @@ const enTranslation = {
     next: 'NEXT',
     log_out: 'Log out',
     create_project: 'Create project',
+    suggestions: 'Suggestions',
   },
   owner: 'Owner',
   description: 'Description',
@@ -59,9 +62,11 @@ const enTranslation = {
   implementation_plan: 'Implementation plan',
   new_project: 'New project',
   project_name: 'Project name',
+  project_url: 'Project URL',
   city: 'City',
   category: 'Category',
   tag_placeholder: 'Enter tag and press [Enter]',
+  url_placeholder: 'You can enter only lat letters and numbers in this field',
   summary: 'Brief description and purpose',
   project_idea: 'Idea. The problem that the project solves',
   financing: 'Financing',
@@ -72,10 +77,13 @@ const enTranslation = {
   stage: 'Stage',
   errors: {
     project_title: 'The project name cannot be empty or have more than 30 characters',
+    project_url: 'Project URL length must be from 5 to 30 symbols',
     project_tags: 'The number of tags can be from 1 to 5',
+    user_tags: 'The number of tags can be from 1 to 10',
     project_summary: 'Short description and purpose cannot be empty or have more than 150 characters',
     project_description: 'The project description cannot be empty or have more than 512 characters',
     project_deadline: 'The collection deadline cannot be later than the goal deadline',
+    suggestion_size: 'The field must contain from 1 to 200 characters',
   },
 };
 

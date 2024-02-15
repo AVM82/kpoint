@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
@@ -16,7 +15,9 @@ import * as React from 'react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { authAction } from 'store/actions';
+import { setIsLogin } from 'store/auth/reducer';
 
 import { ENV, StorageKey } from '../../common/enums/enums';
 import { ResponseType } from '../../common/types/response/response';
@@ -31,6 +32,7 @@ const SignInPage: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<SignInType>({
     email: '',
@@ -40,13 +42,21 @@ const SignInPage: FC = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
-    dispatch(authAction.login(formData)).then((action) => {
-      const responseType: ResponseType = action.payload as ResponseType;
-      const user = responseType.user;
-      storage.setItem(StorageKey.TOKEN, responseType.token);
-      storage.setItem(StorageKey.USER, JSON.stringify(user));
-      navigate('/');
-    });
+    dispatch(authAction.login(formData))
+      .then((action) => {
+        const responseType: ResponseType = action.payload as ResponseType;
+        const user = responseType.user;
+        storage.setItem(StorageKey.TOKEN, responseType.token);
+        storage.setItem(StorageKey.USER, JSON.stringify(user));
+        toast(JSON.stringify(responseType.user));
+        navigate('/');
+      })
+      .catch((error) => {
+        toast.error(`Error while logging: ${error.message}`);
+        setLoginError('Невірний логін або пароль');
+      });
+
+    dispatch(setIsLogin());
   };
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -60,8 +70,7 @@ const SignInPage: FC = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline/>
+      <Container component="main" maxWidth="xs" sx={{ flexGrow: 1 }}>
         <Box
           sx={{
             marginTop: 8,
@@ -71,17 +80,13 @@ const SignInPage: FC = () => {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: '#757575' }}>
-            <LockOutlinedIcon/>
+            <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5" sx={{ fontWeight: 'bold' }}>
             {t('welcome')}
           </Typography>
           <Typography>{t('sign_in_to_continue')}</Typography>
-          <Box
-            component="form"
-            sx={{ mt: 1 }}
-            onSubmit={handleSubmit}
-          >
+          <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit}>
             <TextField
               margin="normal"
               required
@@ -106,10 +111,11 @@ const SignInPage: FC = () => {
               autoComplete="current-password"
               onChange={handleOnChange}
             />
+            {loginError && <Typography color="error">{loginError}</Typography>}
             <Grid container alignItems="center" justifyContent="space-between">
               <Grid item>
                 <FormControlLabel
-                  control={<Checkbox value="remember" color="primary"/>}
+                  control={<Checkbox value="remember" color="primary" />}
                   label={t('remember_me')}
                 />
               </Grid>
@@ -122,16 +128,17 @@ const SignInPage: FC = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, bgcolor: '#757575' }}
+                sx={{ mt: 3, mb: 2, bgcolor: '#757575' }}
               >
                 {t('sign_in')}
               </Button>
-              <Grid container
+              <Grid
+                container
                 spacing={0}
                 direction="column"
                 alignItems="center"
                 justifyContent="center"
-                sx={{ mt: 3, mb: 2 }}>
+              >
                 <GoogleOAuthProvider clientId={ENV.OAUTH2_GOOGLE_CLIENT_ID}>
                   <OAuth2></OAuth2>
                 </GoogleOAuthProvider>

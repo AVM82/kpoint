@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ua.in</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.0.3</version>
+    </parent>
+
+    <artifactId>frontend</artifactId>
+
+    <properties>
+        <app.name>kpoint-react</app.name>
+        <node.version>v18.17.0</node.version>
+        <npm.version>10.4.0</npm.version>
+        <frontend-maven-plugin.version>1.14.2</frontend-maven-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/build</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
+                <configuration>
+                    <nodeVersion>${node.version}</nodeVersion>
+                    <npmVersion>${npm.version}</npmVersion>
+                    <installDirectory>target</installDirectory>
+                    <environmentVariables>
+                        <REACT_APP_API_PATH>http://localhost:3000/api</REACT_APP_API_PATH>
+                        <REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>95773710437-per0n2kjs8v1438vahr6bp0htrka5bvm.apps.googleusercontent.com</REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>
+                    </environmentVariables>
+                </configuration>
+                <executions>
+                  <execution>
+                    <id>install node and npm</id>
+                    <goals>
+                      <goal>install-node-and-npm</goal>
+                    </goals>
+                    <phase>prepare-package</phase>
+                  </execution>
+                  <execution>
+                    <id>npm install</id>
+                    <goals>
+                      <goal>npm</goal>
+                    </goals>
+                    <phase>prepare-package</phase>
+                    <configuration>
+                      <arguments>install</arguments>
+                    </configuration>
+                  </execution>
+<!--                    <execution>-->
+<!--                        <id>npm run lint</id>-->
+<!--                        <goals>-->
+<!--                            <goal>npm</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>test</phase>-->
+<!--                        <configuration>-->
+<!--                            <arguments>run lint</arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+                    <execution>
+                        <id>npm run build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy react build files</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/build</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

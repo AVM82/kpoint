@@ -10,10 +10,16 @@ import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
-import ua.in.kp.exception.ProjectNotFoundException;
+import ua.in.kp.entity.TagEntity;
+import ua.in.kp.entity.UserEntity;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.TagRepository;
+
+import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -53,8 +59,34 @@ public class ProjectService {
         log.info("Get by id project method started");
         ProjectEntity projectEntity = projectRepository.findBy(projectId)
                 .orElseThrow(() ->
-                        new ProjectNotFoundException("Project not found with ID: " + projectId));
+                        new NoSuchElementException("Project not found with ID: " + projectId));
         log.info("Project retrieved, id {}", projectEntity.getProjectId());
         return projectMapper.toDto(projectEntity);
+    }
+
+    @Transactional
+    public ProjectResponseDto getProjectByUrl(String url) {
+        log.info("Trying to get project by URL...");
+        ProjectEntity projectEntity = projectRepository.findByProjectUrl(url)
+                .orElseThrow(() ->
+                        new NoSuchElementException("Project with URL " + url + " not found."));
+        log.info("Project with url {} retrieved.", projectEntity.getUrl());
+        return projectMapper.toDto(projectEntity);
+    }
+
+    public Page<ProjectEntity> retrieveRecommendedProjects(
+            Set<TagEntity> tags, Set<String> userProjectsIds, Pageable pageable) {
+        return projectRepository.findByTagsExceptOwnedAndFavourite(
+                tags, userProjectsIds, pageable);
+    }
+
+    public Set<String> retrieveProjectsIds(Collection<ProjectEntity> projects) {
+        return projects.stream()
+                .map(ProjectEntity::getProjectId)
+                .collect(Collectors.toSet());
+    }
+
+    public Page<ProjectEntity> getProjectsByUser(UserEntity userEntity, Pageable pageable) {
+        return projectRepository.findAllByOwner(userEntity, pageable);
     }
 }

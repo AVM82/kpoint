@@ -3,6 +3,7 @@ package ua.in.kp.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SoftDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,12 +16,12 @@ import java.util.*;
 @Table(name = "users")
 @Getter
 @Setter
-
+@SoftDelete
 public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
     @Column(name = "username", columnDefinition = "VARCHAR(50)", nullable = false, unique = true)
     private String username;
@@ -45,21 +46,28 @@ public class UserEntity implements UserDetails {
     private String description;
 
     @ManyToMany
+    @SoftDelete
     private Set<TagEntity> tags;
 
     @ElementCollection
     @CollectionTable(name = "user_socials", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyEnumerated
     @Column(name = "url")
+    @SoftDelete
     private Map<SocialNetworkName, String> socialNetworks = new EnumMap<>(SocialNetworkName.class);
 
     @ElementCollection
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
+    @SoftDelete
     private Set<UserRole> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
     private Set<ProjectEntity> projectsOwned;
+
+    @ManyToMany
+    @SoftDelete
+    private Set<ProjectEntity> projectsFavourite;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -88,7 +96,20 @@ public class UserEntity implements UserDetails {
         return true;
     }
 
-    public String getUsername() {
-        return email;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

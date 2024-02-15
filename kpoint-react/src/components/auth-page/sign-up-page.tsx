@@ -1,5 +1,5 @@
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Chip } from '@mui/material';
+import { Chip, ListItem } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -7,7 +7,6 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -15,6 +14,7 @@ import * as React from 'react';
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { SignUpType } from '../../common/types/sign-up/sign-up';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
@@ -31,6 +31,7 @@ const SignUpPage: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [registerError, setRegisterError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<SignUpType>({
     firstName: '',
@@ -45,23 +46,20 @@ const SignUpPage: FC = () => {
   });
 
   const location = useLocation();
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [userData, setUserData] = useState({
     email: '',
     avatarImgUrl: '',
   });
 
   useEffect(() => {
-
     if (location.state && location.state.userData) {
       const { email, avatarImgUrl } = location.state.userData;
       setUserData({ email, avatarImgUrl });
     }
   }, [location.state]);
 
-  const [
-    tag,
-    setTag,
-  ] = useState('');
+  const [tag, setTag] = useState('');
 
   const getChipTags = (): ChipTag[] => {
     const result: ChipTag[] = [];
@@ -74,28 +72,80 @@ const SignUpPage: FC = () => {
 
   const [chipTags, setChipTags] = useState<ChipTag[]>(getChipTags());
 
+  const validateForm = (data: SignUpType): Record<string, string> => {
+    const errors: Record<string, string> = {};
+
+    if (data.tags.length === 0 || data.tags.length > 10) {
+      toast.warn(t('errors.user_tags'));
+      errors.tag = 'tag error';
+      setErrors(errors);
+    }
+
+    return errors;
+  };
+
   const handleDeleteTag = (chipToDelete: ChipTag) => () => {
+    if (tag.length > 0 || tag.length === 10) {
+      errors.tags = '';
+    }
+
     setChipTags((chips) =>
       chips.filter((chip) => chip.key !== chipToDelete.key),
     );
     formData.tags = formData.tags.filter((tag) => tag !== chipToDelete.tag);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleAddTag = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === 'Enter') {
+      if (formData.tags.length === 10) {
+        toast.warn('Тегів не може бути більше 10');
+
+        return;
+      }
+
+      if (tag.length > 0 || tag.length === 10) {
+        errors.tags = '';
+      }
+
+      if (tag.trim().length > 0 && formData.tags.indexOf(tag.trim()) === -1) {
+        formData.tags.push(tag);
+        setChipTags(getChipTags);
+        setTag('');
+      }
+      event.preventDefault();
+    }
+  };
+
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
     event.preventDefault();
+    const formErrors = validateForm(formData);
+    setErrors(formErrors);
+
+    if (
+      Object.keys(formErrors).length !== 0 ||
+      Object.keys(errors).length !== 0
+    ) {
+      return;
+    }
+
     const dataToSend = {
       ...formData,
       email: userData.email || formData.email,
       avatarImgUrl: userData.avatarImgUrl || 'placeholder',
     };
 
-    dispatch(authAction.register(dataToSend))
+    await dispatch(authAction.register(dataToSend))
       .unwrap()
       .then((user) => {
-
         if (user != null) {
           navigate('/sign-in');
         }
+      })
+      .catch((error) => {
+        toast.error(`Невірно введені дані: ${error.message}`);
+        setRegisterError('Невірно введені дані');
       });
   };
 
@@ -126,11 +176,7 @@ const SignUpPage: FC = () => {
           <Typography component="h1" variant="h5">
             {t('sign_up')}
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
-          >
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -155,7 +201,6 @@ const SignUpPage: FC = () => {
                   onChange={handleOnChange}
                 />
               </Grid>
-
               <Grid item xs={12}>
                 <TextField
                   required
@@ -167,7 +212,6 @@ const SignUpPage: FC = () => {
                   onChange={handleOnChange}
                 />
               </Grid>
-
               <Grid item xs={12}>
                 <TextField
                   required
@@ -222,27 +266,31 @@ const SignUpPage: FC = () => {
                   value={tag}
                   label="Теги"
                   fullWidth
+                  error={!!errors.tags}
+                  helperText={
+                    errors.tags ||
+                    'Введіть від 1 до 10 тегів, розділяючи їх "ENTER"'
+                  }
                   variant="outlined"
                   onChange={(event): void => {
                     event.preventDefault();
                     setTag(event.target.value);
                   }}
-                  onKeyDown={(event): void => {
-                    if (event.key === 'Enter') {
-                      if (tag.trim().length > 0 && formData.tags.indexOf(tag.trim()) === -1) {
-                        formData.tags.push(tag);
-                        setChipTags(getChipTags);
-                        setTag('');
-                      }
-                      event.preventDefault();
-                    }
-                  }}
+                  onKeyDown={(event): void => handleAddTag(event)}
                 />
                 <Grid
                   sx={{
-                    display: 'flex',
+                    // display: 'flex',
+                    // justifyContent: 'center',
+                    // flexWrap: 'no-wrap',
+                    // listStyle: 'none',
+                    // p: 0.5,
+                    // m: 0,
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', // Adjust 100px to your desired width
+                    gridAutoRows: 'auto',
+                    rowGap: '5px',
                     justifyContent: 'center',
-                    flexWrap: 'wrap',
                     listStyle: 'none',
                     p: 0.5,
                     m: 0,
@@ -251,11 +299,14 @@ const SignUpPage: FC = () => {
                 >
                   {chipTags.map((data) => {
                     return (
-                      <Stack alignItems={'center'} key={data.key}>
+                      <ListItem
+                        alignItems={'center'}
+                        key={data.key}
+                        disablePadding
+                      >
                         <Chip
                           sx={{
                             height: 'auto',
-                            mt: 2, mr: 2,
                             '& .MuiChip-label': {
                               display: 'block',
                               whiteSpace: 'normal',
@@ -264,11 +315,14 @@ const SignUpPage: FC = () => {
                           label={data.tag}
                           onDelete={handleDeleteTag(data)}
                         />
-                      </Stack>
+                      </ListItem>
                     );
                   })}
                 </Grid>
               </Grid>
+              {registerError && (
+                <Typography color="error">{registerError}</Typography>
+              )}
             </Grid>
             <Button
               type="submit"

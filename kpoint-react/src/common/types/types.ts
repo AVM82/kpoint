@@ -3,3 +3,4 @@ export { type HttpErrorDto, type HttpOptions } from './http/http';
 export { type NotificationPayload } from './notification/notification';
 export { type CitiesType,type GetAllProjectsType,type ProjectsEditType,
   type ProjectsPageType,type ProjectType } from './projects/projects';
+export { type SuggestionCreateType, type SuggestionsPageType,type SuggestionType } from './suggestions/suggestions';

@@ -3,54 +3,116 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import YouTubeIcon from '@mui/icons-material/YouTube';
-import Container from '@mui/material/Container';
+import { Box } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { FC } from 'react';
+import { StorageKey } from 'common/enums/app/storage-key.enum';
+import { FC, useEffect, useState } from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { storage } from 'services/services';
+
+import footerImg from '../../footer-rect.png';
+import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
 
 const Footer: FC = () => {
-
   const { t } = useTranslation();
+  const loggedIn = useAppSelector((state) => state.token.isloggedIn);
+  const [isStillLoggedIn, setStillLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = storage.getItem(StorageKey.TOKEN);
+
+    if (token) setStillLoggedIn(true);
+  }, []);
 
   return (
-    <Container maxWidth={false} sx={{
-      bgcolor: 'lightgray',
-      paddingBottom: 5,
-      marginTop: 'auto',
-      p: 4 }}>
-      <Grid container
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center">
-        <Grid item>
-          <Typography variant="h6" align="center">KEY POINTS</Typography>
-        </Grid>
-        <Grid item>
-          <Link  href="#" underline="none" color="black"><YouTubeIcon sx={{ margin: 1 }}/></Link>
-          <Link  href="#" underline="none" color="black"><FacebookIcon sx={{ margin: 1 }}/></Link>
-          <Link  href="#" underline="none" color="black"><TwitterIcon sx={{ margin: 1 }}/></Link>
-          <Link  href="#" underline="none" color="black"><InstagramIcon sx={{ margin: 1 }}/></Link>
-          <Link  href="#" underline="none" color="black"><LinkedInIcon sx={{ margin: 1 }}/></Link>
-        </Grid>
-      </Grid>
-      <Divider variant="fullWidth" orientation="horizontal" sx={{ bgcolor: 'black', marginTop: 1, marginBottom: 3 }}/>
-      <Grid container
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center">
-        <Grid item><Typography variant="body1">{t('footer_sign')}</Typography></Grid>
-        <Grid item>
-          <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Eleven</Link>
-          <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Twelve</Link>
-          <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Thirteen</Link>
-          <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Fourteen</Link>
-          <Link  href="#" underline="none" color="black" sx={{ margin: 1 }}>Fifteen</Link>
-        </Grid>
-      </Grid>
-    </Container>
+    <Box
+      component={'footer'}
+      sx={{ backgroundColor: '#474242', padding: '48px 80px' }}
+      flexShrink={0}
+    >
+      <Box
+        display={'flex'}
+        justifyContent={'space-between'}
+        alignItems={'center'}
+      >
+        <Box
+          display={'flex'}
+          justifyContent={'center'}
+          alignItems={'center'}
+          gap={'5px'}
+        >
+          <Box component={'img'} src={footerImg} alt="white rectangle"></Box>
+          <Typography variant="h6" align="center" color={'white'}>
+            KEY POINTS
+          </Typography>
+        </Box>
+        <Box
+          display={'flex'}
+          justifyContent={'space-between'}
+          gap={'5px'}
+          alignItems={'center'}
+        >
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            <YouTubeIcon />
+          </Link>
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            <FacebookIcon />
+          </Link>
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            <TwitterIcon />
+          </Link>
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            <InstagramIcon />
+          </Link>
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            <LinkedInIcon />
+          </Link>
+        </Box>
+      </Box>
+      <Divider
+        variant="fullWidth"
+        orientation="horizontal"
+        sx={{ bgcolor: '#FFFFFF', marginTop: '48px', marginBottom: '48px' }}
+      />
+      <Box
+        display={'flex'}
+        justifyContent={'space-between'}
+        alignItems={'center'}
+      >
+        <Box display={'flex'} justifyContent={'space-between'}>
+          <Typography variant="body1" color="#FFFFFF">
+            {t('footer_sign')}
+          </Typography>
+        </Box>
+        <Box>
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            Eleven
+          </Link>
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            Twelve
+          </Link>
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            Thirteen
+          </Link>
+          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+            Fourteen
+          </Link>
+          {loggedIn || isStillLoggedIn ? (
+            <Link
+              href="/suggestions"
+              underline="none"
+              color="#FFFFFF"
+              sx={{ margin: 1 }}
+            >
+              {t('suggestions')}
+            </Link>
+          ) : null}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
