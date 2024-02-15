@@ -1,5 +1,9 @@
 package ua.in.kp.security;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import ua.in.kp.exception.ApplicationException;
+
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +16,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+@Slf4j
 public class Encryptor {
     private static final String ENCRYPTION_TYPE = "AES";
     private static final Cipher cipher;
@@ -22,7 +27,8 @@ public class Encryptor {
             cipher = Cipher.getInstance(ENCRYPTION_TYPE);
             key = new SecretKeySpec(new SecureRandom().generateSeed(32), ENCRYPTION_TYPE);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new RuntimeException("Encryptor initialization failed", e);
+            log.error("Encryptor initialization failed", e);
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Encryptor initialization failed");
         }
     }
 
@@ -35,7 +41,8 @@ public class Encryptor {
             byte[] encrypted = cipher.doFinal(line.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(encrypted);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            throw new RuntimeException("Can't encrypt line " + line, e);
+            log.error("Can't encrypt line", e);
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Can't encrypt line " + line);
         }
     }
 
@@ -45,7 +52,8 @@ public class Encryptor {
             byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(line));
             return new String(decrypted);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            throw new RuntimeException("Can't decrypt line " + line, e);
+            log.error("Can't decrypt line", e);
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Can't decrypt line " + line);
         }
     }
 }

@@ -1,6 +1,7 @@
 package ua.in.kp.security;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,13 +10,16 @@ import ua.in.kp.repository.UserRepository;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmailFetchRoles(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Authentication Failed. User not found"));
+                .orElseThrow(() -> {
+                    log.warn("Authentication Failed. User {} not found", email);
+                    return new UsernameNotFoundException("Authentication Failed. User not found");
+                });
     }
 }
