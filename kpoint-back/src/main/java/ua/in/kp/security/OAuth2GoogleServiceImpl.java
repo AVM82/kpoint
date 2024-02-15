@@ -41,6 +41,7 @@ public class OAuth2GoogleServiceImpl implements OAuth2Service {
         String userEmail = tokenPayload.getEmail();
         log.info("Verify user email {}", userEmail);
         if (!idToken.getPayload().getEmailVerified()) {
+            log.warn("Email {} not verified", userEmail);
             throw new OAuth2AuthenticationException(translator.getLocaleMessage(
                     "exception.oauth2.email-not-verified", userEmail));
         }
@@ -59,6 +60,7 @@ public class OAuth2GoogleServiceImpl implements OAuth2Service {
                     redirectUri
             ).execute().parseIdToken();
         } catch (Exception e) {
+            log.warn("Authentication failed!", e);
             throw new OAuth2AuthenticationException(translator.getLocaleMessage(
                     "exception.oauth2.authentication-failed", e.getMessage()), e);
         }
