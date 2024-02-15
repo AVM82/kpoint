@@ -1,13 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { SuggestionCreateType, SuggestionsPageType,SuggestionType } from 'common/types/types';
+import {
+  SuggestionCreateType,
+  SuggestionsPageType,
+  SuggestionType,
+} from 'common/types/types';
 
-import { createNew, deleteById,getAllSuggestionsAddMore, getAllSuggestionsDefault, updateLikeById } from './actions';
+import {
+  createNew,
+  deleteById,
+  getAllSuggestionsAddMore,
+  getAllSuggestionsDefault,
+  updateLikeById,
+} from './actions';
 
-type State={
-  suggestion: SuggestionType | null,
-  suggestions: SuggestionsPageType | null,
-  editSuggestion: SuggestionCreateType | null,
-  status: boolean,
+type State = {
+  suggestion: SuggestionType | null;
+  suggestions: SuggestionsPageType | null;
+  editSuggestion: SuggestionCreateType | null;
+  status: boolean;
 };
 
 const initialState: State = {
@@ -23,7 +33,9 @@ const suggestionSlice = createSlice({
   reducers: {
     deleteData: (state, action) => {
       if (state.suggestions) {
-        state.suggestions.content = state.suggestions.content.filter((item) => item.id !== action.payload.id);
+        state.suggestions.content = state.suggestions.content.filter(
+          (item) => item.id !== action.payload.id,
+        );
       }
 
       if (state.suggestion && state.suggestion.id === action.payload.id) {
@@ -33,18 +45,21 @@ const suggestionSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllSuggestionsDefault.rejected, (state ) => {
+      .addCase(getAllSuggestionsDefault.rejected, (state) => {
         state.suggestions = null;
       })
       .addCase(getAllSuggestionsDefault.fulfilled, (state, { payload }) => {
         state.suggestions = payload;
       })
-      .addCase(getAllSuggestionsAddMore.rejected, (state ) => {
+      .addCase(getAllSuggestionsAddMore.rejected, (state) => {
         state.suggestions = null;
       })
       .addCase(getAllSuggestionsAddMore.fulfilled, (state, { payload }) => {
-        if(state.suggestions != null) {
-          state.suggestions.content = [...state.suggestions.content, ...payload?.content ?? []];
+        if (state.suggestions != null) {
+          state.suggestions.content = [
+            ...state.suggestions.content,
+            ...(payload?.content ?? []),
+          ];
         }
       })
       .addCase(createNew.rejected, (state) => {
@@ -52,6 +67,7 @@ const suggestionSlice = createSlice({
       })
       .addCase(createNew.fulfilled, (state, { payload }) => {
         state.editSuggestion = payload;
+        state.status = !state.status;
       })
       .addCase(updateLikeById.rejected, (state) => {
         state.editSuggestion = null;
@@ -64,12 +80,11 @@ const suggestionSlice = createSlice({
       })
       .addCase(deleteById.fulfilled, (state) => {
         state.status = true;
-      },
-      );
+      });
   },
 });
 
 const { deleteData } = suggestionSlice.actions;
 const suggestionReducer = suggestionSlice.reducer;
 
-export { deleteData,suggestionReducer };
+export { deleteData, suggestionReducer };

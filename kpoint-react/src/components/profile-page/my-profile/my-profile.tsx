@@ -11,7 +11,9 @@ import {
 } from '@mui/material';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
+import { ImageUploader } from 'components/common/common';
 import React, { FC, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { storage } from 'services/services';
 
 import profileImg from '../../../profile-img-test.svg';
@@ -103,8 +105,7 @@ const MyProfile: FC = () => {
 
       // Update the state with the new values
 
-      setTestEditForm((prev) => ({
-        ...prev,
+      setTestEditForm(() => ({
         firstName: updatedSettings.firstName,
         lastName: updatedSettings.lastName,
       }));
@@ -125,11 +126,8 @@ const MyProfile: FC = () => {
         // Store the updated user object back in storage
         storage.setItem(StorageKey.USER, JSON.stringify(storedUser));
       }
-
-      console.log(testEditForm);
-      console.log('Profile settings updated successfully');
     } catch (error) {
-      console.error('Error updating profile settings:', error.message);
+      toast.error('Error updating profile settings:', error.message);
     }
   };
 
@@ -137,6 +135,10 @@ const MyProfile: FC = () => {
     storage.removeItem(StorageKey.TOKEN);
     storage.removeItem(StorageKey.USER);
     window.location.href = '/';
+  };
+
+  const handleChangeImage = (field: string, value: string | File): void => {
+    toast.success(value.toString());
   };
 
   return (
@@ -175,8 +177,12 @@ const MyProfile: FC = () => {
         gap={'150px'}
         margin={'0 50px'}
       >
-        <Box display={'flex'} flexDirection={'column'} minWidth={'221px'}>
-          <Box component={'img'} alt="avatar" src={profileImg}></Box>
+        <Box display={'flex'} flexDirection={'column'} minWidth={'221px'} minHeight={'430px'}
+        justifyContent={'space-between'}>
+          <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'200px'}>
+            {/* <Box component={'img'} alt="avatar" src={profileImg}></Box> */}
+          <ImageUploader component="profile-page" xs={12} handleChange={handleChangeImage}/>
+          </Box>
           <Box
             sx={{
               display: 'flex',
@@ -204,74 +210,56 @@ const MyProfile: FC = () => {
             <MyProfileMenuButton label="Вихід" onClick={handleLogout} />
           </Box>
         </Box>
-        <Box display={'flex'}>
-          <FormControl>
-            <form
-              onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
-                handleSubmit(e)
-              }
-            >
-              <Grid container spacing={2}>
-                <Grid item xs={3} md={6}>
-                  <FormLabel>Ім'я</FormLabel>
-                  <TextField
-                    fullWidth
-                    name="firstName"
-                    placeholder={testUser?.firstName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                      handleChange(e)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={3} md={6}>
-                  <FormLabel>Прізвище</FormLabel>
-                  <TextField
-                    fullWidth
-                    name="lastName"
-                    placeholder={testUser?.lastName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                      handleChange(e)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={3} md={6}>
-                  <FormLabel>Email</FormLabel>
-                  <TextField fullWidth placeholder={testUser?.email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                      handleChange(e)
-                    } />
-                </Grid>
-                <Grid item xs={3} md={6}>
-                  <FormLabel>Пароль</FormLabel>
-                  <TextField fullWidth  defaultValue={'Password'}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                      handleChange(e)
-                    }
-                 />
-                </Grid>
-                <Grid item xs={3} md={6}>
-                  <FormLabel>Країна</FormLabel>
-                  <TextField fullWidth defaultValue={'Країна'}
-                   onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                      handleChange(e)
-                    } />
-                </Grid>
-                <Grid item xs={3} md={6}>
-                  <FormLabel>Місто</FormLabel>
-                  <TextField fullWidth defaultValue={'Місто'}
-                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                      handleChange(e)
-                    } />
-                </Grid>
-              </Grid>
-              <Button
-                sx={{ alignSelf: 'end', marginTop: '56px' }}
-                type="submit"
-              >
-                Зберегти
-              </Button>
-            </form>
-          </FormControl>
+        <Box
+          display={'flex'}
+          component={'form'}
+          onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
+            handleSubmit(e)
+          }
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={3} md={6}>
+              <FormLabel>Ім'я</FormLabel>
+              <TextField
+                fullWidth
+                name="firstName"
+                placeholder={testUser?.firstName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                  handleChange(e)
+                }
+              />
+            </Grid>
+            <Grid item xs={3} md={6}>
+              <FormLabel>Прізвище</FormLabel>
+              <TextField
+                fullWidth
+                name="lastName"
+                placeholder={testUser?.lastName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                  handleChange(e)
+                }
+              />
+            </Grid>
+            <Grid item xs={3} md={6}>
+              <FormLabel>Email</FormLabel>
+              <TextField fullWidth placeholder={testUser?.email} />
+            </Grid>
+            <Grid item xs={3} md={6}>
+              <FormLabel>Пароль</FormLabel>
+              <TextField fullWidth defaultValue={'Password'} />
+            </Grid>
+            <Grid item xs={3} md={6}>
+              <FormLabel>Країна</FormLabel>
+              <TextField fullWidth defaultValue={'Країна'} />
+            </Grid>
+            <Grid item xs={3} md={6}>
+              <FormLabel>Місто</FormLabel>
+              <TextField fullWidth defaultValue={'Місто'} />
+            </Grid>
+          </Grid>
+          <Button sx={{ alignSelf: 'end', marginTop: '56px' }} type="submit">
+            Зберегти
+          </Button>
         </Box>
       </Box>
     </Box>
