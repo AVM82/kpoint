@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
@@ -17,6 +18,7 @@ import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.exception.ApplicationException;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.UserRepository;
@@ -79,7 +81,7 @@ public class ProfileService {
             JsonNode patched = patch.apply(objectMapper.convertValue(userChangeDto, JsonNode.class));
             return objectMapper.treeToValue(patched, UserChangeDto.class);
         } catch (JsonPatchException | JsonProcessingException e) {
-            throw new UserException("User cannot be updated");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "User cannot be updated");
         }
     }
 }
