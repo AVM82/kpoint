@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.in.kp.dto.suggestion.SuggestionCreateRequestDto;
 import ua.in.kp.dto.suggestion.SuggestionResponseDto;
-import ua.in.kp.service.EmailServiceKp;
 import ua.in.kp.service.SuggestionService;
 
 import java.util.UUID;
@@ -29,13 +28,10 @@ import java.util.UUID;
 public class SuggestionController {
 
     private final SuggestionService suggestionService;
-    private final EmailServiceKp emailService;
 
     @PostMapping()
     public ResponseEntity<SuggestionResponseDto> createSuggestion(
             @Valid @RequestBody SuggestionCreateRequestDto suggestionCreateRequestDto) {
-        emailService.sendProjectSubscriptionMessage("1");
-        emailService.sendUpdateProjectMail("1");
         return new ResponseEntity<>(suggestionService.createSuggestion(suggestionCreateRequestDto), HttpStatus.CREATED);
     }
 
