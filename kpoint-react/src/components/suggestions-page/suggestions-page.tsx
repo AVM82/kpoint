@@ -1,5 +1,5 @@
 import SyncTwoToneIcon from '@mui/icons-material/SyncTwoTone';
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
@@ -12,6 +12,7 @@ import { deleteData } from 'store/suggestions/reducer';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
+import suggestionsImage from '../../suggestions-empty-img.png';
 import { AddSuggestionModal } from './add-suggestions-modale';
 import { SuggestionCard } from './suggestion-card';
 
@@ -77,58 +78,108 @@ const SuggestionsPage: FC = () => {
   };
 
   return (
-    <Box sx={{ width: 900, margin: 'auto', padding: 2 }}>
-      <Typography variant="h3" align="center">
-        {t('suggestions')}
-      </Typography>
-      <Grid container justifyContent="flex-end">
-        <Button
-          onClick={handleOpenModal}
-          variant="contained"
-          color="primary"
-          className="mb-2"
-        >
-          {t('add_suggestion')}
-        </Button>
-      </Grid>
-      {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal} />}
-      <Grid item>
-        {suggestions?.content.map((suggestion) => (
-          <Grid item key={suggestion.id}>
-            <SuggestionCard
-              createdAt={suggestion.createdAt}
-              likeCount={suggestion.likeCount}
-              logoImgUrl="kjv"
-              suggestion={suggestion.suggestion}
-              user={suggestion.user}
-              id={suggestion.id}
-              liked={suggestion.liked}
-              onDelete={handleDeleteSuggestion}
-            />
-          </Grid>
-        ))}
-      </Grid>
-      <Grid
-        container
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Grid item>
-          <Button
-            variant="text"
-            onClick={handleAddMoreClick}
-            startIcon={<SyncTwoToneIcon />}
-            sx={{ margin: 2 }}
+    <Container maxWidth={'lg'} sx={{ flexGrow: 1 }}>
+      {suggestions && suggestions.content.length > 0 ? (
+        <Box sx={{ width: '100%', margin: '60px 0 140px 0' }}>
+          <Box
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            width={'100%'}
+            marginBottom={'107px'}
           >
-            {t('buttons.show_more')}
-          </Button>
-        </Grid>
-      </Grid>
-      <Pagination count={suggestions?.totalPages} page={page}
-        onChange={handleChange} showFirstButton showLastButton
-        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}/>
-    </Box>
+            <Typography variant="h3" align="center" width={'100%'}>
+              {t('suggestions')}
+            </Typography>
+            <Box display={'flex'} justifyContent={'end'}>
+              <Button
+                onClick={handleOpenModal}
+                variant="contained"
+                color="primary"
+              >
+                {t('add_suggestion')}
+              </Button>
+            </Box>
+          </Box>
+          {modalOpen && (
+            <AddSuggestionModal handleCloseModal={handleCloseModal} />
+          )}
+          <Grid item>
+            {suggestions?.content.map((suggestion) => (
+              <Grid item key={suggestion.id}>
+                <SuggestionCard
+                  createdAt={suggestion.createdAt}
+                  likeCount={suggestion.likeCount}
+                  logoImgUrl="kjv"
+                  suggestion={suggestion.suggestion}
+                  user={suggestion.user}
+                  id={suggestion.id}
+                  liked={suggestion.liked}
+                  onDelete={handleDeleteSuggestion}
+                />
+              </Grid>
+            ))}
+          </Grid>
+          <Grid
+            container
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Grid item>
+              <Button
+                variant="text"
+                onClick={handleAddMoreClick}
+                startIcon={<SyncTwoToneIcon />}
+                sx={{ margin: 2 }}
+              >
+                {t('buttons.show_more')}
+              </Button>
+            </Grid>
+          </Grid>
+          <Pagination
+            count={suggestions?.totalPages}
+            page={page}
+            onChange={handleChange}
+            showFirstButton
+            showLastButton
+            sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
+          />
+        </Box>
+      ) : (
+        <Box
+          display={'flex'}
+          justifyContent={'center'}
+          alignItems={'center'}
+          margin={'60px 0 140px 0'}
+          flexDirection={'column'}
+        >
+          <Box
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            width={'100%'}
+          >
+            <Typography variant="h3" align="center" width={'100%'}>
+              {t('suggestions')}
+            </Typography>
+            <Box display={'flex'} justifyContent={'end'}>
+              <Button
+                onClick={handleOpenModal}
+                variant="contained"
+                color="primary"
+              >
+                {t('add_suggestion')}
+              </Button>
+            </Box>
+            {modalOpen && (
+              <AddSuggestionModal handleCloseModal={handleCloseModal} />
+            )}
+          </Box>
+          <Box component={'img'} src={suggestionsImage}></Box>
+        </Box>
+      )}
+    </Container>
   );
 };
 
