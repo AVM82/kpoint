@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import Link from '@mui/material/Link';
-import { CustomTimeline } from 'components/common/common';
+import { CustomTimeline, ImageUploader } from 'components/common/common';
 import { useAppDispatch } from 'hooks/hooks';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
 import { FC, useEffect } from 'react';
@@ -68,6 +68,10 @@ const ProjectReworked: FC = () => {
   //   setValue(newValue);
   // };
 
+  const handleChange = (field: string, value: string | File): void => {
+    toast.success(value.toString());
+  };
+
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       try {
@@ -107,14 +111,11 @@ const ProjectReworked: FC = () => {
               alignItems={'center'}
             >
               <Grid maxWidth={390} width={390} container>
-                <Grid item xs={5}>
-                  <Box
-                    width={150}
-                    height={150}
-                    bgcolor={'rgb(130, 130, 131)'}
-                    borderRadius={6}
-                  ></Box>
-                </Grid>
+                <ImageUploader
+                  handleChange={handleChange}
+                  component="project-page"
+                  xs={5}
+                />
                 <Grid item xs={7}>
                   <Typography
                     variant="h2"

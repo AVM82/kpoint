@@ -1,16 +1,9 @@
-import {
-  Autocomplete,
-  Box,
-  Chip,
-  FormLabel,
-  Grid,
-  TextField,
-} from '@mui/material';
+import { Autocomplete, Chip, Grid, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { ImageUploader } from 'components/common/common';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
 import getSlug from 'speakingurl';
 
 import {
@@ -36,7 +29,6 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
   errors,
 }) => {
   const { t } = useTranslation();
-  const [previewUrl, setPreviewUrl] = useState('');
   const [tag, setTag] = useState('');
 
   const getChipTags = (): ChipTag[] => {
@@ -61,78 +53,11 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
     );
   };
 
-  const handleLogoPreview = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (e.currentTarget.files?.[0]) {
-      const projectLogo = e.currentTarget.files?.[0];
-
-      if (projectLogo.size > 5000000) {
-        toast.warn('File is to big');
-
-        return;
-      }
-      const previewUrl = URL.createObjectURL(projectLogo);
-      setPreviewUrl(previewUrl);
-      handleChange('logo', projectLogo);
-    }
-  };
-
   return (
     <Grid container rowSpacing={3}>
-      <Grid container>
-        <Grid
-          item
-          xs={3}
-          container
-          justifyContent={'center'}
-          alignItems={'center'}
-        >
-          <Box
-            sx={{
-              border: '2px dotted #757575',
-              borderRadius: '4px',
-              padding: '8px',
-              width: '100%',
-              minHeight: '70%',
-              overflow: 'hidden',
-              margin: '8px',
-            }}
-          >
-            <Box
-              component={'img'}
-              src={previewUrl}
-              alt="project-preview-image"
-              sx={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%' }}
-            ></Box>
-          </Box>
-          <input
-            type="file"
-            id="project-logo"
-            accept=".jpg, .jpeg, .png"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-              handleLogoPreview(e)
-            }
-            style={{ display: 'none' }}
-          />
-          <FormLabel
-            htmlFor="project-logo"
-            sx={{
-              cursor: 'pointer',
-              border: '1px solid black',
-              borderRadius: '6px',
-              padding: '3px',
-              flexGrow: 1,
-              flexShrink: 0,
-              margin: '8px',
-              '&:hover': {
-                bgcolor: 'green',
-              },
-              textAlign: 'center',
-            }}
-          >
-            Завантажити лого
-          </FormLabel>
-        </Grid>
-        <Grid item xs={9}>
+      <Grid container justifyContent={'space-between'}>
+        <ImageUploader handleChange={handleChange} component="default" xs={3}/>
+        <Grid item xs={8}>
           <Grid item xs={true}>
             <TextField
               label={t('project_name')}

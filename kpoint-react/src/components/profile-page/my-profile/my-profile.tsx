@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
+import { ImageUploader } from 'components/common/common';
 import React, { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { storage } from 'services/services';
@@ -103,8 +104,7 @@ const MyProfile: FC = () => {
 
       // Update the state with the new values
 
-      setTestEditForm((prev) => ({
-        ...prev!,
+      setTestEditForm(() => ({
         firstName: updatedSettings.firstName,
         lastName: updatedSettings.lastName,
       }));
@@ -134,6 +134,10 @@ const MyProfile: FC = () => {
     storage.removeItem(StorageKey.TOKEN);
     storage.removeItem(StorageKey.USER);
     window.location.href = '/';
+  };
+
+  const handleChangeImage = (field: string, value: string | File): void => {
+    toast.success(value.toString());
   };
 
   return (
@@ -172,8 +176,12 @@ const MyProfile: FC = () => {
         gap={'150px'}
         margin={'0 50px'}
       >
-        <Box display={'flex'} flexDirection={'column'} minWidth={'221px'}>
-          <Box component={'img'} alt="avatar" src={profileImg}></Box>
+        <Box display={'flex'} flexDirection={'column'} minWidth={'221px'} minHeight={'430px'} 
+        justifyContent={'space-between'}>
+          <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'200px'}>
+            {/* <Box component={'img'} alt="avatar" src={profileImg}></Box> */}
+          <ImageUploader component="profile-page" xs={12} handleChange={handleChangeImage}/>
+          </Box>
           <Box
             sx={{
               display: 'flex',
