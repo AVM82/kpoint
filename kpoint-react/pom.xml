@@ -7,7 +7,7 @@
     <parent>
         <groupId>ua.in</groupId>
         <artifactId>parent</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </parent>
 
     <artifactId>frontend</artifactId>
@@ -43,10 +43,6 @@
                     <nodeVersion>${node.version}</nodeVersion>
                     <npmVersion>${npm.version}</npmVersion>
                     <installDirectory>target</installDirectory>
-                    <environmentVariables>
-                        <REACT_APP_API_PATH>${env.BACKEND_API}</REACT_APP_API_PATH>
-                        <REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>${env.GOOGLE_CLIENT_ID}</REACT_APP_OAUTH2_GOOGLE_CLIENT_ID>
-                    </environmentVariables>
                 </configuration>
                 <executions>
                     <execution>

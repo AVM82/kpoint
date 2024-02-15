@@ -1,5 +1,6 @@
 package ua.in.kp.controller;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +34,8 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getRecommendedProjects(username, pageable));
     }
 
-    @PutMapping("/{username}/settings")
-    public ResponseEntity<UserChangeDto> changeUserData(@PathVariable String username,
-                                                        @RequestBody UserChangeDto userChangeDto) {
-        return ResponseEntity.ok(profileService.changeUserData(username, userChangeDto));
+    @PatchMapping(path = "/{username}/settings", consumes = "application/json-patch+json")
+    public ResponseEntity<UserChangeDto> updateUser(@PathVariable String username, @RequestBody JsonPatch patch) {
+        return ResponseEntity.ok(profileService.updateUserData(username, patch));
     }
 }

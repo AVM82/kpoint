@@ -14,6 +14,7 @@ import * as React from 'react';
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { SignUpType } from '../../common/types/sign-up/sign-up';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
@@ -52,8 +53,6 @@ const SignUpPage: FC = () => {
   });
 
   useEffect(() => {
-    console.log('location.state', location.state);
-
     if (location.state && location.state.userData) {
       const { email, avatarImgUrl } = location.state.userData;
       setUserData({ email, avatarImgUrl });
@@ -75,12 +74,10 @@ const SignUpPage: FC = () => {
 
   const validateForm = (data: SignUpType): Record<string, string> => {
     const errors: Record<string, string> = {};
-    console.log('data.tags.length');
-    console.log(data.tags.length);
 
     if (data.tags.length === 0 || data.tags.length > 10) {
-      console.log('add error');
-      errors.tags = t('errors.user_tags');
+      toast.warn(t('errors.user_tags'));
+      errors.tag = 'tag error';
       setErrors(errors);
     }
 
@@ -89,7 +86,6 @@ const SignUpPage: FC = () => {
 
   const handleDeleteTag = (chipToDelete: ChipTag) => () => {
     if (tag.length > 0 || tag.length === 10) {
-      console.log('delete errors');
       errors.tags = '';
     }
 
@@ -99,41 +95,56 @@ const SignUpPage: FC = () => {
     formData.tags = formData.tags.filter((tag) => tag !== chipToDelete.tag);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    console.log('formData');
-    console.log(formData);
+  const handleAddTag = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === 'Enter') {
+      if (formData.tags.length === 10) {
+        toast.warn('Тегів не може бути більше 10');
 
+        return;
+      }
+
+      if (tag.length > 0 || tag.length === 10) {
+        errors.tags = '';
+      }
+
+      if (tag.trim().length > 0 && formData.tags.indexOf(tag.trim()) === -1) {
+        formData.tags.push(tag);
+        setChipTags(getChipTags);
+        setTag('');
+      }
+      event.preventDefault();
+    }
+  };
+
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    event.preventDefault();
     const formErrors = validateForm(formData);
     setErrors(formErrors);
 
-    console.log('errors');
-    console.log(errors);
-
-    if (Object.keys(formErrors).length !== 0 || Object.keys(errors).length !== 0) {
-      console.log(Object.keys(formErrors).length);
-      console.log(Object.keys(errors).length);
-      console.log('return');
-
+    if (
+      Object.keys(formErrors).length !== 0 ||
+      Object.keys(errors).length !== 0
+    ) {
       return;
     }
+
     const dataToSend = {
       ...formData,
       email: userData.email || formData.email,
       avatarImgUrl: userData.avatarImgUrl || 'placeholder',
     };
 
-    dispatch(authAction.register(dataToSend))
+    await dispatch(authAction.register(dataToSend))
       .unwrap()
       .then((user) => {
-        console.log(user);
-
         if (user != null) {
           navigate('/sign-in');
         }
       })
       .catch((error) => {
-        console.error('Невірно введені дані:', error);
+        toast.error(`Невірно введені дані: ${error.message}`);
         setRegisterError('Невірно введені дані');
       });
   };
@@ -190,7 +201,6 @@ const SignUpPage: FC = () => {
                   onChange={handleOnChange}
                 />
               </Grid>
-
               <Grid item xs={12}>
                 <TextField
                   required
@@ -202,7 +212,6 @@ const SignUpPage: FC = () => {
                   onChange={handleOnChange}
                 />
               </Grid>
-
               <Grid item xs={12}>
                 <TextField
                   required
@@ -258,43 +267,30 @@ const SignUpPage: FC = () => {
                   label="Теги"
                   fullWidth
                   error={!!errors.tags}
-                  helperText={errors.tags || 'Введіть від 1 до 10 тегів, розділяючи їх \'ENTER\''}
+                  helperText={
+                    errors.tags ||
+                    'Введіть від 1 до 10 тегів, розділяючи їх "ENTER"'
+                  }
                   variant="outlined"
                   onChange={(event): void => {
                     event.preventDefault();
                     setTag(event.target.value);
                   }}
-                  onKeyDown={(event): void => {
-                    if (event.key === 'Enter') {
-                      if (formData.tags.length === 10) {
-                        errors.tags = 'Тегів не може бути більше 10';
-
-                        return;
-                      }
-
-                      if (tag.length > 0 || tag.length === 10) {
-                        errors.tags = '';
-                      }
-
-                      if (
-                        tag.trim().length > 0 &&
-                        formData.tags.indexOf(tag.trim()) === -1
-                      ) {
-                        console.log('push tag');
-                        formData.tags.push(tag);
-                        setChipTags(getChipTags);
-                        setTag('');
-                      }
-                      console.log(formData.tags);
-                      event.preventDefault();
-                    }
-                  }}
+                  onKeyDown={(event): void => handleAddTag(event)}
                 />
                 <Grid
                   sx={{
-                    display: 'flex',
+                    // display: 'flex',
+                    // justifyContent: 'center',
+                    // flexWrap: 'no-wrap',
+                    // listStyle: 'none',
+                    // p: 0.5,
+                    // m: 0,
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', // Adjust 100px to your desired width
+                    gridAutoRows: 'auto',
+                    rowGap: '5px',
                     justifyContent: 'center',
-                    flexWrap: 'wrap',
                     listStyle: 'none',
                     p: 0.5,
                     m: 0,
@@ -303,7 +299,11 @@ const SignUpPage: FC = () => {
                 >
                   {chipTags.map((data) => {
                     return (
-                      <ListItem alignItems={'center'} key={data.key}>
+                      <ListItem
+                        alignItems={'center'}
+                        key={data.key}
+                        disablePadding
+                      >
                         <Chip
                           sx={{
                             height: 'auto',
@@ -320,7 +320,9 @@ const SignUpPage: FC = () => {
                   })}
                 </Grid>
               </Grid>
-              {registerError && <Typography color="error">{registerError}</Typography>}
+              {registerError && (
+                <Typography color="error">{registerError}</Typography>
+              )}
             </Grid>
             <Button
               type="submit"

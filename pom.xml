@@ -12,7 +12,7 @@
 
     <groupId>ua.in</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>pom</packaging>
     <name>kPoint</name>
     <description>Project of projects</description>

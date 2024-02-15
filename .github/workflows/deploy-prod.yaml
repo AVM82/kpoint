@@ -20,6 +20,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
+        env:
+          REACT_APP_API_PATH: ${{ secrets.REACT_APP_API_PATH_PROD }}
+          REACT_APP_OAUTH2_GOOGLE_CLIENT_ID: ${{ secrets.REACT_APP_OAUTH2_GOOGLE_CLIENT_ID }}
         run: mvn clean package
 
       - name: Find JAR file
