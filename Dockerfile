@@ -3,8 +3,8 @@ FROM maven:3.9.6-amazoncorretto-17-debian AS build
 ARG BACKEND_API
 ARG GOOGLE_CLIENT_ID
 
-ENV BACKEND_API $BACKEND_API
-ENV GOOGLE_CLIENT_ID $GOOGLE_CLIENT_ID
+ENV REACT_APP_API_PATH $BACKEND_API
+ENV REACT_APP_OAUTH2_GOOGLE_CLIENT_ID $GOOGLE_CLIENT_ID
 
 COPY pom.xml /home/app/pom.xml
 COPY kpoint-back/pom.xml /home/app/kpoint-back/pom.xml

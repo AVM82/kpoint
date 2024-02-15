@@ -82,7 +82,7 @@ public class ProfileService {
         UserEntity user = userService.getByUsername(username);
 
         if (!userService.checkIfValidOldPassword(user, dto.oldPassword())) {
-            throw new UserException("Invalid old password");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Invalid old password");
         }
         userService.changeUserPassword(user, dto.newPassword());
     }
