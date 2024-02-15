@@ -5,6 +5,6 @@ import ua.in.kp.dto.project.GetAllProjectsDto;
 
 public record ProjectsProfileResponseDto(
         String userId,
-        Page<GetAllProjectsDto> myProjects
+        Page<GetAllProjectsDto> projects
 ) {
 }

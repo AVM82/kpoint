@@ -31,10 +31,11 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
             + "LEFT JOIN FETCH p.networksLinks WHERE t.name IN :tags")
     Set<ProjectEntity> findByTags(List<String> tags);
 
-    @Query("SELECT DISTINCT p FROM ProjectEntity p LEFT JOIN FETCH p.tags t "
+    @Query("SELECT p FROM ProjectEntity p LEFT JOIN FETCH p.tags t "
             + "LEFT JOIN FETCH p.networksLinks WHERE t IN :tags "
-            + "AND p.projectId NOT IN :allProjectIds")
-    Page<ProjectEntity> findByTagsExceptOwnedAndFavourite(
+            + "AND p.projectId NOT IN :allProjectIds "
+            + "ORDER BY (SELECT COUNT(t2) FROM p.tags t2 WHERE t2 IN :tags) DESC, p.goalSum DESC")
+    Page<ProjectEntity> findByTagsExceptOwnedAndFavouriteWithSortByTagsCountThenGoalSum(
             Set<TagEntity> tags, Set<String> allProjectIds, Pageable pageable);
 
     @EntityGraph(attributePaths = "tags")
