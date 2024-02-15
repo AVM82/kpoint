@@ -52,7 +52,7 @@ public class ProjectController {
     }
 
     @PostMapping("/{projectId}/subscribe")
-    private ResponseEntity<SubscribeResponseDto> subscribeToProject(@PathVariable String projectId) {
+    private ResponseEntity<String> subscribeToProject(@PathVariable String projectId) {
         return new ResponseEntity<>(emailService.sendProjectSubscriptionMessage(projectId), HttpStatus.OK);
     }
 }

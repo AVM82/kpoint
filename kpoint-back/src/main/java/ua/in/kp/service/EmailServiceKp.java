@@ -37,13 +37,13 @@ public class EmailServiceKp {
     this.sender = sender;
   }
 
-  public SubscribeResponseDto sendProjectSubscriptionMessage(String projectId) {
+  public String sendProjectSubscriptionMessage(String projectId) {
 
     UserEntity user = userService.getAuthenticated();
     try {
       sendSubscribeMail(user);
       projectService.subscribeUserToProject(user.getId(), projectId);
-      return new SubscribeResponseDto("Ви успішно підписалися на проект!");
+      return "Ви успішно підписалися на проект!";
     } catch (Exception e) {
       log.warn("Email to {} was not sent {}", user.getEmail(), e.getMessage());
       throw new RuntimeException();
