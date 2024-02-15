@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.profile.PasswordDto;
@@ -18,7 +19,7 @@ import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
-import ua.in.kp.exception.UserException;
+import ua.in.kp.exception.ApplicationException;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.UserRepository;
@@ -44,7 +45,7 @@ public class ProfileService {
                 ownedProjectsDtos);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ProjectsProfileResponseDto getFavouriteProjects(String username, Pageable pageable) {
         UserEntity userEntity = userService.getByUsername(username);
         Page<GetAllProjectsDto> favouriteProjectsDtos =
@@ -81,7 +82,7 @@ public class ProfileService {
         UserEntity user = userService.getByUsername(username);
 
         if (!userService.checkIfValidOldPassword(user, dto.oldPassword())) {
-            throw new UserException("Invalid old password");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Invalid old password");
         }
         userService.changeUserPassword(user, dto.newPassword());
     }
@@ -91,7 +92,7 @@ public class ProfileService {
             JsonNode patched = patch.apply(objectMapper.convertValue(userDto, JsonNode.class));
             return objectMapper.treeToValue(patched, UserChangeDto.class);
         } catch (JsonPatchException | JsonProcessingException e) {
-            throw new UserException("User cannot be updated");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "User cannot be updated");
         }
     }
 }

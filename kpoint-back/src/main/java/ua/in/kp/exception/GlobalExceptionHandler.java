@@ -1,6 +1,7 @@
 package ua.in.kp.exception;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 @ControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String TIMESTAMP_PROPERTY_NAME = "timestamp";
     private static final String REJECTED_VALUE_MSG_CODE =
@@ -35,6 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatusCode status,
             WebRequest request) {
+        log.warn("handleMethodArgumentNotValid", ex);
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
         ex.getBindingResult().getAllErrors().forEach(error -> setError(problemDetail, error));
         return ResponseEntity.of(problemDetail).build();
@@ -47,26 +50,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatusCode statusCode,
             WebRequest request) {
+        log.warn("handleExceptionInternal", ex);
         return createResponseEntity(statusCode, ex.getLocalizedMessage());
+    }
+
+    @ExceptionHandler({ ApplicationException.class })
+    protected ResponseEntity<Object> handleApplicationException(final ApplicationException ex) {
+        log.error("handleApplicationException", ex);
+        return createApiError(ex.getStatus(), ex.getLocalizedMessage());
     }
 
     @ExceptionHandler(value = {RuntimeException.class})
     protected ResponseEntity<Object> handleDataProcessingException(RuntimeException ex) {
-        return createResponseEntity(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
+        log.error("handleDataProcessingException", ex);
+        return createApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
     }
 
     @ExceptionHandler(value = {AccessDeniedException.class})
     protected ResponseEntity<Object> handleAuthorizationException(RuntimeException ex) {
-        return createResponseEntity(HttpStatus.FORBIDDEN, ex.getLocalizedMessage());
+        log.warn("handleAuthorizationException", ex);
+        return createApiError(HttpStatus.FORBIDDEN, ex.getLocalizedMessage());
     }
 
     @ExceptionHandler(value = {AuthenticationException.class})
     protected ResponseEntity<Object> handleAuthenticationException(RuntimeException ex) {
-        return createResponseEntity(HttpStatus.UNAUTHORIZED, ex.getLocalizedMessage());
+        log.warn("handleAuthenticationException", ex);
+        return createApiError(HttpStatus.UNAUTHORIZED, ex.getLocalizedMessage());
     }
 
     @ExceptionHandler(SQLException.class)
     protected ResponseEntity<Object> handleSqlException(SQLException ex) {
+        log.warn("handleSqlException", ex);
         ProblemDetail problemDetail =
                 ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setType(
@@ -74,6 +88,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         "https://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=RERR_sql"));
         problemDetail.setProperty("SQL error code", ex.getErrorCode());
         return ResponseEntity.of(problemDetail).build();
+    }
+
+    private ResponseEntity<Object> createApiError(HttpStatus status, String details) {
+        final ApiError apiError = new ApiError(details, details, status);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
     private ResponseEntity<Object> createResponseEntity(HttpStatusCode statusCode, String details) {

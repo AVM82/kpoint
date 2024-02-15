@@ -50,6 +50,12 @@ public class ProjectController {
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
+    @GetMapping("/{title}/title")
+    public ResponseEntity<ProjectResponseDto> getProjectByTitle(@PathVariable String title) {
+        ProjectResponseDto projectDto = projectService.getProjectByTitle(title);
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    }
+
     @PostMapping("/{projectId}/subscribe")
     private ResponseEntity<String> subscribeToProject(@PathVariable String projectId) {
         return new ResponseEntity<>(emailService.sendProjectSubscriptionMessage(projectId), HttpStatus.OK);
