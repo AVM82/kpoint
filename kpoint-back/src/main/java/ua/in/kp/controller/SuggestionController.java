@@ -35,7 +35,7 @@ public class SuggestionController {
     public ResponseEntity<SuggestionResponseDto> createSuggestion(
             @Valid @RequestBody SuggestionCreateRequestDto suggestionCreateRequestDto) {
         emailService.sendProjectSubscriptionMessage("1");
-        log.info("Email to  was sent!");
+        emailService.sendUpdateProjectMail("1");
         return new ResponseEntity<>(suggestionService.createSuggestion(suggestionCreateRequestDto), HttpStatus.CREATED);
     }
 

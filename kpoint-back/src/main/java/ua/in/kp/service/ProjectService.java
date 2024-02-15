@@ -10,13 +10,16 @@ import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
+import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
+import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,6 +32,7 @@ public class ProjectService {
     private final ProjectMapper projectMapper;
     private final UserService userService;
     private final TagRepository tagRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Transactional
     public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto) {
@@ -87,4 +91,16 @@ public class ProjectService {
     public Page<ProjectEntity> getProjectsByUser(UserEntity userEntity, Pageable pageable) {
         return projectRepository.findAllByOwner(userEntity, pageable);
     }
+
+    public void subscribeUserToProject(String userId, String projectId) {
+    ProjectSubscribeEntity subscription = new ProjectSubscribeEntity();
+        subscription.setUserId(userId);
+        subscription.setProjectId(projectId);
+        subscriptionRepository.save(subscription);
+    }
+
+    public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
+        return subscriptionRepository.findByProjectId(projectId);
+    }
+
 }
