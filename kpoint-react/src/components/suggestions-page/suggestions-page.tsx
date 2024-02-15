@@ -125,14 +125,9 @@ const SuggestionsPage: FC = () => {
           </Button>
         </Grid>
       </Grid>
-      <Pagination
-        count={suggestions?.totalPages}
-        page={page}
-        onChange={handleChange}
-        showFirstButton
-        showLastButton
-        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
-      />
+      <Pagination count={suggestions?.totalPages} page={page}
+        onChange={handleChange} showFirstButton showLastButton
+        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}/>
     </Box>
   );
 };

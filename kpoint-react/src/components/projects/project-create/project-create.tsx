@@ -1,15 +1,4 @@
-/* eslint-disable indent */
-import {
-  Box,
-  Button,
-  Container,
-  CssBaseline,
-  Paper,
-  Step,
-  StepLabel,
-  Stepper,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Container, CssBaseline, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -80,65 +69,65 @@ export const ProjectCreate: FC = () => {
     const errors: Record<string, string> = {};
 
     switch (activeStep) {
-      case 1: {
-        if (!data.title.trim() || data.title.trim().length > 30) {
-          errors.title = t('errors.project_title');
-        } else if (data.url.trim().length < 5) {
-          errors.url = t('errors.project_url');
-        } else if (data.tags.length < 1 || data.tags.length > 5) {
-          errors.tags = t('errors.project_tags');
-        } else if (!data.summary.trim() || data.summary.trim().length > 150) {
-          errors.summary = t('errors.project_summary');
-        }
-        break;
+    case 1: {
+      if (!data.title.trim() || data.title.trim().length > 30) {
+        errors.title = t('errors.project_title');
+      } else if (data.url.trim().length < 5) {
+        errors.url = t('errors.project_url');
+      } else if (data.tags.length < 1 || data.tags.length > 5) {
+        errors.tags = t('errors.project_tags');
+      } else if (!data.summary.trim() || data.summary.trim().length > 150) {
+        errors.summary = t('errors.project_summary');
       }
-      case 2: {
-        if (!data.description.trim() || data.description.trim().length > 512) {
-          errors.description = t('errors.project_description');
-        }
-        break;
+      break;
+    }
+    case 2: {
+      if (!data.description.trim() || data.description.trim().length > 512) {
+        errors.description = t('errors.project_description');
       }
-      case 3: {
-        if (new Date(data.goalDeadline) < new Date(data.collectDeadline)) {
-          errors.deadline = t('errors.project_deadline');
-        }
-        break;
+      break;
+    }
+    case 3: {
+      if (new Date(data.goalDeadline) < new Date(data.collectDeadline)) {
+        errors.deadline = t('errors.project_deadline');
       }
+      break;
+    }
     }
 
     return errors;
   };
   const getStepContent = (step: number): ReactElement => {
     switch (step) {
-      case 1:
-        return (
-          <ProjectCreateStep1Form
-            projectData={projectData}
-            handleChange={handleChange}
-            handleFieldFocus={handleFieldFocus}
-            errors={errors}
-          />
-        );
-      case 2:
-        return (
-          <ProjectCreateStep2Form
-            projectData={projectData}
-            handleChange={handleChange}
-            handleFieldFocus={handleFieldFocus}
-            errors={errors}
-          />
-        );
-      case 3:
-        return (
-          <ProjectCreateStep3Form
-            projectData={projectData}
-            handleChange={handleChange}
-            handleFieldFocus={handleFieldFocus}
-            errors={errors}
-          />
-        );
-      default:
-        throw new Error('Unknown step');
+    case 1:
+      return (
+        <ProjectCreateStep1Form
+          projectData={projectData}
+          handleChange={handleChange}
+          handleFieldFocus={handleFieldFocus}
+          errors={errors}
+        />
+      );
+    case 2:
+      return (
+        <ProjectCreateStep2Form
+          projectData={projectData}
+          handleChange={handleChange}
+          handleFieldFocus={handleFieldFocus}
+          errors={errors}
+        />
+      );
+    case 3:
+      return (
+        <ProjectCreateStep3Form
+          projectData={projectData}
+          handleChange={handleChange}
+          handleFieldFocus={handleFieldFocus}
+          errors={errors}
+        />
+      );
+    default:
+      throw new Error('Unknown step');
     }
   };
 
