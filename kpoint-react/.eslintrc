@@ -2,6 +2,7 @@
   "plugins": [
     "simple-import-sort"
   ],
+  "ignorePatterns": ["*.xml"],
   "extends": [
     "react-app",
     "react-app/jest",

@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { suggestionAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/hooks';
@@ -25,21 +26,35 @@ const style = {
   height: '340px',
 };
 
-const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handleCloseModal }) => {
+const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({
+  handleCloseModal,
+}) => {
   const [inputText, setInputText] = React.useState('');
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
     event.preventDefault();
     const formErrors = validateForm(inputText);
 
-    if (Object.keys(formErrors).length === 0) {
-      dispatch(suggestionAction.createNew({ suggestionData: { suggestion: inputText } }));
-      handleCloseModal();
-    } else {
-      setErrors(formErrors);
+    /*This dispatch don't return errors in try-catch */
+
+    try {
+      if (Object.keys(formErrors).length === 0) {
+        await dispatch(
+          suggestionAction.createNew({
+            suggestionData: { suggestion: inputText },
+          }),
+        );
+        handleCloseModal();
+      } else {
+        setErrors(formErrors);
+      }
+    } catch (error) {
+      toast.error(`Can\\'t add suggestion because: ${error.message}`);
     }
   };
 
@@ -51,7 +66,7 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handle
     setInputText('');
   }, []);
 
-  const validateForm = (data: string): Record<string, string>=> {
+  const validateForm = (data: string): Record<string, string> => {
     const errors: Record<string, string> = {};
 
     if (data.trim().length === 0 || data.trim().length > 200) {
@@ -79,7 +94,7 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handle
               right: 0,
             }}
           >
-            <CloseIcon/>
+            <CloseIcon />
           </IconButton>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Нас цікавить ваша думка
@@ -95,7 +110,9 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({ handle
               value={inputText}
               onChange={handleChange}
             />
-            {errors.suggestion && <Typography color="error">{errors.suggestion}</Typography>}
+            {errors.suggestion && (
+              <Typography color="error">{errors.suggestion}</Typography>
+            )}
             <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" sx={{ mt: 2 }}>
                 {t('send_suggestion')}

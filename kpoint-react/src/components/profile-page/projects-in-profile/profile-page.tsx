@@ -3,6 +3,7 @@ import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
 import { useAppDispatch } from 'hooks/hooks';
 import { FC, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { storage } from 'services/services';
 import { profileAction } from 'store/actions';
 
@@ -23,19 +24,21 @@ const ProfilePage: FC = () => {
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       if (testUser) {
-        await dispatch(
-          profileAction.getMyProjects({
-            size: maxPageElements,
-            number: 0,
-          }),
-        );
+        try {
+          await dispatch(
+            profileAction.getMyProjects({
+              size: maxPageElements,
+              number: 0,
+            }),
+          );
+        } catch (error) {
+          toast.error(`Fetchind error: ${error.message}`);
+        }
       }
     };
 
     fetchData();
   }, [dispatch, testUser]);
-
-  console.log(testUser);
 
   return (
     <Box

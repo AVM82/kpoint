@@ -15,6 +15,7 @@ import * as React from 'react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { authAction } from 'store/actions';
 import { setIsLogin } from 'store/auth/reducer';
 
@@ -47,10 +48,11 @@ const SignInPage: FC = () => {
         const user = responseType.user;
         storage.setItem(StorageKey.TOKEN, responseType.token);
         storage.setItem(StorageKey.USER, JSON.stringify(user));
+        toast(JSON.stringify(responseType.user));
         navigate('/');
       })
       .catch((error) => {
-        error.toString();
+        toast.error(`Error while logging: ${error.message}`);
         setLoginError('Невірний логін або пароль');
       });
 

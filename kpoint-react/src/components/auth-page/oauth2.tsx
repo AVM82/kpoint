@@ -3,6 +3,7 @@ import { useAppDispatch } from 'hooks/hooks';
 import { FC, useEffect } from 'react';
 import GoogleButton from 'react-google-button';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { setIsLogin } from 'store/auth/reducer';
 
 import { ENV } from '../../common/enums/app/env.enum';
@@ -46,7 +47,7 @@ const OAuth2: FC = () => {
         }
         dispatch(setIsLogin());
       } catch (error) {
-        error('Error making POST request to backend:', error.message);
+        toast.error(`Error making POST request to backend: ${error.message}`);
       }
     },
   });

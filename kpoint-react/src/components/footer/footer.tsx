@@ -7,9 +7,11 @@ import { Box } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { FC } from 'react';
+import { StorageKey } from 'common/enums/app/storage-key.enum';
+import { FC, useEffect, useState } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { storage } from 'services/services';
 
 import footerImg from '../../footer-rect.png';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
@@ -17,6 +19,13 @@ import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.ho
 const Footer: FC = () => {
   const { t } = useTranslation();
   const loggedIn = useAppSelector((state) => state.token.isloggedIn);
+  const [isStillLoggedIn, setStillLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = storage.getItem(StorageKey.TOKEN);
+
+    if (token) setStillLoggedIn(true);
+  }, []);
 
   return (
     <Box
@@ -91,11 +100,16 @@ const Footer: FC = () => {
           <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
             Fourteen
           </Link>
-          {loggedIn && (
-            <Link href="/suggestions" underline="none" color="#FFFFFF" sx={{ margin: 1 }}>
+          {loggedIn || isStillLoggedIn ? (
+            <Link
+              href="/suggestions"
+              underline="none"
+              color="#FFFFFF"
+              sx={{ margin: 1 }}
+            >
               {t('suggestions')}
             </Link>
-          )}
+          ) : null}
         </Box>
       </Box>
     </Box>
