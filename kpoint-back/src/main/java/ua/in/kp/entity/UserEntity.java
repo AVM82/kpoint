@@ -65,6 +65,9 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
     private Set<ProjectEntity> projectsOwned;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Set<SuggestionEntity> suggestions;
+
     @ManyToMany
     @SoftDelete
     private Set<ProjectEntity> projectsFavourite;

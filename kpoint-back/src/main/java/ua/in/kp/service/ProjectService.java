@@ -92,7 +92,7 @@ public class ProjectService {
 
     public Page<ProjectEntity> retrieveRecommendedProjects(
             Set<TagEntity> tags, Set<String> userProjectsIds, Pageable pageable) {
-        return projectRepository.findByTagsExceptOwnedAndFavourite(
+        return projectRepository.findByTagsExceptOwnedAndFavouriteWithSortByTagsCountThenGoalSum(
                 tags, userProjectsIds, pageable);
     }
 
