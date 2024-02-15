@@ -67,7 +67,7 @@ const suggestionSlice = createSlice({
       })
       .addCase(createNew.fulfilled, (state, { payload }) => {
         state.editSuggestion = payload;
-        state.status = true;
+        state.status = !state.status;
       })
       .addCase(updateLikeById.rejected, (state) => {
         state.editSuggestion = null;

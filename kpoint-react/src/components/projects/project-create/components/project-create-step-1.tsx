@@ -1,6 +1,7 @@
-import { Autocomplete, Avatar, Chip, Grid, TextField } from '@mui/material';
+import { Autocomplete, Chip, Grid, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { ImageUploader } from 'components/common/common';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getSlug from 'speakingurl';
@@ -28,7 +29,6 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
   errors,
 }) => {
   const { t } = useTranslation();
-
   const [tag, setTag] = useState('');
 
   const getChipTags = (): ChipTag[] => {
@@ -55,17 +55,9 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
 
   return (
     <Grid container rowSpacing={3}>
-      <Grid container>
-        <Grid item xs={3}>
-          <Avatar
-            alt="Логотип"
-            src="/logo.jpg"
-            sx={{ width: 116, height: 116, mt: 2.5, ml: 4 }}
-            variant="rounded"
-          ></Avatar>
-          {/*img*/}
-        </Grid>
-        <Grid item xs={9}>
+      <Grid container justifyContent={'space-between'}>
+        <ImageUploader handleChange={handleChange} component="default" xs={3}/>
+        <Grid item xs={8}>
           <Grid item xs={true}>
             <TextField
               label={t('project_name')}

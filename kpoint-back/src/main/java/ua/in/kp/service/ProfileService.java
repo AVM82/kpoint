@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.in.kp.dto.profile.PasswordDto;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
 import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
@@ -75,9 +76,19 @@ public class ProfileService {
         return userMapper.toChangeDto(updatedUser);
     }
 
-    protected UserChangeDto applyPatchToCustomer(JsonPatch patch, UserChangeDto userChangeDto) {
+    public void changePassword(String username, PasswordDto dto) {
+        log.info("change password by username {}", username);
+        UserEntity user = userService.getByUsername(username);
+
+        if (!userService.checkIfValidOldPassword(user, dto.oldPassword())) {
+            throw new UserException("Invalid old password");
+        }
+        userService.changeUserPassword(user, dto.newPassword());
+    }
+
+    protected UserChangeDto applyPatchToCustomer(JsonPatch patch, Record userDto) {
         try {
-            JsonNode patched = patch.apply(objectMapper.convertValue(userChangeDto, JsonNode.class));
+            JsonNode patched = patch.apply(objectMapper.convertValue(userDto, JsonNode.class));
             return objectMapper.treeToValue(patched, UserChangeDto.class);
         } catch (JsonPatchException | JsonProcessingException e) {
             throw new UserException("User cannot be updated");

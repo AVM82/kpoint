@@ -6,7 +6,7 @@ import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/hooks';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-import { ProjectPage } from './project-page';
+import { ProjectPage } from './project-page(DEPRECATED)';
 
 const ProjectDetailsPage: FC = () => {
   const dispatch = useAppDispatch();
