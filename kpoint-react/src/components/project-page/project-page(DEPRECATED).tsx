@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { Box, Chip, Paper, Tab, Tabs } from '@mui/material';
+import { Box, Chip, FormLabel, Paper, Tab, Tabs } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -10,10 +10,10 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { ProjectType } from 'common/types/projects/project.type';
 import logo from 'logo.jpg';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
-// import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { CustomTabPanel } from '../../utils/function-custom-tab-panel';
 import { generateGoogleMapsLink } from '../../utils/function-generate-google-maps-link';
 import { getSocialMediaIcon } from '../../utils/function-social-media-icons';
@@ -24,7 +24,10 @@ interface ProjectPageProps {
   allStatuses: string[];
 }
 
-function getTabAccessibilityProps(index: number): { id: string, 'aria-controls': string } {
+function getTabAccessibilityProps(index: number): {
+  id: string;
+  'aria-controls': string;
+} {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
@@ -32,18 +35,36 @@ function getTabAccessibilityProps(index: number): { id: string, 'aria-controls':
 }
 
 const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
-
   const { t } = useTranslation();
-  const projectImage: string = project.logoImgUrl === null ? { logo }.logo
-    : `data:image/png;base64,${project.logoImgUrl}`;
-  // const dispatch = useAppDispatch();
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event: React.SyntheticEvent, newValue: number): void => {
+  const projectImage: string =
+    project.logoImgUrl === null
+      ? { logo }.logo
+      : `data:image/png;base64,${project.logoImgUrl}`;
+
+  const [value, setValue] = useState(0);
+  const [editLogo, setEditLogo] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  const handleChange = (
+    event: React.SyntheticEvent,
+    newValue: number,
+  ): void => {
     setValue(newValue);
   };
-  // const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    // dispatch(subscribeAction.subscribeToProject({}));
-  // };
+
+  const handleLogoPreview = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.currentTarget.files?.[0]) {
+      const projectLogo = e.currentTarget.files?.[0];
+
+      if (projectLogo.size > 5000000) {
+        toast.warn('File is to big');
+
+        return;
+      }
+      const previewUrl = URL.createObjectURL(projectLogo);
+      setPreviewUrl(previewUrl);
+    }
+  };
 
   return (
     <Paper>
@@ -65,7 +86,13 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
           }}
         >
           {/*button subscribe, social media links*/}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <Button
               size="large"
               sx={{
@@ -78,7 +105,6 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
                 backgroundImage: 'linear-gradient(0deg, #FFFFFF, #FFFFFF)',
                 color: '#828282',
               }}
-              // onClick={handleSubmit}
             >
               <AddIcon />
               {t('buttons.subscribe')}
@@ -101,20 +127,82 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
               maxHeight: 20,
               opacity: 0, // makes in invisible but present
             }}
-          >
-          </Paper>
+          ></Paper>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <Grid container spacing={3}>
               {/* Left Part: Logo, Chips */}
               <Grid item>
                 <Card>
-                  <CardMedia
-                    component="img"
-                    height="194"
-                    image={projectImage}
-                    alt="Logo"
-                  />
+                  {editLogo ? (
+                    <>
+                      <Box
+                        sx={{
+                          border: '2px dotted #757575',
+                          borderRadius: '4px',
+                          padding: '8px',
+                          width: '100%',
+                          minHeight: '70%',
+                          overflow: 'hidden',
+                          margin: '8px',
+                        }}
+                      >
+                        <Box
+                          component={'img'}
+                          src={previewUrl}
+                          alt="project-preview-image"
+                          sx={{
+                            objectFit: 'contain',
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                          }}
+                        ></Box>
+                      </Box>
+                      <input
+                        type="file"
+                        id="project-logo"
+                        accept=".jpg, .jpeg, .png"
+                        onChange={(
+                          e: React.ChangeEvent<HTMLInputElement>,
+                        ): void => handleLogoPreview(e)}
+                        style={{ display: 'none' }}
+                      />
+                      <FormLabel
+                        htmlFor="project-logo"
+                        sx={{
+                          cursor: 'pointer',
+                          border: '1px solid black',
+                          borderRadius: '6px',
+                          padding: '3px',
+                          flexGrow: 1,
+                          flexShrink: 0,
+                          margin: '8px',
+                          '&:hover': {
+                            bgcolor: 'green',
+                          },
+                          textAlign: 'center',
+                        }}
+                      >
+                        Завантажити лого
+                      </FormLabel>
+                    </>
+                  ) : (
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={projectImage}
+                      alt="Logo"
+                    />
+                  )}
+                  <Button onClick={(): void => setEditLogo(!editLogo)}>
+                    {editLogo ? 'Відмінити' : 'Змініти зображення'}
+                  </Button>
                 </Card>
                 <Grid item sx={{ margin: '10px 0' }}>
                   {project.tags.map((tag, index) => (
@@ -139,7 +227,10 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
               <Grid item xs={12} sm container>
                 <Grid item xs container direction="column" spacing={2}>
                   <Grid item xs>
-                    <Typography gutterBottom variant="subtitle1" component="div"
+                    <Typography
+                      gutterBottom
+                      variant="subtitle1"
+                      component="div"
                       sx={{
                         fontFamily: 'Roboto',
                         fontSize: '32px',
@@ -176,7 +267,12 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
               {/* Right Part: Buttons donate, support*/}
               <Grid item>
                 <Box sx={{ marginTop: 20 }}>
-                  <Grid container direction="column" justifyContent="flex-end" alignItems="flex-end">
+                  <Grid
+                    container
+                    direction="column"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
+                  >
                     <Box>
                       <Button
                         size="large"
@@ -187,14 +283,16 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
                           lineHeight: '14px',
                           letterSpacing: '0px',
                           textAlign: 'left',
-                          backgroundImage: 'linear-gradient(0deg, #FFFFFF, #FFFFFF)',
+                          backgroundImage:
+                            'linear-gradient(0deg, #FFFFFF, #FFFFFF)',
                           color: '#828282',
                           marginBottom: '10px',
                           width: '250px',
                         }}
                       >
                         <PersonAddIcon />
-                        {t('buttons.support')}</Button>
+                        {t('buttons.support')}
+                      </Button>
                     </Box>
                     <Box>
                       <Button
@@ -206,13 +304,15 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
                           lineHeight: '14px',
                           letterSpacing: '0px',
                           textAlign: 'left',
-                          backgroundImage: 'linear-gradient(0deg, #FFFFFF, #FFFFFF)',
+                          backgroundImage:
+                            'linear-gradient(0deg, #FFFFFF, #FFFFFF)',
                           color: '#828282',
                           width: '250px',
                         }}
                       >
                         <AttachMoneyIcon />
-                        {t('buttons.donate')}</Button>
+                        {t('buttons.donate')}
+                      </Button>
                     </Box>
                   </Grid>
                 </Box>
@@ -236,10 +336,17 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
           <Grid item xs={8}>
             <Box sx={{ width: '100%' }}>
               <Box sx={{ width: '100%' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="nav tabs example">
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="nav tabs example"
+                >
                   <Tab label={t('about')} {...getTabAccessibilityProps(0)} />
                   <Tab label={t('team')} {...getTabAccessibilityProps(1)} />
-                  <Tab label={t('help_project')} {...getTabAccessibilityProps(2)} />
+                  <Tab
+                    label={t('help_project')}
+                    {...getTabAccessibilityProps(2)}
+                  />
                   <Tab label={t('comments')} {...getTabAccessibilityProps(3)} />
                 </Tabs>
               </Box>
@@ -262,14 +369,15 @@ const ProjectPage: FC<ProjectPageProps> = ({ project, allStatuses }) => {
 
           {/* Right Column project state*/}
           <Grid item xs={4}>
-            <CustomTimeline allStatuses={allStatuses} currentStatus={project.state} />
+            <CustomTimeline
+              allStatuses={allStatuses}
+              currentStatus={project.state}
+            />
           </Grid>
         </Grid>
-
       </Paper>
     </Paper>
   );
 };
 
 export { ProjectPage };
-

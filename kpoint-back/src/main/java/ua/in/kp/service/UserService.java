@@ -124,6 +124,17 @@ public class UserService {
                 new UsernameNotFoundException("Can't find user by username " + username));
     }
 
+    public boolean checkIfValidOldPassword(UserEntity user, String oldPassword) {
+        return passwordEncoder.matches(oldPassword, user.getPassword());
+    }
+
+    @Transactional
+    public void changeUserPassword(UserEntity user, String newPassword) {
+        log.info("Change password for user {}", user.getUsername());
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
     public UserEntity getById(String id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new UsernameNotFoundException("Can't find user by id " + id));
