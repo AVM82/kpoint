@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
-import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.service.EmailServiceKp;
 import ua.in.kp.service.ProjectService;
 

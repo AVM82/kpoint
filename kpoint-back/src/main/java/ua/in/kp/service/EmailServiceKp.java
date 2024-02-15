@@ -7,21 +7,16 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.UserEntity;
 
 @Slf4j
 @Service
-// @AllArgsConstructor
 public class EmailServiceKp {
-
   private final JavaMailSender emailSender;
   private final UserService userService;
   private final Environment env;
   private final ProjectService projectService;
-
-  //  @Value("${MAIL_USERNAME}")
   private final String sender;
 
   public EmailServiceKp(
