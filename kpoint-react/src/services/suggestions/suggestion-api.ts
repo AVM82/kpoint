@@ -23,16 +23,18 @@ class SuggestionApi {
   public getAllSuggestionsDefault(payload: {
     size: number;
     number: number;
+    sort?: string | number;
   }): Promise<SuggestionsPageType> {
     return this.#http.load(
       `${this.#apiPrefix}/suggestions?size=${payload.size}&number=${
         payload.number
-      }`,
+      }$sort=${payload.sort}`,
       {
         method: HttpMethod.GET,
         queryString: {
           size: payload.size,
           page: payload.number,
+          sort: payload.sort,
         },
       },
     );
