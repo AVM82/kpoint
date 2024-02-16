@@ -20,8 +20,11 @@ import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -133,5 +136,24 @@ public class ProjectService {
 
     public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
         return subscriptionRepository.findByProjectId(projectId);
+    }
+
+    public ProjectResponseDto updateProject(String projectId, ProjectCreateRequestDto projectCreateRequestDto) {
+       UserEntity user = userService.getAuthenticated();
+        ProjectEntity existingProject = getProjectIfExist(user, projectId);
+
+        ProjectEntity toUpdate = projectMapper.toEntity(projectCreateRequestDto);
+        existingProject.setCollectedSum(toUpdate.getCollectedSum());
+        existingProject.setDescription(projectCreateRequestDto.getDescription());
+        projectRepository.save(existingProject);
+        return projectMapper.toDto(existingProject);
+    }
+
+    private ProjectEntity getProjectIfExist(UserEntity user, String projectId) {
+        Optional<ProjectEntity> projectForUpdate = projectRepository.findByOwnerAndProjectId(user, projectId);
+        if (projectForUpdate.isEmpty()) {
+            throw new RuntimeException("Project not found");
+        }
+        return projectForUpdate.get();
     }
 }

@@ -48,4 +48,6 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
 
     @EntityGraph(attributePaths = "tags")
     Page<ProjectEntity> findAllByOwner(UserEntity owner, Pageable pageable);
+
+    Optional<ProjectEntity> findByOwnerAndProjectId(UserEntity owner, String projectId);
 }

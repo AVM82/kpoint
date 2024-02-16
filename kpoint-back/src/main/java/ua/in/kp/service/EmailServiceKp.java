@@ -48,34 +48,40 @@ public class EmailServiceKp {
 
     private void sendSubscribeMail(UserEntity user) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(sender);
+        setMessageData(message, env.getProperty("email.subscription_mail.subject"),
+                env.getProperty("email.subscription_mail.text"));
         message.setTo(user.getEmail());
-        message.setSubject(env.getProperty("email.subscription_mail.subject"));
-        message.setText(env.getProperty("email.subscription_mail.text"));
         emailSender.send(message);
         log.info("Email to {} was sent", user.getEmail());
     }
 
     public void sendUpdateProjectMail(String projectId) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(sender);
-        message.setSubject(env.getProperty("email.update_project_mail.subject"));
-        message.setText(env.getProperty("email.update_project_mail.text"));
-        List<ProjectSubscribeEntity> subscriptions =
-                projectService.getUsersSubscribedToProject(projectId);
+        setMessageData(message, env.getProperty("email.update_project_mail.subject"),
+                env.getProperty("email.update_project_mail.text"));
 
-        log.info("ПІДПИСНИКИ " + subscriptions.toString() + subscriptions.size());
-
-        List<String> usersMails =
-                subscriptions.stream()
-                        .map(subscription -> userService.getById(subscription.getUserId()).getEmail())
-                        .toList();
-
+        List<String> usersMails = setUsersMailsList(projectId);
         for (String mail : usersMails) {
             log.info("EMAILS " + mail + usersMails.size());
             message.setTo(mail);
             emailSender.send(message);
             log.info("Email with updates was sent to {}", mail);
         }
+    }
+
+    private List<String> setUsersMailsList(String projectId) {
+        List<ProjectSubscribeEntity> subscriptions =
+                projectService.getUsersSubscribedToProject(projectId);
+        log.info("ПІДПИСНИКИ " + subscriptions.toString() + subscriptions.size());
+
+        return subscriptions.stream()
+                .map(subscription -> userService.getById(subscription.getUserId()).getEmail())
+                .toList();
+    }
+
+    private void setMessageData(SimpleMailMessage message, String subject, String text) {
+        message.setFrom(sender);
+        message.setSubject(subject);
+        message.setText(text);
     }
 }

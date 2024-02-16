@@ -6,17 +6,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.suggestion.SuggestionResponseDto;
 import ua.in.kp.service.EmailServiceKp;
 import ua.in.kp.service.ProjectService;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,7 +55,14 @@ public class ProjectController {
     }
 
     @PostMapping("/{projectId}/subscribe")
-    private ResponseEntity<String> subscribeToProject(@PathVariable String projectId) {
+    public ResponseEntity<String> subscribeToProject(@PathVariable String projectId) {
         return new ResponseEntity<>(emailService.sendProjectSubscriptionMessage(projectId), HttpStatus.OK);
+    }
+
+    @PutMapping("/{projectId}/update")
+    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable String  projectId,
+                                                            @Valid @RequestBody ProjectCreateRequestDto createdProject) {
+        return new ResponseEntity<>(projectService
+                .updateProject(projectId, createdProject), HttpStatus.CREATED);
     }
 }
