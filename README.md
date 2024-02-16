@@ -66,6 +66,14 @@ Feedback1
 
 `JWT_SECRET` - Line of text for secret key generation (min 256 bit)
 
+`AWS_ACCESS_KEY_ID` - AWS coinnection ID
+
+`AWS_SECRET_ACCESS_KEY` - AWS coinnection KEY
+
+`BUCKET_NAME` - Name of the bucket on S3
+
+`FOLDER_NAME` - Name of the folder on S3
+
 
 ## Запуск тільки бек локально в докері
 ```
