@@ -66,6 +66,9 @@ Feedback1
 
 `JWT_SECRET` - Line of text for secret key generation (min 256 bit)
 
+`MAIL_PASSWORD` -  Email password 
+
+`MAIL_USERNAME` - Mail from which notifications are sent
 
 ## Запуск тільки бек локально в докері
 ```

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,5 +145,10 @@ public class UserService {
         log.info("Change password for user {}", user.getUsername());
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    public UserEntity getById(String id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by id " + id));
     }
 }

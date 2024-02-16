@@ -54,6 +54,10 @@ const ProjectsPage: FC = () => {
     setPage(page + 1);
   };
 
+  const handleButtonClick = (projectId: string) => (): void => {
+    dispatch(projectAction.subscribeToProject({ id: projectId }));
+  };
+
   return (
     <div className={styles.div}>
       <Typography variant="h3" align="center">
@@ -73,11 +77,13 @@ const ProjectsPage: FC = () => {
         {projects?.content.map((project) => (
           <Grid item>
             <ProjectCard
+              id={project.id}
               url={project.url}
               title={project.title}
               summary={project.summary}
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
+              onButtonClick={handleButtonClick(project.id)}
             />
           </Grid>
         ))}
