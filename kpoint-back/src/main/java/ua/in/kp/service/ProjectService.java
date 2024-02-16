@@ -15,6 +15,7 @@ import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.exception.UniqueFieldException;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
@@ -22,6 +23,7 @@ import ua.in.kp.repository.TagRepository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,20 @@ public class ProjectService {
     @Transactional
     public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto) {
         log.info("Create project method started");
+
+        String title = projectDto.getTitle();
+        Optional<ProjectEntity> checkTitle = projectRepository.findByTitle(title);
+        if(checkTitle.isPresent()){
+            log.warn("Project with title {} already exist!", title);
+            throw new UniqueFieldException("Project with title " + title + " already exist!");
+        }
+
+        String url = projectDto.getUrl();
+        Optional<ProjectEntity> checkUrl = projectRepository.findByProjectUrl(url);
+        if(checkUrl.isPresent()){
+            log.warn("Project with url {} already exist!", url);
+            throw  new UniqueFieldException("Project with url " + url + " already exist!");
+        }
 
         projectDto.getTags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
 
