@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import { suggestionAction } from 'store/actions';
 import { deleteData } from 'store/suggestions/reducer';
 
-import { SuggestionsPageType } from '../../common/types/suggestions/suggestions-page.type';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
 import { AddSuggestionModal } from './add-suggestions-modale';
@@ -23,8 +22,6 @@ const SuggestionsPage: FC = () => {
   const { suggestions } = useAppSelector(({ suggestion }) => ({
     suggestions: suggestion.suggestions,
   }));
-  const [currentSuggestions,setCurrentSuggestions]
-    = useState<SuggestionsPageType | null>(null);
 
   const status = useAppSelector((state) => state.suggestion.status);
 
@@ -95,9 +92,7 @@ const SuggestionsPage: FC = () => {
           {t('add_suggestion')}
         </Button>
       </Grid>
-      {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal}
-        maxPageElements={maxPageElements} currentPage={page} suggestions={suggestions}
-        setSuggestions={setCurrentSuggestions}/>}
+      {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal} currentPage={page} />}
       <Grid item>
         {suggestions?.content.map((suggestion) => (
           <Grid item key={suggestion.id}>
