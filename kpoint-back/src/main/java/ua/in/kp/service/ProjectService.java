@@ -43,16 +43,16 @@ public class ProjectService {
 
         String title = projectDto.getTitle();
         Optional<ProjectEntity> checkTitle = projectRepository.findByTitle(title);
-        if(checkTitle.isPresent()){
+        if (checkTitle.isPresent()) {
             log.warn("Project with title {} already exist!", title);
             throw new UniqueFieldException("Project with title " + title + " already exist!");
         }
 
         String url = projectDto.getUrl();
         Optional<ProjectEntity> checkUrl = projectRepository.findByProjectUrl(url);
-        if(checkUrl.isPresent()){
+        if (checkUrl.isPresent()) {
             log.warn("Project with url {} already exist!", url);
-            throw  new UniqueFieldException("Project with url " + url + " already exist!");
+            throw new UniqueFieldException("Project with url " + url + " already exist!");
         }
 
         projectDto.getTags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
