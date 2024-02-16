@@ -3,28 +3,30 @@
 import {
   Box,
   Button,
-  FormControl,
   FormLabel,
   Grid,
   TextField,
-  Typography,
 } from '@mui/material';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
-import { ImageUploader } from 'components/common/common';
 import React, { FC, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { storage } from 'services/services';
 
-import profileImg from '../../../profile-img-test.svg';
-import { MyProfileMenuButton } from './my-profile-button';
+import { ProfileLayout } from '../profile-layout/ProfileLayout';
+
+const DEFAULT_FORM_VALUES = { firstName: '', lastName: '', email: '', username: '' };
 
 const MyProfile: FC = () => {
+  const navigate = useNavigate();
   const [testUser, setTestUser] = useState<UserType>();
   const [testEditForm, setTestEditForm] = useState<{
     firstName: string;
     lastName: string;
-  }>({ firstName: '', lastName: '' });
+    email: string;
+    username: string;
+  }>(DEFAULT_FORM_VALUES);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTestEditForm((prev) => ({
@@ -33,65 +35,48 @@ const MyProfile: FC = () => {
     }));
   };
 
+  const handleReset = (): void => {
+    setTestEditForm(DEFAULT_FORM_VALUES);
+  };
+
+  const validateEmail = (email: string): boolean => {
+    // eslint-disable-next-line max-len
+    const emailRegx =  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    return emailRegx.test(email);
+  };
+
   useEffect(() => {
     const user = storage.getItem(StorageKey.USER);
 
     if (user) setTestUser(JSON.parse(user));
   }, []);
 
-  const handleClick = (itemName: string): void => {
-    switch (itemName) {
-      case 'myProjects':
-        // navigate('/userName');
-        break;
-      case 'newProject':
-        // navigate('/projects/new');
-        break;
-      case 'settings':
-        // navigate('/settings/profile');
-        break;
-      default:
-        break;
-    }
-  };
-
-  // const handleSubmit = async (e: React.MouseEvent): Promise<void> => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:5001/api/profile/${testUser?.username}/settings`,
-  //       {
-  //         method: 'PUT',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify(testEditForm),
-  //       },
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error('Failed to update profile settings');
-  //     }
-
-  //     console.log('Profile settings updated successfully');
-  //   } catch (error) {
-  //     console.error('Error updating profile settings:', error.message);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.MouseEvent): Promise<void> => {
     e.preventDefault();
 
     try {
+
+      if(!validateEmail(testEditForm['email'])) {
+        throw new Error('Invalid email');
+
+      }
+
+    const bodyData = Object.keys(testEditForm).map((item) => {
+      const key: string= item;
+
+      return { op:'replace',path:`/${key}`,value: testEditForm[key as keyof typeof testEditForm] || null };
+
+    });
+
       const response = await fetch(
         `http://localhost:5001/api/profile/${testUser?.username}/settings`,
         {
-          method: 'PUT',
+          method: 'PATCH',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json-patch+json',
           },
-          body: JSON.stringify(testEditForm),
+          body: JSON.stringify(bodyData),
         },
       );
 
@@ -101,13 +86,14 @@ const MyProfile: FC = () => {
 
       // Parse the response JSON
       const updatedSettings = await response.json();
-      console.log('url', `http://localhost:5001/api/profile/${testUser?.username}/settings`);
 
       // Update the state with the new values
 
       setTestEditForm(() => ({
         firstName: updatedSettings.firstName,
         lastName: updatedSettings.lastName,
+        email: updatedSettings.email,
+        username: updatedSettings.username,
       }));
 
       const storedUserString = storage.getItem(StorageKey.USER);
@@ -121,96 +107,22 @@ const MyProfile: FC = () => {
           ...storedUser,
           firstName: updatedSettings.firstName,
           lastName: updatedSettings.lastName,
+          email: updatedSettings.email,
+          username: updatedSettings.username,
         };
 
         // Store the updated user object back in storage
         storage.setItem(StorageKey.USER, JSON.stringify(storedUser));
+        navigate(0);
       }
     } catch (error) {
       toast.error('Error updating profile settings:', error.message);
     }
   };
 
-  const handleLogout = (): void => {
-    storage.removeItem(StorageKey.TOKEN);
-    storage.removeItem(StorageKey.USER);
-    window.location.href = '/';
-  };
-
-  const handleChangeImage = (field: string, value: string | File): void => {
-    toast.success(value.toString());
-  };
-
   return (
-    <Box
-      display={'flex'}
-      flexDirection={'column'}
-      sx={{ width: '100%', padding: '0 80px', margin: '75px 0 220px 0' }}
-      flexGrow={1}
-    >
-      <Box
-        display={'flex'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        sx={{
-          borderBottom: '2px solid black',
-          width: '100%',
-          marginBottom: '60px',
-        }}
-      >
-        <Typography
-          variant="h2"
-          fontSize={'36px'}
-          lineHeight={'110%'}
-          color={'#21272A'}
-          paddingBottom={'16px'}
-          textAlign={'center'}
-          width={'30%'}
-        >
-          Мій профіль
-        </Typography>
-      </Box>
-      <Box
-        display={'flex'}
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        gap={'150px'}
-        margin={'0 50px'}
-      >
-        <Box display={'flex'} flexDirection={'column'} minWidth={'221px'} minHeight={'430px'}
-        justifyContent={'space-between'}>
-          <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'200px'}>
-            {/* <Box component={'img'} alt="avatar" src={profileImg}></Box> */}
-          <ImageUploader component="profile-page" xs={12} handleChange={handleChangeImage}/>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '5px',
-              marginTop: '20px',
-            }}
-          >
-            <MyProfileMenuButton
-              label="Профіль"
-              onClick={(): void => handleClick('profile')}
-            />
-            <MyProfileMenuButton
-              label="Налаштування профіля"
-              onClick={(): void => handleClick('profileSettings')}
-            />
-            <MyProfileMenuButton
-              label="Параметри"
-              onClick={(): void => handleClick('params')}
-            />
-            <MyProfileMenuButton
-              label="Зміна пароля"
-              onClick={(): void => handleClick('changePassword')}
-            />
-            <MyProfileMenuButton label="Вихід" onClick={handleLogout} />
-          </Box>
-        </Box>
-        <Box
+    <ProfileLayout>
+       <Box
           display={'flex'}
           component={'form'}
           onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
@@ -218,11 +130,28 @@ const MyProfile: FC = () => {
           }
         >
           <Grid container spacing={2}>
+          <Grid item xs={3} md={6}>
+              <FormLabel>Email</FormLabel>
+              <TextField fullWidth name="email" placeholder={testUser?.email}
+              value={testEditForm['email']}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                handleChange(e)
+              } />
+            </Grid>
+            <Grid item xs={3} md={6}>
+              <FormLabel>Користувацьке ім’я (обов'язково)</FormLabel>
+              <TextField fullWidth name="username" placeholder={testUser?.username}
+              value={testEditForm['username']}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                handleChange(e)
+              } />
+            </Grid>
             <Grid item xs={3} md={6}>
               <FormLabel>Ім'я</FormLabel>
               <TextField
                 fullWidth
                 name="firstName"
+                value={testEditForm['firstName']}
                 placeholder={testUser?.firstName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
                   handleChange(e)
@@ -235,34 +164,25 @@ const MyProfile: FC = () => {
                 fullWidth
                 name="lastName"
                 placeholder={testUser?.lastName}
+                value={testEditForm['lastName']}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
                   handleChange(e)
                 }
               />
             </Grid>
             <Grid item xs={3} md={6}>
-              <FormLabel>Email</FormLabel>
-              <TextField fullWidth placeholder={testUser?.email} />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Пароль</FormLabel>
-              <TextField fullWidth defaultValue={'Password'} />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Країна</FormLabel>
-              <TextField fullWidth defaultValue={'Країна'} />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Місто</FormLabel>
-              <TextField fullWidth defaultValue={'Місто'} />
-            </Grid>
+          <Button sx={{ alignSelf: 'end', marginTop: '56px',  color: 'grey' }} onClick={handleReset}>
+            Скасувати
+          </Button>
           </Grid>
-          <Button sx={{ alignSelf: 'end', marginTop: '56px' }} type="submit">
+          <Grid item xs={6} textAlign={'right'}>
+          <Button sx={{ marginTop: '56px' }} type="submit">
             Зберегти
           </Button>
+          </Grid>
+          </Grid>
         </Box>
-      </Box>
-    </Box>
+    </ProfileLayout>
   );
 };
 
