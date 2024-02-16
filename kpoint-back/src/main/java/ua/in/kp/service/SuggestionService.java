@@ -5,17 +5,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ua.in.kp.dto.suggestion.SuggestionCreateRequestDto;
 import ua.in.kp.dto.suggestion.SuggestionResponseDto;
 import ua.in.kp.entity.LikeEntity;
 import ua.in.kp.entity.SuggestionEntity;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.exception.ApplicationException;
 import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -76,7 +76,8 @@ public class SuggestionService {
 
     public void deleteSuggestion(String suggestionId) {
         if (!suggestionRepository.existsById(suggestionId)) {
-            throw new NoSuchElementException("Suggestion not found with ID: " + suggestionId);
+            log.warn("Suggestion not found with ID: {}", suggestionId);
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "Suggestion not found with ID: " + suggestionId);
         }
         suggestionRepository.deleteById(suggestionId);
     }

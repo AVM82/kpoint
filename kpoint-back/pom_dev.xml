@@ -9,17 +9,21 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ua.in</groupId>
-    <artifactId>kp</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
+    <artifactId>backend</artifactId>
     <name>kp</name>
     <description>Project of projects</description>
+
     <properties>
         <java.version>17</java.version>
         <maven.checkstyle.plugin.configLocation>checkstyle.xml</maven.checkstyle.plugin.configLocation>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
         <jjwt.version>0.12.3</jjwt.version>
+        <maven.dependency.plugin.version>3.6.1</maven.dependency.plugin.version>
+        <google.api.client.version>2.2.0</google.api.client.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -44,7 +48,7 @@
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
-            <version>2.2.0</version>
+            <version>${google.api.client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -70,25 +74,28 @@
             <artifactId>jjwt</artifactId>
             <version>${jjwt.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.3.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.1.214</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.java-json-tools</groupId>
+            <artifactId>json-patch</artifactId>
+            <version>1.13</version>
+        </dependency>
+
     </dependencies>
 
     <build>

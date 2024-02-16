@@ -74,6 +74,9 @@ Feedback1
 
 `FOLDER_NAME` - Name of the folder on S3
 
+`MAIL_PASSWORD` -  Email password 
+
+`MAIL_USERNAME` - Mail from which notifications are sent
 
 ## Запуск тільки бек локально в докері
 ```

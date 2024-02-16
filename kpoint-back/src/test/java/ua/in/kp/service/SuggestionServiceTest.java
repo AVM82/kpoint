@@ -11,12 +11,12 @@ import ua.in.kp.dto.suggestion.SuggestionResponseDto;
 import ua.in.kp.dto.suggestion.SuggestionUserDto;
 import ua.in.kp.entity.SuggestionEntity;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.exception.ApplicationException;
 import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
 
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -101,7 +101,7 @@ class SuggestionServiceTest {
         String id = "id";
         when(suggestionRepository.existsById(id)).thenReturn(false);
 
-        assertThrows(NoSuchElementException.class, () -> testObject.deleteSuggestion(id));
+        assertThrows(ApplicationException.class, () -> testObject.deleteSuggestion(id));
 
         verify(suggestionRepository).existsById(id);
     }

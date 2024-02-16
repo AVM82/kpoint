@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +16,7 @@ import ua.in.kp.dto.user.UserResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.enumeration.UserRole;
+import ua.in.kp.exception.ApplicationException;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.ApplicantRepository;
 import ua.in.kp.repository.TagRepository;
@@ -73,8 +75,10 @@ public class UserService {
 
     public UserResponseDto getByEmailFetchTagsSocialsRoles(String email) {
         UserEntity userFromDb = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Can't find user by email " + email));
+                .orElseThrow(() -> {
+                    log.warn("Can't find user by email {}", email);
+                    return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by email " + email);
+                });
         return userMapper.toDto(userFromDb);
     }
 
@@ -83,7 +87,7 @@ public class UserService {
         log.info("banUserById {}", userId);
         UserEntity userFromDb = userRepository.findById(userId).orElseThrow(() -> {
             log.warn("Can't find user by id {}", userId);
-            return new UsernameNotFoundException("Can't find user by id " + userId);
+            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by id " + userId);
         });
         userRepository.delete(userFromDb);
         return userMapper.toDto(userFromDb);
@@ -95,19 +99,23 @@ public class UserService {
         userRepository.unBanUserByIdForAdmin(userId);
         UserEntity userFromDb = userRepository.findByIdForAdmin(userId).orElseThrow(() -> {
             log.warn("Can't find user by id {}", userId);
-            return new UsernameNotFoundException("Can't find user by id " + userId);
+            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by id " + userId);
         });
         return userMapper.toDto(userFromDb);
     }
 
     public UserEntity getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by username " + username));
+        return userRepository.findByUsername(username).orElseThrow(() -> {
+            log.warn("Can't find user by username {}", username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by username " + username);
+        });
     }
 
     public UserEntity getUserEntityByUsernameFetchedOwnedProjects(String username) {
-        return userRepository.findByUsernameFetchProjectsOwned(username).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by username " + username));
+        return userRepository.findByUsernameFetchProjectsOwned(username).orElseThrow(() -> {
+            log.warn("Can't find user by username {}", username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by username " + username);
+        });
     }
 
     public Page<ProjectEntity> getUserEntityByUsernameFetchedFavouriteProjects(String username, Pageable pageable) {
@@ -115,13 +123,17 @@ public class UserService {
     }
 
     public UserEntity getByUsername(String username) {
-        return userRepository.findByUsernameFetchNothing(username).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by username " + username));
+        return userRepository.findByUsernameFetchNothing(username).orElseThrow(() -> {
+            log.warn("Can't find user by username {}", username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by username " + username);
+        });
     }
 
     public UserEntity getByUsernameFetchTagsSocials(String username) {
-        return userRepository.findByUsernameFetchTagsSocials(username).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by username " + username));
+        return userRepository.findByUsernameFetchTagsSocials(username).orElseThrow(() -> {
+            log.warn("Can't find user by username {}", username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by username " + username);
+        });
     }
 
     public boolean checkIfValidOldPassword(UserEntity user, String oldPassword) {
@@ -133,5 +145,10 @@ public class UserService {
         log.info("Change password for user {}", user.getUsername());
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    public UserEntity getById(String id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new UsernameNotFoundException("Can't find user by id " + id));
     }
 }
