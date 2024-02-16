@@ -8,7 +8,6 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { suggestionAction } from 'store/actions';
 
@@ -27,15 +26,15 @@ const style = {
   height: '340px',
 };
 
-const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, maxPageElements: number, currentPage: number  }> = ({
-  handleCloseModal, maxPageElements,
+const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: number, }> = ({
+  handleCloseModal,
 
 }) => {
   const [inputText, setInputText] = React.useState('');
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const navigate = useNavigate();
+  const [errors, setErrors]
+    = useState<Record<string, string>>({});
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
@@ -51,17 +50,10 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, maxPageElemen
             suggestionData: { suggestion: inputText },
           }),
         );
-        await dispatch(
-          suggestionAction.getAllSuggestionsDefault({
-            size: maxPageElements,
-            number: 0,
-            sort: 'createdAt,desc',
-          }),
-        );
+
         setInputText('');
         setErrors({});
         handleCloseModal();
-        navigate('/suggestions');
       } else {
         setErrors(formErrors);
       }
