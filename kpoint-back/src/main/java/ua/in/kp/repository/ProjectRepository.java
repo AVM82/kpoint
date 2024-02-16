@@ -40,6 +40,12 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
     Page<ProjectEntity> findByTagsExceptOwnedAndFavouriteWithSortByTagsCountThenGoalSum(
             Set<TagEntity> tags, Set<String> allProjectIds, Pageable pageable);
 
+    @Query("SELECT p FROM ProjectEntity p LEFT JOIN FETCH p.tags t "
+            + "LEFT JOIN FETCH p.networksLinks WHERE t IN :tags "
+            + "ORDER BY (SELECT COUNT(t2) FROM p.tags t2 WHERE t2 IN :tags) DESC, p.goalSum DESC")
+    Page<ProjectEntity> findByTagsWithSortByTagsCountThenGoalSum(
+            Set<TagEntity> tags, Pageable pageable);
+
     @EntityGraph(attributePaths = "tags")
     Page<ProjectEntity> findAllByOwner(UserEntity owner, Pageable pageable);
 }

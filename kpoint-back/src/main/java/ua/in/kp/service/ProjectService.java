@@ -107,8 +107,13 @@ public class ProjectService {
 
     public Page<ProjectEntity> retrieveRecommendedProjects(
             Set<TagEntity> tags, Set<String> userProjectsIds, Pageable pageable) {
-        return projectRepository.findByTagsExceptOwnedAndFavouriteWithSortByTagsCountThenGoalSum(
-                tags, userProjectsIds, pageable);
+        if (userProjectsIds.isEmpty()) {
+            return projectRepository.findByTagsWithSortByTagsCountThenGoalSum(
+                    tags, pageable);
+        } else {
+            return projectRepository.findByTagsExceptOwnedAndFavouriteWithSortByTagsCountThenGoalSum(
+                    tags, userProjectsIds, pageable);
+        }
     }
 
     public Set<String> retrieveProjectsIds(Collection<ProjectEntity> projects) {
