@@ -6,3 +6,5 @@ logs/
 /shelf/
 /workspace.xml
 .env
+grafana/
+prometheus/

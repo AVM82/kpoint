@@ -78,6 +78,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return createApiError(HttpStatus.UNAUTHORIZED, ex.getLocalizedMessage());
     }
 
+    @ExceptionHandler(value = {UniqueFieldException.class})
+    protected ResponseEntity<Object> handleUniqueFieldException(RuntimeException ex) {
+        log.warn("handleUniqueFieldException", ex);
+        return createApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
+    }
+
     @ExceptionHandler(SQLException.class)
     protected ResponseEntity<Object> handleSqlException(SQLException ex) {
         log.warn("handleSqlException", ex);
