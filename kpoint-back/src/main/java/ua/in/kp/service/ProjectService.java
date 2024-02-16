@@ -6,9 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ua.in.kp.dto.project.GetAllProjectsDto;
-import ua.in.kp.dto.project.ProjectCreateRequestDto;
-import ua.in.kp.dto.project.ProjectResponseDto;
+import org.springframework.web.multipart.MultipartFile;
+import ua.in.kp.dto.project.*;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
@@ -32,14 +31,14 @@ public class ProjectService {
     private final S3Service s3Service;
 
     @Transactional
-    public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto) {
+    public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto, MultipartFile file) {
         log.info("Create project method started");
 
         projectDto.getTags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
 
         ProjectEntity projectEntity = projectMapper.toEntity(projectDto);
         projectEntity.setOwner(userService.getAuthenticated());
-        projectEntity.setLogoImgUrl(s3Service.uploadLogo(projectDto.getLogoImg()));
+        projectEntity.setLogoImgUrl(s3Service.uploadLogo(file));
         projectRepository.save(projectEntity);
         log.info("ProjectEntity saved, id {}", projectEntity.getProjectId());
 

@@ -5,16 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ua.in.kp.dto.project.GetAllProjectsDto;
-import ua.in.kp.dto.project.ProjectCreateRequestDto;
-import ua.in.kp.dto.project.ProjectResponseDto;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ua.in.kp.dto.project.*;
 import ua.in.kp.service.ProjectService;
 
 @RestController
@@ -24,11 +19,12 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PostMapping()
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ProjectResponseDto> createProject(
-            @Valid @RequestBody ProjectCreateRequestDto createdProject) {
+            @Valid @RequestPart ProjectCreateRequestDto createdProject,
+            @RequestPart("file") MultipartFile file) {
         return new ResponseEntity<>(projectService
-                .createProject(createdProject), HttpStatus.CREATED);
+                .createProject(createdProject, file), HttpStatus.CREATED);
     }
 
     @GetMapping()
