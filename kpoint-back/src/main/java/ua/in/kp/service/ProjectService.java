@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
@@ -35,10 +36,11 @@ public class ProjectService {
     private final ProjectMapper projectMapper;
     private final UserService userService;
     private final TagRepository tagRepository;
+    private final S3Service s3Service;
     private final SubscriptionRepository subscriptionRepository;
 
     @Transactional
-    public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto) {
+    public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto, MultipartFile file) {
         log.info("Create project method started");
 
         String title = projectDto.getTitle();
@@ -59,6 +61,7 @@ public class ProjectService {
 
         ProjectEntity projectEntity = projectMapper.toEntity(projectDto);
         projectEntity.setOwner(userService.getAuthenticated());
+        projectEntity.setLogoImgUrl(s3Service.uploadLogo(file));
         projectRepository.save(projectEntity);
         log.info("ProjectEntity saved, id {}", projectEntity.getProjectId());
 
