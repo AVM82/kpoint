@@ -91,7 +91,8 @@ const SuggestionsPage: FC = () => {
           {t('add_suggestion')}
         </Button>
       </Grid>
-      {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal} />}
+      {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal}
+        maxPageElements={maxPageElements} currentPage={page} />}
       <Grid item>
         {suggestions?.content.map((suggestion) => (
           <Grid item key={suggestion.id}>
