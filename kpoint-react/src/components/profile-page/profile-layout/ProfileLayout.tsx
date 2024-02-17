@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { StorageKey } from 'common/enums/enums';
 import { ImageUploader } from 'components/common/common';
 import React, { FC, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { storage } from 'services/services';
 
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export const ProfileLayout:FC<Props> = ({ children })=> {
+  const navigate = useNavigate();
 
   const handleLogout = (): void => {
     storage.removeItem(StorageKey.TOKEN);
@@ -33,6 +35,9 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
       break;
     case 'settings':
       // navigate('/settings/profile');
+      break;
+    case 'changePassword':
+      navigate('/password/profile');
       break;
     default:
       break;
