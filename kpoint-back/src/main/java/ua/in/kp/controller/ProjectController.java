@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.service.ProjectService;
 
 import java.util.UUID;
@@ -52,7 +53,7 @@ public class ProjectController {
     }
 
     @PostMapping("/{projectId}/subscribe")
-    public ResponseEntity<String> subscribeToProject(@PathVariable String projectId) {
+    public ResponseEntity<SubscribeResponseDto> subscribeToProject(@PathVariable String projectId) {
         return new ResponseEntity<>(projectService.subscribeUserToProject(projectId), HttpStatus.OK);
     }
 

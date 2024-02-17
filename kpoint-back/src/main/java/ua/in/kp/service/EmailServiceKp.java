@@ -66,13 +66,12 @@ public class EmailServiceKp {
 
         List<String> usersMails = setUsersMailsList(projectId);
         for (String mail : usersMails) {
-            log.info("EMAILS " + mail + usersMails.size());
+            log.info("EMAILS: " + mail);
             message.setTo(mail);
             emailSender.send(message);
             log.info("Email with updates was sent to {}", mail);
         }
     }
-
 
     public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
         return subscriptionRepository.findByProjectId(projectId);
@@ -80,7 +79,7 @@ public class EmailServiceKp {
     private List<String> setUsersMailsList(String projectId) {
         List<ProjectSubscribeEntity> subscriptions =
                 getUsersSubscribedToProject(projectId);
-        log.info("ПІДПИСНИКИ " + subscriptions.toString() + subscriptions.size());
+        log.info("ПІДПИСНИКИ " + subscriptions.toString() + " List size " + subscriptions.size());
 
         return subscriptions.stream()
                 .map(subscription -> userService.getById(subscription.getUserId()).getEmail())

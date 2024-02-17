@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
@@ -126,17 +127,17 @@ public class ProjectService {
         return projectRepository.findAllByOwner(userEntity, pageable);
     }
 
-    public String subscribeUserToProject(String projectId) {
+    public SubscribeResponseDto subscribeUserToProject(String projectId) {
         String userId = userService.getAuthenticated().getId();
 
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(userId, projectId);
         if (existingSubscription.isPresent()) {
-            return "User is already subscribed to project " + projectId;
+            return new SubscribeResponseDto("User is already subscribed to project " + projectId);
         } else {
             saveSubscription(projectId);
             emailService.sendProjectSubscriptionMessage(projectId);
-            return "User subscribed to project " + projectId + " successfully";
+            return new SubscribeResponseDto("User subscribed to project " + projectId + " successfully");
         }
     }
 

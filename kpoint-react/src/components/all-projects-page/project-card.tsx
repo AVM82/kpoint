@@ -19,7 +19,7 @@ import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ProjectsProps {
-  id: string;
+  projectId: string;
   url: string;
   title: string;
   summary: string;
@@ -33,13 +33,10 @@ const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
 
   const { t } = useTranslation();
   const [isFollowing, setIsFollowing] = useState(false);
-  const [buttonClicked, setButtonClicked] = useState(false);
+
   const handleButtonClick = ():void => {
-    if (!buttonClicked) {
-      setIsFollowing(!isFollowing);
-      onButtonClick();
-      setButtonClicked(true);
-    }
+    setIsFollowing(!isFollowing);
+    onButtonClick();
   };
 
   return (

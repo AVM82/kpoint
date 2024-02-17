@@ -75,15 +75,15 @@ const ProjectsPage: FC = () => {
         alignItems="center"
       >
         {projects?.content.map((project) => (
-          <Grid item>
+          <Grid item key={project.projectId}>
             <ProjectCard
-              id={project.id}
+              projectId={project.projectId}
               url={project.url}
               title={project.title}
               summary={project.summary}
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
-              onButtonClick={handleButtonClick(project.id)}
+              onButtonClick={handleButtonClick(project.projectId)}
             />
           </Grid>
         ))}
