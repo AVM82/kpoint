@@ -6,8 +6,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.repository.SubscriptionRepository;
 
 import java.util.List;
 
@@ -17,39 +19,40 @@ public class EmailServiceKp {
     private final JavaMailSender emailSender;
     private final UserService userService;
     private final Environment env;
-    private final ProjectService projectService;
     private final String sender;
+
+    private final SubscriptionRepository subscriptionRepository;
 
     public EmailServiceKp(
             JavaMailSender emailSender,
             UserService userService,
             Environment env,
-            ProjectService projectService,
-            @Value("${MAIL_USERNAME}") String sender) {
+            @Value("${MAIL_USERNAME}") String sender, SubscriptionRepository subscriptionRepository) {
         this.emailSender = emailSender;
         this.userService = userService;
         this.env = env;
-        this.projectService = projectService;
         this.sender = sender;
+        this.subscriptionRepository = subscriptionRepository;
     }
 
-    public String sendProjectSubscriptionMessage(String projectId) {
+    public void sendProjectSubscriptionMessage(String projectId) {
 
         UserEntity user = userService.getAuthenticated();
         try {
-            sendSubscribeMail(user);
-            projectService.subscribeUserToProject(user.getId(), projectId);
-            return "Ви успішно підписалися на проект!";
+            sendSubscribeMail(user, projectId);
+            log.info("User {} subscribed on project {}", user.getEmail(), projectId);
         } catch (Exception e) {
             log.warn("Email to {} was not sent {}", user.getEmail(), e.getMessage());
             throw new RuntimeException();
         }
     }
 
-    private void sendSubscribeMail(UserEntity user) {
+    private void sendSubscribeMail(UserEntity user, String projectId) {
         SimpleMailMessage message = new SimpleMailMessage();
+
         setMessageData(message, env.getProperty("email.subscription_mail.subject"),
-                env.getProperty("email.subscription_mail.text"));
+                env.getProperty("email.subscription_mail.text") + "\n\n"
+                        + "Лінк на проект: " + "http://localhost:3000/projects/" + projectId);
         message.setTo(user.getEmail());
         emailSender.send(message);
         log.info("Email to {} was sent", user.getEmail());
@@ -58,7 +61,8 @@ public class EmailServiceKp {
     public void sendUpdateProjectMail(String projectId) {
         SimpleMailMessage message = new SimpleMailMessage();
         setMessageData(message, env.getProperty("email.update_project_mail.subject"),
-                env.getProperty("email.update_project_mail.text"));
+                env.getProperty("email.update_project_mail.text") + "\n\n"
+                        + "Лінк на проект: " + "http://localhost:3000/projects/" + projectId);
 
         List<String> usersMails = setUsersMailsList(projectId);
         for (String mail : usersMails) {
@@ -69,9 +73,13 @@ public class EmailServiceKp {
         }
     }
 
+
+    public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
+        return subscriptionRepository.findByProjectId(projectId);
+    }
     private List<String> setUsersMailsList(String projectId) {
         List<ProjectSubscribeEntity> subscriptions =
-                projectService.getUsersSubscribedToProject(projectId);
+                getUsersSubscribedToProject(projectId);
         log.info("ПІДПИСНИКИ " + subscriptions.toString() + subscriptions.size());
 
         return subscriptions.stream()
@@ -84,4 +92,6 @@ public class EmailServiceKp {
         message.setSubject(subject);
         message.setText(text);
     }
+
+
 }

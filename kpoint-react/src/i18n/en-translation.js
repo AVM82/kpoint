@@ -43,6 +43,7 @@ const enTranslation = {
     show_more: 'show more',
     help: 'Help',
     follow: 'Follow',
+    unfollow: 'Unfollow',
     donate_projects_page: 'Donate',
     back: 'BACK',
     save: 'SAVE',

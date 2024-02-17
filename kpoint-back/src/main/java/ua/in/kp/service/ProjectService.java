@@ -20,10 +20,7 @@ import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,6 +34,8 @@ public class ProjectService {
     private final UserService userService;
     private final TagRepository tagRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final EmailServiceKp emailService;
+
 
     @Transactional
     public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto) {
@@ -127,25 +126,30 @@ public class ProjectService {
         return projectRepository.findAllByOwner(userEntity, pageable);
     }
 
-    public void subscribeUserToProject(String userId, String projectId) {
-        ProjectSubscribeEntity subscription = new ProjectSubscribeEntity();
-        subscription.setUserId(userId);
-        subscription.setProjectId(projectId);
-        subscriptionRepository.save(subscription);
-    }
+    public String subscribeUserToProject(String projectId) {
+        String userId = userService.getAuthenticated().getId();
 
-    public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
-        return subscriptionRepository.findByProjectId(projectId);
+        Optional<ProjectSubscribeEntity> existingSubscription =
+                subscriptionRepository.findByUserIdAndProjectId(userId, projectId);
+        if (existingSubscription.isPresent()) {
+            return "User is already subscribed to project " + projectId;
+        } else {
+            saveSubscription(projectId);
+            emailService.sendProjectSubscriptionMessage(projectId);
+            return "User subscribed to project " + projectId + " successfully";
+        }
     }
 
     public ProjectResponseDto updateProject(String projectId, ProjectCreateRequestDto projectCreateRequestDto) {
-       UserEntity user = userService.getAuthenticated();
+        UserEntity user = userService.getAuthenticated();
         ProjectEntity existingProject = getProjectIfExist(user, projectId);
 
         ProjectEntity toUpdate = projectMapper.toEntity(projectCreateRequestDto);
+        toUpdate.setOwner(user);
         existingProject.setCollectedSum(toUpdate.getCollectedSum());
         existingProject.setDescription(projectCreateRequestDto.getDescription());
         projectRepository.save(existingProject);
+        emailService.sendUpdateProjectMail(projectId);
         return projectMapper.toDto(existingProject);
     }
 
@@ -155,5 +159,20 @@ public class ProjectService {
             throw new RuntimeException("Project not found");
         }
         return projectForUpdate.get();
+    }
+
+    private String getProjectTitleIfExist(String projectId) {
+        Optional<ProjectEntity> projectForUpdate = projectRepository.findBy(projectId);
+        if (projectForUpdate.isEmpty()) {
+            throw new RuntimeException("Project not found");
+        }
+        return projectForUpdate.get().getTitle();
+    }
+
+    private void saveSubscription(String projectId) {
+        ProjectSubscribeEntity subscription = new ProjectSubscribeEntity();
+        subscription.setUserId(userService.getAuthenticated().getId());
+        subscription.setProjectId(projectId);
+        subscriptionRepository.save(subscription);
     }
 }

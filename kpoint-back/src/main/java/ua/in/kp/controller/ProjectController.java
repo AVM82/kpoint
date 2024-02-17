@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
-import ua.in.kp.dto.suggestion.SuggestionResponseDto;
-import ua.in.kp.service.EmailServiceKp;
 import ua.in.kp.service.ProjectService;
 
 import java.util.UUID;
@@ -22,7 +20,6 @@ import java.util.UUID;
 public class ProjectController {
 
     private final ProjectService projectService;
-    private final EmailServiceKp emailService;
 
     @PostMapping()
     public ResponseEntity<ProjectResponseDto> createProject(
@@ -56,7 +53,7 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/subscribe")
     public ResponseEntity<String> subscribeToProject(@PathVariable String projectId) {
-        return new ResponseEntity<>(emailService.sendProjectSubscriptionMessage(projectId), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.subscribeUserToProject(projectId), HttpStatus.OK);
     }
 
     @PutMapping("/{projectId}/update")

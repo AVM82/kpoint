@@ -15,7 +15,7 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ProjectsProps {
@@ -32,6 +32,15 @@ const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
   logoImgUrl, tags , onButtonClick }) => {
 
   const { t } = useTranslation();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+  const handleButtonClick = ():void => {
+    if (!buttonClicked) {
+      setIsFollowing(!isFollowing);
+      onButtonClick();
+      setButtonClicked(true);
+    }
+  };
 
   return (
     <Card sx={{ maxWidth: 500 }}>
@@ -52,7 +61,10 @@ const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
             <Button size="small" startIcon={ <PeopleAltTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>{t('buttons.help')}</Button>
             <Button size="small" startIcon={ <ControlPointTwoToneIcon/> }
-              sx={{ justifyContent: 'right' }} onClick={onButtonClick} >{t('buttons.follow')}</Button>
+              // sx={{ justifyContent: 'right' }} onClick={onButtonClick} >{t('buttons.follow')}</Button>
+              sx={{ justifyContent: 'right' }}onClick={handleButtonClick} >
+              {isFollowing ? t('buttons.unfollow') : t('buttons.follow')}
+            </Button>
             <Button size="small" startIcon={ <MonetizationOnTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>
               {t('buttons.donate_projects_page')}</Button>
