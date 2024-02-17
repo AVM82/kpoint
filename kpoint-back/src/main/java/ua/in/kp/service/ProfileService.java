@@ -20,6 +20,7 @@ import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.UserRepository;
@@ -36,6 +37,7 @@ public class ProfileService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final Translator translator;
 
     public ProjectsProfileResponseDto getMyProjects(String username, Pageable pageable) {
         UserEntity userEntity = userService.getByUsername(username);
@@ -82,7 +84,8 @@ public class ProfileService {
         UserEntity user = userService.getByUsername(username);
 
         if (!userService.checkIfValidOldPassword(user, dto.oldPassword())) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Invalid old password");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
+                    "exception.user.invalid-old-password"));
         }
         userService.changeUserPassword(user, dto.newPassword());
     }
@@ -92,7 +95,8 @@ public class ProfileService {
             JsonNode patched = patch.apply(objectMapper.convertValue(userDto, JsonNode.class));
             return objectMapper.treeToValue(patched, UserChangeDto.class);
         } catch (JsonPatchException | JsonProcessingException e) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "User cannot be updated");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
+                    "exception.user.cannot-updated"));
         }
     }
 }

@@ -16,7 +16,7 @@ import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.exception.ApplicationException;
-import ua.in.kp.exception.UniqueFieldException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
@@ -38,6 +38,7 @@ public class ProjectService {
     private final TagRepository tagRepository;
     private final S3Service s3Service;
     private final SubscriptionRepository subscriptionRepository;
+    private final Translator translator;
 
     @Transactional
     public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto, MultipartFile file) {
@@ -47,14 +48,16 @@ public class ProjectService {
         Optional<ProjectEntity> checkTitle = projectRepository.findByTitle(title);
         if (checkTitle.isPresent()) {
             log.warn("Project with title {} already exist!", title);
-            throw new UniqueFieldException("Project with title " + title + " already exist!");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
+                    "exception.project.property-already-exist", "title", title));
         }
 
         String url = projectDto.getUrl();
         Optional<ProjectEntity> checkUrl = projectRepository.findByProjectUrl(url);
         if (checkUrl.isPresent()) {
             log.warn("Project with url {} already exist!", url);
-            throw new UniqueFieldException("Project with url " + url + " already exist!");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
+                    "exception.project.property-already-exist", "url", url));
         }
 
         projectDto.getTags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
@@ -85,8 +88,8 @@ public class ProjectService {
                         .orElseThrow(
                                 () -> {
                                     log.warn("Project not found with ID: {}", projectId);
-                                    return new ApplicationException(
-                                            HttpStatus.NOT_FOUND, "Project not found with ID: " + projectId);
+                                    return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                                            "exception.project.not-found", "ID", projectId));
                                 });
         log.info("Project retrieved, id {}", projectEntity.getProjectId());
         return projectMapper.toDto(projectEntity);
@@ -101,8 +104,8 @@ public class ProjectService {
                         .orElseThrow(
                                 () -> {
                                     log.warn("Project with URL {} not found.", url);
-                                    return new ApplicationException(
-                                            HttpStatus.NOT_FOUND, "Project with URL " + url + " not found.");
+                                    return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                                            "exception.project.not-found", "url", url));
                                 });
         log.info("Project with url {} retrieved.", projectEntity.getUrl());
         return projectMapper.toDto(projectEntity);
@@ -117,8 +120,8 @@ public class ProjectService {
                         .orElseThrow(
                                 () -> {
                                     log.warn("Project with title {} not found.", title);
-                                    return new ApplicationException(
-                                            HttpStatus.NOT_FOUND, "Project with title " + title + " not found.");
+                                    return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                                            "exception.project.not-found", "title", title));
                                 });
         log.info("Project with title {} retrieved.", projectEntity.getUrl());
         return projectMapper.toDto(projectEntity);
