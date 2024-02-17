@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +16,7 @@ import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.enumeration.UserRole;
 import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.ApplicantRepository;
 import ua.in.kp.repository.TagRepository;
@@ -36,6 +36,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService customUserDetailsService;
     private final ApplicantRepository applicantRepository;
+    private final Translator translator;
 
     @Transactional
     public UserResponseDto create(UserRegisterRequestDto dto) {
@@ -77,7 +78,8 @@ public class UserService {
         UserEntity userFromDb = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.warn("Can't find user by email {}", email);
-                    return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by email " + email);
+                    return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                            "exception.user.not-found", "email", email));
                 });
         return userMapper.toDto(userFromDb);
     }
@@ -87,7 +89,8 @@ public class UserService {
         log.info("banUserById {}", userId);
         UserEntity userFromDb = userRepository.findById(userId).orElseThrow(() -> {
             log.warn("Can't find user by id {}", userId);
-            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by id " + userId);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "id", userId));
         });
         userRepository.delete(userFromDb);
         return userMapper.toDto(userFromDb);
@@ -99,7 +102,8 @@ public class UserService {
         userRepository.unBanUserByIdForAdmin(userId);
         UserEntity userFromDb = userRepository.findByIdForAdmin(userId).orElseThrow(() -> {
             log.warn("Can't find user by id {}", userId);
-            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by id " + userId);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "id", userId));
         });
         return userMapper.toDto(userFromDb);
     }
@@ -107,14 +111,16 @@ public class UserService {
     public UserEntity getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> {
             log.warn("Can't find user by username {}", username);
-            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by username " + username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "username", username));
         });
     }
 
     public UserEntity getUserEntityByUsernameFetchedOwnedProjects(String username) {
         return userRepository.findByUsernameFetchProjectsOwned(username).orElseThrow(() -> {
             log.warn("Can't find user by username {}", username);
-            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by username " + username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "username", username));
         });
     }
 
@@ -125,14 +131,16 @@ public class UserService {
     public UserEntity getByUsername(String username) {
         return userRepository.findByUsernameFetchNothing(username).orElseThrow(() -> {
             log.warn("Can't find user by username {}", username);
-            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by username " + username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "username", username));
         });
     }
 
     public UserEntity getByUsernameFetchTagsSocials(String username) {
         return userRepository.findByUsernameFetchTagsSocials(username).orElseThrow(() -> {
             log.warn("Can't find user by username {}", username);
-            return new ApplicationException(HttpStatus.NOT_FOUND, "Can't find user by username " + username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "username", username));
         });
     }
 
@@ -149,6 +157,7 @@ public class UserService {
 
     public UserEntity getById(String id) {
         return userRepository.findById(id).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by id " + id));
+                new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                        "exception.user.not-found", "id", id)));
     }
 }

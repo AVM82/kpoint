@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 
@@ -21,7 +22,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectServiceTest {
-
+    @Mock
+    private Translator translator;
     @Mock
     private ProjectRepository projectRepository;
     @Mock
