@@ -13,6 +13,7 @@ import ua.in.kp.entity.LikeEntity;
 import ua.in.kp.entity.SuggestionEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
@@ -25,6 +26,7 @@ public class SuggestionService {
     private final LikeRepository likeRepository;
     private final SuggestionMapper suggestionMapper;
     private final UserService userService;
+    private final Translator translator;
 
     public SuggestionResponseDto createSuggestion(SuggestionCreateRequestDto suggestionCreateRequestDto) {
         log.info("Create suggestion method started");
@@ -77,7 +79,8 @@ public class SuggestionService {
     public void deleteSuggestion(String suggestionId) {
         if (!suggestionRepository.existsById(suggestionId)) {
             log.warn("Suggestion not found with ID: {}", suggestionId);
-            throw new ApplicationException(HttpStatus.NOT_FOUND, "Suggestion not found with ID: " + suggestionId);
+            throw new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.suggestion.not-found", "ID", suggestionId));
         }
         suggestionRepository.deleteById(suggestionId);
     }

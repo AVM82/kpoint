@@ -2,10 +2,13 @@ package ua.in.kp.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.repository.UserRepository;
 
 @Component
@@ -13,13 +16,15 @@ import ua.in.kp.repository.UserRepository;
 @Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final Translator translator;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmailFetchRoles(email)
                 .orElseThrow(() -> {
                     log.warn("Authentication Failed. User {} not found", email);
-                    return new UsernameNotFoundException("Authentication Failed. User not found");
+                    return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                            "exception.user.not-found", "email", email));
                 });
     }
 }
