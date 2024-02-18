@@ -24,6 +24,7 @@ const enTranslation = {
   footer_sign: 'All rights reserved',
   add_suggestion: 'Add',
   send_suggestion: 'Send',
+  subscribe_message: 'You successfully subscribed',
   statuses: {
     NEW: 'New',
     GATHERING_FOR_START: 'Gathering for start',
