@@ -17,6 +17,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { projectAction } from 'store/actions';
+
+import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 
 interface ProjectsProps {
   projectId: string;
@@ -25,18 +28,17 @@ interface ProjectsProps {
   summary: string;
   logoImgUrl: string;
   tags: [];
-  onButtonClick: (projectId: string) => void;
 }
 
 const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
-  logoImgUrl, tags , onButtonClick }) => {
-
+  logoImgUrl, tags }) => {
   const { t } = useTranslation();
   const [isFollowing, setIsFollowing] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const handleButtonClick = ():void => {
+  const handleButtonSubClick = ():void => {
     setIsFollowing(!isFollowing);
-    onButtonClick(projectId);
+    dispatch(projectAction.subscribeToProject({ projectId: projectId }));
   };
 
   return (
@@ -58,8 +60,7 @@ const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
             <Button size="small" startIcon={ <PeopleAltTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>{t('buttons.help')}</Button>
             <Button size="small" startIcon={ <ControlPointTwoToneIcon/> }
-              // sx={{ justifyContent: 'right' }} onClick={onButtonClick} >{t('buttons.follow')}</Button>
-              sx={{ justifyContent: 'right' }}onClick={handleButtonClick} >
+              sx={{ justifyContent: 'right' }}onClick={handleButtonSubClick} >
               {isFollowing ? t('buttons.unfollow') : t('buttons.follow')}
             </Button>
             <Button size="small" startIcon={ <MonetizationOnTwoToneIcon/> }

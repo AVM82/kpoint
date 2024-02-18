@@ -149,14 +149,14 @@ public class ProjectService {
 
     public SubscribeResponseDto subscribeUserToProject(String projectId) {
         String userId = userService.getAuthenticated().getId();
-
+        String projUrl = getProjectUriIfExist(projectId);
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(userId, projectId);
         if (existingSubscription.isPresent()) {
             return new SubscribeResponseDto("User is already subscribed to project " + projectId);
         } else {
             saveSubscription(projectId);
-            emailService.sendProjectSubscriptionMessage(projectId);
+            emailService.sendProjectSubscriptionMessage(projectId, projUrl);
             return new SubscribeResponseDto("User subscribed to project " + projectId + " successfully");
         }
     }
