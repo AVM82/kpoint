@@ -6,7 +6,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.repository.SubscriptionRepository;
@@ -76,6 +75,7 @@ public class EmailServiceKp {
     public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
         return subscriptionRepository.findByProjectId(projectId);
     }
+
     private List<String> setUsersMailsList(String projectId) {
         List<ProjectSubscribeEntity> subscriptions =
                 getUsersSubscribedToProject(projectId);
@@ -91,6 +91,4 @@ public class EmailServiceKp {
         message.setSubject(subject);
         message.setText(text);
     }
-
-
 }

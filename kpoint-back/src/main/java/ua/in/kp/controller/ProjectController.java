@@ -13,8 +13,6 @@ import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.service.ProjectService;
 
-import java.util.UUID;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/projects")
@@ -58,8 +56,9 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}/update")
-    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable String  projectId,
-                                                            @Valid @RequestBody ProjectCreateRequestDto createdProject) {
+    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable String projectId,
+                                                            @Valid @RequestBody
+                                                            ProjectCreateRequestDto createdProject) {
         return new ResponseEntity<>(projectService
                 .updateProject(projectId, createdProject), HttpStatus.CREATED);
     }

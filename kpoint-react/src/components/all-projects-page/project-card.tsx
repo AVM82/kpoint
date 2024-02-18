@@ -25,10 +25,10 @@ interface ProjectsProps {
   summary: string;
   logoImgUrl: string;
   tags: [];
-  onButtonClick: () => void;
+  onButtonClick: (projectId: string) => void;
 }
 
-const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
+const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
   logoImgUrl, tags , onButtonClick }) => {
 
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
 
   const handleButtonClick = ():void => {
     setIsFollowing(!isFollowing);
-    onButtonClick();
+    onButtonClick(projectId);
   };
 
   return (

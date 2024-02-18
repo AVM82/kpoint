@@ -37,7 +37,6 @@ public class ProjectService {
     private final SubscriptionRepository subscriptionRepository;
     private final EmailServiceKp emailService;
 
-
     @Transactional
     public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto) {
         log.info("Create project method started");
