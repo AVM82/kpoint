@@ -6,6 +6,7 @@ import {
 } from 'common/types/types';
 
 import { ContentType } from '../../common/enums/file/content-type.enum';
+import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { Http } from '../http/http.service';
 
 type Constructor = {
@@ -76,7 +77,7 @@ class ProjectApi {
     });
   }
 
-  public subscribeToProject(payload: { id: string }): Promise<string> {
+  public subscribeToProject(payload: { id: string }): Promise<SubscriptionRequestType> {
     return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}/subscribe`, {
       method: HttpMethod.POST,
       payload: JSON.stringify(payload),

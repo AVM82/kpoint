@@ -4,6 +4,7 @@ import { AsyncThunkConfig } from 'common/types/app/async-thunk-config.type';
 import { ProjectType } from '../../common/types/projects/project.type';
 import { ProjectsEditType } from '../../common/types/projects/projects-edit.type';
 import { ProjectsPageType } from '../../common/types/projects/projects-page.type';
+import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { ActionType } from './common';
 
 const getById = createAsyncThunk<ProjectType, { id: string }, AsyncThunkConfig>(
@@ -44,7 +45,7 @@ const createNew = createAsyncThunk<ProjectType, { projectData: ProjectsEditType 
   },
 );
 
-const subscribeToProject = createAsyncThunk<string, { id: string }, AsyncThunkConfig>(
+const subscribeToProject = createAsyncThunk<SubscriptionRequestType, { id: string }, AsyncThunkConfig>(
   ActionType.POST_SUB,
   async (payload, { extra }) => {
     const { projectApi } = extra;
