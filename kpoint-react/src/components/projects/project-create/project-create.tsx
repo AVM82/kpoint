@@ -161,11 +161,7 @@ export const ProjectCreate: FC = () => {
               </Step>
             ))}
           </Stepper>
-          {activeStep > steps.length ? (
-            <Typography variant="h5" gutterBottom>
-              Новий проєкт не створено.
-            </Typography>
-          ) : (
+          {activeStep > steps.length ?  <>{setActiveStep(1)}</> : (
             <React.Fragment>
               {getStepContent(activeStep)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

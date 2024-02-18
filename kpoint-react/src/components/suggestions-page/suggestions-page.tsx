@@ -23,6 +23,7 @@ const SuggestionsPage: FC = () => {
   const { suggestions } = useAppSelector(({ suggestion }) => ({
     suggestions: suggestion.suggestions,
   }));
+
   const status = useAppSelector((state) => state.suggestion.status);
 
   const [page, setPage] = useState(1);

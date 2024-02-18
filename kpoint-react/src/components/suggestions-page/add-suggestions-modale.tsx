@@ -26,8 +26,9 @@ const style = {
   height: '340px',
 };
 
-const AddSuggestionModal: React.FC<{ handleCloseModal: () => void }> = ({
+const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: number, }> = ({
   handleCloseModal,
+
 }) => {
   const [inputText, setInputText] = React.useState('');
   const { t } = useTranslation();

@@ -44,4 +44,13 @@ const createNew = createAsyncThunk<ProjectType, { projectData: ProjectsEditType 
   },
 );
 
-export { createNew,getAllProjectsAddMore,getAllProjectsDefault,getById };
+const subscribeToProject = createAsyncThunk<string, { id: string }, AsyncThunkConfig>(
+  ActionType.POST_SUB,
+  async (payload, { extra }) => {
+    const { projectApi } = extra;
+
+    return projectApi.subscribeToProject(payload);
+  },
+);
+
+export { createNew,getAllProjectsAddMore,getAllProjectsDefault,getById, subscribeToProject };

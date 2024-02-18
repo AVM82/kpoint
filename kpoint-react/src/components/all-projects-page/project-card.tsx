@@ -19,15 +19,17 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ProjectsProps {
+  id: string;
   url: string;
   title: string;
   summary: string;
   logoImgUrl: string;
   tags: [];
+  onButtonClick: () => void;
 }
 
 const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
-  logoImgUrl, tags }) => {
+  logoImgUrl, tags , onButtonClick }) => {
 
   const { t } = useTranslation();
 
@@ -50,9 +52,10 @@ const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
             <Button size="small" startIcon={ <PeopleAltTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>{t('buttons.help')}</Button>
             <Button size="small" startIcon={ <ControlPointTwoToneIcon/> }
-              sx={{ justifyContent: 'right' }}>{t('buttons.follow')}</Button>
+              sx={{ justifyContent: 'right' }} onClick={onButtonClick} >{t('buttons.follow')}</Button>
             <Button size="small" startIcon={ <MonetizationOnTwoToneIcon/> }
-              sx={{ justifyContent: 'right' }}>{t('buttons.donate_projects_page')}</Button>
+              sx={{ justifyContent: 'right' }}>
+              {t('buttons.donate_projects_page')}</Button>
           </ButtonGroup></Grid>
         </Grid>
       </CardMedia>

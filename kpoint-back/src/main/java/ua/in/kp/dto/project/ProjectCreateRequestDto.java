@@ -36,8 +36,6 @@ public class ProjectCreateRequestDto {
     @CollectionLength(min = 1, max = 5, message = "{project.tag.not.null}")
     private Set<String> tags;
 
-    private String logoImgUrl;
-
     @DecimalMin(value = "-90.0", message = "{project.latitude.size}")
     @DecimalMax(value = "90.0", message = "{project.latitude.size}")
     @Digits(integer = 3, fraction = 1)
