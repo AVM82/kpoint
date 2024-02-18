@@ -34,11 +34,11 @@ public class EmailServiceKp {
         this.subscriptionRepository = subscriptionRepository;
     }
 
-    public void sendProjectSubscriptionMessage(String projectId) {
+    public void sendProjectSubscriptionMessage(String projectId, String projectUrl) {
 
         UserEntity user = userService.getAuthenticated();
         try {
-            sendSubscribeMail(user, projectId);
+            sendSubscribeMail(user, projectUrl);
             log.info("User {} subscribed on project {}", user.getEmail(), projectId);
         } catch (Exception e) {
             log.warn("Email to {} was not sent {}", user.getEmail(), e.getMessage());
@@ -46,12 +46,11 @@ public class EmailServiceKp {
         }
     }
 
-    private void sendSubscribeMail(UserEntity user, String projectId) {
+    private void sendSubscribeMail(UserEntity user, String url) {
         SimpleMailMessage message = new SimpleMailMessage();
-
         setMessageData(message, env.getProperty("email.subscription_mail.subject"),
                 env.getProperty("email.subscription_mail.text") + "\n\n"
-                        + "Лінк на проект: " + env.getProperty("oauth2.redirect-uri") + "projects/" + projectId);
+                        + "Лінк на проект: " + env.getProperty("oauth2.redirect-uri") + "projects/" + url);
         message.setTo(user.getEmail());
         emailSender.send(message);
         log.info("Email to {} was sent", user.getEmail());
