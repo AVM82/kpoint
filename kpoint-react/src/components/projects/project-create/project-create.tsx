@@ -1,4 +1,15 @@
-import { Box, Button, Container, CssBaseline, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+
+import {
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  Paper,
+  Step,
+  StepLabel,
+  Stepper,
+  Typography,
+} from '@mui/material';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +42,7 @@ export const ProjectCreate: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleNext = (): void => {
+  const handleNext = async (): Promise<void> => {
     const validationErrors = validateForm(projectData);
 
     if (Object.keys(validationErrors).length === 0) {
@@ -59,6 +70,7 @@ export const ProjectCreate: FC = () => {
 
   const handleChange = (field: string, value: string | File): void => {
     setProjectData((prevData) => ({ ...prevData, [field]: value }));
+    console.log(projectData);
   };
 
   const handleFieldFocus = (field: string): void => {

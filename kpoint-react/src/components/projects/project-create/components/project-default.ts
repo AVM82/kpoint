@@ -8,7 +8,7 @@ export const projectDefault: ProjectsEditType = {
   summary: '',
   description: '',
   tags: [],
-  logoImgUrl: null,
+  logoImgUrl: '',
   latitude: 0,
   longitude: 0,
   ownerSum: 0,

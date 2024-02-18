@@ -54,7 +54,7 @@ const ProjectsPage: FC = () => {
   };
 
   return (
-    <Container maxWidth={'xl'}>
+    <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
       <ProjectsPageHeader />
       <Grid
         container
