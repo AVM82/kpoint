@@ -1,3 +1,5 @@
+import { OwnerType } from './owner.type';
+
 export type GetAllProjectsType = {
   projectId: string
   url: string,
@@ -5,4 +7,5 @@ export type GetAllProjectsType = {
   summary: string,
   logoImgUrl: string,
   tags: [],
+  owner: OwnerType,
 };

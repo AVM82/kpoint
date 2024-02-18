@@ -22,4 +22,6 @@ public class GetAllProjectsDto {
     private String state;
 
     private int goalSum;
+
+    private ProjectOwnerDto user;
 }

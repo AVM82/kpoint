@@ -15,7 +15,7 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { projectAction } from 'store/actions';
 
@@ -28,17 +28,29 @@ interface ProjectsProps {
   summary: string;
   logoImgUrl: string;
   tags: [];
+  ownerId: string;
 }
 
 const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
-  logoImgUrl, tags }) => {
+  logoImgUrl, tags, ownerId }) => {
   const { t } = useTranslation();
   const [isFollowing, setIsFollowing] = useState(false);
   const dispatch = useAppDispatch();
 
-  const handleButtonSubClick = ():void => {
-    setIsFollowing(!isFollowing);
-    dispatch(projectAction.subscribeToProject({ projectId: projectId }));
+  useEffect(() => {
+    const isUserSubscribed = localStorage.getItem(`project_${projectId}_${ownerId}_subscription`);
+
+    if (isUserSubscribed) {
+      setIsFollowing(true);
+    }
+  }, [projectId, ownerId]);
+
+  const handleButtonSubClick = (): void => {
+    if (!isFollowing) {
+      setIsFollowing(true);
+      localStorage.setItem(`project_${projectId}_${ownerId}_subscription`, 'true');
+      dispatch(projectAction.subscribeToProject({ projectId: projectId }));
+    }
   };
 
   return (
