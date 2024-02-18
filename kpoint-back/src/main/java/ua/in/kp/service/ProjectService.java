@@ -170,7 +170,7 @@ public class ProjectService {
         existingProject.setCollectedSum(toUpdate.getCollectedSum());
         existingProject.setDescription(projectCreateRequestDto.getDescription());
         projectRepository.save(existingProject);
-        emailService.sendUpdateProjectMail(projectId);
+        emailService.sendUpdateProjectMail(projectId, existingProject.getUrl());
         return projectMapper.toDto(existingProject);
     }
 
@@ -182,12 +182,12 @@ public class ProjectService {
         return projectForUpdate.get();
     }
 
-    private String getProjectTitleIfExist(String projectId) {
+    private String getProjectUriIfExist(String projectId) {
         Optional<ProjectEntity> projectForUpdate = projectRepository.findBy(projectId);
         if (projectForUpdate.isEmpty()) {
             throw new RuntimeException("Project not found");
         }
-        return projectForUpdate.get().getTitle();
+        return projectForUpdate.get().getUrl();
     }
 
     private void saveSubscription(String projectId) {

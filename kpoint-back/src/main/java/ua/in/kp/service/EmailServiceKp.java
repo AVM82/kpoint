@@ -51,17 +51,17 @@ public class EmailServiceKp {
 
         setMessageData(message, env.getProperty("email.subscription_mail.subject"),
                 env.getProperty("email.subscription_mail.text") + "\n\n"
-                        + "Лінк на проект: " + "http://localhost:3000/projects/" + projectId);
+                        + "Лінк на проект: " + env.getProperty("oauth2.redirect-uri") + "projects/" + projectId);
         message.setTo(user.getEmail());
         emailSender.send(message);
         log.info("Email to {} was sent", user.getEmail());
     }
 
-    public void sendUpdateProjectMail(String projectId) {
+    public void sendUpdateProjectMail(String projectId, String title) {
         SimpleMailMessage message = new SimpleMailMessage();
         setMessageData(message, env.getProperty("email.update_project_mail.subject"),
                 env.getProperty("email.update_project_mail.text") + "\n\n"
-                        + "Лінк на проект: " + "http://localhost:3000/projects/" + projectId);
+                        + "Лінк на проект: " + env.getProperty("oauth2.redirect-uri") + "projects/" + title);
 
         List<String> usersMails = setUsersMailsList(projectId);
         for (String mail : usersMails) {
