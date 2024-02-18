@@ -1,5 +1,7 @@
 package ua.in.kp.service;
 
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,6 @@ import ua.in.kp.repository.UserRepository;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
 public class UserService {
@@ -37,6 +38,21 @@ public class UserService {
     private final UserDetailsService customUserDetailsService;
     private final ApplicantRepository applicantRepository;
     private final Translator translator;
+    private final MeterRegistry meterRegistry;
+
+    public UserService(UserRepository userRepository, TagRepository tagRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, UserDetailsService customUserDetailsService, ApplicantRepository applicantRepository, MeterRegistry meterRegistry) {
+        this.userRepository = userRepository;
+        this.tagRepository = tagRepository;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.customUserDetailsService = customUserDetailsService;
+        this.applicantRepository = applicantRepository;
+        this.meterRegistry = meterRegistry;
+
+        Gauge.builder("users_count", userRepository::count)
+                .description("A current number of users in the system")
+                .register(meterRegistry);
+    }
 
     @Transactional
     public UserResponseDto create(UserRegisterRequestDto dto) {
