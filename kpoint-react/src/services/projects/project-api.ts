@@ -77,8 +77,8 @@ class ProjectApi {
     });
   }
 
-  public subscribeToProject(payload: { id: string }): Promise<SubscriptionRequestType> {
-    return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}/subscribe`, {
+  public subscribeToProject(payload: { projectId: string }): Promise<SubscriptionRequestType> {
+    return this.#http.load(`${this.#apiPrefix}/projects/${payload.projectId}/subscribe`, {
       method: HttpMethod.POST,
       payload: JSON.stringify(payload),
       contentType: ContentType.JSON,
