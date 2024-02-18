@@ -17,9 +17,12 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
+import { StorageKey } from '../../common/enums/app/storage-key.enum';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
+import { storage } from '../../services/services';
 
 interface ProjectsProps {
   projectId: string;
@@ -28,28 +31,30 @@ interface ProjectsProps {
   summary: string;
   logoImgUrl: string;
   tags: [];
-  ownerId: string;
 }
 
 const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
-  logoImgUrl, tags, ownerId }) => {
+  logoImgUrl, tags }) => {
   const { t } = useTranslation();
   const [isFollowing, setIsFollowing] = useState(false);
   const dispatch = useAppDispatch();
+  const userID = storage.getItem(StorageKey.USER);
 
   useEffect(() => {
-    const isUserSubscribed = localStorage.getItem(`project_${projectId}_${ownerId}_subscription`);
+    const isUserSubscribed = localStorage.getItem(`project_${projectId}_${userID}_subscription`);
 
     if (isUserSubscribed) {
       setIsFollowing(true);
     }
-  }, [projectId, ownerId]);
+
+  }, [projectId, userID]);
 
   const handleButtonSubClick = (): void => {
     if (!isFollowing) {
       setIsFollowing(true);
-      localStorage.setItem(`project_${projectId}_${ownerId}_subscription`, 'true');
+      localStorage.setItem(`project_${projectId}_${userID}_subscription`, 'true');
       dispatch(projectAction.subscribeToProject({ projectId: projectId }));
+      toast.success('Ви успішно підписані на проект');
     }
   };
 

@@ -79,7 +79,6 @@ const ProjectsPage: FC = () => {
               summary={project.summary}
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
-              ownerId={project.owner.ownerId}
             />
           </Grid>
         ))}
