@@ -2,7 +2,6 @@ package ua.in.kp.service;
 
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,13 +39,17 @@ public class UserService {
     private final Translator translator;
     private final MeterRegistry meterRegistry;
 
-    public UserService(UserRepository userRepository, TagRepository tagRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, UserDetailsService customUserDetailsService, ApplicantRepository applicantRepository, MeterRegistry meterRegistry) {
+    public UserService(UserRepository userRepository, TagRepository tagRepository,
+                       UserMapper userMapper, PasswordEncoder passwordEncoder,
+                       UserDetailsService customUserDetailsService, ApplicantRepository applicantRepository,
+                       Translator translator, MeterRegistry meterRegistry) {
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
         this.applicantRepository = applicantRepository;
+        this.translator = translator;
         this.meterRegistry = meterRegistry;
 
         Gauge.builder("users_count", userRepository::count)
