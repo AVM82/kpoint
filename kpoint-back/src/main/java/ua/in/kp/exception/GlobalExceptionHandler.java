@@ -16,8 +16,6 @@ import ua.in.kp.locale.Translator;
 
 import java.net.URI;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final String TIMESTAMP_PROPERTY_NAME = "timestamp";
     private static final String REJECTED_VALUE_MSG_CODE =
             "validation.constraint.rejected-value.message";
     private final Translator translator;
@@ -51,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode statusCode,
             WebRequest request) {
         log.warn("handleExceptionInternal", ex);
-        return createResponseEntity(statusCode, ex.getLocalizedMessage());
+        return createApiError(HttpStatus.resolve(statusCode.value()), ex.getLocalizedMessage());
     }
 
     @ExceptionHandler({ ApplicationException.class })
@@ -93,13 +90,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> createApiError(HttpStatus status, String details) {
         final ApiError apiError = new ApiError(details, details, status);
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
-    }
-
-    private ResponseEntity<Object> createResponseEntity(HttpStatusCode statusCode, String details) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(statusCode, details);
-        problemDetail.setProperty(TIMESTAMP_PROPERTY_NAME,
-                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        return ResponseEntity.of(problemDetail).build();
     }
 
     private void setError(ProblemDetail problemDetail, ObjectError error) {

@@ -5,7 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
@@ -20,11 +23,12 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PostMapping()
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ProjectResponseDto> createProject(
-            @Valid @RequestBody ProjectCreateRequestDto createdProject) {
+            @Valid @RequestPart ProjectCreateRequestDto createdProject,
+            @RequestPart("file") MultipartFile file) {
         return new ResponseEntity<>(projectService
-                .createProject(createdProject), HttpStatus.CREATED);
+                .createProject(createdProject, file), HttpStatus.CREATED);
     }
 
     @GetMapping()

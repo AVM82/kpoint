@@ -12,6 +12,7 @@ import ua.in.kp.dto.suggestion.SuggestionUserDto;
 import ua.in.kp.entity.SuggestionEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.SuggestionMapper;
 import ua.in.kp.repository.LikeRepository;
 import ua.in.kp.repository.SuggestionRepository;
@@ -36,6 +37,8 @@ class SuggestionServiceTest {
     private SuggestionRepository suggestionRepository;
     @InjectMocks
     private SuggestionService testObject;
+    @Mock
+    private Translator translator;
 
     @Test
     void createSuggestion() {

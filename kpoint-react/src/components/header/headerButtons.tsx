@@ -39,7 +39,8 @@ const HeaderButtons: FC<HeaderButtonsProps> = ({ isTitleClicked }) => {
       buttonsBlock = (
         <>
           <AccountMenu onClick={setProfileClicked} />
-          <Button href="/projects/new" variant="outlined" sx={{ margin: 1 }}>
+          <Button href="/projects/new" variant="outlined"
+         sx={{ margin: 1 }}>
             {t('buttons.create_project')}
           </Button>
           <Button onClick={handleLogout} variant="contained" sx={{ margin: 1 }}>

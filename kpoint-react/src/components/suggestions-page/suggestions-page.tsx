@@ -22,6 +22,7 @@ const SuggestionsPage: FC = () => {
   const { suggestions } = useAppSelector(({ suggestion }) => ({
     suggestions: suggestion.suggestions,
   }));
+
   const status = useAppSelector((state) => state.suggestion.status);
 
   const [page, setPage] = useState(1);
@@ -91,8 +92,7 @@ const SuggestionsPage: FC = () => {
           {t('add_suggestion')}
         </Button>
       </Grid>
-      {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal}
-        maxPageElements={maxPageElements} currentPage={page} />}
+      {modalOpen && <AddSuggestionModal handleCloseModal={handleCloseModal} currentPage={page} />}
       <Grid item>
         {suggestions?.content.map((suggestion) => (
           <Grid item key={suggestion.id}>
