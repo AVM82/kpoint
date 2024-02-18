@@ -1,15 +1,5 @@
-
-import {
-  Box,
-  Button,
-  Container,
-  CssBaseline,
-  Paper,
-  Step,
-  StepLabel,
-  Stepper,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Container, CssBaseline, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { TestRequest } from 'common/types/projects/testRequest';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -40,9 +30,10 @@ export const ProjectCreate: FC = () => {
     useState<ProjectsEditType>(projectDefault);
 
   const dispatch = useAppDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate();
 
-  const handleNext = async (): Promise<void> => {
+  const handleNext = (): void => {
     const validationErrors = validateForm(projectData);
 
     if (Object.keys(validationErrors).length === 0) {
@@ -52,11 +43,32 @@ export const ProjectCreate: FC = () => {
       setErrors(validationErrors);
     }
 
+    const testData: TestRequest = {
+      file: projectData.logo,
+      createdProject: 
+        {
+          title: projectData.title,
+          url: projectData.url,
+          summary: projectData.summary,
+          description: projectData.description,
+          tags: projectData.tags,
+          goalDeadline: projectData.goalDeadline,
+          collectDeadline: projectData.collectDeadline,
+          networksLinks: { FACEBOOK: 'https://www.facebook.com/example' },
+        },
+    };
+
+    const a = new FormData();
+    a.append('file', testData.file);
+    const b  = JSON.stringify(testData.createdProject);
+    a.append('createdProject', b);
+
     if (activeStep === steps.length) {
-      dispatch(projectAction.createNew({ projectData }))
+      dispatch(projectAction.createNew( { testData } ))
         .unwrap()
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .then((action): void => {
-          navigate('/projects/' + action.url);
+          // navigate('/projects/' + action.url);
         })
         .catch((reason) => {
           toast.error(`Can\\'t create new project, because: ${reason}`);
@@ -70,7 +82,6 @@ export const ProjectCreate: FC = () => {
 
   const handleChange = (field: string, value: string | File): void => {
     setProjectData((prevData) => ({ ...prevData, [field]: value }));
-    console.log(projectData);
   };
 
   const handleFieldFocus = (field: string): void => {

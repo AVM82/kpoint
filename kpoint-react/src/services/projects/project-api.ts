@@ -1,10 +1,11 @@
 import { HttpMethod } from 'common/enums/http/http-method.enum';
+import { TestRequest } from 'common/types/projects/testRequest';
 import {
-  ProjectsEditType,
   ProjectsPageType,
   ProjectType,
 } from 'common/types/types';
 
+// import qs from 'query-string';
 import { ContentType } from '../../common/enums/file/content-type.enum';
 import { Http } from '../http/http.service';
 
@@ -68,11 +69,19 @@ class ProjectApi {
     );
   }
 
-  public createNew(payload: ProjectsEditType): Promise<ProjectType> {
+  public createNew(payload: TestRequest): Promise<ProjectType> {
+    const a = new FormData();
+    a.append('file', payload.file);
+    const b  = JSON.stringify(payload.createdProject);
+    a.append('createdProject', b);
+    a.set('createdProject.type', 'application/json');
+    console.log(a.get('createdProject'));
+    console.log(a.get('file'));
+
     return this.#http.load(`${this.#apiPrefix}/projects`, {
       method: HttpMethod.POST,
-      payload: JSON.stringify(payload),
-      contentType: ContentType.JSON,
+      payload: a,
+      contentType: ContentType.FORM_DATA,
     });
   }
 
