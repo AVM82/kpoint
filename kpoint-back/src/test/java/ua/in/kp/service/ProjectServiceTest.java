@@ -1,5 +1,6 @@
 package ua.in.kp.service;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,10 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
+import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,11 +23,14 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectServiceTest {
-
+    @Mock
+    private Translator translator;
     @Mock
     private ProjectRepository projectRepository;
     @Mock
     private ProjectMapper projectMapper;
+    @Mock
+    private MeterRegistry meterRegistry;
     @InjectMocks
     private ProjectService projectService;
 
@@ -62,7 +67,7 @@ class ProjectServiceTest {
 
         when(projectRepository.findBy(projectId)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> projectService.getProjectById(projectId));
+        assertThrows(ApplicationException.class, () -> projectService.getProjectById(projectId));
 
         verify(projectRepository).findBy(projectId);
         verify(projectMapper, never()).toDto(any());
@@ -86,7 +91,7 @@ class ProjectServiceTest {
     void getProjectByUrl_shouldThrowException_whenProjectDoesNotExist() {
         String projectUrl = "url123";
 
-        assertThrows(NoSuchElementException.class, () -> projectService.getProjectByUrl(projectUrl));
+        assertThrows(ApplicationException.class, () -> projectService.getProjectByUrl(projectUrl));
         verify(projectRepository).findByProjectUrl(projectUrl);
     }
 }

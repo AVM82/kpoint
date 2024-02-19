@@ -9,15 +9,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.in.kp.dto.profile.PasswordDto;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
 import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
-import ua.in.kp.exception.UserException;
+import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.UserRepository;
@@ -34,6 +37,7 @@ public class ProfileService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final Translator translator;
 
     public ProjectsProfileResponseDto getMyProjects(String username, Pageable pageable) {
         UserEntity userEntity = userService.getByUsername(username);
@@ -43,7 +47,7 @@ public class ProfileService {
                 ownedProjectsDtos);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ProjectsProfileResponseDto getFavouriteProjects(String username, Pageable pageable) {
         UserEntity userEntity = userService.getByUsername(username);
         Page<GetAllProjectsDto> favouriteProjectsDtos =
@@ -75,12 +79,24 @@ public class ProfileService {
         return userMapper.toChangeDto(updatedUser);
     }
 
-    protected UserChangeDto applyPatchToCustomer(JsonPatch patch, UserChangeDto userChangeDto) {
+    public void changePassword(String username, PasswordDto dto) {
+        log.info("change password by username {}", username);
+        UserEntity user = userService.getByUsername(username);
+
+        if (!userService.checkIfValidOldPassword(user, dto.oldPassword())) {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
+                    "exception.user.invalid-old-password"));
+        }
+        userService.changeUserPassword(user, dto.newPassword());
+    }
+
+    protected UserChangeDto applyPatchToCustomer(JsonPatch patch, Record userDto) {
         try {
-            JsonNode patched = patch.apply(objectMapper.convertValue(userChangeDto, JsonNode.class));
+            JsonNode patched = patch.apply(objectMapper.convertValue(userDto, JsonNode.class));
             return objectMapper.treeToValue(patched, UserChangeDto.class);
         } catch (JsonPatchException | JsonProcessingException e) {
-            throw new UserException("User cannot be updated");
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
+                    "exception.user.cannot-updated"));
         }
     }
 }
