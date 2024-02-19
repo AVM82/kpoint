@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable indent */
 import {
   Box,
   Button,
@@ -57,17 +55,17 @@ const MyProfile: FC = () => {
 
     try {
 
-      if(!validateEmail(testEditForm['email'])) {
+      if(!validateEmail(testEditForm['email']) && testEditForm['email'] !== '') {
         throw new Error('Invalid email');
 
       }
 
-    const bodyData = Object.keys(testEditForm).map((item) => {
-      const key: string= item;
+      const bodyData = Object.keys(testEditForm).map((item) => {
+        const key: string= item;
 
-      return { op:'replace',path:`/${key}`,value: testEditForm[key as keyof typeof testEditForm] || null };
+        return { op:'replace',path:`/${key}`,value: testEditForm[key as keyof typeof testEditForm] || null };
 
-    });
+      });
 
       const response = await fetch(
         `http://localhost:5001/api/profile/${testUser?.username}/settings`,
@@ -122,66 +120,66 @@ const MyProfile: FC = () => {
 
   return (
     <ProfileLayout>
-       <Box
-          display={'flex'}
-          component={'form'}
-          onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
-            handleSubmit(e)
-          }
-        >
-          <Grid container spacing={2}>
+      <Box
+        display={'flex'}
+        component={'form'}
+        onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
+          handleSubmit(e)
+        }
+      >
+        <Grid container spacing={2}>
           <Grid item xs={3} md={6}>
-              <FormLabel>Email</FormLabel>
-              <TextField fullWidth name="email" placeholder={testUser?.email}
+            <FormLabel>Email</FormLabel>
+            <TextField fullWidth name="email" placeholder={testUser?.email}
               value={testEditForm['email']}
-               onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
                 handleChange(e)
               } />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Користувацьке ім’я (обов'язково)</FormLabel>
-              <TextField fullWidth name="username" placeholder={testUser?.username}
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <FormLabel>Користувацьке ім’я (обов'язково)</FormLabel>
+            <TextField fullWidth name="username" placeholder={testUser?.username}
               value={testEditForm['username']}
-               onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
                 handleChange(e)
               } />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Ім'я</FormLabel>
-              <TextField
-                fullWidth
-                name="firstName"
-                value={testEditForm['firstName']}
-                placeholder={testUser?.firstName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                  handleChange(e)
-                }
-              />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Прізвище</FormLabel>
-              <TextField
-                fullWidth
-                name="lastName"
-                placeholder={testUser?.lastName}
-                value={testEditForm['lastName']}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                  handleChange(e)
-                }
-              />
-            </Grid>
-            <Grid item xs={3} md={6}>
-          <Button sx={{ alignSelf: 'end', marginTop: '56px',  color: 'grey' }} onClick={handleReset}>
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <FormLabel>Ім'я</FormLabel>
+            <TextField
+              fullWidth
+              name="firstName"
+              value={testEditForm['firstName']}
+              placeholder={testUser?.firstName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                handleChange(e)
+              }
+            />
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <FormLabel>Прізвище</FormLabel>
+            <TextField
+              fullWidth
+              name="lastName"
+              placeholder={testUser?.lastName}
+              value={testEditForm['lastName']}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                handleChange(e)
+              }
+            />
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <Button sx={{ alignSelf: 'end', marginTop: '56px',  color: 'grey' }} onClick={handleReset}>
             Скасувати
-          </Button>
+            </Button>
           </Grid>
           <Grid item xs={6} textAlign={'right'}>
-          <Button sx={{ marginTop: '56px' }} type="submit">
+            <Button sx={{ marginTop: '56px' }} type="submit">
             Зберегти
-          </Button>
+            </Button>
           </Grid>
-          </Grid>
-        </Box>
+        </Grid>
+      </Box>
     </ProfileLayout>
   );
 };

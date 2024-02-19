@@ -33,8 +33,8 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
     case 'newProject':
       // navigate('/projects/new');
       break;
-    case 'settings':
-      // navigate('/settings/profile');
+    case 'profileSettings':
+      navigate('/settings/profile');
       break;
     case 'changePassword':
       navigate('/password/profile');
@@ -76,7 +76,6 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
       <Box
         display={'flex'}
         alignItems={'center'}
-        justifyContent={'space-between'}
         gap={'150px'}
         margin={'0 50px'}
       >
