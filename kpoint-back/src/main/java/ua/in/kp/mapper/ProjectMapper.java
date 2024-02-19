@@ -6,7 +6,9 @@ import ua.in.kp.config.MapperConfig;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.project.ProjectSubscribeDto;
 import ua.in.kp.entity.ProjectEntity;
+import ua.in.kp.entity.ProjectSubscribeEntity;
 
 @Mapper(config = MapperConfig.class, uses = TagMapper.class)
 public interface ProjectMapper {
@@ -22,4 +24,6 @@ public interface ProjectMapper {
     ProjectEntity toEntity(ProjectCreateRequestDto projectDto);
 
     GetAllProjectsDto getAllToDto(ProjectEntity projectEntity);
+
+    ProjectSubscribeDto toDto(ProjectSubscribeEntity subscribeEntity);
 }

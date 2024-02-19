@@ -6,12 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.project.ProjectSubscribeDto;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
@@ -24,9 +26,7 @@ import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -215,5 +215,16 @@ public class ProjectService {
         subscription.setUserId(userService.getAuthenticated().getId());
         subscription.setProjectId(projectId);
         subscriptionRepository.save(subscription);
+    }
+
+    public List<ProjectSubscribeDto> getSubscribedUsers(String projectId) {
+//        List<ProjectSubscribeEntity> listUsers = emailService.getUserIdsSubscribedToProject(projectId);
+        List<ProjectSubscribeEntity> listUsers = subscriptionRepository.findUserIdsByProjectId(projectId);
+        List<ProjectSubscribeDto> usersId = listUsers.stream()
+                .map(projectMapper::toDto)
+                .collect(Collectors.toList());
+
+        log.info("List subscribers {}", usersId);
+        return usersId;
     }
 }
