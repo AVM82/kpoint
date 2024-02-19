@@ -24,6 +24,7 @@ const ukTranslation = {
   footer_sign: 'Всі права захищені',
   add_suggestion: 'Додати',
   send_suggestion: 'Надіслати',
+  subscribe_message: 'Ви успішно підписані на проект',
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',

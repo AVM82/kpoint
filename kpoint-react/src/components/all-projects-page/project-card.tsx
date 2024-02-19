@@ -1,6 +1,5 @@
 import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
 import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
-import ControlPointTwoToneIcon from '@mui/icons-material/ControlPointTwoTone';
 import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone';
 import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
 import ShareTwoToneIcon from '@mui/icons-material/ShareTwoTone';
@@ -15,11 +14,12 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { projectAction } from 'store/actions';
 
-import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
+import { StorageKey } from '../../common/enums/app/storage-key.enum';
+import { storage } from '../../services/services';
+import { SubscribeButton } from './SubscribeButton';
 
 interface ProjectsProps {
   projectId: string;
@@ -33,13 +33,7 @@ interface ProjectsProps {
 const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
   logoImgUrl, tags }) => {
   const { t } = useTranslation();
-  const [isFollowing, setIsFollowing] = useState(false);
-  const dispatch = useAppDispatch();
-
-  const handleButtonSubClick = ():void => {
-    setIsFollowing(!isFollowing);
-    dispatch(projectAction.subscribeToProject({ projectId: projectId }));
-  };
+  const userID = storage.getItem(StorageKey.USER);
 
   return (
     <Card sx={{ maxWidth: 500 }}>
@@ -59,10 +53,7 @@ const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
             aria-label="outlined button group" sx={{ margin: 1 }}>
             <Button size="small" startIcon={ <PeopleAltTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>{t('buttons.help')}</Button>
-            <Button size="small" startIcon={ <ControlPointTwoToneIcon/> }
-              sx={{ justifyContent: 'right' }}onClick={handleButtonSubClick} >
-              {isFollowing ? t('buttons.unfollow') : t('buttons.follow')}
-            </Button>
+            <SubscribeButton projectId={projectId} userID={userID ? userID : ''} />
             <Button size="small" startIcon={ <MonetizationOnTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>
               {t('buttons.donate_projects_page')}</Button>
