@@ -70,18 +70,14 @@ class ProjectApi {
   }
 
   public createNew(payload: TestRequest): Promise<ProjectType> {
-    const a = new FormData();
-    a.append('file', payload.file);
-    const b  = JSON.stringify(payload.createdProject);
-    a.append('createdProject', b);
-    a.set('createdProject.type', 'application/json');
-    console.log(a.get('createdProject'));
-    console.log(a.get('file'));
+    const formData = new FormData();
+    formData.append('createdProject', new Blob([JSON.stringify(payload.createdProject)],
+      { type: 'application/json' }));
+    formData.append('file', payload.file);
 
     return this.#http.load(`${this.#apiPrefix}/projects`, {
       method: HttpMethod.POST,
-      payload: a,
-      contentType: ContentType.FORM_DATA,
+      payload: formData,
     });
   }
 

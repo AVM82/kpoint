@@ -30,7 +30,7 @@ export const ProjectCreate: FC = () => {
     useState<ProjectsEditType>(projectDefault);
 
   const dispatch = useAppDispatch();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const navigate = useNavigate();
 
   const handleNext = (): void => {
@@ -45,7 +45,7 @@ export const ProjectCreate: FC = () => {
 
     const testData: TestRequest = {
       file: projectData.logo,
-      createdProject: 
+      createdProject:
         {
           title: projectData.title,
           url: projectData.url,
@@ -66,9 +66,9 @@ export const ProjectCreate: FC = () => {
     if (activeStep === steps.length) {
       dispatch(projectAction.createNew( { testData } ))
         .unwrap()
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         .then((action): void => {
-          // navigate('/projects/' + action.url);
+          navigate('/projects/' + action.url);
         })
         .catch((reason) => {
           toast.error(`Can\\'t create new project, because: ${reason}`);
