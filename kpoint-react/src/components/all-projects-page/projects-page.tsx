@@ -53,10 +53,6 @@ const ProjectsPage: FC = () => {
     setPage(page + 1);
   };
 
-  const handleButtonClick = (projectId: string) => (): void => {
-    dispatch(projectAction.subscribeToProject({ id: projectId }));
-  };
-
   return (
     <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
       <ProjectsPageHeader />
@@ -68,15 +64,14 @@ const ProjectsPage: FC = () => {
         alignItems="center"
       >
         {projects?.content.map((project) => (
-          <Grid item>
+          <Grid item key={project.projectId}>
             <ProjectCard
-              id={project.id}
+              projectId={project.projectId}
               url={project.url}
               title={project.title}
               summary={project.summary}
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
-              onButtonClick={handleButtonClick(project.id)}
             />
           </Grid>
         ))}

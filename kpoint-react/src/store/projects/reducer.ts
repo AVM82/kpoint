@@ -2,18 +2,21 @@ import { createSlice } from '@reduxjs/toolkit';
 import { ProjectsEditType, ProjectsPageType } from 'common/types/types';
 
 import { ProjectType } from '../../common/types/projects/project.type';
-import { createNew, getAllProjectsAddMore, getAllProjectsDefault, getById } from './actions';
+import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
+import { createNew, getAllProjectsAddMore, getAllProjectsDefault, getById, subscribeToProject } from './actions';
 
 type State={
   project: ProjectType | null,
   projects: ProjectsPageType | null,
   editProject: ProjectsEditType | null,
+  subscribe: SubscriptionRequestType | null,
 };
 
 const initialState: State = {
   project: null,
   projects: null,
   editProject: null,
+  subscribe: null,
 };
 
 const projectSlice = createSlice({
@@ -47,6 +50,12 @@ const projectSlice = createSlice({
       })
       .addCase(createNew.fulfilled, (state, { payload }) => {
         state.project = payload;
+      })
+      .addCase(subscribeToProject.fulfilled, (state, { payload }) => {
+        state.subscribe = payload;
+      })
+      .addCase(subscribeToProject.rejected, (state) => {
+        state.subscribe = null;
       });
   },
 });

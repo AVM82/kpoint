@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.TagEntity;
 import ua.in.kp.entity.UserEntity;
@@ -48,4 +49,8 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
 
     @EntityGraph(attributePaths = "tags")
     Page<ProjectEntity> findAllByOwner(UserEntity owner, Pageable pageable);
+
+    @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
+            + "LEFT JOIN FETCH p.networksLinks  WHERE p.owner = :owner AND p.projectId=:id")
+    Optional<ProjectEntity> findByOwnerAndProjectId(UserEntity owner, @Param("id") String projectId);
 }

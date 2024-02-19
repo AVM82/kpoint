@@ -23,6 +23,7 @@ public class SpaWebFilter extends OncePerRequestFilter {
 
         if (!path.equals("/")
                 && !path.startsWith("/api")
+                && !path.startsWith("/actuator")
                 && !path.startsWith("/swagger-ui")
                 && !path.startsWith("/v3/api-docs")
                 && !path.startsWith("/static")

@@ -53,26 +53,31 @@ public class SuggestionService {
     @Transactional
     public SuggestionResponseDto updateLike(String suggestionId) {
         UserEntity user = userService.getAuthenticated();
-        SuggestionEntity suggestion = suggestionRepository.findById(suggestionId).orElseThrow();
-
+        SuggestionEntity suggestion = suggestionRepository.findById(suggestionId).orElseThrow(
+                () -> {
+                    log.warn("Suggestion not found with ID: {}", suggestionId);
+                    return new ApplicationException(
+                            HttpStatus.NOT_FOUND, "Suggestion not found with ID: " + suggestionId);
+                });
+        log.info("The suggestion to update is retrieved from database ");
         boolean userLiked = likeRepository.existsByUserAndSuggestion(user, suggestion);
 
         if (userLiked) {
+            log.info("The suggestion is liked by logged in user with ID: {} ", user.getId());
             likeRepository.deleteBySuggestionAndUser(suggestion, user);
             suggestion.setLikeCount(suggestion.getLikeCount() - 1);
         } else {
+            log.info("The suggestion is not liked by logged in user with ID: {} ", user.getId());
             LikeEntity likeEntity = new LikeEntity();
             likeEntity.setUser(user);
             likeEntity.setSuggestion(suggestion);
             likeRepository.save(likeEntity);
-
             suggestion.setLikeCount(suggestion.getLikeCount() + 1);
         }
 
         SuggestionResponseDto dto = suggestionMapper.toDto(suggestionRepository.save(suggestion), user);
-
+        log.info("The suggestion`s like counter is updated");
         dto.setLiked(!userLiked);
-
         return dto;
     }
 
@@ -83,5 +88,6 @@ public class SuggestionService {
                     "exception.suggestion.not-found", "ID", suggestionId));
         }
         suggestionRepository.deleteById(suggestionId);
+        log.info("The suggestion is deleted with ID: {} ", suggestionId);
     }
 }

@@ -10,7 +10,7 @@ import org.hibernate.annotations.SoftDelete;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "project_subscription")
+@Table(name = "project_subscriptions")
 @SoftDelete
 public class ProjectSubscribeEntity {
 
