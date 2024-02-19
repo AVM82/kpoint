@@ -18,9 +18,11 @@ const ProjectsPage: FC = () => {
 
   const maxPageElements = 5;
 
-  const { projects } = useAppSelector(({ project }) => ({
+  const { projects  } = useAppSelector(({ project }) => ({
     projects: project.projects,
   }));
+
+  const isAuthenticated = useAppSelector((state) => state.token.isloggedIn);
 
   const [page, setPage] = useState(1);
 
@@ -72,6 +74,7 @@ const ProjectsPage: FC = () => {
               summary={project.summary}
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
+              isAuthenticated={isAuthenticated}
             />
           </Grid>
         ))}
