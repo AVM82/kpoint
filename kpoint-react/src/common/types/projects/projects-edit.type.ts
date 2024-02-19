@@ -4,7 +4,7 @@ export type ProjectsEditType = {
   summary: string;
   description: string;
   tags: string[];
-  logoImgUrl: File | null;
+  logo: File | string;
   latitude: number;
   longitude: number;
   ownerSum: number;

@@ -1,6 +1,7 @@
 package ua.in.kp.service;
 
-import lombok.AllArgsConstructor;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
 @Slf4j
 public class ProjectService {
@@ -40,6 +40,26 @@ public class ProjectService {
     private final SubscriptionRepository subscriptionRepository;
     private final EmailServiceKp emailService;
     private final Translator translator;
+    private final MeterRegistry meterRegistry;
+
+    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
+                          UserService userService, TagRepository tagRepository, S3Service s3Service,
+                          SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
+                          Translator translator, MeterRegistry meterRegistry) {
+        this.projectRepository = projectRepository;
+        this.projectMapper = projectMapper;
+        this.userService = userService;
+        this.tagRepository = tagRepository;
+        this.s3Service = s3Service;
+        this.subscriptionRepository = subscriptionRepository;
+        this.emailService = emailService;
+        this.translator = translator;
+        this.meterRegistry = meterRegistry;
+
+        Gauge.builder("projects_count", projectRepository::count)
+                .description("A current number of projects in the system")
+                .register(meterRegistry);
+    }
 
     @Transactional
     public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto, MultipartFile file) {

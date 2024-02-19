@@ -12,6 +12,7 @@
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^1.9.7",
     "i18next": "^23.7.18",
+    "query-string": "^8.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-button": "^0.7.2",

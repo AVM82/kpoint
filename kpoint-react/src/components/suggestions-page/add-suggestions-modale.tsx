@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { suggestionAction } from 'store/actions';
@@ -33,30 +33,21 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
   const [inputText, setInputText] = React.useState('');
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [errors, setErrors]
-    = useState<Record<string, string>>({});
+
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
     event.preventDefault();
-    const formErrors = validateForm(inputText);
 
     /*This dispatch don't return errors in try-catch */
 
     try {
-      if (Object.keys(formErrors).length === 0) {
-        await dispatch(
-          suggestionAction.createNew({
-            suggestionData: { suggestion: inputText },
-          }),
-        );
-
-        setInputText('');
-        setErrors({});
-        handleCloseModal();
-      } else {
-        setErrors(formErrors);
-      }
+      await dispatch(
+        suggestionAction.createNew({
+          suggestionData: { suggestion: inputText },
+        }),
+      );
+      handleCloseModal();
     } catch (error) {
       toast.error(`Can\\'t add suggestion because: ${error.message}`);
     }
@@ -69,16 +60,6 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
   useEffect(() => {
     setInputText('');
   }, []);
-
-  const validateForm = (data: string): Record<string, string> => {
-    const errors: Record<string, string> = {};
-
-    if (data.trim().length === 0 || data.trim().length > 200) {
-      errors.suggestion = 'Поле повинне містити від 1 до 200 символів';
-    }
-
-    return Object.keys(errors).length > 0 ? errors : {};
-  };
 
   return (
     <div>
@@ -113,10 +94,8 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
               rows={6}
               value={inputText}
               onChange={handleChange}
+              required
             />
-            {errors.suggestion && (
-              <Typography color="error">{errors.suggestion}</Typography>
-            )}
             <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" sx={{ mt: 2 }}>
                 {t('send_suggestion')}

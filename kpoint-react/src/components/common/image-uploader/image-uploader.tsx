@@ -22,7 +22,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
     if (e.currentTarget.files?.[0]) {
       const projectLogo = e.currentTarget.files?.[0];
 
-      if (projectLogo.size > 5000000) {
+      if (projectLogo.size > 3000000) {
         toast.warn('File is to big');
 
         return;
