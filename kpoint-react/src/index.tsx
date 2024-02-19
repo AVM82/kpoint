@@ -3,6 +3,7 @@ import 'index.css';
 
 import { CssBaseline } from '@mui/material';
 import { MyProfile } from 'components/profile-page/my-profile/my-profile';
+import { ProfilePassword } from 'components/profile-page/profile-password/ProfilePassword';
 import { ProjectReworked } from 'components/project-page/project-reworked';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -37,6 +38,8 @@ root.render(
             <Route path="/sign-up" element={<SignUpPage />} />
             <Route path="/suggestions" element={<SuggestionsPage />} />
             <Route path="/settings/profile" element={<MyProfile />}></Route>
+            <Route path="/password/profile" element={<ProfilePassword />}></Route>
+
             {/*<Route path="/add-suggestions" element={<AddSuggestionModal/>}/>*/}
           </Routes>
           <Footer />
