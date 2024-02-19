@@ -1,6 +1,7 @@
 package ua.in.kp.service;
 
-import lombok.AllArgsConstructor;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
@@ -23,12 +25,10 @@ import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
 @Slf4j
 public class ProjectService {
@@ -38,7 +38,28 @@ public class ProjectService {
     private final TagRepository tagRepository;
     private final S3Service s3Service;
     private final SubscriptionRepository subscriptionRepository;
+    private final EmailServiceKp emailService;
     private final Translator translator;
+    private final MeterRegistry meterRegistry;
+
+    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
+                          UserService userService, TagRepository tagRepository, S3Service s3Service,
+                          SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
+                          Translator translator, MeterRegistry meterRegistry) {
+        this.projectRepository = projectRepository;
+        this.projectMapper = projectMapper;
+        this.userService = userService;
+        this.tagRepository = tagRepository;
+        this.s3Service = s3Service;
+        this.subscriptionRepository = subscriptionRepository;
+        this.emailService = emailService;
+        this.translator = translator;
+        this.meterRegistry = meterRegistry;
+
+        Gauge.builder("projects_count", projectRepository::count)
+                .description("A current number of projects in the system")
+                .register(meterRegistry);
+    }
 
     @Transactional
     public ProjectResponseDto createProject(ProjectCreateRequestDto projectDto, MultipartFile file) {
@@ -146,14 +167,53 @@ public class ProjectService {
         return projectRepository.findAllByOwner(userEntity, pageable);
     }
 
-    public void subscribeUserToProject(String userId, String projectId) {
-        ProjectSubscribeEntity subscription = new ProjectSubscribeEntity();
-        subscription.setUserId(userId);
-        subscription.setProjectId(projectId);
-        subscriptionRepository.save(subscription);
+    public SubscribeResponseDto subscribeUserToProject(String projectId) {
+        String userId = userService.getAuthenticated().getId();
+        String projUrl = getProjectUriIfExist(projectId);
+        Optional<ProjectSubscribeEntity> existingSubscription =
+                subscriptionRepository.findByUserIdAndProjectId(userId, projectId);
+        if (existingSubscription.isPresent()) {
+            return new SubscribeResponseDto("User is already subscribed to project " + projectId);
+        } else {
+            saveSubscription(projectId);
+            emailService.sendProjectSubscriptionMessage(projectId, projUrl);
+            return new SubscribeResponseDto("User subscribed to project " + projectId + " successfully");
+        }
     }
 
-    public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
-        return subscriptionRepository.findByProjectId(projectId);
+    public ProjectResponseDto updateProject(String projectId, ProjectCreateRequestDto projectCreateRequestDto) {
+        UserEntity user = userService.getAuthenticated();
+        ProjectEntity existingProject = getProjectIfExist(user, projectId);
+
+        ProjectEntity toUpdate = projectMapper.toEntity(projectCreateRequestDto);
+        toUpdate.setOwner(user);
+        existingProject.setCollectedSum(toUpdate.getCollectedSum());
+        existingProject.setDescription(projectCreateRequestDto.getDescription());
+        projectRepository.save(existingProject);
+        emailService.sendUpdateProjectMail(projectId, existingProject.getUrl());
+        return projectMapper.toDto(existingProject);
+    }
+
+    private ProjectEntity getProjectIfExist(UserEntity user, String projectId) {
+        Optional<ProjectEntity> projectForUpdate = projectRepository.findByOwnerAndProjectId(user, projectId);
+        if (projectForUpdate.isEmpty()) {
+            throw new RuntimeException("Project not found");
+        }
+        return projectForUpdate.get();
+    }
+
+    private String getProjectUriIfExist(String projectId) {
+        Optional<ProjectEntity> projectForUpdate = projectRepository.findBy(projectId);
+        if (projectForUpdate.isEmpty()) {
+            throw new RuntimeException("Project not found");
+        }
+        return projectForUpdate.get().getUrl();
+    }
+
+    private void saveSubscription(String projectId) {
+        ProjectSubscribeEntity subscription = new ProjectSubscribeEntity();
+        subscription.setUserId(userService.getAuthenticated().getId());
+        subscription.setProjectId(projectId);
+        subscriptionRepository.save(subscription);
     }
 }

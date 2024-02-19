@@ -1,5 +1,6 @@
 package ua.in.kp.service;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,8 @@ class ProjectServiceTest {
     private ProjectRepository projectRepository;
     @Mock
     private ProjectMapper projectMapper;
+    @Mock
+    private MeterRegistry meterRegistry;
     @InjectMocks
     private ProjectService projectService;
 
