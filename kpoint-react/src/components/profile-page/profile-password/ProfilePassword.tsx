@@ -64,8 +64,8 @@ export const ProfilePassword: FC = () => {
       toast.success('Password was changed successfully', {
         position: 'top-right',
       });
-    } catch(e) {
-      console.log(e);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch(e: unknown) {
       toast.error('Error while changing password', {
         position: 'top-right',
       });
