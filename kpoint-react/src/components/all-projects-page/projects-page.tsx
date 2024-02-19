@@ -1,17 +1,16 @@
 import SyncTwoToneIcon from '@mui/icons-material/SyncTwoTone';
+import { Container } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-import styles from '../app/style.module.scss';
 import { ProjectCard } from './project-card';
+import { ProjectsPageHeader } from './projects-page-haeder';
 
 const ProjectsPage: FC = () => {
   const { t } = useTranslation();
@@ -55,14 +54,8 @@ const ProjectsPage: FC = () => {
   };
 
   return (
-    <div className={styles.div}>
-      <Typography variant="h3" align="center">
-        {t('projects')}
-      </Typography>
-      <TextField
-        label={t('search_field')}
-        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
-      ></TextField>
+    <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
+      <ProjectsPageHeader />
       <Grid
         container
         spacing={5}
@@ -108,7 +101,7 @@ const ProjectsPage: FC = () => {
         showLastButton
         sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
       />
-    </div>
+    </Container>
   );
 };
 
