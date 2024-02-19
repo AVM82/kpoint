@@ -25,5 +25,5 @@ public interface ProjectMapper {
 
     GetAllProjectsDto getAllToDto(ProjectEntity projectEntity);
 
-    ProjectSubscribeDto toDto(ProjectSubscribeEntity subscribeEntity);
+    ProjectSubscribeDto toDtoSubscribe(ProjectSubscribeEntity subscribeEntity);
 }

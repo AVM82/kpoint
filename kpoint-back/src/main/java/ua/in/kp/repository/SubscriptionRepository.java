@@ -2,7 +2,6 @@ package ua.in.kp.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ua.in.kp.dto.project.ProjectSubscribeDto;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 
 import java.util.List;

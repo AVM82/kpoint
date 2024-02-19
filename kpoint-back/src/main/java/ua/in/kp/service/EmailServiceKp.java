@@ -7,13 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import ua.in.kp.dto.project.ProjectSubscribeDto;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.exception.ApplicationException;
 import ua.in.kp.repository.SubscriptionRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
