@@ -1,6 +1,6 @@
 import ControlPointTwoToneIcon from '@mui/icons-material/ControlPointTwoTone';
 import Button from '@mui/material/Button';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
@@ -9,27 +9,19 @@ import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.ho
 
 interface SubscribeButtonProps {
     projectId: string;
-    userID: string;
     isAuthenticated: boolean;
+    isFollowed: boolean;
 }
 
-const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId, userID, isAuthenticated }) => {
+const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId,
+  isAuthenticated, isFollowed }) => {
   const { t } = useTranslation();
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(isFollowed);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const isUserSubscribed = localStorage.getItem(`project_${projectId}_${userID}_subscription`);
-
-    if (isUserSubscribed) {
-      setIsFollowing(true);
-    }
-  }, [projectId, userID]);
-
   const handleButtonSubClick = (): void => {
-    if (isAuthenticated && !isFollowing) {
+    if (isAuthenticated && !isFollowed) {
       setIsFollowing(true);
-      localStorage.setItem(`project_${projectId}_${userID}_subscription`, 'true');
       dispatch(projectAction.subscribeToProject({ projectId: projectId }));
       toast.success('Ви успішно підписані на проект');
     } else if (!isAuthenticated) {

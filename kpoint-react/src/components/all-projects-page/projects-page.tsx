@@ -75,6 +75,7 @@ const ProjectsPage: FC = () => {
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
               isAuthenticated={isAuthenticated}
+              isFollowed={project.isFollowed}
             />
           </Grid>
         ))}

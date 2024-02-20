@@ -16,4 +16,8 @@ public interface SubscriptionRepository extends JpaRepository<ProjectSubscribeEn
 
     @Query("SELECT p FROM ProjectSubscribeEntity p WHERE p.projectId = :projectId")
     List<ProjectSubscribeEntity> findUserIdsByProjectId(String projectId);
+
+    @Query("SELECT CASE WHEN COUNT(ps) > 0 THEN true ELSE false END FROM ProjectSubscribeEntity " +
+            "ps WHERE ps.userId = :userId AND ps.projectId = :projectId")
+    boolean existsByUserIdAndProjectId(String userId, String projectId);
 }

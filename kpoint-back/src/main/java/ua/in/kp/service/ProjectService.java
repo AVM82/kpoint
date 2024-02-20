@@ -97,7 +97,14 @@ public class ProjectService {
     public Page<GetAllProjectsDto> getAllProjects(Pageable pageable) {
         Page<ProjectEntity> page = projectRepository.findAll(pageable);
         log.info("Got all projects from projectRepository.");
-        Page<GetAllProjectsDto> toReturn = page.map(projectMapper::getAllToDto);
+//        Page<GetAllProjectsDto> toReturn = page.map(projectMapper::getAllToDto);
+        Page<GetAllProjectsDto> toReturn = page.map(project -> {
+            GetAllProjectsDto dto = projectMapper.getAllToDto(project);
+            boolean isFollowed = subscriptionRepository
+                    .existsByUserIdAndProjectId(userService.getAuthenticated().getId(), project.getProjectId());
+            dto.setFollowed(isFollowed);
+            return dto;
+        });
         log.info("Map all projectsEntity to DTO and return page with them.");
         return toReturn;
     }
