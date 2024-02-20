@@ -14,4 +14,6 @@ public interface SubscriptionRepository extends JpaRepository<ProjectSubscribeEn
     @Query("SELECT p FROM ProjectSubscribeEntity p WHERE p.userId = :userId AND p.projectId = :projectId")
     Optional<ProjectSubscribeEntity> findByUserIdAndProjectId(String userId, String projectId);
 
+    @Query("SELECT p FROM ProjectSubscribeEntity p WHERE p.projectId = :projectId")
+    List<ProjectSubscribeEntity> findUserIdsByProjectId(String projectId);
 }

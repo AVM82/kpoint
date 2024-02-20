@@ -3,11 +3,13 @@ package ua.in.kp.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.exception.ApplicationException;
 import ua.in.kp.repository.SubscriptionRepository;
 
 import java.util.List;
@@ -42,7 +44,7 @@ public class EmailServiceKp {
             log.info("User {} subscribed on project {}", user.getEmail(), projectId);
         } catch (Exception e) {
             log.warn("Email to {} was not sent {}", user.getEmail(), e.getMessage());
-            throw new RuntimeException();
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Email to was not sent");
         }
     }
 
@@ -72,6 +74,7 @@ public class EmailServiceKp {
     }
 
     public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
+        log.info("SUBSCRIBERS ");
         return subscriptionRepository.findByProjectId(projectId);
     }
 
