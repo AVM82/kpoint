@@ -1,12 +1,13 @@
-import { Box, Button, Container, CssBaseline, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { Box, Button, Container, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { TestRequest } from 'common/types/projects/testRequest';
-import React, { FC, ReactElement, useState } from 'react';
+import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
+import React, { FC, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
-import { ProjectsEditType } from '../../../common/types/projects/projects';
+import { ProjectsEditType,ProjectType } from '../../../common/types/projects/projects';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { ProjectCreateStep1Form } from './components/project-create-step-1';
 import { ProjectCreateStep2Form } from './components/project-create-step-2';
@@ -15,6 +16,9 @@ import { projectDefault } from './components/project-default';
 
 export const ProjectCreate: FC = () => {
   const { t } = useTranslation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const location = useLocation();
+  const project = useAppSelector((state) => state.project.project);
 
   const steps: string[] = [
     t('general_information'),
@@ -33,6 +37,20 @@ export const ProjectCreate: FC = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (project) {
+      const placeholder: ProjectType = { ...project };
+
+      for (const key in projectData) {
+        if (Object.prototype.hasOwnProperty.call(projectData, key)) {
+          if (key in placeholder) {
+            setProjectData((prevData) => ({ ...prevData, [key]: placeholder[key] }));
+          }
+        }
+      }
+    }
+  }, []);
+
   const handleNext = (): void => {
     const validationErrors = validateForm(projectData);
 
@@ -44,7 +62,7 @@ export const ProjectCreate: FC = () => {
     }
 
     const testData: TestRequest = {
-      file: projectData.logo,
+      file: projectData.logo ? projectData.logo : '',
       createdProject:
         {
           title: projectData.title,
@@ -57,11 +75,6 @@ export const ProjectCreate: FC = () => {
           networksLinks: { FACEBOOK: 'https://www.facebook.com/example' },
         },
     };
-
-    const a = new FormData();
-    a.append('file', testData.file);
-    const b  = JSON.stringify(testData.createdProject);
-    a.append('createdProject', b);
 
     if (activeStep === steps.length) {
       dispatch(projectAction.createNew( { testData } ))
@@ -129,6 +142,8 @@ export const ProjectCreate: FC = () => {
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
           errors={errors}
+          project={project}
+          isEdit={true}
         />
       );
     case 2:
@@ -138,6 +153,8 @@ export const ProjectCreate: FC = () => {
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
           errors={errors}
+          project={project}
+          isEdit={true}
         />
       );
     case 3:
@@ -147,6 +164,8 @@ export const ProjectCreate: FC = () => {
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
           errors={errors}
+          project={project}
+          isEdit={true}
         />
       );
     default:
@@ -156,7 +175,6 @@ export const ProjectCreate: FC = () => {
 
   return (
     <React.Fragment>
-      <CssBaseline />
       <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
         <Typography component="h1" variant="h4" align="center" sx={{ p: 2 }}>
           {t('new_project')}

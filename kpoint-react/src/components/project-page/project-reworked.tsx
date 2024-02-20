@@ -10,12 +10,12 @@ import {
   Typography,
 } from '@mui/material';
 import Link from '@mui/material/Link';
-import { CustomTimeline, ImageUploader } from 'components/common/common';
+import { CustomTimeline } from 'components/common/common';
 import { useAppDispatch } from 'hooks/hooks';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
 import { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
@@ -35,31 +35,11 @@ import { ProjectSocials } from './project-socials';
 const ProjectReworked: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { projectId } = useParams();
-  const { project } = useAppSelector(({ project }) => ({
-    project: project.project,
-  }));
+  const  project  = useAppSelector((state) => state.project.project);
 
   /*All logic from previous version below !!!DON'T DELETE DEPRECATED FILES!!!*/
-
-  // const projectImage: string =
-  // project.logoImgUrl === null
-  //   ? { logo }.logo
-  //   : `data:image/png;base64,${project.logoImgUrl}`;
-
-  // const handleLogoPreview = (e: React.ChangeEvent<HTMLInputElement>): void => {
-  //   if (e.currentTarget.files?.[0]) {
-  //     const projectLogo = e.currentTarget.files?.[0];
-
-  //     if (projectLogo.size > 5000000) {
-  //       toast.warn('File is to big');
-
-  //       return;
-  //     }
-  //     const previewUrl = URL.createObjectURL(projectLogo);
-  //     setPreviewUrl(previewUrl);
-  //   }
-  // };
 
   // const handleChange = (
   //   event: React.SyntheticEvent,
@@ -67,10 +47,6 @@ const ProjectReworked: FC = () => {
   // ): void => {
   //   setValue(newValue);
   // };
-
-  const handleChange = (field: string, value: string | File): void => {
-    toast.success(value.toString());
-  };
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
@@ -111,11 +87,15 @@ const ProjectReworked: FC = () => {
               alignItems={'center'}
             >
               <Grid maxWidth={390} width={390} container>
-                <ImageUploader
-                  handleChange={handleChange}
-                  component="project-page"
-                  xs={5}
-                />
+                <Grid item xs={5}>
+                  <Box
+                    component={'img'}
+                    alt="logo-image"
+                    src={project?.logoImgUrl}
+                    maxWidth={'100%'}
+                    maxHeight={'100%'}
+                  ></Box>
+                </Grid>
                 <Grid item xs={7}>
                   <Typography
                     variant="h2"
@@ -194,6 +174,24 @@ const ProjectReworked: FC = () => {
                     lineHeight: '100%',
                     letterSpacing: '0.5px',
                   }}
+                  onClick={():void => navigate('/projects/new', { state: {
+                    previousUrl: project?.url,
+                  } })}
+                >
+                  {t('buttons.edit')}
+                </Button>
+                <Button
+                  sx={{
+                    border: '2px solid rgb(130, 130, 130)',
+                    borderRadius: '5px',
+                    background: 'rgb(255, 255, 255)',
+                    width: '100%',
+                    color: 'rgb(130, 130, 130)',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '100%',
+                    letterSpacing: '0.5px',
+                  }}
                 >
                   <PersonAddIcon /> {t('buttons.support')}
                 </Button>
@@ -251,7 +249,7 @@ const ProjectReworked: FC = () => {
                   },
                 }}
               >
-                Про проєкт
+                {t('about')}
               </Button>
               <Button
                 sx={{
@@ -267,7 +265,7 @@ const ProjectReworked: FC = () => {
                   },
                 }}
               >
-                Команда
+                {t('team')}
               </Button>
               <Button
                 sx={{
@@ -283,7 +281,7 @@ const ProjectReworked: FC = () => {
                   },
                 }}
               >
-                Допомогти проєкту
+                {t('help_project')}
               </Button>
               <Button
                 sx={{
@@ -299,33 +297,13 @@ const ProjectReworked: FC = () => {
                   },
                 }}
               >
-                Коментарі
+                {t('comments')}
               </Button>
             </Box>
           </Grid>
           <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
             <Box component={'article'} maxWidth={'620px'}>
-              Ідея: Ми віримо у потенціал кожної ідеї та важливість підтримки та
-              розвитку цих ідей. Наша мета - зробити інвестування доступним та
-              простим для всіх, незалежно від їхнього ... досвіду чи фінансових
-              можливостей. Проблема, яку вирішує ваш проєкт: Ми віримо у
-              потенціал кожної ідеї та важливість підтримки та розвитку цих
-              ідей. Наша мета - зробити інвестування доступним та простим для
-              всіх, незалежно від їхнього ... досвіду чи фінансових можливостей.
-              Як доказ ідеї - сам цей проєкт буде першим, що реалізується на цій
-              ідеї: “зробіть щось для нас, і ми не забудемо”. Приєднатись до
-              проєкта: Потрібні фахівці: -текст -текст -текст Гроші будуть
-              використанні на: Ми віримо у потенціал кожної ідеї та важливість
-              підтримки та розвитку цих ідей. Наша мета - зробити інвестування
-              доступним та простим для всіх, незалежно від їхнього ... досвіду
-              чи фінансових можливостей. Як доказ ідеї - сам цей проєкт буде
-              першим, що реалізується на цій ідеї: “зробіть щось для нас, і ми
-              не забудемо”. Пропозиція до інвесторів: Ми віримо у потенціал
-              кожної ідеї та важливість підтримки та розвитку цих ідей. Наша
-              мета - зробити інвестування доступним та простим для всіх,
-              незалежно від їхнього ... досвіду чи фінансових можливостей. Як
-              доказ ідеї - сам цей проєкт буде першим, що реалізується на цій
-              ідеї: “зробіть щось для нас, і ми не забудемо”.
+              {project && project.description}
             </Box>
           </Grid>
           <Grid item xs={4} container justifyContent={'end'}>
@@ -338,7 +316,10 @@ const ProjectReworked: FC = () => {
             >
               <Box>
                 <Typography>Всього зібрано</Typography>
-                <Typography>100/700</Typography>
+                <Typography>
+                  {project &&
+                    `${project.collectedSum}/${project.collectDeadline}`}
+                </Typography>
               </Box>
               <Box>
                 <CustomTimeline

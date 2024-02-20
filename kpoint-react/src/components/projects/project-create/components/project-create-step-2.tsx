@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { EditProjectsPropsType } from '../../../../common/types/projects/projects';
 
 export const ProjectCreateStep2Form: FC<EditProjectsPropsType> = (
-  { projectData, handleChange, handleFieldFocus, errors }) => {
+  { projectData, handleChange, handleFieldFocus, errors, project, isEdit }) => {
 
   const { t } = useTranslation();
 
@@ -16,7 +16,7 @@ export const ProjectCreateStep2Form: FC<EditProjectsPropsType> = (
         <TextField
           label={t('description')}
           fullWidth
-          value={projectData.description}
+          value={isEdit ? project?.description : projectData.description}
           onChange={(e): void => handleChange('description', e.target.value)}
           onFocus={(): void => handleFieldFocus('description')}
           error={!!errors.description}

@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, FormLabel } from '@mui/material';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { getProperStyles } from './getProperStyles';
@@ -8,15 +8,21 @@ import { getProperStyles } from './getProperStyles';
 interface ImageUploaderProps {
   handleChange: (field: string, value: string | File) => void;
   component: string;
-  xs: number
+  xs: number;
+  imageUrl?: string;
 }
 
 export const ImageUploader: FC<ImageUploaderProps> = ({
   handleChange,
   component,
   xs,
+  imageUrl,
 }) => {
   const [previewUrl, setPreviewUrl] = useState('');
+
+  useEffect(() => {
+    if (imageUrl && imageUrl.length > 0) setPreviewUrl(imageUrl);
+  }, [imageUrl]);
 
   const handleLogoPreview = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.currentTarget.files?.[0]) {

@@ -52,10 +52,11 @@ const enTranslation = {
     log_out: 'Log out',
     create_project: 'Create project',
     suggestions: 'Suggestions',
+    edit: 'edit',
   },
   owner: 'Owner',
   description: 'Description',
-  about:'About project',
+  about: 'About project',
   team: 'Team',
   help_project: 'Help Project',
   comments: 'Comments',
@@ -78,16 +79,19 @@ const enTranslation = {
   stages_implementation: 'Tasks and Stages of Implementation',
   stage: 'Stage',
   errors: {
-    project_title: 'The project name cannot be empty or have more than 30 characters',
+    project_title:
+      'The project name cannot be empty or have more than 30 characters',
     project_url: 'Project URL length must be from 5 to 30 symbols',
     project_tags: 'The number of tags can be from 1 to 5',
     user_tags: 'The number of tags can be from 1 to 10',
-    project_summary: 'Short description and purpose cannot be empty or have more than 150 characters',
-    project_description: 'The project description cannot be empty or have more than 512 characters',
-    project_deadline: 'The collection deadline cannot be later than the goal deadline',
+    project_summary:
+      'Short description and purpose cannot be empty or have more than 150 characters',
+    project_description:
+      'The project description cannot be empty or have more than 512 characters',
+    project_deadline:
+      'The collection deadline cannot be later than the goal deadline',
     suggestion_size: 'The field must contain from 1 to 200 characters',
   },
 };
 
 export { enTranslation };
-
