@@ -53,17 +53,15 @@ public class ProfileService {
                 favouriteProjectsDtos);
     }
 
-    public ProjectsProfileResponseDto getRecommendedProjects(String username, Pageable pageable) {
+    public Page<GetAllProjectsDto> getRecommendedProjects(String username, Pageable pageable) {
         UserEntity userEntity =
                 userService.getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(username);
         Set<TagEntity> tags = userEntity.getTags();
         Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
         allProjects.addAll(userEntity.getProjectsFavourite());
         Set<String> projectsIds = projectService.retrieveProjectsIds(allProjects);
-        Page<GetAllProjectsDto> recommendedProjectsDtos =
-                projectService.retrieveRecommendedProjects(tags, projectsIds, pageable)
-                        .map(projectMapper::getAllToDto);
-        return new ProjectsProfileResponseDto(userEntity.getId(), recommendedProjectsDtos);
+        return projectService.retrieveRecommendedProjects(tags, projectsIds, pageable)
+                .map(projectMapper::getAllToDto);
     }
 
     public UserChangeDto updateUserData(String username, JsonPatch patch) {
