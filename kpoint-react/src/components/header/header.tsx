@@ -1,64 +1,72 @@
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
+import { AppBar, Box, Grid } from '@mui/material';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { FC , useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
-import { StorageKey } from '../../common/enums/app/storage-key.enum';
-import { storage } from '../../services/services';
+import { HeaderButtons } from './headerButtons';
 
 const Header: FC = () => {
   const { t } = useTranslation();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const [isTitleClicked, setTitleClicked] = useState(false);
 
-  useEffect(() => {
-    const token = storage.getItem(StorageKey.TOKEN);
-    const user = storage.getItem(StorageKey.USER);
-    setIsLoggedIn(!!token && !!user);
-  }, []);
-
-  function handleLogout(): void {
-    storage.removeItem(StorageKey.TOKEN);
-    storage.removeItem(StorageKey.USER);
-    window.location.href = '/';
-  }
-
-  function HeaderButtons(): ReactJSXElement {
-    if (isLoggedIn) {
-      return (
-        <>
-          <Button href="/projects/new" variant="outlined" sx={{ margin: 1 }}>{t('buttons.create_project')}</Button>
-          <Button onClick={handleLogout} variant="contained" sx={{ margin: 1 }}>{t('buttons.log_out')}</Button>
-        </>);
-    }
-
-    return (
-      <>
-        <Button href="/sign-in" variant="outlined" sx={{ margin: 1 }}>{t('buttons.log_in')}</Button>
-        <Button href="/sign-up" variant="contained" sx={{ margin: 1 }}>{t('buttons.sign_in')}</Button>
-      </>);
-
-  }
+  const handleTitleClick = (): void => {
+    if (isTitleClicked) setTitleClicked(!isTitleClicked);
+    else setTitleClicked(true);
+    navigate('/');
+  };
 
   return (
-    <Grid container
-      direction="row"
-      justifyContent="space-between"
-      alignItems="center"
-      sx={{ background: 'lightgray' }}>
-      <Grid item>
-        <Link href="/" underline="none" color="black" sx={{ margin: 1 }}>{t('projects')}</Link>
-        <Link href="#" underline="none" color="black" sx={{ margin: 1 }}>{t('about_us')}</Link>
-      </Grid>
-      <Grid item>
-        <Typography variant="h6" align="center">KEY POINTS</Typography>
-      </Grid>
-      <Grid item>
-        <HeaderButtons/>
-      </Grid>
-    </Grid>
+    <AppBar
+      sx={{
+        backgroundColor: '#E9EFF4',
+        width: '100%',
+        padding: '16px 80px',
+        flexShrink: 0,
+      }}
+      elevation={0}
+      position="static"
+    >
+
+      <Box>
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Grid item xs={5}>
+            <Box display="flex" alignItems="center">
+              <Link href="/" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
+                {t('projects')}
+              </Link>
+              <Link href="#" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
+                {t('about_us')}
+              </Link>
+            </Box>
+          </Grid>
+          <Grid item xs={2} container justifyContent="center">
+            <Typography
+              variant="h1"
+              align="center"
+              fontSize={24}
+              fontWeight={700}
+              color={'black'}
+              sx={{ cursor: 'pointer', textAlign: 'center' }} // Center the title within the grid cell
+              onClick={handleTitleClick}
+            >
+        K-POINTS
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <Box display="flex" justifyContent="flex-end" alignItems="center">
+              <HeaderButtons isTitleClicked={isTitleClicked} />
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    </AppBar>
   );
 };
 

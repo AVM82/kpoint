@@ -1,5 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { authApi,notification,projectApi,storage } from 'services/services';
+import {
+  authApi,
+  notification,
+  profileApi,
+  projectApi,
+  storage,
+  suggestionApi,
+} from 'services/services';
 
 import { handleError } from './middlewares/middlewares';
 import { rootReducer } from './root-reducer';
@@ -8,7 +15,9 @@ const extraArgument = {
   storage,
   notification,
   authApi: authApi,
+  profileApi,
   projectApi,
+  suggestionApi,
 };
 
 const store = configureStore({

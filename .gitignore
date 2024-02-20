@@ -5,3 +5,6 @@ logs/
 .DS_Store
 /shelf/
 /workspace.xml
+.env
+prometheus/
+grafana/

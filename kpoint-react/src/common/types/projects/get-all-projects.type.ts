@@ -1,5 +1,7 @@
+
 export type GetAllProjectsType = {
-  projectId: string,
+  projectId: string
+  url: string,
   title: string,
   summary: string,
   logoImgUrl: string,

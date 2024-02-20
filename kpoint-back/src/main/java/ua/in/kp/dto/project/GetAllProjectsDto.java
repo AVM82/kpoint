@@ -9,6 +9,8 @@ public class GetAllProjectsDto {
 
     private String projectId;
 
+    private String url;
+
     private String title;
 
     private String summary;
@@ -16,4 +18,8 @@ public class GetAllProjectsDto {
     private Set<String> tags;
 
     private String logoImgUrl;
+
+    private String state;
+
+    private int goalSum;
 }

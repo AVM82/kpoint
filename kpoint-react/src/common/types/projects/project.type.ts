@@ -4,6 +4,7 @@ import { OwnerType } from './owner.type';
 export type ProjectType = {
   owner: OwnerType,
   projectId: string,
+  url: string,
   title: string,
   summary: string,
   description: string,

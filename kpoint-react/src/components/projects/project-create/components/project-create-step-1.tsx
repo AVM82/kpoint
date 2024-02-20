@@ -1,14 +1,20 @@
-import { Autocomplete, Avatar, Chip, Grid, TextField } from '@mui/material';
+import { Autocomplete, Chip, Grid, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { ImageUploader } from 'components/common/common';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import getSlug from 'speakingurl';
 
-import { CitiesType,EditProjectsPropsType } from '../../../../common/types/projects/projects';
+import {
+  CitiesType,
+  EditProjectsPropsType,
+} from '../../../../common/types/projects/projects';
 import { cities } from './cities';
 
 const citiesProps = {
   options: cities,
-  getOptionLabel: ( option: CitiesType ): string => option.name,
+  getOptionLabel: (option: CitiesType): string => option.name,
 };
 
 type ChipTag = {
@@ -16,15 +22,14 @@ type ChipTag = {
   tag: string;
 };
 
-export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
-  { projectData, handleChange, handleFieldFocus, errors }) => {
-
+export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
+  projectData,
+  handleChange,
+  handleFieldFocus,
+  errors,
+}) => {
   const { t } = useTranslation();
-
-  const [
-    tag,
-    setTag,
-  ] = useState('');
+  const [tag, setTag] = useState('');
 
   const getChipTags = (): ChipTag[] => {
     const result: ChipTag[] = [];
@@ -35,37 +40,43 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
     return result;
   };
 
-  const [
-    chipTags,
-    setChipTags,
-  ] = useState<ChipTag[]>(getChipTags());
+  const [chipTags, setChipTags] = useState<ChipTag[]>(getChipTags());
+
+  const [projectURL, setProjectURL] = useState('');
 
   const handleDeleteTag = (chipToDelete: ChipTag) => () => {
-    setChipTags((chips) => chips.filter((chip: ChipTag): boolean => chip.key !== chipToDelete.key));
-    projectData.tags = projectData.tags.filter((tag: string): boolean => tag !== chipToDelete.tag);
+    setChipTags((chips) =>
+      chips.filter((chip: ChipTag): boolean => chip.key !== chipToDelete.key),
+    );
+    projectData.tags = projectData.tags.filter(
+      (tag: string): boolean => tag !== chipToDelete.tag,
+    );
   };
 
   return (
     <Grid container rowSpacing={3}>
-      <Grid container>
-        <Grid item xs={3}>
-          <Avatar
-            alt="Логотип"
-            src="/logo.jpg"
-            sx={{ width: 116, height: 116, mt: 2.5, ml: 4 }}
-            variant="rounded"
-          >
-          </Avatar>
-          {/*img*/}
-        </Grid>
-        <Grid item xs={9}>
+      <Grid container justifyContent={'space-between'}>
+        <ImageUploader handleChange={handleChange} component="default" xs={3}/>
+        <Grid item xs={8}>
           <Grid item xs={true}>
             <TextField
               label={t('project_name')}
               fullWidth
               value={projectData.title}
               // defaultValue={project.title}
-              onChange={(e): void => handleChange('title', e.target.value)}
+              onChange={(e): void => {
+                handleChange('title', e.target.value);
+                let slug = getSlug(e.target.value, {
+                  maintainCase: true,
+                });
+
+                if (slug.length > 30) {
+                  slug = slug.slice(0, 30);
+                }
+                handleChange('url', slug);
+                setProjectURL(slug);
+              }}
+              inputProps={{ maxLength: 30 }}
               onFocus={(): void => handleFieldFocus('title')}
               error={!!errors.title}
               helperText={errors.title}
@@ -77,23 +88,47 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
               variant="outlined"
             />
           </Grid>
+          <Typography>
+            {'http://k-points.in.ua/projects/'.concat(projectURL)}
+          </Typography>
           <Grid item xs={true}>
-            <Autocomplete
-              {...citiesProps}
-              // id="citi"
-              // name="citi"
-              // defaultValue={project.city}
-              renderInput={(params): ReactElement => (
-                <TextField
-                  label={t('city')}
-                  {...params}
-                  required
-                  fullWidth
-                />
-              )}
+            <TextField
+              label={t('project_url')}
+              fullWidth
+              placeholder={t('url_placeholder')}
+              value={projectData.url}
+              // defaultValue={defaultURL}
+              onChange={(e): void => {
+                const slug = getSlug(e.target.value, {
+                  maintainCase: true,
+                });
+                handleChange('url', slug);
+                setProjectURL(slug);
+              }}
+              inputProps={{ maxLength: 30 }}
+              onFocus={(): void => handleFieldFocus('url')}
+              error={!!errors.url}
+              helperText={errors.url}
+              // placeholder={'1234'}
+              // type={'text'}
+              required
+              margin={'normal'}
+              autoComplete="given-name"
+              variant="outlined"
             />
           </Grid>
         </Grid>
+      </Grid>
+      <Grid item xs={true}>
+        <Autocomplete
+          {...citiesProps}
+          // id="citi"
+          // name="citi"
+          // defaultValue={project.city}
+          renderInput={(params): ReactElement => (
+            <TextField label={t('city')} {...params} required fullWidth />
+          )}
+        />
       </Grid>
       <Grid item xs={12}>
         <TextField
@@ -134,7 +169,10 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
                 return;
               }
 
-              if (tag.trim().length > 0 && projectData.tags.indexOf(tag.trim()) === -1) {
+              if (
+                tag.trim().length > 0 &&
+                projectData.tags.indexOf(tag.trim()) === -1
+              ) {
                 projectData.tags.push(tag);
                 setChipTags(getChipTags);
                 setTag('');
@@ -145,9 +183,17 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
         />
         <Grid
           sx={{
-            display: 'flex',
+            // display: 'flex',
+            // justifyContent: 'center',
+            // flexWrap: 'wrap',
+            // listStyle: 'none',
+            // p: 0.5,
+            // m: 0,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', // Adjust 100px to your desired width
+            gridAutoRows: 'auto',
+            rowGap: '5px',
             justifyContent: 'center',
-            flexWrap: 'wrap',
             listStyle: 'none',
             p: 0.5,
             m: 0,
@@ -160,7 +206,8 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = (
                 <Chip
                   sx={{
                     height: 'auto',
-                    mt: 2, mr: 2,
+                    mt: 2,
+                    mr: 2,
                     '& .MuiChip-label': {
                       display: 'block',
                       whiteSpace: 'normal',

@@ -1,7 +1,13 @@
 import { HttpMethod } from 'common/enums/http/http-method.enum';
-import { ProjectsEditType, ProjectsPageType, ProjectType } from 'common/types/types';
+import { TestRequest } from 'common/types/projects/testRequest';
+import {
+  ProjectsPageType,
+  ProjectType,
+} from 'common/types/types';
 
+// import qs from 'query-string';
 import { ContentType } from '../../common/enums/file/content-type.enum';
+import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { Http } from '../http/http.service';
 
 type Constructor = {
@@ -10,7 +16,6 @@ type Constructor = {
 };
 
 class ProjectApi {
-
   #http: Http;
 
   #apiPrefix: string;
@@ -21,30 +26,21 @@ class ProjectApi {
   }
 
   public getById(payload: { id: string }): Promise<ProjectType> {
-    return this.#http.load(
-      `${this.#apiPrefix}/projects/${payload.id}`, {
-        method: HttpMethod.GET,
-        hasAuth: false,
-      },
-    );
+    return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}`, {
+      method: HttpMethod.GET,
+      hasAuth: false,
+    });
   }
 
-  public getAllProjectsDefault(payload:{ size: number, number: number }): Promise<ProjectsPageType> {
+  public getAllProjectsDefault(payload: {
+    size: number;
+    number: number;
+  }): Promise<ProjectsPageType> {
     return this.#http.load(
-      `${this.#apiPrefix}/projects?size=${payload.size}&number=${payload.number}`, {
-        method: HttpMethod.GET,
-        hasAuth: false,
-        queryString: {
-          size: payload.size,
-          page: payload.number,
-        },
-      },
-    );
-  }
-
-  public getAllProjectsAddMore(payload:{ size: number, number: number }): Promise<ProjectsPageType> {
-    return this.#http.load(
-      `${this.#apiPrefix}/projects?size=${payload.size}&number=${payload.number}`, {
+      `${this.#apiPrefix}/projects?size=${payload.size}&number=${
+        payload.number
+      }`,
+      {
         method: HttpMethod.GET,
         hasAuth: false,
         queryString: {
@@ -55,14 +51,43 @@ class ProjectApi {
     );
   }
 
-  public createNew(payload: ProjectsEditType): Promise<ProjectType> {
+  public getAllProjectsAddMore(payload: {
+    size: number;
+    number: number;
+  }): Promise<ProjectsPageType> {
     return this.#http.load(
-      `${this.#apiPrefix}/projects`, {
-        method: HttpMethod.POST,
-        payload: JSON.stringify(payload),
-        contentType: ContentType.JSON,
+      `${this.#apiPrefix}/projects?size=${payload.size}&number=${
+        payload.number
+      }`,
+      {
+        method: HttpMethod.GET,
+        hasAuth: false,
+        queryString: {
+          size: payload.size,
+          page: payload.number,
+        },
       },
     );
+  }
+
+  public createNew(payload: TestRequest): Promise<ProjectType> {
+    const formData = new FormData();
+    formData.append('createdProject', new Blob([JSON.stringify(payload.createdProject)],
+      { type: 'application/json' }));
+    formData.append('file', payload.file);
+
+    return this.#http.load(`${this.#apiPrefix}/projects`, {
+      method: HttpMethod.POST,
+      payload: formData,
+    });
+  }
+
+  public subscribeToProject(payload: { projectId: string }): Promise<SubscriptionRequestType> {
+    return this.#http.load(`${this.#apiPrefix}/projects/${payload.projectId}/subscribe`, {
+      method: HttpMethod.POST,
+      payload: JSON.stringify(payload),
+      contentType: ContentType.JSON,
+    });
   }
 }
 

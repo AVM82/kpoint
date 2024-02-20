@@ -19,6 +19,11 @@ public class ProjectCreateRequestDto {
     @Size(max = 30)
     private String title;
 
+    @NotBlank(message = "{project.url.not.blank}")
+    @Size(min = 5, max = 30, message = "{project.url.min.max}")
+    @Pattern(regexp = "[a-zA-Z0-9-]+", message = "{project.url.pattern}")
+    private String url;
+
     @NotBlank
     @Size(max = 150)
     private String summary;
@@ -30,8 +35,6 @@ public class ProjectCreateRequestDto {
     @NotEmpty(message = "{project.tag.not.null}")
     @CollectionLength(min = 1, max = 5, message = "{project.tag.not.null}")
     private Set<String> tags;
-
-    private String logoImgUrl;
 
     @DecimalMin(value = "-90.0", message = "{project.latitude.size}")
     @DecimalMax(value = "90.0", message = "{project.latitude.size}")

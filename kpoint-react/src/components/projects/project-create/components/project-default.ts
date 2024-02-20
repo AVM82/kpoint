@@ -4,10 +4,11 @@ const currentDate = new Date().toISOString().substring(0, 10);
 
 export const projectDefault: ProjectsEditType = {
   title: '',
+  url: '',
   summary: '',
   description: '',
   tags: [],
-  logoImgUrl: null,
+  logo: '',
   latitude: 0,
   longitude: 0,
   ownerSum: 0,
