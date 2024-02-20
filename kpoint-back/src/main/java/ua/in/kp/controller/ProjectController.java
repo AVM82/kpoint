@@ -37,7 +37,7 @@ public class ProjectController {
     @GetMapping()
     public ResponseEntity<Page<GetAllProjectsDto>> getAllProjects(Pageable pageable,
                                                                   Authentication authentication) {
-        if(authentication.isAuthenticated()){
+        if (authentication.isAuthenticated()) {
             return new ResponseEntity<>(profileService
                     .getRecommendedProjects(authentication.getName(), pageable), HttpStatus.OK);
         }
