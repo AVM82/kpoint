@@ -5,7 +5,7 @@
     <parent>
         <groupId>ua.in</groupId>
         <artifactId>parent</artifactId>
-        <version>0.0.4</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>backend</artifactId>
