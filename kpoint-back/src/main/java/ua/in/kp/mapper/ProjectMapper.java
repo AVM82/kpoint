@@ -1,5 +1,6 @@
 package ua.in.kp.mapper;
 
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ua.in.kp.config.MapperConfig;
@@ -24,6 +25,8 @@ public interface ProjectMapper {
     ProjectEntity toEntity(ProjectCreateRequestDto projectDto);
 
     GetAllProjectsDto getAllToDto(ProjectEntity projectEntity);
+
+    GetAllProjectsDto projectEntityToGetAllDto(ProjectEntity projectEntity);
 
     ProjectSubscribeDto toDtoSubscribe(ProjectSubscribeEntity subscribeEntity);
 }

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
+import ua.in.kp.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,12 +44,14 @@ public class ProjectService {
     private final SubscriptionRepository subscriptionRepository;
     private final EmailServiceKp emailService;
     private final Translator translator;
+    private final UserRepository userRepository;
     private final MeterRegistry meterRegistry;
+
 
     public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
-                          Translator translator, MeterRegistry meterRegistry) {
+                          Translator translator, UserRepository userRepository, MeterRegistry meterRegistry) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userService = userService;
@@ -56,6 +60,7 @@ public class ProjectService {
         this.subscriptionRepository = subscriptionRepository;
         this.emailService = emailService;
         this.translator = translator;
+        this.userRepository = userRepository;
         this.meterRegistry = meterRegistry;
 
         Gauge.builder("projects_count", projectRepository::count)
@@ -97,13 +102,22 @@ public class ProjectService {
     public Page<GetAllProjectsDto> getAllProjects(Pageable pageable) {
         Page<ProjectEntity> page = projectRepository.findAll(pageable);
         log.info("Got all projects from projectRepository.");
-//        Page<GetAllProjectsDto> toReturn = page.map(projectMapper::getAllToDto);
         Page<GetAllProjectsDto> toReturn = page.map(project -> {
-            GetAllProjectsDto dto = projectMapper.getAllToDto(project);
-            boolean isFollowed = subscriptionRepository
-                    .existsByUserIdAndProjectId(userService.getAuthenticated().getId(), project.getProjectId());
+            boolean isFollowed = false;
+            if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
+                Optional<UserEntity> userOpt = userRepository.findByEmail(userMail);
+
+                if (userOpt.isPresent()) {
+                    UserEntity user = userOpt.get();
+                    isFollowed = subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
+                }
+            }
+
+            GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
             dto.setFollowed(isFollowed);
             return dto;
+
         });
         log.info("Map all projectsEntity to DTO and return page with them.");
         return toReturn;
