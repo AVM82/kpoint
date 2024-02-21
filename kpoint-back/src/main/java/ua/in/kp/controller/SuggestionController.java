@@ -7,14 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ua.in.kp.dto.ApiResponse;
 import ua.in.kp.dto.suggestion.SuggestionCreateRequestDto;
 import ua.in.kp.dto.suggestion.SuggestionResponseDto;
 import ua.in.kp.service.SuggestionService;
@@ -46,8 +40,8 @@ public class SuggestionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSuggestion(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse> deleteSuggestion(@PathVariable UUID id) {
         suggestionService.deleteSuggestion(id.toString());
-        return new ResponseEntity<>("Suggestion was deleted", HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("Successfully deleted"), HttpStatus.OK);
     }
 }
