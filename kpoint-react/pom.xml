@@ -43,6 +43,9 @@
                     <nodeVersion>${node.version}</nodeVersion>
                     <npmVersion>${npm.version}</npmVersion>
                     <installDirectory>target</installDirectory>
+                    <environmentVariables>
+                        <REACT_APP_VERSION>${project.version}</REACT_APP_VERSION>
+                    </environmentVariables>
                 </configuration>
                 <executions>
                     <execution>
@@ -62,16 +65,6 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-<!--                    <execution>-->
-<!--                        <id>npm run lint</id>-->
-<!--                        <goals>-->
-<!--                            <goal>npm</goal>-->
-<!--                        </goals>-->
-<!--                        <phase>test</phase>-->
-<!--                        <configuration>-->
-<!--                            <arguments>run lint</arguments>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
                     <execution>
                         <id>npm run build</id>
                         <goals>
