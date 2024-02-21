@@ -7,11 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.project.ProjectSubscribeDto;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
@@ -25,6 +26,7 @@ import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -215,5 +217,15 @@ public class ProjectService {
         subscription.setUserId(userService.getAuthenticated().getId());
         subscription.setProjectId(projectId);
         subscriptionRepository.save(subscription);
+    }
+
+    public List<ProjectSubscribeDto> getSubscribedUsers(String projectId) {
+        List<ProjectSubscribeEntity> listUsers = subscriptionRepository.findUserIdsByProjectId(projectId);
+        List<ProjectSubscribeDto> usersId = listUsers.stream()
+                .map(projectMapper::toDtoSubscribe)
+                .collect(Collectors.toList());
+
+        log.info("List subscribers {}", usersId);
+        return usersId;
     }
 }

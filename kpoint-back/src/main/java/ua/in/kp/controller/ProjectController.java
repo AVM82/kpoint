@@ -12,8 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
+import ua.in.kp.dto.project.ProjectSubscribeDto;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.service.ProjectService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,5 +67,10 @@ public class ProjectController {
                                                             ProjectCreateRequestDto createdProject) {
         return new ResponseEntity<>(projectService
                 .updateProject(projectId, createdProject), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{projectId}/subscribe-users")
+    public ResponseEntity<List<ProjectSubscribeDto>> getSubscribedUsers(@PathVariable String projectId) {
+        return new ResponseEntity<>(projectService.getSubscribedUsers(projectId), HttpStatus.OK);
     }
 }
