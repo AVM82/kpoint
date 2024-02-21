@@ -28,7 +28,7 @@ class ProjectApi {
   public getById(payload: { id: string }): Promise<ProjectType> {
     return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}`, {
       method: HttpMethod.GET,
-      hasAuth: false,
+      // hasAuth: false,
     });
   }
 
@@ -42,7 +42,7 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        hasAuth: false,
+        // hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -61,7 +61,7 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        hasAuth: false,
+        // hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
