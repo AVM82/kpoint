@@ -111,6 +111,7 @@ public class ProjectService {
                 if (userOpt.isPresent()) {
                     UserEntity user = userOpt.get();
                     isFollowed = subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
+                    log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
                 }
             }
 
@@ -267,5 +268,10 @@ public class ProjectService {
         log.info("User {} has been unsubscribed from project with id {}", user.getUsername(), projectId);
         return new SubscribeResponseDto(translator.getLocaleMessage("project.unsubscribed",
                 user.getUsername(), projectId));
+    }
+
+    public boolean checkIfSubscribed(String projectId) {
+        UserEntity user = userService.getAuthenticated();
+       return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), projectId);
     }
 }

@@ -1,6 +1,6 @@
 import ControlPointTwoToneIcon from '@mui/icons-material/ControlPointTwoTone';
 import Button from '@mui/material/Button';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
@@ -19,15 +19,25 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId,
   const [isFollowing, setIsFollowing] = useState(isFollowed);
   const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    setIsFollowing(isFollowed);
+  }, [isFollowed]);
+
   const handleButtonSubClick = (): void => {
     if (isAuthenticated && !isFollowed) {
       setIsFollowing(true);
       dispatch(projectAction.subscribeToProject({ projectId: projectId }));
       toast.success('Ви успішно підписані на проект');
-    } else if (!isAuthenticated) {
-      toast.error('Увійдіть, щоб підписатися на проект');
+    }  else if (isAuthenticated && isFollowed) {
+      setIsFollowing(false);
+      // dispatch(projectAction.unsubscribeFromProject({ projectId: projectId }));
+      // toast.success('Ви успішно відписалися від проекту');
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem(`isFollowing_${projectId}`, String(isFollowing));
+  }, [isFollowing, projectId]);
 
   return (
     <Button size="small" startIcon={ <ControlPointTwoToneIcon/> }

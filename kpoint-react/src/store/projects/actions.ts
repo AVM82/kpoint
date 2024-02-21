@@ -55,4 +55,13 @@ const subscribeToProject = createAsyncThunk<SubscriptionRequestType, { projectId
   },
 );
 
+const checkIfSubscribed = createAsyncThunk<ProjectType, { id: string }, AsyncThunkConfig>(
+  ActionType.GET_BY_ID,
+  async (payload, { extra }) => {
+    const { projectApi } = extra;
+
+    return projectApi.getById(payload);
+  },
+);
+
 export { createNew,getAllProjectsAddMore,getAllProjectsDefault,getById, subscribeToProject };

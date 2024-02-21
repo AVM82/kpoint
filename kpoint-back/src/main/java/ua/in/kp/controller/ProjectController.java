@@ -14,6 +14,7 @@ import ua.in.kp.dto.project.ProjectCreateRequestDto;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.dto.project.ProjectSubscribeDto;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
+import ua.in.kp.dto.subscribtion.SubscribeStatusDto;
 import ua.in.kp.service.ProjectService;
 
 import java.util.List;
@@ -77,5 +78,12 @@ public class ProjectController {
     @GetMapping("/{projectId}/subscribe-users")
     public ResponseEntity<List<ProjectSubscribeDto>> getSubscribedUsers(@PathVariable String projectId) {
         return new ResponseEntity<>(projectService.getSubscribedUsers(projectId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{projectId}/is-subscribe")
+    public ResponseEntity<SubscribeStatusDto> checkIfSubscribed(@PathVariable String projectId) {
+        boolean isSubscribed = projectService.checkIfSubscribed(projectId);
+        SubscribeStatusDto response = new SubscribeStatusDto(isSubscribed);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
