@@ -50,7 +50,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
     @EntityGraph(attributePaths = "tags")
     Page<ProjectEntity> findAllByOwner(UserEntity owner, Pageable pageable);
 
-    @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
-            + "LEFT JOIN FETCH p.networksLinks  WHERE p.owner = :owner AND p.projectId=:id")
+    @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags LEFT JOIN FETCH p.networksLinks "
+            + "LEFT JOIN FETCH p.tags WHERE p.owner = :owner AND p.projectId=:id")
     Optional<ProjectEntity> findByOwnerAndProjectId(UserEntity owner, @Param("id") String projectId);
 }

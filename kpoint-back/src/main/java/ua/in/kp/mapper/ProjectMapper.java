@@ -2,11 +2,9 @@ package ua.in.kp.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import ua.in.kp.config.MapperConfig;
-import ua.in.kp.dto.project.GetAllProjectsDto;
-import ua.in.kp.dto.project.ProjectCreateRequestDto;
-import ua.in.kp.dto.project.ProjectResponseDto;
-import ua.in.kp.dto.project.ProjectSubscribeDto;
+import ua.in.kp.dto.project.*;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 
@@ -26,4 +24,8 @@ public interface ProjectMapper {
     GetAllProjectsDto getAllToDto(ProjectEntity projectEntity);
 
     ProjectSubscribeDto toDtoSubscribe(ProjectSubscribeEntity subscribeEntity);
+
+    ProjectEntity changeDtoToEntity(ProjectChangeDto dto, @MappingTarget ProjectEntity projectEntity);
+
+    ProjectChangeDto toChangeDto(ProjectEntity project);
 }
