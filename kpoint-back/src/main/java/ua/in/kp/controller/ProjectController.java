@@ -61,6 +61,11 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.subscribeUserToProject(projectId), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{projectId}/unsubscribe")
+    public ResponseEntity<SubscribeResponseDto> unsubscribeToProject(@PathVariable String projectId) {
+        return new ResponseEntity<>(projectService.unsubscribeUserFromProject(projectId), HttpStatus.OK);
+    }
+
     @PutMapping("/{projectId}/update")
     public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable String projectId,
                                                             @Valid @RequestBody

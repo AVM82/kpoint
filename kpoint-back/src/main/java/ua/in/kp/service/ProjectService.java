@@ -228,4 +228,23 @@ public class ProjectService {
         log.info("List subscribers {}", usersId);
         return usersId;
     }
+
+    public SubscribeResponseDto unsubscribeUserFromProject(String projectId) {
+        UserEntity user = userService.getAuthenticated();
+        log.info("User {} unsubscribe from project with id {}", user.getUsername(), projectId);
+        Optional<ProjectSubscribeEntity> existingSubscription =
+                subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
+        if (existingSubscription.isEmpty()) {
+            throw new ApplicationException(
+                    HttpStatus.NOT_FOUND,
+                    translator.getLocaleMessage("exception.project.not-subscribe",
+                            user.getUsername(), projectId));
+        }
+        subscriptionRepository.delete(existingSubscription.get());
+        String projectUrl = projectRepository.findBy(projectId).orElseThrow().getUrl();
+        emailService.sendUnsubscribeMessage(user.getEmail(), projectUrl);
+        log.info("User {} has been unsubscribed from project with id {}", user.getUsername(), projectId);
+        return new SubscribeResponseDto(translator.getLocaleMessage("project.unsubscribed",
+                user.getUsername(), projectId));
+    }
 }
