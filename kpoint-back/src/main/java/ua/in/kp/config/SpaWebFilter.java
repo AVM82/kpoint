@@ -19,7 +19,7 @@ public class SpaWebFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI().toLowerCase();
-        log.info("SpaWebFilter path: " + path);
+        log.debug("SpaWebFilter path: " + path);
 
         if (!path.equals("/")
                 && !path.startsWith("/api")
@@ -36,12 +36,12 @@ public class SpaWebFilter extends OncePerRequestFilter {
                 && !path.endsWith("jpeg")
                 && !path.endsWith("gif")
                 && !path.endsWith("png")) {
-            log.info("SpaWebFilter forwarding to /index.html from path: " + path);
+            log.debug("SpaWebFilter forwarding to /index.html from path: " + path);
             request.getRequestDispatcher("/index.html").forward(request, response);
             return;
         }
 
-        log.info("SpaWebFilter sent along its way path: " + path);
+        log.debug("SpaWebFilter sent along its way path: " + path);
         filterChain.doFilter(request, response);
     }
 

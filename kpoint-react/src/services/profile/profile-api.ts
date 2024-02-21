@@ -28,7 +28,7 @@ class ProfileApi {
       }`,
       {
         method: HttpMethod.GET,
-        hasAuth: false,
+        // hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,

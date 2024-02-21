@@ -32,13 +32,11 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**",
-                                "/v3/api-docs/",
-                                "/swagger-ui/**")
+                        .requestMatchers(HttpMethod.GET)
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/projects")
+                        .requestMatchers(HttpMethod.POST, "/api/auth/**")
                         .permitAll()
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(customUserDetailsService)
