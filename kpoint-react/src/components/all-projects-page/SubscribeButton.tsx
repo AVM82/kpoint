@@ -1,11 +1,13 @@
 import ControlPointTwoToneIcon from '@mui/icons-material/ControlPointTwoTone';
 import Button from '@mui/material/Button';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
+import { StorageKey } from '../../common/enums/enums';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
+import { storage } from '../../services/services';
 
 interface SubscribeButtonProps {
     projectId: string;
@@ -13,35 +15,35 @@ interface SubscribeButtonProps {
     isFollowed: boolean;
 }
 
-const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId,
-  isAuthenticated, isFollowed }) => {
+const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId, isFollowed }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [following, setFollowing] = useState(isFollowed);
-
-  useEffect(() => {
-    setFollowing(isFollowed);
-  }, [isFollowed]);
+  const [following, setFollowing] = useState(false);
+  const user = storage.getItem(StorageKey.TOKEN);
+  console.log('FOLL ', isFollowed);
+  // useEffect(() => {
+  //   setFollowing(isFollowed);
+  // }, [isFollowed]);
 
   const handleButtonSubClick = async (): Promise<void> => {
 
-    if (isAuthenticated && !following) {
+    if (user && !following) {
       await dispatch(projectAction.subscribeToProject({ projectId: projectId }));
       setFollowing(true);
       console.log('Button ', following);
       toast.success('Ви успішно підписані на проект');
-    }  else if (isAuthenticated && following) {
+    }  else if (user && following) {
       setFollowing(false);
       console.log('Button2 ', following);
       // dispatch(projectAction.unsubscribeFromProject({ projectId: projectId }));
-      // toast.success('Ви успішно відписалися від проекту');
+      toast.success('Ви успішно відписалися від проекту');
     }
   };
 
   return (
     <Button size="small" startIcon={ <ControlPointTwoToneIcon/> }
       sx={{ justifyContent: 'right' }} onClick={handleButtonSubClick} >
-      {following ? t('buttons.unfollow') : t('buttons.follow')}
+      {isFollowed || following ? t('buttons.unfollow') : t('buttons.follow')}
     </Button>
   );
 };

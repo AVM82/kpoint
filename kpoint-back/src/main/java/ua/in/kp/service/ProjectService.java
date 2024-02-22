@@ -107,11 +107,12 @@ public class ProjectService {
             if (SecurityContextHolder.getContext().getAuthentication() != null) {
                 String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
                 Optional<UserEntity> userOpt = userRepository.findByEmail(userMail);
-
                 if (userOpt.isPresent()) {
                     UserEntity user = userOpt.get();
                     isFollowed = subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
                     log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
+                    log.info("AaAAAAAAA {}", isFollowed);
+//                }
                 }
             }
 
