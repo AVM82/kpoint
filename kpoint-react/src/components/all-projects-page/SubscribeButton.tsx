@@ -21,15 +21,18 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId,
 
   useEffect(() => {
     setFollowing(isFollowed);
+    console.log('FOLLOWED ', following);
   }, [isFollowed]);
 
   const handleButtonSubClick = async (): Promise<void> => {
     if (isAuthenticated && !following) {
       await dispatch(projectAction.subscribeToProject({ projectId: projectId }));
       setFollowing(true);
+      console.log('Button ', following);
       toast.success('Ви успішно підписані на проект');
     }  else if (isAuthenticated && following) {
       setFollowing(false);
+      console.log('Button2 ', following);
       // dispatch(projectAction.unsubscribeFromProject({ projectId: projectId }));
       // toast.success('Ви успішно відписалися від проекту');
     }
