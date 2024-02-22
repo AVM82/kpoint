@@ -7,6 +7,8 @@ import java.util.Set;
 @Data
 public class GetAllProjectsDto {
 
+    private String projectId;
+
     private String url;
 
     private String title;

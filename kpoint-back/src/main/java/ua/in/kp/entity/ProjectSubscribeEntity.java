@@ -4,14 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SoftDelete;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "project_subscription")
-@SoftDelete
+@Table(name = "project_subscriptions")
 public class ProjectSubscribeEntity {
 
     @Id

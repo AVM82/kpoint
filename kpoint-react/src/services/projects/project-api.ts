@@ -1,11 +1,13 @@
 import { HttpMethod } from 'common/enums/http/http-method.enum';
+import { TestRequest } from 'common/types/projects/testRequest';
 import {
-  ProjectsEditType,
   ProjectsPageType,
   ProjectType,
 } from 'common/types/types';
 
+// import qs from 'query-string';
 import { ContentType } from '../../common/enums/file/content-type.enum';
+import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { Http } from '../http/http.service';
 
 type Constructor = {
@@ -26,7 +28,7 @@ class ProjectApi {
   public getById(payload: { id: string }): Promise<ProjectType> {
     return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}`, {
       method: HttpMethod.GET,
-      hasAuth: false,
+      // hasAuth: false,
     });
   }
 
@@ -40,7 +42,7 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        hasAuth: false,
+        // hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -59,7 +61,7 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        hasAuth: false,
+        // hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -68,16 +70,20 @@ class ProjectApi {
     );
   }
 
-  public createNew(payload: ProjectsEditType): Promise<ProjectType> {
+  public createNew(payload: TestRequest): Promise<ProjectType> {
+    const formData = new FormData();
+    formData.append('createdProject', new Blob([JSON.stringify(payload.createdProject)],
+      { type: 'application/json' }));
+    formData.append('file', payload.file);
+
     return this.#http.load(`${this.#apiPrefix}/projects`, {
       method: HttpMethod.POST,
-      payload: JSON.stringify(payload),
-      contentType: ContentType.JSON,
+      payload: formData,
     });
   }
 
-  public subscribeToProject(payload: { id: string }): Promise<string> {
-    return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}/subscribe`, {
+  public subscribeToProject(payload: { projectId: string }): Promise<SubscriptionRequestType> {
+    return this.#http.load(`${this.#apiPrefix}/projects/${payload.projectId}/subscribe`, {
       method: HttpMethod.POST,
       payload: JSON.stringify(payload),
       contentType: ContentType.JSON,

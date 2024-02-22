@@ -7,13 +7,14 @@ import com.google.api.client.json.gson.GsonFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import ua.in.kp.dto.OAuthRequestDto;
 import ua.in.kp.dto.user.UserLoginResponseDto;
 import ua.in.kp.entity.ApplicantEntity;
 import ua.in.kp.enumeration.UserRole;
-import ua.in.kp.exception.OAuth2AuthenticationException;
+import ua.in.kp.exception.ApplicationException;
 import ua.in.kp.locale.Translator;
 import ua.in.kp.service.AuthService;
 
@@ -42,7 +43,7 @@ public class OAuth2GoogleServiceImpl implements OAuth2Service {
         log.info("Verify user email {}", userEmail);
         if (!idToken.getPayload().getEmailVerified()) {
             log.warn("Email {} not verified", userEmail);
-            throw new OAuth2AuthenticationException(translator.getLocaleMessage(
+            throw new ApplicationException(HttpStatus.UNAUTHORIZED, translator.getLocaleMessage(
                     "exception.oauth2.email-not-verified", userEmail));
         }
         return authService.oauth2Login(buildApplicant(idToken));
@@ -61,8 +62,8 @@ public class OAuth2GoogleServiceImpl implements OAuth2Service {
             ).execute().parseIdToken();
         } catch (Exception e) {
             log.warn("Authentication failed!", e);
-            throw new OAuth2AuthenticationException(translator.getLocaleMessage(
-                    "exception.oauth2.authentication-failed", e.getMessage()), e);
+            throw new ApplicationException(HttpStatus.UNAUTHORIZED, translator.getLocaleMessage(
+                    "exception.oauth2.authentication-failed", e.getMessage()));
         }
     }
 

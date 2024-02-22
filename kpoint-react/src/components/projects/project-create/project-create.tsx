@@ -1,4 +1,5 @@
 import { Box, Button, Container, CssBaseline, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { TestRequest } from 'common/types/projects/testRequest';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -29,6 +30,7 @@ export const ProjectCreate: FC = () => {
     useState<ProjectsEditType>(projectDefault);
 
   const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
 
   const handleNext = (): void => {
@@ -41,9 +43,30 @@ export const ProjectCreate: FC = () => {
       setErrors(validationErrors);
     }
 
+    const testData: TestRequest = {
+      file: projectData.logo,
+      createdProject:
+        {
+          title: projectData.title,
+          url: projectData.url,
+          summary: projectData.summary,
+          description: projectData.description,
+          tags: projectData.tags,
+          goalDeadline: projectData.goalDeadline,
+          collectDeadline: projectData.collectDeadline,
+          networksLinks: { FACEBOOK: 'https://www.facebook.com/example' },
+        },
+    };
+
+    const a = new FormData();
+    a.append('file', testData.file);
+    const b  = JSON.stringify(testData.createdProject);
+    a.append('createdProject', b);
+
     if (activeStep === steps.length) {
-      dispatch(projectAction.createNew({ projectData }))
+      dispatch(projectAction.createNew( { testData } ))
         .unwrap()
+
         .then((action): void => {
           navigate('/projects/' + action.url);
         })

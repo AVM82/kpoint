@@ -1,17 +1,16 @@
 import SyncTwoToneIcon from '@mui/icons-material/SyncTwoTone';
+import { Container } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-import styles from '../app/style.module.scss';
 import { ProjectCard } from './project-card';
+import { ProjectsPageHeader } from './projects-page-haeder';
 
 const ProjectsPage: FC = () => {
   const { t } = useTranslation();
@@ -19,9 +18,11 @@ const ProjectsPage: FC = () => {
 
   const maxPageElements = 5;
 
-  const { projects } = useAppSelector(({ project }) => ({
+  const { projects  } = useAppSelector(({ project }) => ({
     projects: project.projects,
   }));
+
+  const isAuthenticated = useAppSelector((state) => state.token.isloggedIn);
 
   const [page, setPage] = useState(1);
 
@@ -54,19 +55,9 @@ const ProjectsPage: FC = () => {
     setPage(page + 1);
   };
 
-  const handleButtonClick = (projectId: string) => (): void => {
-    dispatch(projectAction.subscribeToProject({ id: projectId }));
-  };
-
   return (
-    <div className={styles.div}>
-      <Typography variant="h3" align="center">
-        {t('projects')}
-      </Typography>
-      <TextField
-        label={t('search_field')}
-        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
-      ></TextField>
+    <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
+      <ProjectsPageHeader />
       <Grid
         container
         spacing={5}
@@ -75,15 +66,15 @@ const ProjectsPage: FC = () => {
         alignItems="center"
       >
         {projects?.content.map((project) => (
-          <Grid item>
+          <Grid item key={project.projectId}>
             <ProjectCard
-              id={project.id}
+              projectId={project.projectId}
               url={project.url}
               title={project.title}
               summary={project.summary}
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
-              onButtonClick={handleButtonClick(project.id)}
+              isAuthenticated={isAuthenticated}
             />
           </Grid>
         ))}
@@ -113,7 +104,7 @@ const ProjectsPage: FC = () => {
         showLastButton
         sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
       />
-    </div>
+    </Container>
   );
 };
 

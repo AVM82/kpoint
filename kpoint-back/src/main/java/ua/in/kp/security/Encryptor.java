@@ -41,8 +41,8 @@ public class Encryptor {
             byte[] encrypted = cipher.doFinal(line.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(encrypted);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            log.error("Can't encrypt line", e);
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Can't encrypt line " + line);
+            log.error("Can't encrypt line {}", line, e);
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Can't encrypt line");
         }
     }
 
@@ -52,8 +52,8 @@ public class Encryptor {
             byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(line));
             return new String(decrypted);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            log.error("Can't decrypt line", e);
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Can't decrypt line " + line);
+            log.error("Can't decrypt line {}", line, e);
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Can't decrypt line");
         }
     }
 }
