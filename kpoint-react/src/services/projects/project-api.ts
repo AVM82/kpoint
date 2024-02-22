@@ -7,9 +7,9 @@ import {
 
 // import qs from 'query-string';
 import { ContentType } from '../../common/enums/file/content-type.enum';
+import { SubscribeStatusType } from '../../common/types/projects/subscribe-status.type';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { Http } from '../http/http.service';
-import {SubscribeStatusType} from "../../common/types/projects/subscribe-status.type";
 
 type Constructor = {
   http: Http;

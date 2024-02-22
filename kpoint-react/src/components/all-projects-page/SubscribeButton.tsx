@@ -21,10 +21,10 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId,
 
   useEffect(() => {
     setFollowing(isFollowed);
-    console.log('FOLLOWED ', following);
   }, [isFollowed]);
 
   const handleButtonSubClick = async (): Promise<void> => {
+
     if (isAuthenticated && !following) {
       await dispatch(projectAction.subscribeToProject({ projectId: projectId }));
       setFollowing(true);

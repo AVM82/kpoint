@@ -33,7 +33,6 @@ interface ProjectsProps {
 const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
   logoImgUrl, tags, isAuthenticated, isFollowed  }) => {
   const { t } = useTranslation();
-  // const userID = storage.getItem(StorageKey.USER);
 
   return (
     <Card sx={{ maxWidth: 500 }}>
@@ -54,7 +53,7 @@ const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
             <Button size="small" startIcon={ <PeopleAltTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>{t('buttons.help')}</Button>
             {<SubscribeButton projectId={projectId}
-              isAuthenticated={isAuthenticated} isFollowed={isFollowed}/>}
+              isAuthenticated={isAuthenticated} isFollowed={isFollowed ?? false}/>}
             <Button size="small" startIcon={ <MonetizationOnTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>
               {t('buttons.donate_projects_page')}</Button>
