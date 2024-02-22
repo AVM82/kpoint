@@ -100,7 +100,7 @@ public class ProjectService {
         Page<ProjectEntity> page = projectRepository.findAll(pageable);
         log.info("Got all projects from projectRepository.");
         Page<GetAllProjectsDto> toReturn = page.map(projectMapper::getAllToDto);
-        log.info("Map all projectsEntity to DTO and return page with them.");
+        log.info("Mapped all projectsEntity to DTO and returned a page with them.");
         return toReturn;
     }
 

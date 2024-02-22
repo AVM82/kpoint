@@ -8,10 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.project.*;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
+import ua.in.kp.service.ProfileService;
 import ua.in.kp.service.ProjectService;
 
 import java.util.List;
@@ -22,6 +26,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ProfileService profileService;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ProjectResponseDto> createProject(
@@ -32,7 +37,13 @@ public class ProjectController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<GetAllProjectsDto>> getAllProjects(Pageable pageable) {
+    public ResponseEntity<Page<GetAllProjectsDto>> getAllProjects(
+            Pageable pageable) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof UsernamePasswordAuthenticationToken) {
+            return new ResponseEntity<>(profileService
+                    .getRecommendedProjects(auth.getName(), pageable), HttpStatus.OK);
+        }
         return new ResponseEntity<>(projectService.getAllProjects(pageable), HttpStatus.OK);
     }
 
