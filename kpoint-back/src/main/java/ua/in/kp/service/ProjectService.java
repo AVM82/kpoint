@@ -1,5 +1,9 @@
 package ua.in.kp.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ua.in.kp.dto.project.GetAllProjectsDto;
-import ua.in.kp.dto.project.ProjectCreateRequestDto;
-import ua.in.kp.dto.project.ProjectResponseDto;
-import ua.in.kp.dto.project.ProjectSubscribeDto;
+import ua.in.kp.dto.project.*;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
@@ -24,6 +25,7 @@ import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
+import ua.in.kp.util.PatchUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +46,7 @@ public class ProjectService {
     private final Translator translator;
     private final MeterRegistry meterRegistry;
 
-    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
+    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper, ObjectMapper objectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
                           Translator translator, MeterRegistry meterRegistry) {
@@ -98,7 +100,7 @@ public class ProjectService {
         Page<ProjectEntity> page = projectRepository.findAll(pageable);
         log.info("Got all projects from projectRepository.");
         Page<GetAllProjectsDto> toReturn = page.map(projectMapper::getAllToDto);
-        log.info("Map all projectsEntity to DTO and return page with them.");
+        log.info("Mapped all projectsEntity to DTO and returned a page with them.");
         return toReturn;
     }
 
@@ -235,6 +237,7 @@ public class ProjectService {
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isEmpty()) {
+            log.warn("User {} is not yet subscribed to project with id {}", user.getUsername(), projectId);
             throw new ApplicationException(
                     HttpStatus.NOT_FOUND,
                     translator.getLocaleMessage("exception.project.not-subscribe",
@@ -246,5 +249,27 @@ public class ProjectService {
         log.info("User {} has been unsubscribed from project with id {}", user.getUsername(), projectId);
         return new SubscribeResponseDto(translator.getLocaleMessage("project.unsubscribed",
                 user.getUsername(), projectId));
+    }
+
+    @Transactional
+    public ProjectChangeDto updateProjectData(String projectId, JsonPatch patch) {
+        UserEntity user = userService.getAuthenticated();
+        log.info("update project data by projectId {}", projectId);
+        ProjectEntity projectEntity = projectRepository.findByOwnerAndProjectId(user, projectId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND,
+                        String.format("User %s does not have project with id %s", user.getUsername(), projectId)));
+        ProjectChangeDto projectDto = projectMapper.toChangeDto(projectEntity);
+        ProjectChangeDto patchedDto;
+        try {
+            patchedDto = PatchUtil.applyPatch(patch, projectDto, ProjectChangeDto.class);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            log.warn("cannot update project data by projectId {}", projectId);
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    translator.getLocaleMessage("exception.project.cannot-updated"));
+        }
+        patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
+        ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
+        ProjectEntity updatedUser = projectRepository.save(updatedProject);
+        return projectMapper.toChangeDto(updatedUser);
     }
 }

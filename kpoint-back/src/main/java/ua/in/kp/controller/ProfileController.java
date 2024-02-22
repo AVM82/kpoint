@@ -33,12 +33,6 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getFavouriteProjects(username, pageable));
     }
 
-    @GetMapping("/{username}/recommendedProjects")
-    public ResponseEntity<ProjectsProfileResponseDto> getRecommendedProjects(
-            @PathVariable String username, Pageable pageable) {
-        return ResponseEntity.ok(profileService.getRecommendedProjects(username, pageable));
-    }
-
     @PatchMapping(path = "/{username}/settings", consumes = "application/json-patch+json")
     public ResponseEntity<UserChangeDto> updateUser(@PathVariable String username, @RequestBody JsonPatch patch) {
         return ResponseEntity.ok(profileService.updateUserData(username, patch));
