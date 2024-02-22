@@ -33,7 +33,7 @@ const ProjectsPage: FC = () => {
         number: page - 1,
       }),
     );
-  }, [dispatch, page]);
+  }, [dispatch]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(

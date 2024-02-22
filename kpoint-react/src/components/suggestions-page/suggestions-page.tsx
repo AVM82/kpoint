@@ -36,7 +36,7 @@ const SuggestionsPage: FC = () => {
         sort: 'likeCount,desc',
       }),
     );
-  }, [dispatch, page, status]);
+  }, [dispatch, status]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
