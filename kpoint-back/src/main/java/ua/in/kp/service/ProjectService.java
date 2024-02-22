@@ -1,5 +1,7 @@
 package ua.in.kp.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ua.in.kp.dto.project.GetAllProjectsDto;
-import ua.in.kp.dto.project.ProjectCreateRequestDto;
-import ua.in.kp.dto.project.ProjectResponseDto;
-import ua.in.kp.dto.project.ProjectSubscribeDto;
+import ua.in.kp.dto.project.*;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
@@ -24,6 +23,7 @@ import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
+import ua.in.kp.util.PatchUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +44,7 @@ public class ProjectService {
     private final Translator translator;
     private final MeterRegistry meterRegistry;
 
-    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
+    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper, ObjectMapper objectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
                           Translator translator, MeterRegistry meterRegistry) {
@@ -227,5 +227,36 @@ public class ProjectService {
 
         log.info("List subscribers {}", usersId);
         return usersId;
+    }
+
+    public SubscribeResponseDto unsubscribeUserFromProject(String projectId) {
+        UserEntity user = userService.getAuthenticated();
+        log.info("User {} unsubscribe from project with id {}", user.getUsername(), projectId);
+        Optional<ProjectSubscribeEntity> existingSubscription =
+                subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
+        if (existingSubscription.isEmpty()) {
+            throw new ApplicationException(
+                    HttpStatus.NOT_FOUND,
+                    translator.getLocaleMessage("exception.project.not-subscribe",
+                            user.getUsername(), projectId));
+        }
+        subscriptionRepository.delete(existingSubscription.get());
+        String projectUrl = projectRepository.findBy(projectId).orElseThrow().getUrl();
+        emailService.sendUnsubscribeMessage(user.getEmail(), projectUrl);
+        log.info("User {} has been unsubscribed from project with id {}", user.getUsername(), projectId);
+        return new SubscribeResponseDto(translator.getLocaleMessage("project.unsubscribed",
+                user.getUsername(), projectId));
+    }
+
+    public ProjectChangeDto updateProjectData(String projectId, JsonPatch patch) {
+        UserEntity user = userService.getAuthenticated();
+        log.info("update profile data by projectId {}", projectId);
+        ProjectEntity projectEntity = projectRepository.findByOwnerAndProjectId(user, projectId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND,
+                        String.format("User %s does not have project with id %s", user.getUsername(), projectId)));
+        ProjectChangeDto projectDto = projectMapper.toChangeDto(projectEntity);
+        ProjectChangeDto patchedDto = PatchUtil.applyPatch(patch, projectDto, ProjectChangeDto.class);
+        ProjectEntity updatedUser = projectRepository.save(projectMapper.changeDtoToEntity(patchedDto, projectEntity));
+        return projectMapper.toChangeDto(updatedUser);
     }
 }
