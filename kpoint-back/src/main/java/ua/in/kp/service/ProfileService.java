@@ -1,10 +1,6 @@
 package ua.in.kp.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,6 +20,7 @@ import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.UserRepository;
+import ua.in.kp.util.PatchUtil;
 
 import java.util.Set;
 
@@ -36,7 +33,6 @@ public class ProfileService {
     private final ProjectMapper projectMapper;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
-    private final ObjectMapper objectMapper;
     private final Translator translator;
 
     public ProjectsProfileResponseDto getMyProjects(String username, Pageable pageable) {
@@ -74,7 +70,7 @@ public class ProfileService {
         log.info("update user data by username {}", username);
         UserEntity userEntity = userService.getByUsername(username);
         UserChangeDto userChangeDto = userMapper.toChangeDto(userEntity);
-        UserChangeDto patchedDto = applyPatchToCustomer(patch, userChangeDto);
+        UserChangeDto patchedDto = PatchUtil.applyPatch(patch, userChangeDto, UserChangeDto.class);
         UserEntity updatedUser = userRepository.save(userMapper.changeDtoToEntity(patchedDto, userEntity));
         return userMapper.toChangeDto(updatedUser);
     }
@@ -88,15 +84,5 @@ public class ProfileService {
                     "exception.user.invalid-old-password"));
         }
         userService.changeUserPassword(user, dto.newPassword());
-    }
-
-    protected UserChangeDto applyPatchToCustomer(JsonPatch patch, Record userDto) {
-        try {
-            JsonNode patched = patch.apply(objectMapper.convertValue(userDto, JsonNode.class));
-            return objectMapper.treeToValue(patched, UserChangeDto.class);
-        } catch (JsonPatchException | JsonProcessingException e) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
-                    "exception.user.cannot-updated"));
-        }
     }
 }
