@@ -1,6 +1,8 @@
 package ua.in.kp.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -53,9 +55,9 @@ public class ProfileService {
                 favouriteProjectsDtos);
     }
 
-    public Page<GetAllProjectsDto> getRecommendedProjects(String username, Pageable pageable) {
+    public Page<GetAllProjectsDto> getRecommendedProjects(String email, Pageable pageable) {
         UserEntity userEntity =
-                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(username);
+                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(email);
         Set<TagEntity> tags = userEntity.getTags();
         Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
         allProjects.addAll(userEntity.getProjectsFavourite());
@@ -68,7 +70,14 @@ public class ProfileService {
         log.info("update user data by username {}", username);
         UserEntity userEntity = userService.getByUsername(username);
         UserChangeDto userChangeDto = userMapper.toChangeDto(userEntity);
-        UserChangeDto patchedDto = PatchUtil.applyPatch(patch, userChangeDto, UserChangeDto.class);
+        UserChangeDto patchedDto;
+        try {
+            patchedDto = PatchUtil.applyPatch(patch, userChangeDto, UserChangeDto.class);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            log.warn("cannot update user data by username {}", username);
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    translator.getLocaleMessage("exception.user.cannot-updated"));
+        }
         UserEntity updatedUser = userRepository.save(userMapper.changeDtoToEntity(patchedDto, userEntity));
         return userMapper.toChangeDto(updatedUser);
     }
@@ -78,6 +87,7 @@ public class ProfileService {
         UserEntity user = userService.getByUsername(username);
 
         if (!userService.checkIfValidOldPassword(user, dto.oldPassword())) {
+            log.warn("cannot change password by username {}", username);
             throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
                     "exception.user.invalid-old-password"));
         }
