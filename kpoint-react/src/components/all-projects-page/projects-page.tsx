@@ -33,6 +33,7 @@ const ProjectsPage: FC = () => {
         number: page - 1,
       }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
