@@ -52,7 +52,7 @@ public class EmailServiceKp {
         SimpleMailMessage message = new SimpleMailMessage();
         setMessageData(message, env.getProperty("email.subscription_mail.subject"),
                 env.getProperty("email.subscription_mail.text") + "\n\n"
-                        + "Лінк на проект: " + env.getProperty("oauth2.redirect-uri") + "projects/" + url);
+                        + "Лінк на проєкт: " + env.getProperty("oauth2.redirect-uri") + "projects/" + url);
         message.setTo(user.getEmail());
         emailSender.send(message);
         log.info("Email to {} was sent", user.getEmail());
@@ -62,7 +62,7 @@ public class EmailServiceKp {
         SimpleMailMessage message = new SimpleMailMessage();
         setMessageData(message, env.getProperty("email.update_project_mail.subject"),
                 env.getProperty("email.update_project_mail.text") + "\n\n"
-                        + "Лінк на проект: " + env.getProperty("oauth2.redirect-uri") + "projects/" + title);
+                        + "Лінк на проєкт: " + env.getProperty("oauth2.redirect-uri") + "projects/" + title);
 
         List<String> usersMails = setUsersMailsList(projectId);
         for (String mail : usersMails) {
@@ -92,5 +92,15 @@ public class EmailServiceKp {
         message.setFrom(sender);
         message.setSubject(subject);
         message.setText(text);
+    }
+
+    public void sendUnsubscribeMessage(String email, String projectUrl) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        setMessageData(message, env.getProperty("email.unsubscription_mail.subject"),
+                env.getProperty("email.unsubscription_mail.text") + "\n\n"
+                        + "Лінк на проєкт: " + env.getProperty("oauth2.redirect-uri") + "projects/" + projectUrl);
+        message.setTo(email);
+        emailSender.send(message);
+        log.info("Email to {} was sent", email);
     }
 }
