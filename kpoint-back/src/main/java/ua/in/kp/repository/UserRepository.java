@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Query("FROM UserEntity u LEFT JOIN FETCH u.roles WHERE u.email=:email")
     Optional<UserEntity> findByEmailFetchRoles(String email);
 
-    @EntityGraph(attributePaths = {"roles", "tags", "socialNetworks"})
+    @EntityGraph(attributePaths = {"roles", "tags", "socialNetworks", "projectsOwned", "projectsFavourite"})
     Optional<UserEntity> findByEmail(String email);
 
     @Query("FROM UserEntity u WHERE u.username=:username")
@@ -30,9 +30,6 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Query(value = "SELECT * FROM public.users AS u "
             + "LEFT JOIN kpoint.public.user_roles AS r ON u.id = r.user_id", nativeQuery = true)
     Page<UserEntity> findAllByAdmin(Pageable pageable);
-
-    @EntityGraph(attributePaths = {"tags", "projectsOwned", "projectsFavourite"})
-    Optional<UserEntity> findByUsername(String username);
 
     @Query("FROM UserEntity u LEFT JOIN FETCH u.projectsOwned WHERE u.username=:username")
     Optional<UserEntity> findByUsernameFetchProjectsOwned(String username);

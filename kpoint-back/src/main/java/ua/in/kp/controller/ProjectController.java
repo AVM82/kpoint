@@ -1,5 +1,6 @@
 package ua.in.kp.controller;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -7,14 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ua.in.kp.dto.project.GetAllProjectsDto;
-import ua.in.kp.dto.project.ProjectCreateRequestDto;
-import ua.in.kp.dto.project.ProjectResponseDto;
-import ua.in.kp.dto.project.ProjectSubscribeDto;
+import ua.in.kp.dto.project.*;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
-import ua.in.kp.dto.subscribtion.SubscribeStatusDto;
+import ua.in.kp.service.ProfileService;
 import ua.in.kp.service.ProjectService;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ProfileService profileService;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ProjectResponseDto> createProject(
@@ -35,8 +37,14 @@ public class ProjectController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<GetAllProjectsDto>> getAllProjects(Pageable pageable) {
-        return new ResponseEntity<>(projectService.getAllProjects(pageable), HttpStatus.OK);
+    public ResponseEntity<Page<GetAllProjectsDto>> getAllProjects(
+            Pageable pageable) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof UsernamePasswordAuthenticationToken) {
+            return new ResponseEntity<>(profileService
+                    .getRecommendedProjects(auth.getName(), pageable), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(projectService.getAllProjects(pageable, auth), HttpStatus.OK);
     }
 
     @GetMapping("/id/{projectId}")
@@ -67,6 +75,12 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.unsubscribeUserFromProject(projectId), HttpStatus.OK);
     }
 
+    @PatchMapping(path = "/{projectId}/settings", consumes = "application/json-patch+json")
+    public ResponseEntity<ProjectChangeDto> updateProject(@PathVariable String projectId,
+                                                          @RequestBody JsonPatch patch) {
+        return ResponseEntity.ok(projectService.updateProjectData(projectId, patch));
+    }
+
     @PutMapping("/{projectId}/update")
     public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable String projectId,
                                                             @Valid @RequestBody
@@ -78,12 +92,5 @@ public class ProjectController {
     @GetMapping("/{projectId}/subscribe-users")
     public ResponseEntity<List<ProjectSubscribeDto>> getSubscribedUsers(@PathVariable String projectId) {
         return new ResponseEntity<>(projectService.getSubscribedUsers(projectId), HttpStatus.OK);
-    }
-
-    @GetMapping("/{projectId}/is-subscribe")
-    public ResponseEntity<SubscribeStatusDto> checkIfSubscribed(@PathVariable String projectId) {
-        boolean isSubscribed = projectService.checkIfSubscribed(projectId);
-        SubscribeStatusDto response = new SubscribeStatusDto(isSubscribed);
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

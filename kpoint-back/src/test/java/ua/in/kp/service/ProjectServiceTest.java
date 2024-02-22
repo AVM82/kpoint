@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import ua.in.kp.dto.project.ProjectResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.exception.ApplicationException;
@@ -31,15 +32,18 @@ class ProjectServiceTest {
     private ProjectMapper projectMapper;
     @Mock
     private MeterRegistry meterRegistry;
+    @Mock
+    private Authentication auth;
     @InjectMocks
     private ProjectService projectService;
+
 
     @Test
     void getAllProjectsTest() {
         Pageable pageable = mock(Pageable.class);
         Page<ProjectEntity> page = mock(Page.class);
         when(projectRepository.findAll(pageable)).thenReturn(page);
-        projectService.getAllProjects(pageable);
+        projectService.getAllProjects(pageable, auth);
         verify(projectRepository, times(1)).findAll(pageable);
         verify(page, times(1)).map(any());
     }

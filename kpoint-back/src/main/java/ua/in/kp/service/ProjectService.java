@@ -1,19 +1,19 @@
 package ua.in.kp.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ua.in.kp.dto.project.GetAllProjectsDto;
-import ua.in.kp.dto.project.ProjectCreateRequestDto;
-import ua.in.kp.dto.project.ProjectResponseDto;
-import ua.in.kp.dto.project.ProjectSubscribeDto;
+import ua.in.kp.dto.project.*;
 import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
@@ -25,6 +25,7 @@ import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
+import ua.in.kp.util.PatchUtil;
 import ua.in.kp.repository.UserRepository;
 
 import java.util.Collection;
@@ -46,7 +47,6 @@ public class ProjectService {
     private final Translator translator;
     private final UserRepository userRepository;
     private final MeterRegistry meterRegistry;
-
 
     public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
@@ -99,14 +99,14 @@ public class ProjectService {
         return projectMapper.toDto(projectEntity);
     }
 
-    public Page<GetAllProjectsDto> getAllProjects(Pageable pageable) {
+    public Page<GetAllProjectsDto> getAllProjects(Pageable pageable, Authentication auth) {
         Page<ProjectEntity> page = projectRepository.findAll(pageable);
         log.info("Got all projects from projectRepository.");
         Page<GetAllProjectsDto> toReturn = page.map(project -> {
             boolean isFollowed = false;
             if (SecurityContextHolder.getContext().getAuthentication() != null) {
-                String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
-                Optional<UserEntity> userOpt = userRepository.findByEmail(userMail);
+//                String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
+                Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
                 if (userOpt.isPresent()) {
                     UserEntity user = userOpt.get();
                     isFollowed = subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
@@ -271,8 +271,15 @@ public class ProjectService {
                 user.getUsername(), projectId));
     }
 
-    public boolean checkIfSubscribed(String projectId) {
+    public ProjectChangeDto updateProjectData(String projectId, JsonPatch patch) {
         UserEntity user = userService.getAuthenticated();
-       return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), projectId);
+        log.info("update profile data by projectId {}", projectId);
+        ProjectEntity projectEntity = projectRepository.findByOwnerAndProjectId(user, projectId)
+                .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND,
+                        String.format("User %s does not have project with id %s", user.getUsername(), projectId)));
+        ProjectChangeDto projectDto = projectMapper.toChangeDto(projectEntity);
+        ProjectChangeDto patchedDto = PatchUtil.applyPatch(patch, projectDto, ProjectChangeDto.class);
+        ProjectEntity updatedUser = projectRepository.save(projectMapper.changeDtoToEntity(patchedDto, projectEntity));
+        return projectMapper.toChangeDto(updatedUser);
     }
 }
