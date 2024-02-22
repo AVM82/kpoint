@@ -251,6 +251,7 @@ public class ProjectService {
                 user.getUsername(), projectId));
     }
 
+    @Transactional
     public ProjectChangeDto updateProjectData(String projectId, JsonPatch patch) {
         UserEntity user = userService.getAuthenticated();
         log.info("update project data by projectId {}", projectId);
@@ -266,7 +267,9 @@ public class ProjectService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.project.cannot-updated"));
         }
-        ProjectEntity updatedUser = projectRepository.save(projectMapper.changeDtoToEntity(patchedDto, projectEntity));
+        patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
+        ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
+        ProjectEntity updatedUser = projectRepository.save(updatedProject);
         return projectMapper.toChangeDto(updatedUser);
     }
 }
