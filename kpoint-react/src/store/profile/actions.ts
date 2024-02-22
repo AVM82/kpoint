@@ -6,7 +6,7 @@ import { ActionType } from './common';
 
 const getMyProjects = createAsyncThunk<
   ProjectsPageType,
-  { size: number; number: number },
+  { size: number; number: number, username: string },
   AsyncThunkConfig
 >(ActionType.GET_MY_PROJECTS, async (payload, { extra }) => {
   const { profileApi } = extra;
@@ -16,7 +16,7 @@ const getMyProjects = createAsyncThunk<
 
 const getRecommendedProjects = createAsyncThunk<
   ProjectsPageType,
-  { size: number; number: number },
+  { size: number; number: number, username: string },
   AsyncThunkConfig
 >(ActionType.GET_RECOMMENDED_PROJECTS, async (payload, { extra }) => {
   const { profileApi } = extra;

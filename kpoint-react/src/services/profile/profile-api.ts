@@ -21,9 +21,10 @@ class ProfileApi {
   public getMyProjects(payload: {
     size: number;
     number: number;
+    username: string;
   }): Promise<ProjectsPageType> {
     return this.#http.load(
-      `${this.#apiPrefix}/projects?size=${payload.size}&number=${
+      `${this.#apiPrefix}/profile/${payload.username}/myProjects?size=${payload.size}&number=${
         payload.number
       }`,
       {
@@ -39,10 +40,11 @@ class ProfileApi {
 
   public getRecommendProjects(payload: {
     size: number,
-    number: number
+    number: number,
+    username: string
   }): Promise<ProjectsPageType> {
     return this.#http.load(
-      `${this.#apiPrefix}/profile/recommendedProjects?size=${payload.size}&number=${
+      `${this.#apiPrefix}/profile/${payload.username}/recommendedProjects?size=${payload.size}&number=${
         payload.number
       }`,
       {
