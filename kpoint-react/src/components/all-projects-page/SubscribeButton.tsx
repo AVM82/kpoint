@@ -16,33 +16,29 @@ interface SubscribeButtonProps {
 const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId,
   isAuthenticated, isFollowed }) => {
   const { t } = useTranslation();
-  const [isFollowing, setIsFollowing] = useState(isFollowed);
   const dispatch = useAppDispatch();
+  const [following, setFollowing] = useState(isFollowed);
 
   useEffect(() => {
-    setIsFollowing(isFollowed);
+    setFollowing(isFollowed);
   }, [isFollowed]);
 
-  const handleButtonSubClick = (): void => {
-    if (isAuthenticated && !isFollowed) {
-      setIsFollowing(true);
-      dispatch(projectAction.subscribeToProject({ projectId: projectId }));
+  const handleButtonSubClick = async (): Promise<void> => {
+    if (isAuthenticated && !following) {
+      await dispatch(projectAction.subscribeToProject({ projectId: projectId }));
+      setFollowing(true);
       toast.success('Ви успішно підписані на проект');
-    }  else if (isAuthenticated && isFollowed) {
-      setIsFollowing(false);
+    }  else if (isAuthenticated && following) {
+      setFollowing(false);
       // dispatch(projectAction.unsubscribeFromProject({ projectId: projectId }));
       // toast.success('Ви успішно відписалися від проекту');
     }
   };
 
-  useEffect(() => {
-    localStorage.setItem(`isFollowing_${projectId}`, String(isFollowing));
-  }, [isFollowing, projectId]);
-
   return (
     <Button size="small" startIcon={ <ControlPointTwoToneIcon/> }
       sx={{ justifyContent: 'right' }} onClick={handleButtonSubClick} >
-      {isFollowing ? t('buttons.unfollow') : t('buttons.follow')}
+      {following ? t('buttons.unfollow') : t('buttons.follow')}
     </Button>
   );
 };

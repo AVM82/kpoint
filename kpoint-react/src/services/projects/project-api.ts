@@ -9,6 +9,7 @@ import {
 import { ContentType } from '../../common/enums/file/content-type.enum';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { Http } from '../http/http.service';
+import {SubscribeStatusType} from "../../common/types/projects/subscribe-status.type";
 
 type Constructor = {
   http: Http;
@@ -87,6 +88,13 @@ class ProjectApi {
       method: HttpMethod.POST,
       payload: JSON.stringify(payload),
       contentType: ContentType.JSON,
+    });
+  }
+
+  public checkIfSubscribed (payload: { id: string }): Promise<SubscribeStatusType> {
+    return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}/subscribe-users`, {
+      method: HttpMethod.GET,
+    // hasAuth: false,
     });
   }
 }

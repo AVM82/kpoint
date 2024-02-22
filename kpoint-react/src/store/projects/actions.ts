@@ -3,8 +3,8 @@ import { AsyncThunkConfig } from 'common/types/app/async-thunk-config.type';
 import { TestRequest } from 'common/types/projects/testRequest';
 
 import { ProjectType } from '../../common/types/projects/project.type';
-// import { ProjectsEditType } from '../../common/types/projects/projects-edit.type';
 import { ProjectsPageType } from '../../common/types/projects/projects-page.type';
+import { SubscribeStatusType } from '../../common/types/projects/subscribe-status.type';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { ActionType } from './common';
 
@@ -55,13 +55,13 @@ const subscribeToProject = createAsyncThunk<SubscriptionRequestType, { projectId
   },
 );
 
-const checkIfSubscribed = createAsyncThunk<ProjectType, { id: string }, AsyncThunkConfig>(
-  ActionType.GET_BY_ID,
+const checkIfSubscribed = createAsyncThunk<SubscribeStatusType, { id: string }, AsyncThunkConfig>(
+  ActionType.GET_SUBSCRIBE_STATUS,
   async (payload, { extra }) => {
     const { projectApi } = extra;
 
-    return projectApi.getById(payload);
+    return projectApi.checkIfSubscribed(payload);
   },
 );
 
-export { createNew,getAllProjectsAddMore,getAllProjectsDefault,getById, subscribeToProject };
+export { checkIfSubscribed,createNew,getAllProjectsAddMore,getAllProjectsDefault,getById, subscribeToProject };

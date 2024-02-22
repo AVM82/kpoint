@@ -2,14 +2,17 @@ import { createSlice } from '@reduxjs/toolkit';
 import { ProjectsEditType, ProjectsPageType } from 'common/types/types';
 
 import { ProjectType } from '../../common/types/projects/project.type';
+import { SubscribeStatusType } from '../../common/types/projects/subscribe-status.type';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
-import { createNew, getAllProjectsAddMore, getAllProjectsDefault, getById, subscribeToProject } from './actions';
+import { checkIfSubscribed, createNew, getAllProjectsAddMore, getAllProjectsDefault, getById, subscribeToProject }
+  from './actions';
 
 type State={
   project: ProjectType | null,
   projects: ProjectsPageType | null,
   editProject: ProjectsEditType | null,
   subscribe: SubscriptionRequestType | null,
+  isFollowed: SubscribeStatusType;
 };
 
 const initialState: State = {
@@ -17,6 +20,9 @@ const initialState: State = {
   projects: null,
   editProject: null,
   subscribe: null,
+  isFollowed: {
+    isFollowed: false,
+  },
 };
 
 const projectSlice = createSlice({
@@ -56,7 +62,17 @@ const projectSlice = createSlice({
       })
       .addCase(subscribeToProject.rejected, (state) => {
         state.subscribe = null;
-      });
+      })
+      .addCase(checkIfSubscribed.fulfilled, (state, { payload }) => {
+        state.isFollowed = payload;
+      })
+      .addCase(checkIfSubscribed.rejected, (state) => {
+        state.isFollowed = {
+          isFollowed: false,
+        };
+      })
+    ;
+
   },
 });
 

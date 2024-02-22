@@ -31,6 +31,8 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
         <AddIcon />
         {t('buttons.subscribe')}
       </Button>
+      {/*<SubscribeButton projectId={projectAll.projectId}*/}
+      {/*  isAuthenticated={isAuthenticated} isFollowed={projectAll?.isFollowed}/>}*/}
       <Box
         display={'flex'}
         justifyContent={'space-between'}

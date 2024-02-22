@@ -197,6 +197,8 @@ const ProjectReworked: FC = () => {
                 >
                   <PersonAddIcon /> {t('buttons.support')}
                 </Button>
+                {/*{project &&<SubscribeButton projectId={project.projectId}*/}
+                {/*  isAuthenticated={isAuthenticated} isFollowed={isFollowed}/>}*/}
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
