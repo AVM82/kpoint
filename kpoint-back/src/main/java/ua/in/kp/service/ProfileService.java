@@ -55,7 +55,7 @@ public class ProfileService {
 
     public Page<GetAllProjectsDto> getRecommendedProjects(String username, Pageable pageable) {
         UserEntity userEntity =
-                userService.getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(username);
+                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(username);
         Set<TagEntity> tags = userEntity.getTags();
         Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
         allProjects.addAll(userEntity.getProjectsFavourite());

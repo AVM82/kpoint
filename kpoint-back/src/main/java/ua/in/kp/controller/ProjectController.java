@@ -8,7 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.project.*;
@@ -35,11 +37,12 @@ public class ProjectController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<GetAllProjectsDto>> getAllProjects(Pageable pageable,
-                                                                  Authentication authentication) {
-        if (authentication.isAuthenticated()) {
+    public ResponseEntity<Page<GetAllProjectsDto>> getAllProjects(
+            Pageable pageable) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof UsernamePasswordAuthenticationToken) {
             return new ResponseEntity<>(profileService
-                    .getRecommendedProjects(authentication.getName(), pageable), HttpStatus.OK);
+                    .getRecommendedProjects(auth.getName(), pageable), HttpStatus.OK);
         }
         return new ResponseEntity<>(projectService.getAllProjects(pageable), HttpStatus.OK);
     }
