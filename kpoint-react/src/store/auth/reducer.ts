@@ -24,6 +24,7 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, { payload }) => {
         state.token = payload.token;
+        state.isloggedIn = true;
         // state.user = payload.user;
       });
   },
@@ -31,7 +32,7 @@ const authSlice = createSlice({
   name: 'token',
   reducers: {
     setIsLogin: (state) => {
-      state.isloggedIn = true;
+      state.isloggedIn = false;
     },
     setUser: (state, action) => {
       state.user = action.payload.user;
