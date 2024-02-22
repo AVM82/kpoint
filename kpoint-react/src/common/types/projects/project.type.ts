@@ -1,3 +1,4 @@
+
 import { NetworksLinks } from './networks-links.type';
 import { OwnerType } from './owner.type';
 
@@ -21,6 +22,4 @@ export type ProjectType = {
   goalSum: number,
   goalDeadline: string,
   networksLinks:NetworksLinks,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
 };

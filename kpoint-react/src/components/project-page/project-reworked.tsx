@@ -10,12 +10,12 @@ import {
   Typography,
 } from '@mui/material';
 import Link from '@mui/material/Link';
-import { CustomTimeline } from 'components/common/common';
+import { CustomTimeline, ImageUploader, InputField } from 'components/common/common';
 import { useAppDispatch } from 'hooks/hooks';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
@@ -35,10 +35,10 @@ import { ProjectSocials } from './project-socials';
 const ProjectReworked: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { projectId } = useParams();
-  const  project  = useAppSelector((state) => state.project.project);
-
+  const project = useAppSelector((state) => state.project.project);
+  const [editFieldClicked, setEditFieldClicked] = useState(false);
+  const [descriptionClicked, setDescriptionClicked] = useState(false);
   /*All logic from previous version below !!!DON'T DELETE DEPRECATED FILES!!!*/
 
   // const handleChange = (
@@ -61,6 +61,15 @@ const ProjectReworked: FC = () => {
 
     fetchData();
   }, [dispatch, projectId]);
+
+  const changeHandler = (params: string): void => {
+    console.log(params);
+  };
+
+  const submitHandler = (event: React.FormEvent<HTMLFormElement>, actionType: string): void => {
+    event.preventDefault();
+    console.log(actionType);
+  };
 
   return (
     <>
@@ -87,27 +96,28 @@ const ProjectReworked: FC = () => {
               alignItems={'center'}
             >
               <Grid maxWidth={390} width={390} container>
-                <Grid item xs={5}>
-                  <Box
-                    component={'img'}
-                    alt="logo-image"
-                    src={project?.logoImgUrl}
-                    maxWidth={'100%'}
-                    maxHeight={'100%'}
-                  ></Box>
-                </Grid>
+                <ImageUploader xs={5} component="project-page"
+                  handleChange={changeHandler} imageUrl={project.logoImgUrl}/>
                 <Grid item xs={7}>
-                  <Typography
-                    variant="h2"
-                    color={'rgb(0, 29, 108)'}
-                    fontSize={32}
-                    fontWeight={700}
-                    lineHeight={'100%'}
-                    letterSpacing={'1px'}
-                    textAlign={'center'}
-                  >
-                    {project && project.title}
-                  </Typography>
+                  {editFieldClicked ? <InputField onChange={changeHandler}
+                    onSubmit={submitHandler} actionType="edit"
+                    placeholder={project && project.title} itemName="title"/> : (
+                    <Typography
+                      variant="h2"
+                      color={'rgb(0, 29, 108)'}
+                      fontSize={32}
+                      fontWeight={700}
+                      lineHeight={'100%'}
+                      letterSpacing={'1px'}
+                      textAlign={'center'}
+                      sx={{
+                        cursor: 'pointer',
+                      }}
+                      onClick={(): void => setEditFieldClicked(!editFieldClicked)}
+                    >
+                      {project && project.title}
+                    </Typography>
+                  )}
                   <Link href={generateGoogleMapsLink(project)}>
                     <Typography
                       variant="h6"
@@ -136,7 +146,7 @@ const ProjectReworked: FC = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={12} padding={'10px 0 0 0'}>
-                  {project &&
+                  {
                     project.tags.map((tag, index) => (
                       <Chip
                         key={index}
@@ -162,24 +172,6 @@ const ProjectReworked: FC = () => {
                 alignSelf={'end'}
                 gap={'16px'}
               >
-                <Button
-                  sx={{
-                    border: '2px solid rgb(130, 130, 130)',
-                    borderRadius: '5px',
-                    background: 'rgb(255, 255, 255)',
-                    width: '100%',
-                    color: 'rgb(130, 130, 130)',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '100%',
-                    letterSpacing: '0.5px',
-                  }}
-                  onClick={():void => navigate('/projects/new', { state: {
-                    previousUrl: project?.url,
-                  } })}
-                >
-                  {t('buttons.edit')}
-                </Button>
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
@@ -302,9 +294,14 @@ const ProjectReworked: FC = () => {
             </Box>
           </Grid>
           <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
-            <Box component={'article'} maxWidth={'620px'}>
-              {project && project.description}
-            </Box>
+            {descriptionClicked ? (<InputField onChange={changeHandler}
+              onSubmit={submitHandler} actionType="edit"
+              placeholder={project.description} itemName="description"/>) : (
+              <Box component={'article'} maxWidth={'620px'} 
+                onClick={(): void => setDescriptionClicked(!descriptionClicked)} sx={{ cursor: 'pointer' }}>
+                {project.description}
+              </Box>
+            )}
           </Grid>
           <Grid item xs={4} container justifyContent={'end'}>
             <Box
@@ -318,7 +315,7 @@ const ProjectReworked: FC = () => {
                 <Typography>Всього зібрано</Typography>
                 <Typography>
                   {project &&
-                    `${project.collectedSum}/${project.collectDeadline}`}
+                    `${project.collectedSum}/${project.goalSum}`}
                 </Typography>
               </Box>
               <Box>

@@ -9,7 +9,7 @@ interface ImageUploaderProps {
   handleChange: (field: string, value: string | File) => void;
   component: string;
   xs: number;
-  imageUrl?: string;
+  imageUrl: string;
 }
 
 export const ImageUploader: FC<ImageUploaderProps> = ({
@@ -18,11 +18,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
   xs,
   imageUrl,
 }) => {
-  const [previewUrl, setPreviewUrl] = useState('');
-
-  useEffect(() => {
-    if (imageUrl && imageUrl.length > 0) setPreviewUrl(imageUrl);
-  }, [imageUrl]);
+  const [previewUrl, setPreviewUrl] = useState<string>('');
 
   const handleLogoPreview = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.currentTarget.files?.[0]) {
@@ -39,15 +35,27 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
     }
   };
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') setPreviewUrl(imageUrl);
+    };
+
+    window.addEventListener('keydown', handleEscape);
+  
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [imageUrl]);
+
   const { CustomGrid, CustomBox }= getProperStyles({ component: component });
 
   return (
-    <CustomGrid item container xs={xs}>
+    <CustomGrid item container xs={xs} >
       <div style={CustomBox}
       >
         <Box
           component={'img'}
-          src={previewUrl}
+          src={previewUrl.length > 0 ? previewUrl : imageUrl}
           sx={{ objectFit: 'cover', maxWidth: '100%', maxHeight: '100%' }}
         ></Box>
       </div>

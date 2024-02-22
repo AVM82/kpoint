@@ -1,13 +1,12 @@
 import { Box, Button, Container, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { TestRequest } from 'common/types/projects/testRequest';
-import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
-import React, { FC, ReactElement, useEffect, useState } from 'react';
+import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
-import { ProjectsEditType,ProjectType } from '../../../common/types/projects/projects';
+import { ProjectsEditType } from '../../../common/types/projects/projects';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { ProjectCreateStep1Form } from './components/project-create-step-1';
 import { ProjectCreateStep2Form } from './components/project-create-step-2';
@@ -16,9 +15,6 @@ import { projectDefault } from './components/project-default';
 
 export const ProjectCreate: FC = () => {
   const { t } = useTranslation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const location = useLocation();
-  const project = useAppSelector((state) => state.project.project);
 
   const steps: string[] = [
     t('general_information'),
@@ -36,20 +32,6 @@ export const ProjectCreate: FC = () => {
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (project) {
-      const placeholder: ProjectType = { ...project };
-
-      for (const key in projectData) {
-        if (Object.prototype.hasOwnProperty.call(projectData, key)) {
-          if (key in placeholder) {
-            setProjectData((prevData) => ({ ...prevData, [key]: placeholder[key] }));
-          }
-        }
-      }
-    }
-  }, []);
 
   const handleNext = (): void => {
     const validationErrors = validateForm(projectData);
@@ -142,8 +124,6 @@ export const ProjectCreate: FC = () => {
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
           errors={errors}
-          project={project}
-          isEdit={true}
         />
       );
     case 2:
@@ -152,9 +132,7 @@ export const ProjectCreate: FC = () => {
           projectData={projectData}
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
-          errors={errors}
-          project={project}
-          isEdit={true}
+          errors={errors}          
         />
       );
     case 3:
@@ -163,9 +141,7 @@ export const ProjectCreate: FC = () => {
           projectData={projectData}
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
-          errors={errors}
-          project={project}
-          isEdit={true}
+          errors={errors}          
         />
       );
     default:

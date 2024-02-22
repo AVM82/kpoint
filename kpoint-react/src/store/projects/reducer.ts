@@ -6,17 +6,47 @@ import { SubscriptionRequestType } from '../../common/types/projects/subscriptio
 import { createNew, getAllProjectsAddMore, getAllProjectsDefault, getById, subscribeToProject } from './actions';
 
 type State={
-  project: ProjectType | null,
+  project: ProjectType,
   projects: ProjectsPageType | null,
   editProject: ProjectsEditType | null,
   subscribe: SubscriptionRequestType | null,
+  error: string,
 };
 
 const initialState: State = {
-  project: null,
+  project: {
+    owner: {
+      ownerId: '',
+      firstName: '',
+      lastName: '',
+    },
+    projectId: '',
+    title: '',
+    logoImgUrl: '',
+    url: '',
+    description: '',
+    tags: [],
+    collectDeadline: '',
+    goalDeadline: '',
+    goalSum: 0,
+    summary: '',
+    latitude: 0,
+    longitude: 0,
+    state: '',
+    ownerSum: 0,
+    collectedSum: 0,
+    createdAt: '',
+    networksLinks: {
+      FACEBOOK: '',
+      INSTAGRAM: '',
+      YOUTUBE: '',
+    },
+    startSum: 0,
+  },
   projects: null,
   editProject: null,
   subscribe: null,
+  error: '',
 };
 
 const projectSlice = createSlice({
@@ -25,8 +55,8 @@ const projectSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getById.rejected, (state ) => {
-        state.project = null;
+      .addCase(getById.rejected, (state) => {
+        state.error = 'rejected';
       })
       .addCase(getById.fulfilled, (state, { payload }) => {
         state.project = payload;
@@ -46,7 +76,7 @@ const projectSlice = createSlice({
         }
       })
       .addCase(createNew.rejected, (state) => {
-        state.project = null;
+        state.error = 'rejected';
       })
       .addCase(createNew.fulfilled, (state, { payload }) => {
         state.project = payload;

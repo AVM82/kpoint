@@ -2,7 +2,7 @@ import { Autocomplete, Chip, Grid, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { ImageUploader } from 'components/common/common';
-import React, { FC, ReactElement, useCallback, useEffect, useState } from 'react';
+import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getSlug from 'speakingurl';
 
@@ -27,22 +27,20 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
   handleChange,
   handleFieldFocus,
   errors,
-  project,
-  isEdit,
 }) => {
   const { t } = useTranslation();
   const [tag, setTag] = useState('');
 
-  const getChipTags = useCallback((tagArray: string[]): ChipTag[] => {
+  const getChipTags = (): ChipTag[] => {
     const result: ChipTag[] = [];
-    for (let i = 0; i < tagArray.length; i++) {
-      result.push({ key: i, tag: tagArray[i] });
+    for (let i = 0; i < projectData.tags.length; i++) {
+      result.push({ key: i, tag: projectData.tags[i] });
     }
 
     return result;
-  }, []);
+  };
 
-  const [chipTags, setChipTags] = useState<ChipTag[]>(getChipTags([]));
+  const [chipTags, setChipTags] = useState<ChipTag[]>(getChipTags());
 
   const [projectURL, setProjectURL] = useState('');
 
@@ -55,22 +53,16 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
     );
   };
 
-  useEffect(() => {
-    if (project && project.tags.length > 0) {
-      setChipTags(getChipTags(project.tags));
-    }
-  }, [getChipTags, project]);
-
   return (
     <Grid container rowSpacing={3}>
       <Grid container justifyContent={'space-between'}>
-        <ImageUploader handleChange={handleChange} component="default" xs={3} imageUrl={project?.logoImgUrl}/>
+        <ImageUploader handleChange={handleChange} component="default" xs={3} imageUrl={''}/>
         <Grid item xs={8}>
           <Grid item xs={true}>
             <TextField
               label={t('project_name')}
               fullWidth
-              value={isEdit ? project?.title : projectData.title}
+              value={projectData.title}
               // defaultValue={project.title}
               onChange={(e): void => {
                 handleChange('title', e.target.value);
@@ -104,7 +96,7 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
               label={t('project_url')}
               fullWidth
               placeholder={t('url_placeholder')}
-              value={isEdit ? project?.url : projectData.url}
+              value={projectData.url}
               // defaultValue={defaultURL}
               onChange={(e): void => {
                 const slug = getSlug(e.target.value, {
@@ -182,7 +174,7 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
                 projectData.tags.indexOf(tag.trim()) === -1
               ) {
                 projectData.tags.push(tag);
-                setChipTags(getChipTags(projectData.tags));
+                setChipTags(getChipTags());
                 setTag('');
               }
               event.preventDefault();
@@ -233,7 +225,7 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
         <TextField
           label={t('summary')}
           fullWidth
-          value={isEdit ? project?.summary : projectData.summary}
+          value={projectData.summary}
           onChange={(e): void => handleChange('summary', e.target.value)}
           onFocus={(): void => handleFieldFocus('summary')}
           error={!!errors.summary}
