@@ -25,7 +25,7 @@ const ProjectsPage: FC = () => {
   const isAuthenticated = useAppSelector((state) => state.token.isloggedIn);
 
   const [page, setPage] = useState(1);
-
+  console.log('PROJ ', projects?.content);
   useLayoutEffect(() => {
     dispatch(
       projectAction.getAllProjectsDefault({

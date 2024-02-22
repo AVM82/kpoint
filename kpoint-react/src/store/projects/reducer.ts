@@ -23,7 +23,16 @@ const initialState: State = {
 const projectSlice = createSlice({
   name: 'project',
   initialState,
-  reducers: {},
+  reducers: {
+    subscribeToProjectLocally: (state, action) => {
+      const content = state.projects?.content;
+      const proj = content?.filter((content) =>
+        content.projectId === action.payload);
+      proj?.forEach((p) => p.isFollowed = true);
+      console.log(action.payload);
+      console.log(proj);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getById.rejected, (state ) => {
@@ -61,6 +70,7 @@ const projectSlice = createSlice({
   },
 });
 
+const { subscribeToProjectLocally } = projectSlice.actions;
 const projectReducer = projectSlice.reducer;
 
-export { projectReducer };
+export { projectReducer, subscribeToProjectLocally };
