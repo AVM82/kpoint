@@ -14,4 +14,14 @@ const getMyProjects = createAsyncThunk<
   return profileApi.getMyProjects(payload);
 });
 
-export { getMyProjects };
+const getRecommendedProjects = createAsyncThunk<
+  ProjectsPageType,
+  { size: number; number: number },
+  AsyncThunkConfig
+>(ActionType.GET_RECOMMENDED_PROJECTS, async (payload, { extra }) => {
+  const { profileApi } = extra;
+
+  return profileApi.getRecommendProjects(payload);
+});
+
+export { getMyProjects, getRecommendedProjects };

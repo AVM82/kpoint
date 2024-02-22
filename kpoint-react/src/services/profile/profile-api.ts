@@ -36,6 +36,24 @@ class ProfileApi {
       },
     );
   }
+
+  public getRecommendProjects(payload: {
+    size: number,
+    number: number
+  }): Promise<ProjectsPageType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/profile/recommendedProjects?size=${payload.size}&number=${
+        payload.number
+      }`,
+      {
+        method: HttpMethod.GET,
+        queryString: {
+          size: payload.size,
+          page: payload.number,
+        },
+      },
+    );
+  }
 }
 
 export { ProfileApi };

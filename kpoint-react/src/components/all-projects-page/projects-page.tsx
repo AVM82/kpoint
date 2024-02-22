@@ -65,7 +65,7 @@ const ProjectsPage: FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {projects?.content.map((project) => (
+        {projects?.projects?.content.map((project) => (
           <Grid item key={project.projectId}>
             <ProjectCard
               projectId={project.projectId}

@@ -23,7 +23,7 @@ const profileSlice = createSlice({
         state.status = 'error';
       })
       .addCase(getMyProjects.fulfilled, (state, { payload }) => {
-        state.response = payload.content;
+        state.response = payload.projects?.content || payload.content || [];
       });
   },
 });
