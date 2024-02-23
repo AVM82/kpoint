@@ -31,7 +31,8 @@ const ProjectsPage: FC = () => {
         number: page - 1,
       }),
     );
-  }, [dispatch, page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
@@ -63,20 +64,20 @@ const ProjectsPage: FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {projects && projects.content.map((project) => (
-          <Grid item key={project.projectId}>
-            <ProjectCard
-              key={project.projectId}
-              projectId={project.projectId}
-              url={project.url}
-              title={project.title}
-              summary={project.summary}
-              logoImgUrl={project.logoImgUrl}
-              tags={project.tags}
-              isAuthenticated={isAuthenticated}
-            />
-          </Grid>
-        ))}
+        {projects &&
+          projects.content.map((project) => (
+            <Grid item key={project.projectId}>
+              <ProjectCard
+                projectId={project.projectId}
+                url={project.url}
+                title={project.title}
+                summary={project.summary}
+                logoImgUrl={project.logoImgUrl}
+                tags={project.tags}
+                isAuthenticated={isAuthenticated}
+              />
+            </Grid>
+          ))}
       </Grid>
       <Grid
         container
