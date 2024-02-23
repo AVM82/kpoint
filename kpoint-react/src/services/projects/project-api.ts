@@ -43,7 +43,7 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        // hasAuth: false,
+        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -62,7 +62,7 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        // hasAuth: false,
+        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,

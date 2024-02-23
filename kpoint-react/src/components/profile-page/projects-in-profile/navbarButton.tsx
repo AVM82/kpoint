@@ -4,23 +4,21 @@ import { FC } from 'react';
 interface NavbarButtonProps {
   label: string;
   onClick: () => void;
+  isActive: boolean;
 }
 
-const NavbarButton: FC<NavbarButtonProps> = ({ label, onClick }) => {
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
-    e.currentTarget.style.backgroundColor = '#DDE1E6';
+const NavbarButton: FC<NavbarButtonProps> = ({ label, onClick, isActive }) => {
+  const handleClick = (): void => {
     onClick();
   };
 
   return (
     <Button
-      onClick={(e): void => handleClick(e)}
+      onClick={(): void => handleClick()}
       sx={{
         textTransform: 'none',
         color: 'black',
-        '&:hover': {
-          bgcolor: '#DDE1E6',
-        },
+        bgcolor: isActive ? '#DDE1E6' : 'transparent',
         borderRadius: '6px',
       }}
     >

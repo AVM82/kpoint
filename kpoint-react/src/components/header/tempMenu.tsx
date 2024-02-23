@@ -37,7 +37,7 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
 
   const handleClickProfile = (): void => {
     onClick(true);
-    navigate('/userName');
+    navigate(`${user.username}`);
   };
 
   const handleLogout = (): void => {
