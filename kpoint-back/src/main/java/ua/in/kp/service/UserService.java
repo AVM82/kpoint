@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.in.kp.dto.ApiResponse;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
 import ua.in.kp.entity.ProjectEntity;
@@ -178,5 +179,21 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() ->
                 new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
                         "exception.user.not-found", "id", id)));
+    }
+
+    public ApiResponse verifyExistsEmail(String email) {
+        if (!userRepository.existsByEmail(email)) {
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "User with email " + email + " not found");
+        }
+        return new ApiResponse(translator.getLocaleMessage(
+                "exception.user.register-email-failed", email));
+    }
+
+    public ApiResponse verifyExistsUsername(String username) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "User " + username + " not found");
+        }
+        return new ApiResponse(translator.getLocaleMessage(
+                "exception.user.register-username-failed", username));
     }
 }

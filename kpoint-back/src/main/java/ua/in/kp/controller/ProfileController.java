@@ -6,8 +6,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.profile.PasswordDto;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
@@ -17,6 +20,7 @@ import ua.in.kp.service.ProfileService;
 @RestController
 @RequestMapping("/api/profile")
 @RequiredArgsConstructor
+@Slf4j
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -39,9 +43,12 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getRecommendedProjects(username, pageable));
     }
 
-    @PatchMapping(path = "/{username}/settings", consumes = "application/json-patch+json")
-    public ResponseEntity<UserChangeDto> updateUser(@PathVariable String username, @RequestBody JsonPatch patch) {
-        return ResponseEntity.ok(profileService.updateUserData(username, patch));
+    @PatchMapping(path = "/settings")
+    @PreAuthorize("hasAnyAuthority({'USER', 'ADMIN'})")
+    public ResponseEntity<UserChangeDto> updateUser(@RequestBody JsonPatch patch) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        log.info("updateUser {} {}", auth.getName(), patch);
+        return ResponseEntity.ok(profileService.updateUserData(auth.getName(), patch));
     }
 
     @Operation(summary = "Change password")

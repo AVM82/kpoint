@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
@@ -74,5 +76,21 @@ public class UserController {
     public ResponseEntity<UserResponseDto> unbanUser(@PathVariable UUID id) {
         log.info("banning user by id {}", id);
         return ResponseEntity.ok(userService.unBanUserById(id.toString()));
+    }
+
+    @GetMapping(path = "/{email}/exists_email")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<?> verifyExistsEmail(@NonNull @PathVariable String email) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        log.info("verifyExistEmail {} {}", auth.getName(), email);
+        return ResponseEntity.ok(userService.verifyExistsEmail(email));
+    }
+
+    @GetMapping(path = "/{username}/exists_username")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<?> verifyExistsUsername(@NonNull @PathVariable String username) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        log.info("verifyExistUsername {} {}", auth.getName(), username);
+        return ResponseEntity.ok(userService.verifyExistsUsername(username));
     }
 }
