@@ -7,7 +7,6 @@ import { ProjectItem } from './project-item';
 
 const MyProjects: FC = () => {
   const response = useAppSelector((state) => state.profile.response);
-  console.log(response, 'responce');
 
   return (
     <Box
