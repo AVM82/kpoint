@@ -1,7 +1,6 @@
 package ua.in.kp.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,6 @@ public class ProfileService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final ObjectMapper objectMapper;
     private final Translator translator;
 
     public Page<GetAllProjectsDto> getMyProjects(Pageable pageable) {
@@ -86,9 +84,11 @@ public class ProfileService {
                 .map(projectMapper::getAllToDto);
     }
 
-    public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(String username, Pageable pageable) {
+    public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(Pageable pageable) {
+        UserEntity user = userService.getAuthenticated();
+        log.info("Get recommended projects for user {}", user.getUsername());
         UserEntity userEntity =
-                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(username);
+                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(user.getEmail());
         Set<TagEntity> tags = userEntity.getTags();
         Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
         allProjects.addAll(userEntity.getProjectsFavourite());
