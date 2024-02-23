@@ -1,7 +1,6 @@
 package ua.in.kp.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
@@ -89,7 +88,7 @@ public class ProfileService {
 
     public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(String username, Pageable pageable) {
         UserEntity userEntity =
-                userService.getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(username);
+                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(username);
         Set<TagEntity> tags = userEntity.getTags();
         Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
         allProjects.addAll(userEntity.getProjectsFavourite());
