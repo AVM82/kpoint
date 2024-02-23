@@ -1,7 +1,6 @@
 package ua.in.kp.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,6 @@ public class ProfileService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final ObjectMapper objectMapper;
     private final Translator translator;
 
     public Page<GetAllProjectsDto> getMyProjects(Pageable pageable) {
