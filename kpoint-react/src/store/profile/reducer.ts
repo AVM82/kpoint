@@ -1,9 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { GetAllProjectsType, ProfileType } from 'common/types/types';
 
-import { existsEmail, existsUsername,
-  getFavoriteProjects, getMyProjects,
-  getRecommendedProjects, updateMyProfile } from './actions';
+import {
+  existsEmail,
+  existsUsername,
+  getFavoriteProjects,
+  getMyProjects,
+  getRecommendedProjects,
+  updateMyProfile,
+} from './actions';
 
 type State = {
   response: Array<GetAllProjectsType>;
