@@ -42,7 +42,7 @@ const projectSlice = createSlice({
       })
       .addCase(getAllProjectsAddMore.fulfilled, (state, { payload }) => {
         if(state.projects != null) {
-          state.projects.content = [...state.projects.content!, ...payload?.content ?? []];
+          state.projects.content = [...state.projects.content, ...payload?.content ?? []];
         }
       })
       .addCase(createNew.rejected, (state) => {

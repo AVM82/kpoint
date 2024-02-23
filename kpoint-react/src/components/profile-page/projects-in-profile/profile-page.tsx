@@ -29,7 +29,6 @@ const ProfilePage: FC = () => {
             profileAction.getMyProjects({
               size: maxPageElements,
               number: 0,
-              username: testUser.username,
             }),
           );
         } catch (error) {

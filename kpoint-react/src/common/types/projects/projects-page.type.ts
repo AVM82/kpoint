@@ -1,8 +1,7 @@
 import { GetAllProjectsType } from './get-all-projects.type';
 
 export type ProjectsPageType = {
-  projects?: { content: GetAllProjectsType[], }
-  content? :GetAllProjectsType[]
+  content :GetAllProjectsType[]
 
   pageable: {
     pageNumber: number,
