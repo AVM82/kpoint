@@ -4,6 +4,8 @@ enum ActionType {
   GET_ALL_PROJECTS_ADD_MORE = 'projects/get-all-add',
   POST_NEW = 'projects/create-new',
   POST_SUB = 'projects/get-by-id/subscribe',
+  DEL_SUB = 'projects/projectId/unsubscribe',
+  EDIT = 'projects/projectId/settings',
 }
 
 export { ActionType };

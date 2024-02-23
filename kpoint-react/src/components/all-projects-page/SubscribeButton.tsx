@@ -10,10 +10,9 @@ import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.ho
 interface SubscribeButtonProps {
     projectId: string;
     userID: string;
-    isAuthenticated: boolean;
 }
 
-const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId, userID, isAuthenticated }) => {
+const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId, userID }) => {
   const { t } = useTranslation();
   const [isFollowing, setIsFollowing] = useState(false);
   const dispatch = useAppDispatch();
@@ -26,15 +25,20 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId, userID, isAuthen
     }
   }, [projectId, userID]);
 
-  const handleButtonSubClick = (): void => {
-    if (isAuthenticated && !isFollowing) {
+  const handleButtonSubClick = async (): Promise<void> => {
+
+    if (userID && !isFollowing) {
       setIsFollowing(true);
       localStorage.setItem(`project_${projectId}_${userID}_subscription`, 'true');
-      dispatch(projectAction.subscribeToProject({ projectId: projectId }));
+      await dispatch(projectAction.subscribeToProject({ projectId: projectId }));
       toast.success('Ви успішно підписані на проект');
-    } else if (!isAuthenticated) {
-      toast.error('Увійдіть, щоб підписатися на проект');
+    } else if (userID && isFollowing) {
+      setIsFollowing(false);
+      localStorage.removeItem(`project_${projectId}_${userID}_subscription`);
+      await dispatch(projectAction.unSubscribe({ projectId: projectId }));
     }
+
+    toast.error('Увійдіть, щоб підписатися на проект');
   };
 
   return (
