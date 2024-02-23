@@ -19,24 +19,21 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
 
   const user = storage.getItem(StorageKey.TOKEN);
   const isAuthenticated = user !== undefined && user !== null;
-  // const getIsFollowedById = (projectId: string): boolean | undefined => {
-  //   const project = projects?.content
-  //     .find((project) => project.projectId === projectId);
-  //
-  //   return project?.isFollowed;
-  // };
 
-  // const projectId = project?.projectId;
-  // const isFollowed = getIsFollowedById(project?.projectId);
-  //   console.log(isFollowed);
+  const getIsFollowedById = (projectId: string): boolean | undefined => {
+    const project = projects?.content
+      .find((projectA) => projectA.projectId === projectId);
 
-  const projectWithId = projects?.content
-    .find((projectA) => projectA.projectId === project?.projectId);
-  const isFollowed = projectWithId?.isFollowed ?? false;
+    return project?.isFollowed;
+  };
+
+  const projectId = project?.projectId as string;
+  const isFollowed = getIsFollowedById(projectId);
 
   console.log('ID ', project?.projectId);
-  console.log('ID-pr ', projectWithId);
+  console.log('ID-pr ', projectId);
   console.log('Foll ', isFollowed);
+  console.log(project?.projectId === projectId);
 
   return (
     <Box
@@ -61,7 +58,7 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
         <SubscribeButton
           projectId={project.projectId}
           isAuthenticated={isAuthenticated}
-          isFollowed={isFollowed}
+          isFollowed={isFollowed ?? false}
         />
       }
 
