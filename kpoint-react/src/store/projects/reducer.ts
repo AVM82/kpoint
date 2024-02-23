@@ -29,8 +29,6 @@ const projectSlice = createSlice({
       const proj = content?.filter((content) =>
         content.projectId === action.payload);
       proj?.forEach((p) => p.isFollowed = true);
-      console.log(action.payload);
-      console.log(proj);
     },
 
     subscribeToProjectPage: (state, action) => {
