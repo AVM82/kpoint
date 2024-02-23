@@ -104,18 +104,8 @@ public class ProjectService {
         Page<ProjectEntity> page = projectRepository.findAll(pageable);
         log.info("Got all projects from projectRepository.");
         Page<GetAllProjectsDto> toReturn = page.map(project -> {
-            boolean isFollowed = false;
-            if (SecurityContextHolder.getContext().getAuthentication() != null) {
-//                String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
-                Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
-                if (userOpt.isPresent()) {
-                    UserEntity user = userOpt.get();
-                    isFollowed = subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
-                    log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
-                    log.info("AaAAAAAAA {}", isFollowed);
-//                }
-                }
-            }
+
+            boolean isFollowed = checkIsFollowed(project, auth);
 
             GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
             dto.setFollowed(isFollowed);
@@ -124,6 +114,19 @@ public class ProjectService {
         });
         log.info("Map all projectsEntity to DTO and return page with them.");
         return toReturn;
+    }
+
+    private boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
+            if (userOpt.isPresent()) {
+                UserEntity user = userOpt.get();
+                log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
+                return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
+            }
+        }
+        return false;
     }
 
     @Transactional(readOnly = true)
@@ -154,8 +157,12 @@ public class ProjectService {
                                     return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
                                             "exception.project.not-found", "url", url));
                                 });
+
+        boolean isFollowed = checkIsFollowed(projectEntity,  SecurityContextHolder.getContext().getAuthentication());
         log.info("Project with url {} retrieved.", projectEntity.getUrl());
-        return projectMapper.toDto(projectEntity);
+        ProjectResponseDto dto = projectMapper.toDto(projectEntity);
+        dto.setFollowed(isFollowed);
+        return dto;
     }
 
     @Transactional(readOnly = true)

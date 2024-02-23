@@ -3,37 +3,38 @@ import { ProjectType } from 'common/types/types';
 import { FC } from 'react';
 
 import { StorageKey } from '../../common/enums/app/storage-key.enum';
-import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
 import { storage } from '../../services/services';
 import { getSocialMediaIcon } from '../../utils/function-social-media-icons';
-import { SubscribeButton } from '../all-projects-page/SubscribeButton';
+import { SubscribeButton } from './SubscribeButton';
 
 interface ProjectSocialsProps {
   project: ProjectType | null;
 }
 const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
   // const { t } = useTranslation();
-  const { projects  } = useAppSelector(({ project }) => ({
-    projects: project.projects,
-  }));
+  // const { projects  } = useAppSelector(({ project }) => ({
+  //   projects: project.projects,
+  // }));
+
+  // const project = useAppSelector((state) => state.project.project);
 
   const user = storage.getItem(StorageKey.TOKEN);
   const isAuthenticated = user !== undefined && user !== null;
 
-  const getIsFollowedById = (projectId: string): boolean | undefined => {
-    const project = projects?.content
-      .find((projectA) => projectA.projectId === projectId);
+  // const getIsFollowedById = (projectId: string): boolean | undefined => {
+  //   const project = projects?.content
+  //     .find((projectA) => projectA.projectId === projectId);
+  //
+  //   return project?.isFollowed;
+  // };
 
-    return project?.isFollowed;
-  };
-
-  const projectId = project?.projectId as string;
-  const isFollowed = getIsFollowedById(projectId);
-
-  console.log('ID ', project?.projectId);
-  console.log('ID-pr ', projectId);
-  console.log('Foll ', isFollowed);
-  console.log(project?.projectId === projectId);
+  // const projectId = project?.projectId as string;
+  // const isFollowed = getIsFollowedById(projectId);
+  //
+  // console.log('ID ', project?.projectId);
+  // console.log('ID-pr ', projectId);
+  // console.log('Foll ', isFollowed);
+  // console.log(project?.projectId === projectId);
 
   return (
     <Box
@@ -58,7 +59,7 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
         <SubscribeButton
           projectId={project.projectId}
           isAuthenticated={isAuthenticated}
-          isFollowed={isFollowed ?? false}
+          isFollowed={project.isFollowed}
         />
       }
 

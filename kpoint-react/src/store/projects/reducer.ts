@@ -32,6 +32,16 @@ const projectSlice = createSlice({
       console.log(action.payload);
       console.log(proj);
     },
+
+    subscribeToProjectPage: (state, action) => {
+      const content = state.project;
+      // const fol = content? content.projectId === action.payload : content.isFollowed = true;
+
+      if (content && content?.projectId === action.payload) {
+        content.isFollowed = true;
+      }
+
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -71,6 +81,8 @@ const projectSlice = createSlice({
 });
 
 const { subscribeToProjectLocally } = projectSlice.actions;
+
+const { subscribeToProjectPage } = projectSlice.actions;
 const projectReducer = projectSlice.reducer;
 
-export { projectReducer, subscribeToProjectLocally };
+export { projectReducer, subscribeToProjectLocally, subscribeToProjectPage };
