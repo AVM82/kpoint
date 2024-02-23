@@ -84,9 +84,11 @@ public class ProfileService {
                 .map(projectMapper::getAllToDto);
     }
 
-    public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(String username, Pageable pageable) {
+    public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(Pageable pageable) {
+        UserEntity user = userService.getAuthenticated();
+        log.info("Get recommended projects for user {}", user.getUsername());
         UserEntity userEntity =
-                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(username);
+                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(user.getEmail());
         Set<TagEntity> tags = userEntity.getTags();
         Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
         allProjects.addAll(userEntity.getProjectsFavourite());
