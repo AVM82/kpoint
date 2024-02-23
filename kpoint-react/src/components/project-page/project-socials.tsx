@@ -11,30 +11,9 @@ interface ProjectSocialsProps {
   project: ProjectType | null;
 }
 const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
-  // const { t } = useTranslation();
-  // const { projects  } = useAppSelector(({ project }) => ({
-  //   projects: project.projects,
-  // }));
-
-  // const project = useAppSelector((state) => state.project.project);
 
   const user = storage.getItem(StorageKey.TOKEN);
   const isAuthenticated = user !== undefined && user !== null;
-
-  // const getIsFollowedById = (projectId: string): boolean | undefined => {
-  //   const project = projects?.content
-  //     .find((projectA) => projectA.projectId === projectId);
-  //
-  //   return project?.isFollowed;
-  // };
-
-  // const projectId = project?.projectId as string;
-  // const isFollowed = getIsFollowedById(projectId);
-  //
-  // console.log('ID ', project?.projectId);
-  // console.log('ID-pr ', projectId);
-  // console.log('Foll ', isFollowed);
-  // console.log(project?.projectId === projectId);
 
   return (
     <Box

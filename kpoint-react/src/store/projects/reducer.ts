@@ -35,12 +35,10 @@ const projectSlice = createSlice({
 
     subscribeToProjectPage: (state, action) => {
       const content = state.project;
-      // const fol = content? content.projectId === action.payload : content.isFollowed = true;
 
       if (content && content?.projectId === action.payload) {
         content.isFollowed = true;
       }
-
     },
   },
   extraReducers: (builder) => {

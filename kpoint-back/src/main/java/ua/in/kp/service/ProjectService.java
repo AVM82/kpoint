@@ -106,18 +106,15 @@ public class ProjectService {
         Page<GetAllProjectsDto> toReturn = page.map(project -> {
 
             boolean isFollowed = checkIsFollowed(project, auth);
-
             GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
             dto.setFollowed(isFollowed);
             return dto;
-
         });
         log.info("Map all projectsEntity to DTO and return page with them.");
         return toReturn;
     }
 
     private boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
-
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
             Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
             if (userOpt.isPresent()) {
@@ -158,7 +155,7 @@ public class ProjectService {
                                             "exception.project.not-found", "url", url));
                                 });
 
-        boolean isFollowed = checkIsFollowed(projectEntity,  SecurityContextHolder.getContext().getAuthentication());
+        boolean isFollowed = checkIsFollowed(projectEntity, SecurityContextHolder.getContext().getAuthentication());
         log.info("Project with url {} retrieved.", projectEntity.getUrl());
         ProjectResponseDto dto = projectMapper.toDto(projectEntity);
         dto.setFollowed(isFollowed);

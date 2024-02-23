@@ -26,7 +26,6 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId, isFollowed }) =>
     if (user && !isFollowed) {
       await dispatch(projectAction.subscribeToProject({ projectId: projectId }));
       dispatch(subscribeToProjectPage(projectId));
-      console.log('Button ', isFollowed);
       toast.success('Ви успішно підписані на проект');
     }  else if (user && isFollowed) {
       // dispatch(projectAction.unsubscribeFromProject({ projectId: projectId }));

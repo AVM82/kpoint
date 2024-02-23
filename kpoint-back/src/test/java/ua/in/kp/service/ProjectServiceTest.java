@@ -37,7 +37,6 @@ class ProjectServiceTest {
     @InjectMocks
     private ProjectService projectService;
 
-
     @Test
     void getAllProjectsTest() {
         Pageable pageable = mock(Pageable.class);
