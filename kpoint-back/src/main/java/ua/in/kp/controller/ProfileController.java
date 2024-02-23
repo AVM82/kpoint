@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.profile.PasswordDto;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
 import ua.in.kp.dto.profile.UserChangeDto;
+import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.service.ProfileService;
 
 @RestController
@@ -21,10 +23,9 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @GetMapping("/{username}/myProjects")
-    public ResponseEntity<ProjectsProfileResponseDto> getMyProjects(
-            @PathVariable String username, Pageable pageable) {
-        return ResponseEntity.ok(profileService.getMyProjects(username, pageable));
+    @GetMapping("/myProjects")
+    public ResponseEntity<Page<GetAllProjectsDto>> getMyProjects(Pageable pageable) {
+        return ResponseEntity.ok(profileService.getMyProjects(pageable));
     }
 
     @GetMapping("/{username}/favouriteProjects")

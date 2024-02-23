@@ -39,12 +39,10 @@ public class ProfileService {
     private final ObjectMapper objectMapper;
     private final Translator translator;
 
-    public ProjectsProfileResponseDto getMyProjects(String username, Pageable pageable) {
-        UserEntity userEntity = userService.getByUsername(username);
-        Page<GetAllProjectsDto> ownedProjectsDtos = projectService.getProjectsByUser(userEntity, pageable)
-                .map(projectMapper::getAllToDto);
-        return new ProjectsProfileResponseDto(userEntity.getId(),
-                ownedProjectsDtos);
+    public Page<GetAllProjectsDto> getMyProjects(Pageable pageable) {
+        log.info("Get my projects");
+        UserEntity user = userService.getAuthenticated();
+        return projectService.getProjectsByUser(user, pageable).map(projectMapper::getAllToDto);
     }
 
     @Transactional(readOnly = true)
