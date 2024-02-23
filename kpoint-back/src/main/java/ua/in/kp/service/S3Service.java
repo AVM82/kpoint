@@ -13,12 +13,14 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
 public class S3Service {
     public static final int WIDTH = 240;
     public static final int HEIGHT = 240;
+    public static final String DEFAULT_LOGO_URI = "https://kpoint-image.s3.eu-north-1.amazonaws.com/test-logo/default-logo.jpg";
 
     private final S3Client s3Client;
     private final String s3Bucket;
@@ -33,6 +35,11 @@ public class S3Service {
     }
 
     public String uploadLogo(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return DEFAULT_LOGO_URI;
+        }
+        validateFileSize(file);
+        validateFileType(file);
         try {
             byte[] logoBytes = compressImage(file);
 
@@ -49,6 +56,18 @@ public class S3Service {
                     .build()).toExternalForm();
         } catch (Exception e) {
             return e.getMessage();
+        }
+    }
+
+    private void validateFileSize(MultipartFile file) {
+        if (file.getSize() > 3 * 1024 * 1024) {
+            throw new IllegalArgumentException("The file size must not exceed 3 MB");
+        }
+    }
+
+    private void validateFileType(MultipartFile file) {
+        if (!Objects.requireNonNull(file.getContentType()).startsWith("image/")) {
+            throw new IllegalArgumentException("Invalid file type. Only images are supported");
         }
     }
 

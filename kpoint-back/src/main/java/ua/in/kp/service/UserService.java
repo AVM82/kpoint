@@ -128,11 +128,11 @@ public class UserService {
         return userMapper.toDto(userFromDb);
     }
 
-    public UserEntity getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> {
-            log.warn("Can't find user by username {}", username);
+    public UserEntity getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> {
+            log.warn("Can't find user by email {}", email);
             return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
-                    "exception.user.not-found", "username", username));
+                    "exception.user.not-found", "email", email));
         });
     }
 

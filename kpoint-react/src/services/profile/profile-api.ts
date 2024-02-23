@@ -24,12 +24,47 @@ class ProfileApi {
     number: number;
   }): Promise<ProjectsPageType> {
     return this.#http.load(
+      `${this.#apiPrefix}/profile/myProjects?size=${payload.size}&number=${
+        payload.number
+      }`,
+      {
+        method: HttpMethod.GET,
+        queryString: {
+          size: payload.size,
+          page: payload.number,
+        },
+      },
+    );
+  }
+
+  public getRecommendProjects(payload: {
+    size: number,
+    number: number,
+  }): Promise<ProjectsPageType> {
+    return this.#http.load(
       `${this.#apiPrefix}/projects?size=${payload.size}&number=${
         payload.number
       }`,
       {
         method: HttpMethod.GET,
-        // hasAuth: false,
+        queryString: {
+          size: payload.size,
+          page: payload.number,
+        },
+      },
+    );
+  }
+
+  public  getFavoriteProjects(payload: {
+    size: number,
+    number: number,
+  }): Promise<ProjectsPageType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/profile/subscribedProjects?size=${payload.size}&number=${
+        payload.number
+      }`,
+      {
+        method: HttpMethod.GET,
         queryString: {
           size: payload.size,
           page: payload.number,

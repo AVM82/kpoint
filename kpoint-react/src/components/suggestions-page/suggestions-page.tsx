@@ -36,7 +36,8 @@ const SuggestionsPage: FC = () => {
         sort: 'likeCount,desc',
       }),
     );
-  }, [dispatch, page, status]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, status]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(

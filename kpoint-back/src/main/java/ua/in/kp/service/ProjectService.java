@@ -1,7 +1,8 @@
 package ua.in.kp.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class ProjectService {
     private final Translator translator;
     private final MeterRegistry meterRegistry;
 
-    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper, ObjectMapper objectMapper,
+    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
                           Translator translator, MeterRegistry meterRegistry) {
@@ -98,7 +99,7 @@ public class ProjectService {
         Page<ProjectEntity> page = projectRepository.findAll(pageable);
         log.info("Got all projects from projectRepository.");
         Page<GetAllProjectsDto> toReturn = page.map(projectMapper::getAllToDto);
-        log.info("Map all projectsEntity to DTO and return page with them.");
+        log.info("Mapped all projectsEntity to DTO and returned a page with them.");
         return toReturn;
     }
 
@@ -223,7 +224,7 @@ public class ProjectService {
         List<ProjectSubscribeEntity> listUsers = subscriptionRepository.findUserIdsByProjectId(projectId);
         List<ProjectSubscribeDto> usersId = listUsers.stream()
                 .map(projectMapper::toDtoSubscribe)
-                .collect(Collectors.toList());
+                .toList();
 
         log.info("List subscribers {}", usersId);
         return usersId;
@@ -235,6 +236,7 @@ public class ProjectService {
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isEmpty()) {
+            log.warn("User {} is not yet subscribed to project with id {}", user.getUsername(), projectId);
             throw new ApplicationException(
                     HttpStatus.NOT_FOUND,
                     translator.getLocaleMessage("exception.project.not-subscribe",
@@ -248,15 +250,30 @@ public class ProjectService {
                 user.getUsername(), projectId));
     }
 
+    public Page<GetAllProjectsDto> getProjectByIds(List<String> projectIds, Pageable pageable) {
+        return projectRepository.findByProjectIds(projectIds, pageable)
+                .map(projectMapper::getAllToDto);
+    }
+
+    @Transactional
     public ProjectChangeDto updateProjectData(String projectId, JsonPatch patch) {
         UserEntity user = userService.getAuthenticated();
-        log.info("update profile data by projectId {}", projectId);
+        log.info("update project data by projectId {}", projectId);
         ProjectEntity projectEntity = projectRepository.findByOwnerAndProjectId(user, projectId)
                 .orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND,
                         String.format("User %s does not have project with id %s", user.getUsername(), projectId)));
         ProjectChangeDto projectDto = projectMapper.toChangeDto(projectEntity);
-        ProjectChangeDto patchedDto = PatchUtil.applyPatch(patch, projectDto, ProjectChangeDto.class);
-        ProjectEntity updatedUser = projectRepository.save(projectMapper.changeDtoToEntity(patchedDto, projectEntity));
+        ProjectChangeDto patchedDto;
+        try {
+            patchedDto = PatchUtil.applyPatch(patch, projectDto, ProjectChangeDto.class);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            log.warn("cannot update project data by projectId {}", projectId);
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    translator.getLocaleMessage("exception.project.cannot-updated"));
+        }
+        patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
+        ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
+        ProjectEntity updatedUser = projectRepository.save(updatedProject);
         return projectMapper.toChangeDto(updatedUser);
     }
 }

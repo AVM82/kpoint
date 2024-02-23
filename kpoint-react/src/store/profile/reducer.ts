@@ -1,7 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { GetAllProjectsType, ProfileType } from 'common/types/types';
 
-import { existsEmail, existsUsername, getMyProjects, updateMyProfile } from './actions';
+import { existsEmail, existsUsername,
+  getFavoriteProjects, getMyProjects,
+  getRecommendedProjects, updateMyProfile } from './actions';
 
 type State = {
   response: Array<GetAllProjectsType>;
@@ -25,6 +27,18 @@ const profileSlice = createSlice({
         state.status = 'error';
       })
       .addCase(getMyProjects.fulfilled, (state, { payload }) => {
+        state.response = payload.content;
+      })
+      .addCase(getRecommendedProjects.rejected, (state) => {
+        state.status = 'error';
+      })
+      .addCase(getRecommendedProjects.fulfilled, (state, { payload }) => {
+        state.response = payload.content;
+      })
+      .addCase(getFavoriteProjects.rejected, (state) => {
+        state.status = 'error';
+      })
+      .addCase(getFavoriteProjects.fulfilled, (state, { payload }) => {
         state.response = payload.content;
       })
       .addCase(updateMyProfile.rejected, (state) => {

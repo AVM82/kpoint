@@ -14,6 +14,26 @@ const getMyProjects = createAsyncThunk<
   return profileApi.getMyProjects(payload);
 });
 
+const getRecommendedProjects = createAsyncThunk<
+  ProjectsPageType,
+  { size: number; number: number },
+  AsyncThunkConfig
+>(ActionType.GET_RECOMMENDED_PROJECTS, async (payload, { extra }) => {
+  const { profileApi } = extra;
+
+  return profileApi.getRecommendProjects(payload);
+});
+
+const getFavoriteProjects = createAsyncThunk<
+  ProjectsPageType,
+  { size: number; number: number },
+  AsyncThunkConfig
+>(ActionType.GET_FAVORITE_PROJECTS, async (payload, { extra }) => {
+  const { profileApi } = extra;
+
+  return profileApi.getFavoriteProjects(payload);
+});
+
 const updateMyProfile = createAsyncThunk<
   ProfileType,
   JsonPatchType,
@@ -47,4 +67,4 @@ const existsUsername = createAsyncThunk<
       return profileApi.existsUsername(payload);
     });
 
-export { existsEmail, existsUsername, getMyProjects, updateMyProfile };
+export { existsEmail, existsUsername, getFavoriteProjects, getMyProjects, getRecommendedProjects, updateMyProfile };
