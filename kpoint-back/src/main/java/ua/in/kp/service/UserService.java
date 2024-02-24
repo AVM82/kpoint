@@ -95,13 +95,7 @@ public class UserService {
     }
 
     public UserResponseDto getByEmailFetchTagsSocialsRoles(String email) {
-        UserEntity userFromDb = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.warn("Can't find user by email {}", email);
-                    return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
-                            "exception.user.not-found", "email", email));
-                });
-        return userMapper.toDto(userFromDb);
+        return userMapper.toDto(getByEmail(email));
     }
 
     @Transactional
@@ -128,19 +122,11 @@ public class UserService {
         return userMapper.toDto(userFromDb);
     }
 
-    public UserEntity getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(String email) {
+    public UserEntity getByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> {
             log.warn("Can't find user by email {}", email);
             return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
                     "exception.user.not-found", "email", email));
-        });
-    }
-
-    public UserEntity getUserEntityByUsernameFetchedOwnedProjects(String username) {
-        return userRepository.findByUsernameFetchProjectsOwned(username).orElseThrow(() -> {
-            log.warn("Can't find user by username {}", username);
-            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
-                    "exception.user.not-found", "username", username));
         });
     }
 
@@ -150,14 +136,6 @@ public class UserService {
 
     public UserEntity getByUsername(String username) {
         return userRepository.findByUsernameFetchNothing(username).orElseThrow(() -> {
-            log.warn("Can't find user by username {}", username);
-            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
-                    "exception.user.not-found", "username", username));
-        });
-    }
-
-    public UserEntity getByUsernameFetchTagsSocials(String username) {
-        return userRepository.findByUsernameFetchTagsSocials(username).orElseThrow(() -> {
             log.warn("Can't find user by username {}", username);
             return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
                     "exception.user.not-found", "username", username));
@@ -182,7 +160,7 @@ public class UserService {
     }
 
     public ApiResponse verifyExistsEmail(String email) {
-        if (!userRepository.existsByEmail(email)) {
+        if (!existsByEmail(email)) {
             throw new ApplicationException(HttpStatus.NOT_FOUND, "User with email " + email + " not found");
         }
         return new ApiResponse(translator.getLocaleMessage(

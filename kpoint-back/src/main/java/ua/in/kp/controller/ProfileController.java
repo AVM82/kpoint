@@ -50,7 +50,6 @@ public class ProfileController {
     }
 
     @PatchMapping(path = "/settings")
-    @PreAuthorize("hasAnyAuthority({'USER', 'ADMIN'})")
     public ResponseEntity<UserChangeDto> updateUser(@RequestBody JsonPatch patch) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         log.info("updateUser {} {}", auth.getName(), patch);
