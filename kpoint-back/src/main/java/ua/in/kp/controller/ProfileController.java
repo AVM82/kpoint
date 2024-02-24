@@ -10,15 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ua.in.kp.dto.profile.PasswordDto;
 import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
-import ua.in.kp.dto.user.UserResponseDto;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.service.ProfileService;
 
 @RestController
@@ -28,6 +26,7 @@ import ua.in.kp.service.ProfileService;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final Translator translator;
 
     @GetMapping("/myProjects")
     public ResponseEntity<Page<GetAllProjectsDto>> getMyProjects(Pageable pageable) {
@@ -74,6 +73,7 @@ public class ProfileController {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         log.info("changePassword {}", auth.getName());
         profileService.changePassword(auth.getName(), dto);
-        return ResponseEntity.ok(new ua.in.kp.dto.ApiResponse("Password was changed successfully!"));
+        return ResponseEntity.ok(new ua.in.kp.dto.ApiResponse(translator.getLocaleMessage(
+                "profile.change-password.successfully")));
     }
 }

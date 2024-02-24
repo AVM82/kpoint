@@ -9,6 +9,9 @@ const enTranslation = {
   username: 'Username (required)',
   email: 'Email Address',
   password: 'Password',
+  current_password: 'Current password',
+  new_password: 'New password',
+  new_password_again: 'New password again',
   repeated_password: 'Repeated password',
   avatar_url: 'AvatarUrl',
   tags: 'Tags',
@@ -87,6 +90,8 @@ const enTranslation = {
     project_description: 'The project description cannot be empty or have more than 512 characters',
     project_deadline: 'The collection deadline cannot be later than the goal deadline',
     suggestion_size: 'The field must contain from 1 to 200 characters',
+    profile_password_not_same: 'New and repeat passwords are not the same',
+    profile_password_new_current: 'The new profile password must be different from the current one',
   },
 };
 

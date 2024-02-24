@@ -160,7 +160,9 @@ public class UserService {
     }
 
     public ApiResponse verifyExistsEmail(String email) {
+        log.info("verifyExistsEmail {}", email);
         if (!existsByEmail(email)) {
+            log.warn("User with email {} not found", email);
             throw new ApplicationException(HttpStatus.NOT_FOUND, "User with email " + email + " not found");
         }
         return new ApiResponse(translator.getLocaleMessage(
@@ -168,7 +170,9 @@ public class UserService {
     }
 
     public ApiResponse verifyExistsUsername(String username) {
+        log.info("verifyExistsUsername {}", username);
         if (!userRepository.existsByUsername(username)) {
+            log.warn("User {} not found", username);
             throw new ApplicationException(HttpStatus.NOT_FOUND, "User " + username + " not found");
         }
         return new ApiResponse(translator.getLocaleMessage(

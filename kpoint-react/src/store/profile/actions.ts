@@ -45,6 +45,17 @@ const updateMyProfile = createAsyncThunk<
       return profileApi.updateProfile(payload);
     });
 
+const changePassword = createAsyncThunk<
+  ApiResponseType,
+  { oldPassword: string, newPassword: string },
+  AsyncThunkConfig> (
+    ActionType.CHANGE_PASSWORD,
+    async (payload, { extra }) => {
+      const { profileApi } = extra;
+
+      return profileApi.changePassword(payload);
+    });
+
 const existsEmail = createAsyncThunk<
   ApiResponseType,
   { email: string },
@@ -53,7 +64,7 @@ const existsEmail = createAsyncThunk<
     async (payload, { extra }) => {
       const { profileApi } = extra;
 
-      return await profileApi.existsEmail(payload);
+      return profileApi.existsEmail(payload);
     });
 
 const existsUsername = createAsyncThunk<
@@ -64,7 +75,15 @@ const existsUsername = createAsyncThunk<
     async (payload, { extra }) => {
       const { profileApi } = extra;
 
-      return await profileApi.existsUsername(payload);
+      return profileApi.existsUsername(payload);
     });
 
-export { existsEmail, existsUsername, getFavoriteProjects, getMyProjects, getRecommendedProjects, updateMyProfile };
+export {
+  changePassword,
+  existsEmail,
+  existsUsername,
+  getFavoriteProjects,
+  getMyProjects,
+  getRecommendedProjects,
+  updateMyProfile,
+};

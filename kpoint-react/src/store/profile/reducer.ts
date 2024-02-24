@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { GetAllProjectsType, ProfileType } from 'common/types/types';
 
 import {
+  changePassword,
   existsEmail,
   existsUsername,
   getFavoriteProjects,
@@ -51,6 +52,12 @@ const profileSlice = createSlice({
       })
       .addCase(updateMyProfile.fulfilled, (state, { payload }) => {
         state.profile = payload;
+      })
+      .addCase(changePassword.rejected, (state) => {
+        state.status = 'error';
+      })
+      .addCase(changePassword.fulfilled, (state, { payload }) => {
+        state.status = payload.message;
       })
       .addCase(existsEmail.rejected, (state) => {
         state.status = 'error';

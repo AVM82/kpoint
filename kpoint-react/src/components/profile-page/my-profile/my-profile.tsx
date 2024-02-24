@@ -9,7 +9,7 @@ import { profileAction } from 'store/actions';
 
 import { ProfileType } from '../../../common/types/types';
 import { useAppDispatch } from '../../../hooks/hooks';
-import { ProfileLayout } from '../profile-layout/ProfileLayout';
+import { ProfileLayout } from '../profile-layout/profile-layout';
 
 const DEFAULT_FORM_VALUES = { firstName: '', lastName: '', email: '', username: '' };
 
@@ -23,10 +23,10 @@ const MyProfile: FC = () => {
     = useState<ProfileType>(DEFAULT_FORM_VALUES);
 
   useEffect(() => {
-    const user = storage.getItem(StorageKey.USER);
+    const currentUser = storage.getItem(StorageKey.USER);
 
-    if (user) {
-      const userJson = JSON.parse(user);
+    if (currentUser) {
+      const userJson = JSON.parse(currentUser);
       setUser(userJson);
       setEditForm({
         firstName: userJson.firstName,
@@ -47,7 +47,12 @@ const MyProfile: FC = () => {
   };
 
   const handleReset = (): void => {
-    setEditForm(DEFAULT_FORM_VALUES);
+    setEditForm({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      username: user?.username || '',
+      email: user?.email || '',
+    });
   };
 
   const handleSubmit = async (e: React.MouseEvent): Promise<void> => {
@@ -140,21 +145,21 @@ const MyProfile: FC = () => {
     }
 
     if (errors.email === undefined && data.email.trim() !== user?.email.trim()){
-      dispatch(profileAction.existsEmail({ email: data.email.trim() }))
-        .unwrap()
-        .then((action): void => {
-          errors.email = action.message;
-          toast.error(action.message);
-        });
+      // dispatch(profileAction.existsEmail({ email: data.email.trim() }))
+      //   .unwrap()
+      //   .then((action): void => {
+      //     errors.email = action.message;
+      //     toast.error(action.message);
+      //   });
     }
 
     if (errors.username === undefined && data.username.trim() !== user?.username.trim()){
-      dispatch(profileAction.existsUsername({ username: data.username.trim() }))
-        .unwrap()
-        .then((action): void => {
-          errors.username = action.message;
-          toast.error(action.message);
-        });
+      // dispatch(profileAction.existsUsername({ username: data.username.trim() }))
+      //   .unwrap()
+      //   .then((action): void => {
+      //     errors.username = action.message;
+      //     toast.error(action.message);
+      //   });
     }
 
     return errors;
