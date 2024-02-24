@@ -75,7 +75,7 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.unsubscribeUserFromProject(projectId), HttpStatus.OK);
     }
 
-    @PatchMapping(path = "", consumes = "application/json-patch+json")
+    @PatchMapping(path = "/{projectId}/settings", consumes = "application/json-patch+json")
     public ResponseEntity<ProjectChangeDto> updateProject(@PathVariable String projectId,
                                                           @RequestBody JsonPatch patch) {
         return ResponseEntity.ok(projectService.updateProjectData(projectId, patch));
