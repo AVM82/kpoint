@@ -3,8 +3,8 @@ enum ActionType {
   GET_RECOMMENDED_PROJECTS= 'username/recommendedProjects',
   GET_FAVORITE_PROJECTS = 'username/favoriteProjects',
   UPDATE_PROFILE = 'profile/update',
-  EXISTS_EMAIL = 'exists/email',
-  EXISTS_USERNAME = 'exists/username',
+  EXISTS_EMAIL = 'username/existsEmail',
+  EXISTS_USERNAME = 'username/existsUsername',
 }
 
 export { ActionType };

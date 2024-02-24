@@ -53,7 +53,7 @@ const existsEmail = createAsyncThunk<
     async (payload, { extra }) => {
       const { profileApi } = extra;
 
-      return profileApi.existsEmail(payload);
+      return await profileApi.existsEmail(payload);
     });
 
 const existsUsername = createAsyncThunk<
@@ -64,7 +64,7 @@ const existsUsername = createAsyncThunk<
     async (payload, { extra }) => {
       const { profileApi } = extra;
 
-      return profileApi.existsUsername(payload);
+      return await profileApi.existsUsername(payload);
     });
 
 export { existsEmail, existsUsername, getFavoriteProjects, getMyProjects, getRecommendedProjects, updateMyProfile };

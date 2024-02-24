@@ -143,6 +143,7 @@ const MyProfile: FC = () => {
       dispatch(profileAction.existsEmail({ email: data.email.trim() }))
         .unwrap()
         .then((action): void => {
+          errors.email = action.message;
           toast.error(action.message);
         });
     }
@@ -151,6 +152,7 @@ const MyProfile: FC = () => {
       dispatch(profileAction.existsUsername({ username: data.username.trim() }))
         .unwrap()
         .then((action): void => {
+          errors.username = action.message;
           toast.error(action.message);
         });
     }
