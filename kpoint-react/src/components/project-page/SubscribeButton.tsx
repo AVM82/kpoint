@@ -8,7 +8,7 @@ import { projectAction } from 'store/actions';
 import { StorageKey } from '../../common/enums/enums';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { storage } from '../../services/services';
-import { subscribeToProjectLocally } from '../../store/projects/reducer';
+import { subscribeToProjectPage } from '../../store/projects/reducer';
 
 interface SubscribeButtonProps {
     projectId: string;
@@ -25,7 +25,7 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({ projectId, isFollowed }) =>
 
     if (user && !isFollowed) {
       await dispatch(projectAction.subscribeToProject({ projectId: projectId }));
-      dispatch(subscribeToProjectLocally(projectId));
+      dispatch(subscribeToProjectPage(projectId));
       toast.success('Ви успішно підписані на проект');
     }  else if (user && isFollowed) {
       // dispatch(projectAction.unsubscribeFromProject({ projectId: projectId }));

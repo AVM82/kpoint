@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
 import ua.in.kp.util.PatchUtil;
+import ua.in.kp.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,12 +46,13 @@ public class ProjectService {
     private final SubscriptionRepository subscriptionRepository;
     private final EmailServiceKp emailService;
     private final Translator translator;
+    private final UserRepository userRepository;
     private final MeterRegistry meterRegistry;
 
     public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
-                          Translator translator, MeterRegistry meterRegistry) {
+                          Translator translator, UserRepository userRepository, MeterRegistry meterRegistry) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userService = userService;
@@ -57,6 +61,7 @@ public class ProjectService {
         this.subscriptionRepository = subscriptionRepository;
         this.emailService = emailService;
         this.translator = translator;
+        this.userRepository = userRepository;
         this.meterRegistry = meterRegistry;
 
         Gauge.builder("projects_count", projectRepository::count)
@@ -95,12 +100,30 @@ public class ProjectService {
         return projectMapper.toDto(projectEntity);
     }
 
-    public Page<GetAllProjectsDto> getAllProjects(Pageable pageable) {
+    public Page<GetAllProjectsDto> getAllProjects(Pageable pageable, Authentication auth) {
         Page<ProjectEntity> page = projectRepository.findAll(pageable);
         log.info("Got all projects from projectRepository.");
-        Page<GetAllProjectsDto> toReturn = page.map(projectMapper::getAllToDto);
-        log.info("Mapped all projectsEntity to DTO and returned a page with them.");
+        Page<GetAllProjectsDto> toReturn = page.map(project -> {
+
+            boolean isFollowed = checkIsFollowed(project, auth);
+            GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
+            dto.setFollowed(isFollowed);
+            return dto;
+        });
+        log.info("Map all projectsEntity to DTO and return page with them.");
         return toReturn;
+    }
+
+    private boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
+            if (userOpt.isPresent()) {
+                UserEntity user = userOpt.get();
+                log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
+                return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
+            }
+        }
+        return false;
     }
 
     @Transactional(readOnly = true)
@@ -131,8 +154,12 @@ public class ProjectService {
                                     return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
                                             "exception.project.not-found", "url", url));
                                 });
+
+        boolean isFollowed = checkIsFollowed(projectEntity, SecurityContextHolder.getContext().getAuthentication());
         log.info("Project with url {} retrieved.", projectEntity.getUrl());
-        return projectMapper.toDto(projectEntity);
+        ProjectResponseDto dto = projectMapper.toDto(projectEntity);
+        dto.setFollowed(isFollowed);
+        return dto;
     }
 
     @Transactional(readOnly = true)
