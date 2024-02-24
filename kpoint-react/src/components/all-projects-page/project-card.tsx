@@ -17,8 +17,6 @@ import Typography from '@mui/material/Typography';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { StorageKey } from '../../common/enums/app/storage-key.enum';
-import { storage } from '../../services/services';
 import { SubscribeButton } from './SubscribeButton';
 
 interface ProjectsProps {
@@ -29,12 +27,12 @@ interface ProjectsProps {
   logoImgUrl: string;
   tags: [];
   isAuthenticated: boolean;
+  isFollowed: boolean;
 }
 
 const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
-  logoImgUrl, tags, isAuthenticated  }) => {
+  logoImgUrl, tags, isAuthenticated, isFollowed  }) => {
   const { t } = useTranslation();
-  const userID = storage.getItem(StorageKey.USER);
 
   return (
     <Card sx={{ maxWidth: 500 }}>
@@ -54,8 +52,8 @@ const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
             aria-label="outlined button group" sx={{ margin: 1 }}>
             <Button size="small" startIcon={ <PeopleAltTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>{t('buttons.help')}</Button>
-            {<SubscribeButton projectId={projectId} userID={userID ? userID : ''}
-              isAuthenticated={isAuthenticated}/>}
+            {<SubscribeButton projectId={projectId}
+              isAuthenticated={isAuthenticated} isFollowed={isFollowed ?? false}/>}
             <Button size="small" startIcon={ <MonetizationOnTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>
               {t('buttons.donate_projects_page')}</Button>

@@ -44,7 +44,7 @@ public class ProjectController {
             return new ResponseEntity<>(profileService
                     .getRecommendedProjects(pageable), HttpStatus.OK);
         }
-        return new ResponseEntity<>(projectService.getAllProjects(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.getAllProjects(pageable, auth), HttpStatus.OK);
     }
 
     @GetMapping("/id/{projectId}")

@@ -25,7 +25,6 @@ const ProjectsPage: FC = () => {
   const isAuthenticated = useAppSelector((state) => state.token.isloggedIn);
 
   const [page, setPage] = useState(1);
-
   useLayoutEffect(() => {
     dispatch(
       projectAction.getAllProjectsDefault({
@@ -76,6 +75,7 @@ const ProjectsPage: FC = () => {
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
               isAuthenticated={isAuthenticated}
+              isFollowed={project.isFollowed}
             />
           </Grid>
         ))}
