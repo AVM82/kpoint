@@ -1,121 +1,183 @@
-import {
-  Box,
-  Button,
-  FormLabel,
-  Grid,
-  TextField,
-} from '@mui/material';
+import { Box, Button, FormLabel, Grid, TextField } from '@mui/material';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
 import React, { FC, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { storage } from 'services/services';
+import { profileAction } from 'store/actions';
 
+import { ProfileType } from '../../../common/types/types';
+import { useAppDispatch } from '../../../hooks/hooks';
 import { ProfileLayout } from '../profile-layout/ProfileLayout';
 
 const DEFAULT_FORM_VALUES = { firstName: '', lastName: '', email: '', username: '' };
 
 const MyProfile: FC = () => {
-  const navigate = useNavigate();
-  const [testUser, setTestUser] = useState<UserType>();
-  const [testEditForm, setTestEditForm] = useState<{
-    firstName: string;
-    lastName: string;
-    email: string;
-    username: string;
-  }>(DEFAULT_FORM_VALUES);
+  const { t } = useTranslation();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setTestEditForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const [user, setUser]
+    = useState<UserType>();
 
-  const handleReset = (): void => {
-    setTestEditForm(DEFAULT_FORM_VALUES);
-  };
-
-  const validateEmail = (email: string): boolean => {
-    // eslint-disable-next-line max-len
-    const emailRegx =  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    return emailRegx.test(email);
-  };
+  const [editForm, setEditForm]
+    = useState<ProfileType>(DEFAULT_FORM_VALUES);
 
   useEffect(() => {
     const user = storage.getItem(StorageKey.USER);
 
-    if (user) setTestUser(JSON.parse(user));
+    if (user) {
+      const userJson = JSON.parse(user);
+      setUser(userJson);
+      setEditForm({
+        firstName: userJson.firstName,
+        lastName: userJson.lastName,
+        username: userJson.username,
+        email: userJson.email,
+      });
+    }
   }, []);
+
+  const dispatch = useAppDispatch();
+
+  const handleChange = (field: string, value: string | File): void => {
+    setEditForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleReset = (): void => {
+    setEditForm(DEFAULT_FORM_VALUES);
+  };
 
   const handleSubmit = async (e: React.MouseEvent): Promise<void> => {
     e.preventDefault();
 
-    try {
+    const validationErrors = validateForm(editForm);
 
-      if(!validateEmail(testEditForm['email']) && testEditForm['email'] !== '') {
-        throw new Error('Invalid email');
+    const changedFields = verifyChangedFields(editForm);
 
-      }
-
-      const bodyData = Object.keys(testEditForm).map((item) => {
-        const key: string= item;
-
-        return { op:'replace',path:`/${key}`,value: testEditForm[key as keyof typeof testEditForm] || null };
-
-      });
-
-      const response = await fetch(
-        `http://localhost:5001/api/profile/${testUser?.username}/settings`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json-patch+json',
-          },
-          body: JSON.stringify(bodyData),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to update profile settings');
-      }
-
-      // Parse the response JSON
-      const updatedSettings = await response.json();
-
-      // Update the state with the new values
-
-      setTestEditForm(() => ({
-        firstName: updatedSettings.firstName,
-        lastName: updatedSettings.lastName,
-        email: updatedSettings.email,
-        username: updatedSettings.username,
-      }));
-
-      const storedUserString = storage.getItem(StorageKey.USER);
-
-      if (storedUserString) {
-        // Parse the user object from the stored string
-        let storedUser: UserType = JSON.parse(storedUserString);
-
-        // Update the firstName and lastName properties using destructuring
-        storedUser = {
-          ...storedUser,
-          firstName: updatedSettings.firstName,
-          lastName: updatedSettings.lastName,
-          email: updatedSettings.email,
-          username: updatedSettings.username,
-        };
-
-        // Store the updated user object back in storage
-        storage.setItem(StorageKey.USER, JSON.stringify(storedUser));
-        navigate(0);
-      }
-    } catch (error) {
-      toast.error('Error updating profile settings:', error.message);
+    if (Object.keys(validationErrors).length === 0) {
+      setErrors({});
+    } else {
+      setErrors(validationErrors);
     }
+
+    if (user && Object.keys(validationErrors).length === 0 && Object.keys(changedFields).length > 0) {
+
+      try {
+
+        const bodyData = Object.keys(editForm)
+          .filter((item) =>  changedFields[item] )
+          .map((item) => {
+            const key: string = item;
+
+            return { op: 'replace', path: `/${key}`, value: editForm[key as keyof typeof editForm] || null };
+          });
+
+        dispatch(profileAction.updateMyProfile({ body: bodyData }))
+          .unwrap()
+          .then((action): void => {
+
+            setEditForm(() => ({
+              firstName: action.firstName,
+              lastName: action.lastName,
+              email: action.email,
+              username: action.username,
+            }));
+
+            setUser((user) => {
+              if (user) {
+                user['firstName'] = action.firstName;
+                user['lastName'] = action.lastName;
+                user['email'] = action.email;
+                user['username'] = action.username;
+              }
+
+              // Store the updated user object back in storage
+              storage.setItem(StorageKey.USER, JSON.stringify(user));
+
+              return user;
+            });
+          })
+          .catch((reason) => {
+            toast.error(`Can\\'t update profile, because: ${reason}`);
+          });
+
+      } catch (error) {
+        toast.error('Error updating profile settings:', error.message);
+      }
+    }
+  };
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleFieldFocus = (field: string): void => {
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
+  };
+
+  const validateForm = (data: ProfileType): Record<string, string> => {
+
+    const errors: Record<string, string> = {};
+
+    // eslint-disable-next-line max-len
+    const emailRegx =  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if(!emailRegx.test(data.email) || data.email.trim() === '') {
+      errors.email = 'Invalid email';
+    }
+
+    if (data.username.trim().length < 2) {
+      errors.username = 'Invalid username';
+    }
+
+    if (data.firstName.trim().length === 0) {
+      errors.firstName = 'Invalid firstName';
+    }
+
+    if (data.lastName.trim().length === 0) {
+      errors.lastName = 'Invalid lastName';
+    }
+
+    if (errors.email === undefined && data.email.trim() !== user?.email.trim()){
+      dispatch(profileAction.existsEmail({ email: data.email.trim() }))
+        .unwrap()
+        .then((action): void => {
+          toast.error(action.message);
+        });
+    }
+
+    if (errors.username === undefined && data.username.trim() !== user?.username.trim()){
+      dispatch(profileAction.existsUsername({ username: data.username.trim() }))
+        .unwrap()
+        .then((action): void => {
+          toast.error(action.message);
+        });
+    }
+
+    return errors;
+  };
+
+  const verifyChangedFields = (data: ProfileType): Record<string, string> => {
+    const changed: Record<string, string> = {};
+
+    if (data.email.trim() !== user?.email.trim()){
+      changed.email = data.email.trim();
+    }
+
+    if (data.username.trim() !== user?.username.trim()){
+      changed.username = data.username.trim();
+    }
+
+    if (data.firstName.trim() !== user?.firstName.trim()){
+      changed.firstName = data.firstName.trim();
+    }
+
+    if (data.lastName.trim() !== user?.lastName.trim()){
+      changed.lastName = data.lastName.trim();
+    }
+
+    return changed;
   };
 
   return (
@@ -129,53 +191,61 @@ const MyProfile: FC = () => {
       >
         <Grid container spacing={2}>
           <Grid item xs={3} md={6}>
-            <FormLabel>Email</FormLabel>
-            <TextField fullWidth name="email" placeholder={testUser?.email}
-              value={testEditForm['email']}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                handleChange(e)
-              } />
-          </Grid>
-          <Grid item xs={3} md={6}>
-            <FormLabel>Користувацьке ім’я (обов'язково)</FormLabel>
-            <TextField fullWidth name="username" placeholder={testUser?.username}
-              value={testEditForm['username']}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                handleChange(e)
-              } />
-          </Grid>
-          <Grid item xs={3} md={6}>
-            <FormLabel>Ім'я</FormLabel>
+            <FormLabel>{t('email')}</FormLabel>
             <TextField
               fullWidth
-              name="firstName"
-              value={testEditForm['firstName']}
-              placeholder={testUser?.firstName}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                handleChange(e)
-              }
+              name="email"
+              value={editForm.email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void => handleChange(e.target.name, e.target.value)}
+              onFocus={(): void => handleFieldFocus('email')}
+              error={!!errors.email}
+              helperText={errors.email}
             />
           </Grid>
           <Grid item xs={3} md={6}>
-            <FormLabel>Прізвище</FormLabel>
+            <FormLabel>{t('username')}</FormLabel>
+            <TextField
+              fullWidth
+              name="username"
+              value={editForm['username']}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void => handleChange(e.target.name, e.target.value)}
+              onFocus={(): void => handleFieldFocus('username')}
+              error={!!errors.username}
+              helperText={errors.username}
+            />
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <FormLabel>{t('first_name')}</FormLabel>
+            <TextField
+              fullWidth
+              name="firstName"
+              value={editForm['firstName']}
+              onChange={(e): void => handleChange(e.target.name, e.target.value)}
+              onFocus={(): void => handleFieldFocus('firstName')}
+              error={!!errors.firstName}
+              helperText={errors.firstName}
+            />
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <FormLabel>{t('last_name')}</FormLabel>
             <TextField
               fullWidth
               name="lastName"
-              placeholder={testUser?.lastName}
-              value={testEditForm['lastName']}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                handleChange(e)
-              }
+              value={editForm['lastName']}
+              onChange={(e): void => handleChange(e.target.name, e.target.value)}
+              onFocus={(): void => handleFieldFocus('lastName')}
+              error={!!errors.lastName}
+              helperText={errors.lastName}
             />
           </Grid>
           <Grid item xs={3} md={6}>
             <Button sx={{ alignSelf: 'end', marginTop: '56px',  color: 'grey' }} onClick={handleReset}>
-            Скасувати
+              {t('buttons.cancel')}
             </Button>
           </Grid>
           <Grid item xs={6} textAlign={'right'}>
             <Button sx={{ marginTop: '56px' }} type="submit">
-            Зберегти
+              {t('buttons.save')}
             </Button>
           </Grid>
         </Grid>

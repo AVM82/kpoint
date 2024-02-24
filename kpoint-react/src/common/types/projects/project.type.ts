@@ -21,4 +21,5 @@ export type ProjectType = {
   goalSum: number,
   goalDeadline: string,
   networksLinks:NetworksLinks,
+  isFollowed: boolean,
 };

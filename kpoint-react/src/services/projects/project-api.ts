@@ -7,6 +7,7 @@ import {
 
 // import qs from 'query-string';
 import { ContentType } from '../../common/enums/file/content-type.enum';
+import { SubscribeStatusType } from '../../common/types/projects/subscribe-status.type';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { Http } from '../http/http.service';
 
@@ -42,7 +43,6 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -87,6 +87,13 @@ class ProjectApi {
       method: HttpMethod.POST,
       payload: JSON.stringify(payload),
       contentType: ContentType.JSON,
+    });
+  }
+
+  public checkIfSubscribed (payload: { id: string }): Promise<SubscribeStatusType> {
+    return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}/subscribe-users`, {
+      method: HttpMethod.GET,
+    // hasAuth: false,
     });
   }
 }

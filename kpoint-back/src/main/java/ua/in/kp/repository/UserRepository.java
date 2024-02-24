@@ -24,6 +24,8 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     boolean existsByEmail(String email);
 
+    boolean existsByUsername(String username);
+
     @EntityGraph(attributePaths = {"socialNetworks", "roles"})
     Page<UserEntity> findAll(Pageable pageable);
 

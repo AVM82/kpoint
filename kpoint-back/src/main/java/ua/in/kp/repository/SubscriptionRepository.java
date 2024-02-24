@@ -20,4 +20,6 @@ public interface SubscriptionRepository extends JpaRepository<ProjectSubscribeEn
     List<ProjectSubscribeEntity> findUserIdsByProjectId(String projectId);
 
     Page<ProjectSubscribeEntity> findByUserId(String userId, Pageable pageable);
+
+    boolean existsByUserIdAndProjectId(String userId, String projectId);
 }
