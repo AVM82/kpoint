@@ -1,7 +1,6 @@
 package ua.in.kp.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import io.micrometer.core.instrument.Gauge;
@@ -46,7 +45,7 @@ public class ProjectService {
     private final Translator translator;
     private final MeterRegistry meterRegistry;
 
-    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper, ObjectMapper objectMapper,
+    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
                           Translator translator, MeterRegistry meterRegistry) {
@@ -225,7 +224,7 @@ public class ProjectService {
         List<ProjectSubscribeEntity> listUsers = subscriptionRepository.findUserIdsByProjectId(projectId);
         List<ProjectSubscribeDto> usersId = listUsers.stream()
                 .map(projectMapper::toDtoSubscribe)
-                .collect(Collectors.toList());
+                .toList();
 
         log.info("List subscribers {}", usersId);
         return usersId;
@@ -249,6 +248,11 @@ public class ProjectService {
         log.info("User {} has been unsubscribed from project with id {}", user.getUsername(), projectId);
         return new SubscribeResponseDto(translator.getLocaleMessage("project.unsubscribed",
                 user.getUsername(), projectId));
+    }
+
+    public Page<GetAllProjectsDto> getProjectByIds(List<String> projectIds, Pageable pageable) {
+        return projectRepository.findByProjectIds(projectIds, pageable)
+                .map(projectMapper::getAllToDto);
     }
 
     @Transactional
