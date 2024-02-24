@@ -301,6 +301,7 @@ public class ProjectService {
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
         ProjectEntity updatedUser = projectRepository.save(updatedProject);
+        emailService.sendUpdateProjectMail(projectId, projectEntity.getUrl());
         return projectMapper.toChangeDto(updatedUser);
     }
 }
