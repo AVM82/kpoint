@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.profile.PasswordDto;
@@ -27,6 +29,7 @@ import ua.in.kp.repository.UserRepository;
 import ua.in.kp.util.PatchUtil;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,20 +71,46 @@ public class ProfileService {
     }
 
     public Page<GetAllProjectsDto> getRecommendedProjects(Pageable pageable) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = userService.getAuthenticated();
         log.info("Get recommended projects for user {}", user.getUsername());
         Set<String> subscribedProjectIds =
                 subscriptionRepository.findByUserId(user.getId(), pageable).stream()
                         .map(ProjectSubscribeEntity::getProjectId)
                         .collect(Collectors.toSet());
+        log.info("Sub proj {}", subscribedProjectIds.size());
         Set<String> ownedProjectIds =
                 projectService.getProjectsByUser(user, pageable).stream()
                         .map(ProjectEntity::getProjectId)
                         .collect(Collectors.toSet());
+        log.info("Own proj {}", ownedProjectIds.size());
+        log.info("Get recommended projects for user {}", user.getUsername());
         subscribedProjectIds.addAll(ownedProjectIds);
+        log.info("Sub proj 2 {}", subscribedProjectIds.size());
+        log.info("Get recommended projects for user {}", user.getUsername());
         Set<TagEntity> tags = userRepository.findByEmail(user.getEmail()).orElseThrow().getTags();
+//        return projectService.retrieveRecommendedProjects(tags, subscribedProjectIds, pageable)
+//                .map(projectMapper::getAllToDto);
         return projectService.retrieveRecommendedProjects(tags, subscribedProjectIds, pageable)
-                .map(projectMapper::getAllToDto);
+                .map(project -> {
+
+                    boolean isFollowed = checkIsFollowed(project, auth);
+                    GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
+                    dto.setFollowed(isFollowed);
+                    return dto;
+                });
+    }
+
+    private boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
+            if (userOpt.isPresent()) {
+                UserEntity user = userOpt.get();
+                log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
+                return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
+            }
+        }
+        return false;
     }
 
     public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(Pageable pageable) {
