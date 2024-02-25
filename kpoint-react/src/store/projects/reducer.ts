@@ -49,6 +49,7 @@ const initialState: State = {
       YOUTUBE: '',
     },
     startSum: 0,
+    isFollowed: false,
   },
   projects: null,
   editProject: null,

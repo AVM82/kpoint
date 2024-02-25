@@ -20,7 +20,7 @@ const enTranslation = {
   sign_in_to_continue: 'Sign in to continue',
   forgot_password: 'Forgot your password?',
   remember_me: 'Remember me',
-  dont_have_an_account: "Don't have an account yet?",
+  dont_have_an_account: 'Don\'t have an account yet?',
   search_field: 'Search field',
   share_button: 'Share',
   learn_more_button: 'Learn more',
