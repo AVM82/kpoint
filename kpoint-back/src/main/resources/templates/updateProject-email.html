@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Проект, на який ви підписані, оновлено!</title>
+    <style>
+        .button-link {
+            display: inline-block;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #4CAF50; /* Колір фону */
+            color: white; /* Колір тексту */
+            border: 1px solid #4CAF50; /* Обрамлення кнопки */
+            border-radius: 5px; /* Закруглені кути */
+            transition: background-color 0.3s;
+        }
+
+        .button-link:hover {
+            background-color: #45a049; /* Змінюємо колір фону при наведенні */
+        }
+    </style>
+</head>
+<body>
+<h3>Проект, на який ви підписані, оновлено!</h3>
+<p>Проект : <span th:text="${projectName}"> оновився.</span></p>
+<p>Нижче наведено змінені поля::</p>
+<ul>
+    <li th:each="field : ${changedFields}" th:text="${field}"></li>
+</ul>
+<p>URL проекту: <a th:href="${projectUrl}" th:text="${projectUrl}"></a></p>
+<p style="text-align: left;">
+    <a class="button-link" href="#" th:href="${projectUrl}">Перейти до проекту</a>
+    <a class="button-link" href="#" th:href="${website}">Перейти на сайт</a>
+</p>
+</p>
+</body>
+</html>
