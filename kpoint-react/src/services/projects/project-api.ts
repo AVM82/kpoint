@@ -29,7 +29,6 @@ class ProjectApi {
   public getById(payload: { id: string }): Promise<ProjectType> {
     return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}`, {
       method: HttpMethod.GET,
-      // hasAuth: false,
     });
   }
 
@@ -61,7 +60,6 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -93,7 +91,6 @@ class ProjectApi {
   public checkIfSubscribed (payload: { id: string }): Promise<SubscribeStatusType> {
     return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}/subscribe-users`, {
       method: HttpMethod.GET,
-    // hasAuth: false,
     });
   }
 }
