@@ -89,28 +89,16 @@ public class ProfileService {
         log.info("Sub proj 2 {}", subscribedProjectIds.size());
         log.info("Get recommended projects for user {}", user.getUsername());
         Set<TagEntity> tags = userRepository.findByEmail(user.getEmail()).orElseThrow().getTags();
-//        return projectService.retrieveRecommendedProjects(tags, subscribedProjectIds, pageable)
-//                .map(projectMapper::getAllToDto);
         return projectService.retrieveRecommendedProjects(tags, subscribedProjectIds, pageable)
-                .map(project -> {
-
-                    boolean isFollowed = checkIsFollowed(project, auth);
-                    GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
-                    dto.setFollowed(isFollowed);
-                    return dto;
-                });
-    }
-
-    private boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
-            if (userOpt.isPresent()) {
-                UserEntity user = userOpt.get();
-                log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
-                return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
-            }
-        }
-        return false;
+                .map(projectMapper::getAllToDto);
+//        return projectService.retrieveRecommendedProjects(tags, subscribedProjectIds, pageable)
+//                .map(project -> {
+//
+//                    boolean isFollowed = checkIsFollowed(project, auth);
+//                    GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
+//                    dto.setFollowed(isFollowed);
+//                    return dto;
+//                });
     }
 
     public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(Pageable pageable) {
