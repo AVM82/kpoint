@@ -45,9 +45,8 @@ public class EmailServiceKp {
         this.subscriptionRepository = subscriptionRepository;
     }
 
-    public void sendProjectSubscriptionMessage(String projectId, String projectUrl) {
+    public void sendProjectSubscriptionMessage(String projectId, String projectUrl, UserEntity user) {
 
-        UserEntity user = userService.getAuthenticated();
         try {
             sendSubscribeMail(user, projectUrl);
             log.info("User {} subscribed on project {}", user.getEmail(), projectId);

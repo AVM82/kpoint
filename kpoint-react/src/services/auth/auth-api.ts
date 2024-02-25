@@ -38,6 +38,14 @@ class AuthApi {
       payload: JSON.stringify(payload),
     });
   }
+
+  public loginWithOAuth2(payload: SignInType): Promise<ResponseType> {
+    return this.#http.load(`${this.#apiPrefix}/auth/oauth2`, {
+      method: HttpMethod.POST,
+      contentType: ContentType.JSON,
+      payload: JSON.stringify(payload),
+    });
+  }
 }
 
 export { AuthApi };
