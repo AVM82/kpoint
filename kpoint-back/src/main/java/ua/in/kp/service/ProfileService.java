@@ -90,7 +90,6 @@ public class ProfileService {
                     dto.setFollowed(isFollowed);
                     return dto;
                 });
-
     }
 
     public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(Pageable pageable) {

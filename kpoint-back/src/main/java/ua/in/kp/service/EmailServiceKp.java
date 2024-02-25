@@ -16,6 +16,7 @@ import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.repository.SubscriptionRepository;
 
 import java.util.List;
@@ -28,56 +29,32 @@ public class EmailServiceKp {
     private final Environment env;
     private final String sender;
     private final SpringTemplateEngine templateEngine;
-
     private final SubscriptionRepository subscriptionRepository;
+    private final Translator translator;
 
     public EmailServiceKp(
             JavaMailSender emailSender,
             UserService userService,
             Environment env,
             @Value("${MAIL_USERNAME}") String sender, SpringTemplateEngine templateEngine,
-            SubscriptionRepository subscriptionRepository) {
+            SubscriptionRepository subscriptionRepository, Translator translator) {
         this.emailSender = emailSender;
         this.userService = userService;
         this.env = env;
         this.sender = sender;
         this.templateEngine = templateEngine;
         this.subscriptionRepository = subscriptionRepository;
+        this.translator = translator;
     }
 
-    public void sendProjectSubscriptionMessage(String projectId, String projectUrl, UserEntity user) {
+    public void sendProjectSubscriptionMessage(ProjectEntity project, UserEntity user) {
 
         try {
-            sendSubscribeMail(user, projectUrl);
-            log.info("User {} subscribed on project {}", user.getEmail(), projectId);
+            sendProjectSubscribeEmail(user, project);
+            log.info("User {} subscribed on project {}", user.getEmail(), project.getTitle());
         } catch (Exception e) {
             log.warn("Email to {} was not sent {}", user.getEmail(), e.getMessage());
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Email to was not sent");
-        }
-    }
-
-    private void sendSubscribeMail(UserEntity user, String url) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        setMessageData(message, env.getProperty("email.subscription_mail.subject"),
-                env.getProperty("email.subscription_mail.text") + "\n\n"
-                        + "Лінк на проєкт: " + env.getProperty("oauth2.redirect-uri") + "projects/" + url);
-        message.setTo(user.getEmail());
-        emailSender.send(message);
-        log.info("Email to {} was sent", user.getEmail());
-    }
-
-    public void sendUpdateProjectMail(String projectId, String title) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        setMessageData(message, env.getProperty("email.update_project_mail.subject"),
-                env.getProperty("email.update_project_mail.text") + "\n\n"
-                        + "Лінк на проєкт: " + env.getProperty("oauth2.redirect-uri") + "projects/" + title);
-
-        List<String> usersMails = setUsersMailsList(projectId);
-        for (String mail : usersMails) {
-            log.info("EMAILS: " + mail);
-            message.setTo(mail);
-            emailSender.send(message);
-            log.info("Email with updates was sent to {}", mail);
         }
     }
 
@@ -106,7 +83,7 @@ public class EmailServiceKp {
         SimpleMailMessage message = new SimpleMailMessage();
         setMessageData(message, env.getProperty("email.unsubscription_mail.subject"),
                 env.getProperty("email.unsubscription_mail.text") + "\n\n"
-                        + "Лінк на проєкт: " + env.getProperty("oauth2.redirect-uri") + "projects/" + projectUrl);
+                        + "Лінк на проєкт: " + env.getProperty("oauth2.redirect-uri") + "/projects/" + projectUrl);
         message.setTo(email);
         emailSender.send(message);
         log.info("Email to {} was sent", email);
@@ -141,5 +118,31 @@ public class EmailServiceKp {
                 env.getProperty("oauth2.redirect-uri") + "/projects/" + project.getUrl());
 
         return templateEngine.process("updateProject-email", context);
+    }
+
+    private String getHtmlSubscribeContent(ProjectEntity project) {
+        Context context = new Context();
+        context.setVariable("projectName", project.getTitle());
+        context.setVariable("website", env.getProperty("oauth2.redirect-uri"));
+        context.setVariable("projectUrl",
+                env.getProperty("oauth2.redirect-uri") + "/projects/" + project.getUrl());
+
+        return templateEngine.process("subscribeProject-email", context);
+    }
+
+    public void sendProjectSubscribeEmail(UserEntity user, ProjectEntity project) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
+        String htmlContent = getHtmlSubscribeContent(project);
+        try {
+            helper.setText(htmlContent, true);
+            helper.setSubject(translator.getLocaleMessage("email.subscribe.subject"));
+            helper.setFrom(sender);
+            helper.setTo(user.getEmail());
+            emailSender.send(message);
+            log.info("Email with updates was sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            log.error("Error sending email", e);
+        }
     }
 }
