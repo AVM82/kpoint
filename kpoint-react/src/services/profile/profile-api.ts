@@ -84,6 +84,20 @@ class ProfileApi {
     );
   }
 
+  public changePassword(payload: {
+    oldPassword: string;
+    newPassword: string;
+  }): Promise<ApiResponseType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/profile/changePassword`,
+      {
+        method: HttpMethod.PATCH,
+        payload: JSON.stringify(payload),
+        contentType: ContentType.JSON,
+      },
+    );
+  }
+
   public existsEmail(payload: {
     email: string;
   }): Promise<ApiResponseType> {
