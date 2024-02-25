@@ -7,6 +7,7 @@ import {
   Chip,
   Container,
   Grid,
+  IconButton,
   TextField,
   Typography,
 } from '@mui/material';
@@ -18,14 +19,15 @@ import {
 } from 'components/common/common';
 import { useAppDispatch } from 'hooks/hooks';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { editProject } from 'store/projects/actions';
 import {
+  addTagLocally,
+  deleteTagLocally,
   editDescriptionLocally,
   editTitleLocally,
 } from 'store/projects/reducer';
@@ -43,11 +45,6 @@ import { ProjectSocials } from './project-socials';
 //   };
 // }
 
-type ChipTag = {
-  key: number;
-  tag: string;
-};
-
 const ProjectReworked: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -57,15 +54,22 @@ const ProjectReworked: FC = () => {
   const [descriptionClicked, setDescriptionClicked] = useState(false);
   const [tagsClicked, setTagsClicked] = useState(false);
   const [testEditForm, setTestEditForm] = useState<object>({});
+  const [showButton, setShowButton] = useState(false);
 
-  // const handleDeleteTag = (chipToDelete: ChipTag) => () => {
-  //   setChipTags((chips) =>
-  //     chips.filter((chip: ChipTag): boolean => chip.key !== chipToDelete.key),
-  //   );
-  //   projectData.tags = projectData.tags.filter(
-  //     (tag: string): boolean => tag !== chipToDelete.tag,
-  //   );
-  // };
+  const handleDeleteTag = (tag: string): void => {
+    const bodyData = [];
+    bodyData.push({ op: 'replace', path: '/tags', value: [] });
+
+    project.tags.forEach((item) => {
+      if (item !== tag) {
+        bodyData.push({ op: 'add', path: '/tags/-', value: item });
+      }
+    });
+
+    const id = project.projectId;
+    dispatch(editProject({ id, bodyData }));
+    dispatch(deleteTagLocally(tag));
+  };
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
@@ -96,52 +100,63 @@ const ProjectReworked: FC = () => {
     };
   }, []);
 
-  const getChipTags = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ): ChipTag[] => {
-    const result: ChipTag[] = [];
-    for (let i = 0; i < project.tags.length; i++) {
-      result.push({ key: i, tag: e.target.value });
-    }
-
-    return result;
-  };
-
   const changeHandler = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ): void => {
-    setTestEditForm({ [e.target.name]: getChipTags(e) });
+    setTestEditForm({ [e.target.name]: e.target.value });
   };
 
   const changeHandlerPhoto = (field: string, file: string | File): void => {
-    console.log(field + '' + file);
+    toast.success(field + '' + file);
+  };
+
+  const createBodyData = (
+    itemName: string,
+  ): { op: string; path: string; value: string | string[] }[] => {
+    const bodyData = [];
+
+    if (itemName === 'tags') {
+      bodyData.push({ op: 'replace', path: '/tags', value: project.tags });
+      Object.keys(testEditForm).forEach((item) => {
+        const key: string = item;
+
+        bodyData.push({
+          op: 'add',
+          path: '/tags/-',
+          value: testEditForm[key as keyof typeof testEditForm] || null,
+        });
+      });
+    } else {
+      Object.keys(testEditForm).forEach((item) => {
+        const key: string = item;
+
+        bodyData.push({
+          op: 'replace',
+          path: `/${key}`,
+          value: testEditForm[key as keyof typeof testEditForm] || null,
+        });
+      });
+    }
+
+    return bodyData;
   };
 
   const submitHandler = async (
     event: React.FormEvent<HTMLFormElement>,
-    actionType: string,
     itemName: string,
   ): Promise<void> => {
     event.preventDefault();
-    console.log(actionType);
 
-    // if (itemName === 'tag') setTestEditForm({ [itemName]: getChipTags() });
-
-    console.log(testEditForm);
-
-    const bodyData = Object.keys(testEditForm).map((item) => {
-      const key: string = item;
-
-      return {
-        op: itemName === 'tags' ? 'add' : 'replace',
-        path: `/${key}`,
-        value: testEditForm[key as keyof typeof testEditForm] || null,
-      };
-    });
+    const bodyData = createBodyData(itemName);
 
     const id = project.projectId;
 
-    console.log(bodyData);
+    if (project.tags.length >= 5) {
+      toast.warn('Тегів може бути не більше 5');
+
+      return;
+    }
+
     dispatch(editProject({ id, bodyData }));
 
     if (itemName === 'title') {
@@ -150,6 +165,9 @@ const ProjectReworked: FC = () => {
     } else if (itemName === 'description') {
       dispatch(editDescriptionLocally(bodyData[0].value));
       setDescriptionClicked(!descriptionClicked);
+    } else if (itemName === 'tags') {
+      dispatch(addTagLocally(bodyData[1].value as string));
+      setTagsClicked(!tagsClicked);
     }
   };
 
@@ -189,7 +207,6 @@ const ProjectReworked: FC = () => {
                     <InputField
                       onChange={changeHandler}
                       onSubmit={submitHandler}
-                      actionType="edit"
                       placeholder={project && project.title}
                       itemName="title"
                     />
@@ -250,21 +267,37 @@ const ProjectReworked: FC = () => {
                     flexShrink={0}
                   >
                     {project.tags.map((tag, index) => (
-                      <Chip
-                        key={index}
-                        label={tag}
-                        variant="outlined"
-                        sx={{
-                          fontFamily: 'Roboto',
-                          fontWeight: 400,
-                          fontSize: '13px',
-                          lineHeight: '18px',
-                          letterSpacing: '0.16px',
-                          color: '#4F4F4F',
-                          margin: '5px',
-                          maxWidth: '20%',
-                        }}
-                      />
+                      <>
+                        <Chip
+                          key={index}
+                          label={tag}
+                          variant="outlined"
+                          sx={{
+                            fontFamily: 'Roboto',
+                            fontWeight: 400,
+                            fontSize: '13px',
+                            lineHeight: '18px',
+                            letterSpacing: '0.16px',
+                            color: '#4F4F4F',
+                            margin: '5px',
+                            maxWidth: '20%',
+                            cursor: 'pointer',
+                          }}
+                          onMouseEnter={(): void => setShowButton(!showButton)}
+                        />
+                        {showButton && (
+                          <IconButton
+                            size="small"
+                            className={tag}
+                            onClick={(): void => {
+                              setShowButton(!showButton);
+                              handleDeleteTag(tag);
+                            }}
+                          >
+                            -
+                          </IconButton>
+                        )}
+                      </>
                     ))}
                   </Box>
                   <Box
@@ -281,7 +314,6 @@ const ProjectReworked: FC = () => {
                       onSubmit={submitHandler}
                       onChange={changeHandler}
                       itemName="tags"
-                      actionType="edit"
                       placeholder="Введіть назву тега"
                     />
                   )}
@@ -420,7 +452,6 @@ const ProjectReworked: FC = () => {
               <InputField
                 onChange={changeHandler}
                 onSubmit={submitHandler}
-                actionType="edit"
                 placeholder={project.description}
                 itemName="description"
               />

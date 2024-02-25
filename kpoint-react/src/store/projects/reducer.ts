@@ -60,8 +60,13 @@ const projectSlice = createSlice({
   name: 'project',
   initialState,
   reducers: {
-    addTagLocally: (state, action: PayloadAction<string[]>) => {
-      state.project.tags = action.payload;
+    addTagLocally: (state, action: PayloadAction<string>) => {
+      state.project.tags.push(action.payload);
+    },
+    deleteTagLocally: (state, action: PayloadAction<string>) => {
+      state.project.tags = state.project.tags.filter(
+        (tag) => tag !== action.payload,
+      );
     },
     editTitleLocally: (state, action) => {
       state.project.title = action.payload;
@@ -117,6 +122,7 @@ const projectSlice = createSlice({
 });
 const {
   addTagLocally,
+  deleteTagLocally,
   editTitleLocally,
   editDescriptionLocally,
   editLogoLocally,
@@ -125,6 +131,7 @@ const projectReducer = projectSlice.reducer;
 
 export {
   addTagLocally,
+  deleteTagLocally,
   editDescriptionLocally,
   editLogoLocally,
   editTitleLocally,

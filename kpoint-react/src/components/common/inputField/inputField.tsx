@@ -8,12 +8,7 @@ interface IInputField {
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  onSubmit: (
-    event: React.FormEvent<HTMLFormElement>,
-    actionType: string,
-    itemName: string,
-  ) => void;
-  actionType: string;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>, itemName: string) => void;
   itemName: string;
 }
 
@@ -22,7 +17,6 @@ export const InputField: FC<IInputField> = ({
   placeholder,
   onChange,
   onSubmit,
-  actionType,
   itemName,
 }) => {
   const { t } = useTranslation();
@@ -38,7 +32,7 @@ export const InputField: FC<IInputField> = ({
         id={id ? `${id}` : ''}
         name={itemName}
         className="input__form"
-        onSubmit={(e): void => onSubmit(e, actionType, itemName)}
+        onSubmit={(e): void => onSubmit(e, itemName)}
       >
         {itemName === 'description' ? (
           <textarea
