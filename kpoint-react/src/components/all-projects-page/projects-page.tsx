@@ -1,17 +1,16 @@
 import SyncTwoToneIcon from '@mui/icons-material/SyncTwoTone';
+import { Container } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-import styles from '../app/style.module.scss';
 import { ProjectCard } from './project-card';
+import { ProjectsPageHeader } from './projects-page-haeder';
 
 const ProjectsPage: FC = () => {
   const { t } = useTranslation();
@@ -19,12 +18,13 @@ const ProjectsPage: FC = () => {
 
   const maxPageElements = 5;
 
-  const { projects } = useAppSelector(({ project }) => ({
+  const { projects  } = useAppSelector(({ project }) => ({
     projects: project.projects,
   }));
 
-  const [page, setPage] = useState(1);
+  const isAuthenticated = useAppSelector((state) => state.token.isloggedIn);
 
+  const [page, setPage] = useState(1);
   useLayoutEffect(() => {
     dispatch(
       projectAction.getAllProjectsDefault({
@@ -32,7 +32,8 @@ const ProjectsPage: FC = () => {
         number: page - 1,
       }),
     );
-  }, [dispatch, page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
@@ -55,14 +56,8 @@ const ProjectsPage: FC = () => {
   };
 
   return (
-    <div className={styles.div}>
-      <Typography variant="h3" align="center">
-        {t('projects')}
-      </Typography>
-      <TextField
-        label={t('search_field')}
-        sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
-      ></TextField>
+    <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
+      <ProjectsPageHeader />
       <Grid
         container
         spacing={5}
@@ -70,14 +65,17 @@ const ProjectsPage: FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {projects?.content.map((project) => (
-          <Grid item>
+        {projects?.content?.map((project) => (
+          <Grid item key={project.projectId}>
             <ProjectCard
+              projectId={project.projectId}
               url={project.url}
               title={project.title}
               summary={project.summary}
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
+              isAuthenticated={isAuthenticated}
+              isFollowed={project.isFollowed}
             />
           </Grid>
         ))}
@@ -107,7 +105,7 @@ const ProjectsPage: FC = () => {
         showLastButton
         sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
       />
-    </div>
+    </Container>
   );
 };
 

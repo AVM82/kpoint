@@ -1,20 +1,24 @@
 package ua.in.kp.service;
 
-import lombok.RequiredArgsConstructor;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.in.kp.dto.ApiResponse;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.UserEntity;
 import ua.in.kp.enumeration.UserRole;
+import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.ApplicantRepository;
 import ua.in.kp.repository.TagRepository;
@@ -23,7 +27,6 @@ import ua.in.kp.repository.UserRepository;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
 public class UserService {
@@ -34,6 +37,26 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService customUserDetailsService;
     private final ApplicantRepository applicantRepository;
+    private final Translator translator;
+    private final MeterRegistry meterRegistry;
+
+    public UserService(UserRepository userRepository, TagRepository tagRepository,
+                       UserMapper userMapper, PasswordEncoder passwordEncoder,
+                       UserDetailsService customUserDetailsService, ApplicantRepository applicantRepository,
+                       Translator translator, MeterRegistry meterRegistry) {
+        this.userRepository = userRepository;
+        this.tagRepository = tagRepository;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.customUserDetailsService = customUserDetailsService;
+        this.applicantRepository = applicantRepository;
+        this.translator = translator;
+        this.meterRegistry = meterRegistry;
+
+        Gauge.builder("users_count", userRepository::count)
+                .description("A current number of users in the system")
+                .register(meterRegistry);
+    }
 
     @Transactional
     public UserResponseDto create(UserRegisterRequestDto dto) {
@@ -72,10 +95,7 @@ public class UserService {
     }
 
     public UserResponseDto getByEmailFetchTagsSocialsRoles(String email) {
-        UserEntity userFromDb = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Can't find user by email " + email));
-        return userMapper.toDto(userFromDb);
+        return userMapper.toDto(getByEmail(email));
     }
 
     @Transactional
@@ -83,7 +103,8 @@ public class UserService {
         log.info("banUserById {}", userId);
         UserEntity userFromDb = userRepository.findById(userId).orElseThrow(() -> {
             log.warn("Can't find user by id {}", userId);
-            return new UsernameNotFoundException("Can't find user by id " + userId);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "id", userId));
         });
         userRepository.delete(userFromDb);
         return userMapper.toDto(userFromDb);
@@ -95,19 +116,18 @@ public class UserService {
         userRepository.unBanUserByIdForAdmin(userId);
         UserEntity userFromDb = userRepository.findByIdForAdmin(userId).orElseThrow(() -> {
             log.warn("Can't find user by id {}", userId);
-            return new UsernameNotFoundException("Can't find user by id " + userId);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "id", userId));
         });
         return userMapper.toDto(userFromDb);
     }
 
-    public UserEntity getUserEntityByUsernameFetchedTagsFavouriteAndOwnedProjects(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by username " + username));
-    }
-
-    public UserEntity getUserEntityByUsernameFetchedOwnedProjects(String username) {
-        return userRepository.findByUsernameFetchProjectsOwned(username).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by username " + username));
+    public UserEntity getByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> {
+            log.warn("Can't find user by email {}", email);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "email", email));
+        });
     }
 
     public Page<ProjectEntity> getUserEntityByUsernameFetchedFavouriteProjects(String username, Pageable pageable) {
@@ -115,12 +135,47 @@ public class UserService {
     }
 
     public UserEntity getByUsername(String username) {
-        return userRepository.findByUsernameFetchNothing(username).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by username " + username));
+        return userRepository.findByUsernameFetchNothing(username).orElseThrow(() -> {
+            log.warn("Can't find user by username {}", username);
+            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                    "exception.user.not-found", "username", username));
+        });
     }
 
-    public UserEntity getByUsernameFetchTagsSocials(String username) {
-        return userRepository.findByUsernameFetchTagsSocials(username).orElseThrow(() ->
-                new UsernameNotFoundException("Can't find user by username " + username));
+    public boolean checkIfValidOldPassword(UserEntity user, String oldPassword) {
+        return passwordEncoder.matches(oldPassword, user.getPassword());
+    }
+
+    @Transactional
+    public void changeUserPassword(UserEntity user, String newPassword) {
+        log.info("Change password for user {}", user.getUsername());
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public UserEntity getById(String id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                        "exception.user.not-found", "id", id)));
+    }
+
+    public ApiResponse verifyExistsEmail(String email) {
+        log.info("verifyExistsEmail {}", email);
+        if (!existsByEmail(email)) {
+            log.warn("User with email {} not found", email);
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "User with email " + email + " not found");
+        }
+        return new ApiResponse(translator.getLocaleMessage(
+                "exception.user.register-email-failed", email));
+    }
+
+    public ApiResponse verifyExistsUsername(String username) {
+        log.info("verifyExistsUsername {}", username);
+        if (!userRepository.existsByUsername(username)) {
+            log.warn("User {} not found", username);
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "User " + username + " not found");
+        }
+        return new ApiResponse(translator.getLocaleMessage(
+                "exception.user.register-username-failed", username));
     }
 }

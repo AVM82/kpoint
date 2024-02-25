@@ -12,13 +12,14 @@
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^1.9.7",
     "i18next": "^23.7.18",
+    "query-string": "^8.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-button": "^0.7.2",
     "react-hook-form": "^7.49.3",
     "react-i18next": "^14.0.1",
     "react-redux": "^8.1.0",
-    "react-router-dom": "^6.21.3",
+    "react-router-dom": "^6.22.0",
     "react-scripts": "^5.0.1",
     "react-toastify": "^10.0.3",
     "speakingurl": "^14.0.1",
@@ -61,7 +62,6 @@
     "lint:editorconfig": "editorconfig-checker",
     "lint:fs": "ls-lint",
     "lint:css": "npx stylelint \"src/**/*.scss\"",
-
     "lint:type": "npx tsc --noEmit",
     "lint:fix": "npm run lint -- --fix",
     "lint": "npm run lint:editorconfig && npm run lint:fs && npm run lint:css && npm run lint:js && npm run lint:type"

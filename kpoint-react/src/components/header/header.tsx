@@ -1,4 +1,4 @@
-import { AppBar, Box } from '@mui/material';
+import { AppBar, Box, Grid } from '@mui/material';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { FC, useState } from 'react';
@@ -29,49 +29,42 @@ const Header: FC = () => {
       elevation={0}
       position="static"
     >
-      <Box
-        display={'flex'}
-        justifyContent={'space-between'}
-        alignItems={'center'}
-      >
-        <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
-          <Link
-            href="/"
-            underline="none"
-            color="#21272A"
-            sx={{ margin: 1 }}
-            fontSize={16}
-          >
-            {t('projects')}
-          </Link>
-          <Link
-            href="#"
-            underline="none"
-            color="#21272A"
-            sx={{ margin: 1 }}
-            fontSize={16}
-          >
-            {t('about_us')}
-          </Link>
-        </Box>
-        <Typography
-          variant="h1"
-          align="center"
-          fontSize={24}
-          fontWeight={700}
-          color={'black'}
-          sx={{ cursor: 'pointer' }}
-          onClick={handleTitleClick}
+
+      <Box>
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="space-between"
         >
-          K-POINTS
-        </Typography>
-        <Box
-          display={'flex'}
-          justifyContent={'space-between'}
-          alignItems={'center'}
-        >
-          <HeaderButtons isTitleClicked={isTitleClicked} />
-        </Box>
+          <Grid item xs={5}>
+            <Box display="flex" alignItems="center">
+              <Link href="/" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
+                {t('projects')}
+              </Link>
+              <Link href="#" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
+                {t('about_us')}
+              </Link>
+            </Box>
+          </Grid>
+          <Grid item xs={2} container justifyContent="center">
+            <Typography
+              variant="h1"
+              align="center"
+              fontSize={24}
+              fontWeight={700}
+              color={'black'}
+              sx={{ cursor: 'pointer', textAlign: 'center' }} // Center the title within the grid cell
+              onClick={handleTitleClick}
+            >
+        K-POINTS
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <Box display="flex" justifyContent="flex-end" alignItems="center">
+              <HeaderButtons isTitleClicked={isTitleClicked} />
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
     </AppBar>
   );

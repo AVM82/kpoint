@@ -1,8 +1,8 @@
 package ua.in.kp.service;
 
-import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,6 +13,8 @@ import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
 import ua.in.kp.entity.ApplicantEntity;
 import ua.in.kp.entity.UserEntity;
+import ua.in.kp.exception.ApplicationException;
+import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ApplicantMapper;
 import ua.in.kp.repository.ApplicantRepository;
 import ua.in.kp.security.JwtUtil;
@@ -26,11 +28,13 @@ public class AuthService {
     private final ApplicantMapper applicantMapper;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final Translator translator;
 
     public UserResponseDto register(UserRegisterRequestDto requestDto) {
         if (userService.existsByEmail(requestDto.email())) {
-            throw new EntityExistsException(
-                    "User with email " + requestDto.email() + " already exist");
+            log.warn("User with email {} already exist", requestDto.email());
+            throw new ApplicationException(HttpStatus.CONFLICT, translator.getLocaleMessage(
+                    "exception.user.register-email-failed", requestDto.email()));
         }
         return userService.create(requestDto);
     }

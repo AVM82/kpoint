@@ -7,40 +7,28 @@ import { NavbarButton } from './navbarButton';
 
 const Navbar: FC = () => {
   const dispatch = useAppDispatch();
-  // const [testUser, setTestUser] = useState<UserType>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [page, setPage] = useState(1);
-
+  const [activeButton, setActiveButton] = useState('myProjects');
   const maxPageElements = 4;
 
-  // useEffect(() => {
-  //   const user = storage.getItem(StorageKey.USER);
-
-  //   if (user) setTestUser(JSON.parse(user));
-  // }, []);
-
   const handleMyProjectsClick = async (): Promise<void> => {
-    const value = 0;
     await dispatch(
       profileAction.getMyProjects({
         size: maxPageElements,
         number: 0,
       }),
     );
-    setPage(value);
+    setActiveButton('myProjects');
   };
 
-  /*const handleFavoritesClick = (event: ChangeEvent<unknown>): void => {
-    const value = Number((event.currentTarget as HTMLButtonElement).value);
-    dispatch(profileAction.getFavoritesProjects({ size: maxPageElements, number: (value - 1) }));
-    setPage(value);
+  const handleFavoritesClick = async (): Promise<void> => {
+    await dispatch(profileAction.getFavoriteProjects({ size: maxPageElements, number: 0 }));
+    setActiveButton('favoriteProjects');
   };
 
-  const handleRecommendedClick = (event: ChangeEvent<unknown>): void => {
-    const value = Number((event.currentTarget as HTMLButtonElement).value);
-    dispatch(profileAction.getRecommendedProjects({ size: maxPageElements, number: (value - 1) }));
-    setPage(value);
-  };*/
+  const handleRecommendedClick = async (): Promise<void> => {
+    await dispatch(profileAction.getRecommendedProjects({ size: maxPageElements, number:0 }));
+    setActiveButton('recommendedProjects');
+  };
 
   return (
     <Box
@@ -53,15 +41,18 @@ const Navbar: FC = () => {
     >
       <NavbarButton
         label="Мої Проєкти"
+        isActive={activeButton === 'myProjects'}
         onClick={(): Promise<void> => handleMyProjectsClick()}
       ></NavbarButton>
       <NavbarButton
         label="Улюблені проєкти"
-        onClick={(): Promise<void> => handleMyProjectsClick()}
+        isActive={activeButton === 'favoriteProjects'}
+        onClick={(): Promise<void> => handleFavoritesClick()}
       ></NavbarButton>
       <NavbarButton
         label="Рекомендовані проєкти"
-        onClick={(): Promise<void> => handleMyProjectsClick()}
+        isActive={activeButton === 'recommendedProjects'}
+        onClick={(): Promise<void> => handleRecommendedClick()}
       ></NavbarButton>
     </Box>
   );

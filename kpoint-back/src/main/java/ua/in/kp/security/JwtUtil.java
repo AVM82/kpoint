@@ -4,10 +4,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import ua.in.kp.exception.SubjectEncryptionException;
+import ua.in.kp.exception.ApplicationException;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +18,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtil {
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String HEADER_NAME = "Authorization";
@@ -61,7 +64,8 @@ public class JwtUtil {
         try {
             return Encryptor.decrypt(getClaims(token).getSubject());
         } catch (Exception e) {
-            throw new SubjectEncryptionException("Can't decrypt subject from token", e);
+            log.warn("Can't decrypt subject from token", e);
+            throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Can't decrypt subject from token");
         }
     }
 

@@ -56,9 +56,13 @@ const suggestionSlice = createSlice({
       })
       .addCase(getAllSuggestionsAddMore.fulfilled, (state, { payload }) => {
         if (state.suggestions != null) {
+          const uniquePayloadContent = payload?.content
+            ? payload.content.filter((item) =>
+              !state.suggestions?.content.some((existingItem) => existingItem.id === item.id))
+            : [];
           state.suggestions.content = [
             ...state.suggestions.content,
-            ...(payload?.content ?? []),
+            ...uniquePayloadContent,
           ];
         }
       })
@@ -67,7 +71,10 @@ const suggestionSlice = createSlice({
       })
       .addCase(createNew.fulfilled, (state, { payload }) => {
         state.editSuggestion = payload;
-        state.status = true;
+
+        if(state.suggestions != null){
+          state.suggestions.content.unshift(payload);
+        }
       })
       .addCase(updateLikeById.rejected, (state) => {
         state.editSuggestion = null;

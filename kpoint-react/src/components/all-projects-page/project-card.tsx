@@ -1,6 +1,5 @@
 import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
 import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
-import ControlPointTwoToneIcon from '@mui/icons-material/ControlPointTwoTone';
 import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone';
 import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
 import ShareTwoToneIcon from '@mui/icons-material/ShareTwoTone';
@@ -18,17 +17,21 @@ import Typography from '@mui/material/Typography';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { SubscribeButton } from './subscribe-button';
+
 interface ProjectsProps {
+  projectId: string;
   url: string;
   title: string;
   summary: string;
   logoImgUrl: string;
   tags: [];
+  isAuthenticated: boolean;
+  isFollowed: boolean;
 }
 
-const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
-  logoImgUrl, tags }) => {
-
+const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
+  logoImgUrl, tags, isAuthenticated, isFollowed  }) => {
   const { t } = useTranslation();
 
   return (
@@ -49,10 +52,11 @@ const ProjectCard: FC<ProjectsProps> = ({ url, title, summary,
             aria-label="outlined button group" sx={{ margin: 1 }}>
             <Button size="small" startIcon={ <PeopleAltTwoToneIcon/> }
               sx={{ justifyContent: 'right' }}>{t('buttons.help')}</Button>
-            <Button size="small" startIcon={ <ControlPointTwoToneIcon/> }
-              sx={{ justifyContent: 'right' }}>{t('buttons.follow')}</Button>
+            {<SubscribeButton projectId={projectId}
+              isAuthenticated={isAuthenticated} isFollowed={isFollowed ?? false}/>}
             <Button size="small" startIcon={ <MonetizationOnTwoToneIcon/> }
-              sx={{ justifyContent: 'right' }}>{t('buttons.donate_projects_page')}</Button>
+              sx={{ justifyContent: 'right' }}>
+              {t('buttons.donate_projects_page')}</Button>
           </ButtonGroup></Grid>
         </Grid>
       </CardMedia>

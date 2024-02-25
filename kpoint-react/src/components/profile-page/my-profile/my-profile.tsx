@@ -1,259 +1,263 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable indent */
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Grid,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Button, FormLabel, Grid, TextField } from '@mui/material';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { storage } from 'services/services';
+import { profileAction } from 'store/actions';
 
-import profileImg from '../../../profile-img-test.svg';
-import { MyProfileMenuButton } from './my-profile-button';
+import { ProfileType } from '../../../common/types/types';
+import { useAppDispatch } from '../../../hooks/hooks';
+import { ProfileLayout } from '../profile-layout/profile-layout';
+
+const DEFAULT_FORM_VALUES = { firstName: '', lastName: '', email: '', username: '' };
 
 const MyProfile: FC = () => {
-  const [testUser, setTestUser] = useState<UserType>();
-  const [testEditForm, setTestEditForm] = useState<{
-    firstName: string;
-    lastName: string;
-  }>({ firstName: '', lastName: '' });
+  const { t } = useTranslation();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setTestEditForm((prev) => ({
+  const [user, setUser]
+    = useState<UserType>();
+
+  const [editForm, setEditForm]
+    = useState<ProfileType>(DEFAULT_FORM_VALUES);
+
+  useEffect(() => {
+    const currentUser = storage.getItem(StorageKey.USER);
+
+    if (currentUser) {
+      const userJson = JSON.parse(currentUser);
+      setUser(userJson);
+      setEditForm({
+        firstName: userJson.firstName,
+        lastName: userJson.lastName,
+        username: userJson.username,
+        email: userJson.email,
+      });
+    }
+  }, []);
+
+  const dispatch = useAppDispatch();
+
+  const handleChange = (field: string, value: string | File): void => {
+    setEditForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [field]: value,
     }));
   };
 
-  useEffect(() => {
-    const user = storage.getItem(StorageKey.USER);
-
-    if (user) setTestUser(JSON.parse(user));
-  }, []);
-
-  const handleClick = (itemName: string): void => {
-    switch (itemName) {
-      case 'myProjects':
-        // navigate('/userName');
-        break;
-      case 'newProject':
-        // navigate('/projects/new');
-        break;
-      case 'settings':
-        // navigate('/settings/profile');
-        break;
-      default:
-        break;
-    }
+  const handleReset = (): void => {
+    setEditForm({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      username: user?.username || '',
+      email: user?.email || '',
+    });
   };
-
-  // const handleSubmit = async (e: React.MouseEvent): Promise<void> => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:5001/api/profile/${testUser?.username}/settings`,
-  //       {
-  //         method: 'PUT',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify(testEditForm),
-  //       },
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error('Failed to update profile settings');
-  //     }
-
-  //     console.log('Profile settings updated successfully');
-  //   } catch (error) {
-  //     console.error('Error updating profile settings:', error.message);
-  //   }
-  // };
 
   const handleSubmit = async (e: React.MouseEvent): Promise<void> => {
     e.preventDefault();
 
-    try {
-      const response = await fetch(
-        `http://localhost:5001/api/profile/${testUser?.username}/settings`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(testEditForm),
-        },
-      );
+    const validationErrors = validateForm(editForm);
 
-      if (!response.ok) {
-        throw new Error('Failed to update profile settings');
+    const changedFields = verifyChangedFields(editForm);
+
+    if (Object.keys(validationErrors).length === 0) {
+      setErrors({});
+    } else {
+      setErrors(validationErrors);
+    }
+
+    if (user && Object.keys(validationErrors).length === 0 && Object.keys(changedFields).length > 0) {
+
+      try {
+
+        const bodyData = Object.keys(editForm)
+          .filter((item) =>  changedFields[item] )
+          .map((item) => {
+            const key: string = item;
+
+            return { op: 'replace', path: `/${key}`, value: editForm[key as keyof typeof editForm] || null };
+          });
+
+        dispatch(profileAction.updateMyProfile({ body: bodyData }))
+          .unwrap()
+          .then((action): void => {
+
+            setEditForm(() => ({
+              firstName: action.firstName,
+              lastName: action.lastName,
+              email: action.email,
+              username: action.username,
+            }));
+
+            setUser((user) => {
+              if (user) {
+                user['firstName'] = action.firstName;
+                user['lastName'] = action.lastName;
+                user['email'] = action.email;
+                user['username'] = action.username;
+              }
+
+              // Store the updated user object back in storage
+              storage.setItem(StorageKey.USER, JSON.stringify(user));
+
+              return user;
+            });
+          })
+          .catch((reason) => {
+            toast.error(`Can\\'t update profile, because: ${reason}`);
+          });
+
+      } catch (error) {
+        toast.error('Error updating profile settings:', error.message);
       }
-
-      // Parse the response JSON
-      const updatedSettings = await response.json();
-
-      // Update the state with the new values
-
-      setTestEditForm((prev) => ({
-        // ...prev!,
-        firstName: updatedSettings.firstName,
-        lastName: updatedSettings.lastName,
-      }));
-
-      const storedUserString = storage.getItem(StorageKey.USER);
-
-      if (storedUserString) {
-        // Parse the user object from the stored string
-        let storedUser: UserType = JSON.parse(storedUserString);
-
-        // Update the firstName and lastName properties using destructuring
-        storedUser = {
-          ...storedUser,
-          firstName: updatedSettings.firstName,
-          lastName: updatedSettings.lastName,
-        };
-
-        // Store the updated user object back in storage
-        storage.setItem(StorageKey.USER, JSON.stringify(storedUser));
-      }
-    } catch (error) {
-      toast.error('Error updating profile settings:', error.message);
     }
   };
 
-  const handleLogout = (): void => {
-    storage.removeItem(StorageKey.TOKEN);
-    storage.removeItem(StorageKey.USER);
-    window.location.href = '/';
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleFieldFocus = (field: string): void => {
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
+  };
+
+  const validateForm = (data: ProfileType): Record<string, string> => {
+
+    const errors: Record<string, string> = {};
+
+    // eslint-disable-next-line max-len
+    const emailRegx =  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if(!emailRegx.test(data.email) || data.email.trim() === '') {
+      errors.email = 'Invalid email';
+    }
+
+    if (data.username.trim().length < 2) {
+      errors.username = 'Invalid username';
+    }
+
+    if (data.firstName.trim().length === 0) {
+      errors.firstName = 'Invalid firstName';
+    }
+
+    if (data.lastName.trim().length === 0) {
+      errors.lastName = 'Invalid lastName';
+    }
+
+    if (errors.email === undefined && data.email.trim() !== user?.email.trim()){
+      // dispatch(profileAction.existsEmail({ email: data.email.trim() }))
+      //   .unwrap()
+      //   .then((action): void => {
+      //     errors.email = action.message;
+      //     toast.error(action.message);
+      //   });
+    }
+
+    if (errors.username === undefined && data.username.trim() !== user?.username.trim()){
+      // dispatch(profileAction.existsUsername({ username: data.username.trim() }))
+      //   .unwrap()
+      //   .then((action): void => {
+      //     errors.username = action.message;
+      //     toast.error(action.message);
+      //   });
+    }
+
+    return errors;
+  };
+
+  const verifyChangedFields = (data: ProfileType): Record<string, string> => {
+    const changed: Record<string, string> = {};
+
+    if (data.email.trim() !== user?.email.trim()){
+      changed.email = data.email.trim();
+    }
+
+    if (data.username.trim() !== user?.username.trim()){
+      changed.username = data.username.trim();
+    }
+
+    if (data.firstName.trim() !== user?.firstName.trim()){
+      changed.firstName = data.firstName.trim();
+    }
+
+    if (data.lastName.trim() !== user?.lastName.trim()){
+      changed.lastName = data.lastName.trim();
+    }
+
+    return changed;
   };
 
   return (
-    <Box
-      display={'flex'}
-      flexDirection={'column'}
-      sx={{ width: '100%', padding: '0 80px', margin: '75px 0 220px 0' }}
-      flexGrow={1}
-    >
+    <ProfileLayout>
       <Box
         display={'flex'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        sx={{
-          borderBottom: '2px solid black',
-          width: '100%',
-          marginBottom: '60px',
-        }}
+        component={'form'}
+        onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
+          handleSubmit(e)
+        }
       >
-        <Typography
-          variant="h2"
-          fontSize={'36px'}
-          lineHeight={'110%'}
-          color={'#21272A'}
-          paddingBottom={'16px'}
-          textAlign={'center'}
-          width={'30%'}
-        >
-          Мій профіль
-        </Typography>
-      </Box>
-      <Box
-        display={'flex'}
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        gap={'150px'}
-        margin={'0 50px'}
-      >
-        <Box display={'flex'} flexDirection={'column'} minWidth={'221px'}>
-          <Box component={'img'} alt="avatar" src={profileImg}></Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '5px',
-              marginTop: '20px',
-            }}
-          >
-            <MyProfileMenuButton
-              label="Профіль"
-              onClick={(): void => handleClick('profile')}
+        <Grid container spacing={2}>
+          <Grid item xs={3} md={6}>
+            <FormLabel>{t('email')}</FormLabel>
+            <TextField
+              fullWidth
+              name="email"
+              value={editForm.email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void => handleChange(e.target.name, e.target.value)}
+              onFocus={(): void => handleFieldFocus('email')}
+              error={!!errors.email}
+              helperText={errors.email}
             />
-            <MyProfileMenuButton
-              label="Налаштування профіля"
-              onClick={(): void => handleClick('profileSettings')}
-            />
-            <MyProfileMenuButton
-              label="Параметри"
-              onClick={(): void => handleClick('params')}
-            />
-            <MyProfileMenuButton
-              label="Зміна пароля"
-              onClick={(): void => handleClick('changePassword')}
-            />
-            <MyProfileMenuButton label="Вихід" onClick={handleLogout} />
-          </Box>
-        </Box>
-        <Box
-          display={'flex'}
-          component={'form'}
-          onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
-            handleSubmit(e)
-          }
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Ім'я</FormLabel>
-              <TextField
-                fullWidth
-                name="firstName"
-                placeholder={testUser?.firstName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                  handleChange(e)
-                }
-              />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Прізвище</FormLabel>
-              <TextField
-                fullWidth
-                name="lastName"
-                placeholder={testUser?.lastName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                  handleChange(e)
-                }
-              />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Email</FormLabel>
-              <TextField fullWidth placeholder={testUser?.email} />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Пароль</FormLabel>
-              <TextField fullWidth defaultValue={'Password'} />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Країна</FormLabel>
-              <TextField fullWidth defaultValue={'Країна'} />
-            </Grid>
-            <Grid item xs={3} md={6}>
-              <FormLabel>Місто</FormLabel>
-              <TextField fullWidth defaultValue={'Місто'} />
-            </Grid>
           </Grid>
-          <Button sx={{ alignSelf: 'end', marginTop: '56px' }} type="submit">
-            Зберегти
-          </Button>
-        </Box>
+          <Grid item xs={3} md={6}>
+            <FormLabel>{t('username')}</FormLabel>
+            <TextField
+              fullWidth
+              name="username"
+              value={editForm['username']}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void => handleChange(e.target.name, e.target.value)}
+              onFocus={(): void => handleFieldFocus('username')}
+              error={!!errors.username}
+              helperText={errors.username}
+            />
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <FormLabel>{t('first_name')}</FormLabel>
+            <TextField
+              fullWidth
+              name="firstName"
+              value={editForm['firstName']}
+              onChange={(e): void => handleChange(e.target.name, e.target.value)}
+              onFocus={(): void => handleFieldFocus('firstName')}
+              error={!!errors.firstName}
+              helperText={errors.firstName}
+            />
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <FormLabel>{t('last_name')}</FormLabel>
+            <TextField
+              fullWidth
+              name="lastName"
+              value={editForm['lastName']}
+              onChange={(e): void => handleChange(e.target.name, e.target.value)}
+              onFocus={(): void => handleFieldFocus('lastName')}
+              error={!!errors.lastName}
+              helperText={errors.lastName}
+            />
+          </Grid>
+          <Grid item xs={3} md={6}>
+            <Button sx={{ alignSelf: 'end', marginTop: '56px',  color: 'grey' }} onClick={handleReset}>
+              {t('buttons.cancel')}
+            </Button>
+          </Grid>
+          <Grid item xs={6} textAlign={'right'}>
+            <Button sx={{ marginTop: '56px' }} type="submit">
+              {t('buttons.save')}
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
-    </Box>
+    </ProfileLayout>
   );
 };
 
