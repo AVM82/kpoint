@@ -77,6 +77,21 @@ const projectSlice = createSlice({
     editLogoLocally: (state, action) => {
       state.project.logoImgUrl = action.payload;
     },
+    subscribeToProjectLocally: (state, action) => {
+      const content = state.projects?.content;
+      const proj = content?.filter(
+        (content) => content.projectId === action.payload,
+      );
+      proj?.forEach((p) => (p.isFollowed = true));
+    },
+
+    subscribeToProjectPage: (state, action) => {
+      const content = state.project;
+
+      if (content && content?.projectId === action.payload) {
+        content.isFollowed = true;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -126,7 +141,10 @@ const {
   editTitleLocally,
   editDescriptionLocally,
   editLogoLocally,
+  subscribeToProjectLocally,
+  subscribeToProjectPage,
 } = projectSlice.actions;
+
 const projectReducer = projectSlice.reducer;
 
 export {
@@ -136,4 +154,6 @@ export {
   editLogoLocally,
   editTitleLocally,
   projectReducer,
+  subscribeToProjectLocally,
+  subscribeToProjectPage,
 };

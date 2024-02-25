@@ -17,9 +17,7 @@ import Typography from '@mui/material/Typography';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { StorageKey } from '../../common/enums/app/storage-key.enum';
-import { storage } from '../../services/services';
-import { SubscribeButton } from './SubscribeButton';
+import { SubscribeButton } from './subscribe-button';
 
 interface ProjectsProps {
   projectId: string;
@@ -29,55 +27,94 @@ interface ProjectsProps {
   logoImgUrl: string;
   tags: [];
   isAuthenticated: boolean;
+  isFollowed: boolean;
 }
 
-const ProjectCard: FC<ProjectsProps> = ({ projectId, url, title, summary,
-  logoImgUrl, tags }) => {
+const ProjectCard: FC<ProjectsProps> = ({
+  projectId,
+  url,
+  title,
+  summary,
+  logoImgUrl,
+  tags,
+  isAuthenticated,
+  isFollowed,
+}) => {
   const { t } = useTranslation();
-  const userID = storage.getItem(StorageKey.USER);
 
   return (
     <Card sx={{ maxWidth: 500 }}>
-      <CardMedia
-        sx={{ height: 200 }}
-        image={ logoImgUrl }
-        title={ title }>
-        <Grid container
+      <CardMedia sx={{ height: 200 }} image={logoImgUrl} title={title}>
+        <Grid
+          container
           direction="row"
           justifyContent="space-between"
-          alignItems="flex-start">
+          alignItems="flex-start"
+        >
           <Grid item>
-            <IconButton  href="#"><BookmarkTwoToneIcon sx={{ margin: 1, color: 'blue' }}/></IconButton>
-            <IconButton  href="#"><ShareTwoToneIcon  sx={{ margin: 1, color: 'blue' }}/></IconButton>
+            <IconButton href="#">
+              <BookmarkTwoToneIcon sx={{ margin: 1, color: 'blue' }} />
+            </IconButton>
+            <IconButton href="#">
+              <ShareTwoToneIcon sx={{ margin: 1, color: 'blue' }} />
+            </IconButton>
           </Grid>
-          <Grid item><ButtonGroup orientation="vertical" variant="text"
-            aria-label="outlined button group" sx={{ margin: 1 }}>
-            <Button size="small" startIcon={ <PeopleAltTwoToneIcon/> }
-              sx={{ justifyContent: 'right' }}>{t('buttons.help')}</Button>
-            {<SubscribeButton projectId={projectId} userID={userID ? userID : ''}/>}
-            <Button size="small" startIcon={ <MonetizationOnTwoToneIcon/> }
-              sx={{ justifyContent: 'right' }}>
-              {t('buttons.donate_projects_page')}</Button>
-          </ButtonGroup></Grid>
+          <Grid item>
+            <ButtonGroup
+              orientation="vertical"
+              variant="text"
+              aria-label="outlined button group"
+              sx={{ margin: 1 }}
+            >
+              <Button
+                size="small"
+                startIcon={<PeopleAltTwoToneIcon />}
+                sx={{ justifyContent: 'right' }}
+              >
+                {t('buttons.help')}
+              </Button>
+              {
+                <SubscribeButton
+                  projectId={projectId}
+                  isAuthenticated={isAuthenticated}
+                  isFollowed={isFollowed ?? false}
+                />
+              }
+              <Button
+                size="small"
+                startIcon={<MonetizationOnTwoToneIcon />}
+                sx={{ justifyContent: 'right' }}
+              >
+                {t('buttons.donate_projects_page')}
+              </Button>
+            </ButtonGroup>
+          </Grid>
         </Grid>
       </CardMedia>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          { title }
+          {title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          { summary }
+          {summary}
         </Typography>
       </CardContent>
       <CardActions>
         <Stack direction="row" spacing={1}>
-          {tags.map((tag) => <Chip label={'#'.concat(tag)} />)}
+          {tags.map((tag) => (
+            <Chip label={'#'.concat(tag)} />
+          ))}
         </Stack>
-        <Button size="small" endIcon={ <ArrowForwardTwoToneIcon/> } href={'projects/'.concat(url)}>
+        <Button
+          size="small"
+          endIcon={<ArrowForwardTwoToneIcon />}
+          href={'projects/'.concat(url)}
+        >
           {t('buttons.learn_more')}
         </Button>
       </CardActions>
-    </Card>);
+    </Card>
+  );
 };
 
 export { ProjectCard };

@@ -4,6 +4,7 @@ import { TestRequest } from 'common/types/projects/testRequest';
 import { ProjectsPageType, ProjectType } from 'common/types/types';
 
 import { ContentType } from '../../common/enums/file/content-type.enum';
+import { SubscribeStatusType } from '../../common/types/projects/subscribe-status.type';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import { Http } from '../http/http.service';
 
@@ -45,7 +46,6 @@ class ProjectApi {
       }`,
       {
         method: HttpMethod.GET,
-        hasAuth: false,
         queryString: {
           size: payload.size,
           page: payload.number,
@@ -124,6 +124,13 @@ class ProjectApi {
         contentType: ContentType.PATCH,
       },
     );
+  }
+
+  public checkIfSubscribed (payload: { id: string }): Promise<SubscribeStatusType> {
+    return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}/subscribe-users`, {
+      method: HttpMethod.GET,
+    // hasAuth: false,
+    });
   }
 }
 

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.in.kp.dto.ApiResponse;
 import ua.in.kp.dto.user.UserRegisterRequestDto;
 import ua.in.kp.dto.user.UserResponseDto;
 import ua.in.kp.entity.ProjectEntity;
@@ -94,13 +95,7 @@ public class UserService {
     }
 
     public UserResponseDto getByEmailFetchTagsSocialsRoles(String email) {
-        UserEntity userFromDb = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.warn("Can't find user by email {}", email);
-                    return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
-                            "exception.user.not-found", "email", email));
-                });
-        return userMapper.toDto(userFromDb);
+        return userMapper.toDto(getByEmail(email));
     }
 
     @Transactional
@@ -127,19 +122,11 @@ public class UserService {
         return userMapper.toDto(userFromDb);
     }
 
-    public UserEntity getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(String email) {
+    public UserEntity getByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> {
             log.warn("Can't find user by email {}", email);
             return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
                     "exception.user.not-found", "email", email));
-        });
-    }
-
-    public UserEntity getUserEntityByUsernameFetchedOwnedProjects(String username) {
-        return userRepository.findByUsernameFetchProjectsOwned(username).orElseThrow(() -> {
-            log.warn("Can't find user by username {}", username);
-            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
-                    "exception.user.not-found", "username", username));
         });
     }
 
@@ -149,14 +136,6 @@ public class UserService {
 
     public UserEntity getByUsername(String username) {
         return userRepository.findByUsernameFetchNothing(username).orElseThrow(() -> {
-            log.warn("Can't find user by username {}", username);
-            return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
-                    "exception.user.not-found", "username", username));
-        });
-    }
-
-    public UserEntity getByUsernameFetchTagsSocials(String username) {
-        return userRepository.findByUsernameFetchTagsSocials(username).orElseThrow(() -> {
             log.warn("Can't find user by username {}", username);
             return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
                     "exception.user.not-found", "username", username));
@@ -178,5 +157,25 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() ->
                 new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
                         "exception.user.not-found", "id", id)));
+    }
+
+    public ApiResponse verifyExistsEmail(String email) {
+        log.info("verifyExistsEmail {}", email);
+        if (!existsByEmail(email)) {
+            log.warn("User with email {} not found", email);
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "User with email " + email + " not found");
+        }
+        return new ApiResponse(translator.getLocaleMessage(
+                "exception.user.register-email-failed", email));
+    }
+
+    public ApiResponse verifyExistsUsername(String username) {
+        log.info("verifyExistsUsername {}", username);
+        if (!userRepository.existsByUsername(username)) {
+            log.warn("User {} not found", username);
+            throw new ApplicationException(HttpStatus.NOT_FOUND, "User " + username + " not found");
+        }
+        return new ApiResponse(translator.getLocaleMessage(
+                "exception.user.register-username-failed", username));
     }
 }

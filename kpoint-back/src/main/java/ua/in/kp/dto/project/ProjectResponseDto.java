@@ -1,5 +1,6 @@
 package ua.in.kp.dto.project;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Map;
@@ -45,4 +46,7 @@ public class ProjectResponseDto {
     private String goalDeadline;
 
     private Map<String, String> networksLinks;
+
+    @JsonProperty("isFollowed")
+    private boolean isFollowed;
 }

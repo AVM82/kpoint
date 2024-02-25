@@ -6,9 +6,12 @@ const ukTranslation = {
   sign_up: 'Зареєструватись',
   first_name: 'Імʼя',
   last_name: 'Прізвище',
-  username: 'Імʼя користувача',
+  username: 'Імʼя користувача (обовʼязково)',
   email: 'Електронна пошта',
   password: 'Пароль',
+  current_password: 'Поточний пароль',
+  new_password: 'Новий пароль',
+  new_password_again: 'Новий пароль ще раз',
   repeated_password: 'Повторіть пароль',
   avatar_url: 'Посилання на аватар',
   tags: 'Теги',
@@ -53,6 +56,7 @@ const ukTranslation = {
     create_project: 'Створити проєкт',
     suggestions: 'Пропозиції',
     edit: 'Редагувати',
+    cancel: 'СКАСУВАТИ',
   },
   owner: 'Власник',
   description: 'Опис',
@@ -91,6 +95,9 @@ const ukTranslation = {
     project_deadline:
       'Дата дедлайну збору не може бути більшою за дату дедлайну повернення',
     suggestion_size: 'Поле повинне містити від 1 до 200 символів',
+    profile_password_not_same: 'Введені нові паролі не збігаються',
+    profile_password_new_current:
+      'Новий пароль профілю має відрізнятися від поточного',
   },
 };
 

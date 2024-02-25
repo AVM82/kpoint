@@ -6,9 +6,12 @@ const enTranslation = {
   sign_up: 'Sign up',
   first_name: 'First name',
   last_name: 'Last name',
-  username: 'Username',
+  username: 'Username (required)',
   email: 'Email Address',
   password: 'Password',
+  current_password: 'Current password',
+  new_password: 'New password',
+  new_password_again: 'New password again',
   repeated_password: 'Repeated password',
   avatar_url: 'AvatarUrl',
   tags: 'Tags',
@@ -17,7 +20,7 @@ const enTranslation = {
   sign_in_to_continue: 'Sign in to continue',
   forgot_password: 'Forgot your password?',
   remember_me: 'Remember me',
-  dont_have_an_account: 'Don\'t have an account yet?',
+  dont_have_an_account: "Don't have an account yet?",
   search_field: 'Search field',
   share_button: 'Share',
   learn_more_button: 'Learn more',
@@ -53,6 +56,7 @@ const enTranslation = {
     create_project: 'Create project',
     suggestions: 'Suggestions',
     edit: 'edit',
+    cancel: 'CANCEL',
   },
   owner: 'Owner',
   description: 'Description',
@@ -91,6 +95,9 @@ const enTranslation = {
     project_deadline:
       'The collection deadline cannot be later than the goal deadline',
     suggestion_size: 'The field must contain from 1 to 200 characters',
+    profile_password_not_same: 'New and repeat passwords are not the same',
+    profile_password_new_current:
+      'The new profile password must be different from the current one',
   },
 };
 

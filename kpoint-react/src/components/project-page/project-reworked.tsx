@@ -326,6 +326,9 @@ const ProjectReworked: FC = () => {
                 alignSelf={'end'}
                 gap={'16px'}
               >
+                {/*{<SubscribeButton projectId={projects?.content.map((project) => project.projectId)}*/}
+                {/*  isAuthenticated={isAuthenticated}*/}
+                {/*  isFollowed={projects?.content.map((project) => project.isFollowed) ?? false}/>}*/}
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
@@ -341,6 +344,8 @@ const ProjectReworked: FC = () => {
                 >
                   <PersonAddIcon /> {t('buttons.support')}
                 </Button>
+                {/*{project &&<SubscribeButton projectId={project.projectId}*/}
+                {/*  isAuthenticated={isAuthenticated} isFollowed={isFollowed}/>}*/}
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
