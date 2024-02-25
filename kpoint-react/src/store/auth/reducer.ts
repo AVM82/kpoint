@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { UserTypeSuggestion } from '../../common/types/suggestions/user-type-suggestion';
-import { login } from './actions';
+import { login, loginWithOAuth2 } from './actions';
 
 type State = {
   token: string | null;
@@ -23,6 +23,15 @@ const authSlice = createSlice({
         state.user = null;
       })
       .addCase(login.fulfilled, (state, { payload }) => {
+        state.token = payload.token;
+        state.isloggedIn = true;
+        // state.user = payload.user;
+      })
+      .addCase(loginWithOAuth2.rejected, (state) => {
+        state.token = null;
+        state.user = null;
+      })
+      .addCase(loginWithOAuth2.fulfilled, (state, { payload }) => {
         state.token = payload.token;
         state.isloggedIn = true;
         // state.user = payload.user;
