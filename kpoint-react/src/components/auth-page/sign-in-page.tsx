@@ -1,4 +1,5 @@
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { FormLabel } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -84,30 +85,32 @@ const SignInPage: FC = () => {
           </Typography>
           <Typography>{t('sign_in_to_continue')}</Typography>
           <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label={t('email')}
-              name="email"
-              value={formData.email}
-              autoComplete="email"
-              onChange={handleOnChange}
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label={t('password')}
-              type="password"
-              id="password"
-              value={formData.password}
-              autoComplete="current-password"
-              onChange={handleOnChange}
-            />
+            <Grid item xs={3} md={6} marginTop={2}>
+              <FormLabel>{t('email')}</FormLabel>
+              <TextField
+                required
+                fullWidth
+                id="email"
+                name="email"
+                value={formData.email}
+                autoComplete="email"
+                onChange={handleOnChange}
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={3} md={6} marginTop={2}>
+              <FormLabel>{t('password')}</FormLabel>
+              <TextField
+                required
+                fullWidth
+                name="password"
+                type="password"
+                id="password"
+                value={formData.password}
+                autoComplete="current-password"
+                onChange={handleOnChange}
+              />
+            </Grid>
             {loginError && <Typography color="error">{loginError}</Typography>}
             <Grid container alignItems="center" justifyContent="space-between">
               <Grid item>

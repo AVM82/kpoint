@@ -26,8 +26,8 @@ import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
-import ua.in.kp.util.PatchUtil;
 import ua.in.kp.repository.UserRepository;
+import ua.in.kp.util.PatchUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -197,17 +197,27 @@ public class ProjectService {
         return projectRepository.findAllByOwner(userEntity, pageable);
     }
 
-    public SubscribeResponseDto subscribeUserToProject(String projectId) {
-        String userId = userService.getAuthenticated().getId();
+    public SubscribeResponseDto subscribeUserToProject(String projectId, Authentication auth) {
+        UserEntity user = getCurrentUser(auth);
         String projUrl = getProjectUriIfExist(projectId);
         Optional<ProjectSubscribeEntity> existingSubscription =
-                subscriptionRepository.findByUserIdAndProjectId(userId, projectId);
+                subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isPresent()) {
             return new SubscribeResponseDto("User is already subscribed to project " + projectId);
         } else {
             saveSubscription(projectId);
-            emailService.sendProjectSubscriptionMessage(projectId, projUrl);
+            emailService.sendProjectSubscriptionMessage(projectId, projUrl, user);
             return new SubscribeResponseDto("User subscribed to project " + projectId + " successfully");
+        }
+    }
+
+    private UserEntity getCurrentUser(Authentication auth) {
+        Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
+        if (userOpt.isPresent()) {
+            return userOpt.get();
+        } else {
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    translator.getLocaleMessage("exception.user.not-found", auth.getName()));
         }
     }
 

@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/{email}/exists_email")
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> verifyExistsEmail(@NonNull @PathVariable String email) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         log.info("verifyExistEmail {} {}", auth.getName(), email);
@@ -87,7 +87,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/{username}/exists_username")
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> verifyExistsUsername(@NonNull @PathVariable String username) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         log.info("verifyExistUsername {} {}", auth.getName(), username);

@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SubscribeButton } from './SubscribeButton';
+import { SubscribeButton } from './subscribe-button';
 
 interface ProjectsProps {
   projectId: string;

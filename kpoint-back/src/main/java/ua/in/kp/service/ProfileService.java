@@ -88,7 +88,7 @@ public class ProfileService {
         UserEntity user = userService.getAuthenticated();
         log.info("Get recommended projects for user {}", user.getUsername());
         UserEntity userEntity =
-                userService.getUserEntityByEmailFetchedTagsFavouriteAndOwnedProjects(user.getEmail());
+                userService.getByEmail(user.getEmail());
         Set<TagEntity> tags = userEntity.getTags();
         Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
         allProjects.addAll(userEntity.getProjectsFavourite());
@@ -99,15 +99,15 @@ public class ProfileService {
         return new ProjectsProfileResponseDto(userEntity.getId(), recommendedProjectsDtos);
     }
 
-    public UserChangeDto updateUserData(String username, JsonPatch patch) {
-        log.info("update user data by username {}", username);
-        UserEntity userEntity = userService.getByUsername(username);
+    public UserChangeDto updateUserData(String email, JsonPatch patch) {
+        log.info("update user data by user with email {}", email);
+        UserEntity userEntity = userService.getByEmail(email);
         UserChangeDto userChangeDto = userMapper.toChangeDto(userEntity);
         UserChangeDto patchedDto;
         try {
             patchedDto = PatchUtil.applyPatch(patch, userChangeDto, UserChangeDto.class);
         } catch (JsonPatchException | JsonProcessingException e) {
-            log.warn("cannot update user data by username {}", username);
+            log.warn("cannot update user data by username {}", userEntity.getUsername());
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.user.cannot-updated"));
         }
@@ -115,12 +115,12 @@ public class ProfileService {
         return userMapper.toChangeDto(updatedUser);
     }
 
-    public void changePassword(String username, PasswordDto dto) {
-        log.info("change password by username {}", username);
-        UserEntity user = userService.getByUsername(username);
+    public void changePassword(String email, PasswordDto dto) {
+        log.info("change password by user with email {}", email);
+        UserEntity user = userService.getByEmail(email);
 
         if (!userService.checkIfValidOldPassword(user, dto.oldPassword())) {
-            log.warn("cannot change password by username {}", username);
+            log.warn("cannot change password by username {}", user.getUsername());
             throw new ApplicationException(HttpStatus.BAD_REQUEST, translator.getLocaleMessage(
                     "exception.user.invalid-old-password"));
         }
