@@ -106,10 +106,11 @@ const MyProfile: FC = () => {
 
               if (isUpdateEmail) {
                 storage.removeItem(StorageKey.TOKEN);
+                storage.removeItem(StorageKey.USER);
                 toast.success(t('success.profile_email_updated'));
                 navigate('/sign-in', { state: { userData: JSON.stringify(user) } });
               } else {
-                storage.setItem(StorageKey.TOKEN, JSON.stringify(user));
+                storage.setItem(StorageKey.USER, JSON.stringify(user));
                 toast.success(t('success.profile_updated'));
               }
 
