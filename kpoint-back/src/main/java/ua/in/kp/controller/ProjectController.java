@@ -67,7 +67,8 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/subscribe")
     public ResponseEntity<SubscribeResponseDto> subscribeToProject(@PathVariable String projectId) {
-        return new ResponseEntity<>(projectService.subscribeUserToProject(projectId), HttpStatus.OK);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return new ResponseEntity<>(projectService.subscribeUserToProject(projectId, auth), HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectId}/unsubscribe")
