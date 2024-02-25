@@ -1,11 +1,14 @@
 package ua.in.kp.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.UserEntity;
@@ -102,5 +105,40 @@ public class EmailServiceKp {
         message.setTo(email);
         emailSender.send(message);
         log.info("Email to {} was sent", email);
+    }
+
+    public void sendProjectUpdateEmail(String projectId, List<String> changedFields, String projectUrl) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
+        String htmlContent = buildUpdateNotificationContent(changedFields, projectUrl);
+        List<String> usersMails = setUsersMailsList(projectId);
+        try {
+            helper.setText(htmlContent, true);
+            helper.setSubject("Project Update Notification");
+            helper.setFrom(sender);
+            for (String mail : usersMails) {
+                log.info("EMAILS: " + mail);
+                helper.setTo(mail);
+                emailSender.send(message);
+                log.info("Email with updates was sent to {}", mail);
+            }
+        } catch (MessagingException e) {
+            log.error("Error sending email", e);
+        }
+
+    }
+
+    private String buildUpdateNotificationContent(List<String> changedFields, String projectUrl) {
+
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append("<p>Вітаємо! У проєкті, на який ви підписались, відбулись зміни!</p>");
+        contentBuilder.append("<p>Наступні поля були оновлені в проекті:</p>");
+        for (String field : changedFields) {
+            contentBuilder.append("<p>").append(field).append("</p>");
+        }
+        contentBuilder.append("<p>Лінк на проєкт: ").append(env.getProperty("oauth2.redirect-uri"))
+                .append("/projects/").append(projectUrl).append("</p>");
+
+        return contentBuilder.toString();
     }
 }
