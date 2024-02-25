@@ -299,7 +299,7 @@ public class ProjectService {
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
         ProjectEntity updatedUser = projectRepository.save(updatedProject);
-        emailService.sendProjectUpdateEmail(projectId, changedFields, updatedUser.getUrl());
+        emailService.sendProjectUpdateEmail(projectId, changedFields, updatedUser);
         return projectMapper.toChangeDto(updatedUser);
     }
 
@@ -310,7 +310,7 @@ public class ProjectService {
             changedFields.add("Значення поля 'Назва проекту' змінено на " + patchedDto.title());
         }
         if (!Objects.equals(originalDto.description(), patchedDto.description())) {
-            changedFields.add("Значення поля 'Опис' змінено на" + patchedDto.description());
+            changedFields.add("Значення поля 'Опис' змінено на " + patchedDto.description());
         }
         if (!Objects.equals(originalDto.tags(), patchedDto.tags())) {
             changedFields.add("Значення поля 'Теги' змінено на" + patchedDto.tags());
