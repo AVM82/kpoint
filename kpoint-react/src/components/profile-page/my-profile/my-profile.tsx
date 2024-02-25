@@ -107,7 +107,7 @@ const MyProfile: FC = () => {
               if (isUpdateEmail) {
                 storage.removeItem(StorageKey.TOKEN);
                 toast.success(t('success.profile_email_updated'));
-                navigate('/sign-up', { state: { userData: JSON.stringify(user) } });
+                navigate('/sign-in', { state: { userData: JSON.stringify(user) } });
               } else {
                 storage.setItem(StorageKey.TOKEN, JSON.stringify(user));
                 toast.success(t('success.profile_updated'));
@@ -116,8 +116,8 @@ const MyProfile: FC = () => {
               return user;
             });
           })
-          .catch((reason) => {
-            toast.error(t('errors.profile_can_not_update'), reason);
+          .catch(() => {
+            toast.error(t('errors.profile_can_not_update'));
           });
 
       } catch (error) {

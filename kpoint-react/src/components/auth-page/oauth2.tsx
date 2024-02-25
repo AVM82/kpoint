@@ -29,14 +29,14 @@ const OAuth2: FC = () => {
 
             if (action.user.roles.includes('GUEST')) {
               storage.removeItem(StorageKey.TOKEN);
-              navigate('/sign-in', { state: { userData: action.user } });
+              navigate('/sign-up', { state: { userData: action.user } });
             } else {
               storage.setItem(StorageKey.TOKEN, action.token);
               navigate('/');
             }
           })
-          .catch((reason) => {
-            toast.error(t('can_not_login'), reason);
+          .catch(() => {
+            toast.error(t('can_not_login'));
           });
       } catch (error) {
         toast.error(`Error making POST request to backend: ${error.message}`);

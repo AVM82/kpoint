@@ -92,8 +92,8 @@ const enTranslation = {
     suggestion_size: 'The field must contain from 1 to 200 characters',
     profile_password_not_same: 'New and repeat passwords are not the same',
     profile_password_new_current: 'The new profile password must be different from the current one',
-    can_not_login: 'Can`t login: ',
-    profile_can_not_update: 'Can\'t update profile, because:',
+    can_not_login: 'Can`t login',
+    profile_can_not_update: 'Can`t update profile',
   },
   success: {
     profile_email_updated: 'Email address changed. Please sign in with your new email to continue',
