@@ -15,12 +15,12 @@ const login = createAsyncThunk<ResponseType, SignInType, AsyncThunkConfig>(
   },
 );
 
-const loginWithOAuth2 = createAsyncThunk<ResponseType, SignInType, AsyncThunkConfig>(
+const loginWithOAuth2 = createAsyncThunk<ResponseType, { code: string }, AsyncThunkConfig>(
   ActionType.LOGIN_OAUTH2,
   async (payload, { extra }) => {
     const { authApi } = extra;
 
-    return authApi.login(payload);
+    return authApi.loginWithOAuth2(payload);
   },
 );
 

@@ -92,6 +92,12 @@ const ukTranslation = {
     suggestion_size: 'Поле повинне містити від 1 до 200 символів',
     profile_password_not_same: 'Введені нові паролі не збігаються',
     profile_password_new_current: 'Новий пароль профілю має відрізнятися від поточного',
+    can_not_login: 'Не можу увійти: ',
+    profile_can_not_update: 'Не вдається оновити профіль, оскільки:',
+  },
+  success: {
+    profile_email_updated: 'Електронна пошта змінена. Щоб продовжити, увійдіть з новою поштою',
+    profile_updated: 'Данні профілю успішно змінені',
   },
 };
 
