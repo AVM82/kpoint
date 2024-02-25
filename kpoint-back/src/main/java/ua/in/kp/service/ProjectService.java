@@ -29,10 +29,7 @@ import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
 import ua.in.kp.util.PatchUtil;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -308,10 +305,27 @@ public class ProjectService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.project.cannot-updated"));
         }
+        List<String> changedFields = findChangedFields(projectDto, patchedDto);
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
         ProjectEntity updatedUser = projectRepository.save(updatedProject);
-        emailService.sendUpdateProjectMail(projectId, projectEntity.getUrl());
+        emailService.sendProjectUpdateEmail(projectId, changedFields, updatedUser);
         return projectMapper.toChangeDto(updatedUser);
+    }
+
+    private List<String> findChangedFields(ProjectChangeDto originalDto, ProjectChangeDto patchedDto) {
+        List<String> changedFields = new ArrayList<>();
+
+        if (!Objects.equals(originalDto.title(), patchedDto.title())) {
+            changedFields.add("Значення поля 'Назва проекту' змінено на " + patchedDto.title());
+        }
+        if (!Objects.equals(originalDto.description(), patchedDto.description())) {
+            changedFields.add("Значення поля 'Опис' змінено на " + patchedDto.description());
+        }
+        if (!Objects.equals(originalDto.tags(), patchedDto.tags())) {
+            changedFields.add("Значення поля 'Теги' змінено на" + patchedDto.tags());
+        }
+
+        return changedFields;
     }
 }
