@@ -1,3 +1,4 @@
+import AddIcon from '@mui/icons-material/Add';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import {
@@ -6,18 +7,30 @@ import {
   Chip,
   Container,
   Grid,
+  IconButton,
   TextField,
   Typography,
 } from '@mui/material';
 import Link from '@mui/material/Link';
-import { CustomTimeline, ImageUploader } from 'components/common/common';
+import {
+  CustomTimeline,
+  ImageUploader,
+  InputField,
+} from 'components/common/common';
 import { useAppDispatch } from 'hooks/hooks';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
-import { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
+import { editLogo, editProject } from 'store/projects/actions';
+import {
+  addTagLocally,
+  deleteTagLocally,
+  editDescriptionLocally,
+  editTitleLocally,
+} from 'store/projects/reducer';
 
 import { generateGoogleMapsLink } from '../../utils/function-generate-google-maps-link';
 import { ProjectSocials } from './project-socials';
@@ -36,47 +49,33 @@ const ProjectReworked: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { projectId } = useParams();
-  const { project } = useAppSelector(({ project }) => ({
-    project: project.project,
-  }));
+  const project = useAppSelector((state) => state.project.project);
+  const [editFieldClicked, setEditFieldClicked] = useState(false);
+  const [descriptionClicked, setDescriptionClicked] = useState(false);
+  const [tagsClicked, setTagsClicked] = useState(false);
+  const [testEditForm, setTestEditForm] = useState<object>({});
+  const [showButton, setShowButton] = useState(false);
 
-  /*All logic from previous version below !!!DON'T DELETE DEPRECATED FILES!!!*/
+  const handleDeleteTag = (tag: string): void => {
+    const bodyData = [];
+    bodyData.push({ op: 'replace', path: '/tags', value: [] });
 
-  // const projectImage: string =
-  // project.logoImgUrl === null
-  //   ? { logo }.logo
-  //   : `data:image/png;base64,${project.logoImgUrl}`;
+    project.tags.forEach((item) => {
+      if (item !== tag) {
+        bodyData.push({ op: 'add', path: '/tags/-', value: item });
+      }
+    });
 
-  // const handleLogoPreview = (e: React.ChangeEvent<HTMLInputElement>): void => {
-  //   if (e.currentTarget.files?.[0]) {
-  //     const projectLogo = e.currentTarget.files?.[0];
-
-  //     if (projectLogo.size > 5000000) {
-  //       toast.warn('File is to big');
-
-  //       return;
-  //     }
-  //     const previewUrl = URL.createObjectURL(projectLogo);
-  //     setPreviewUrl(previewUrl);
-  //   }
-  // };
-
-  // const handleChange = (
-  //   event: React.SyntheticEvent,
-  //   newValue: number,
-  // ): void => {
-  //   setValue(newValue);
-  // };
-
-  const handleChange = (field: string, value: string | File): void => {
-    toast.success(value.toString());
+    const id = project.projectId;
+    dispatch(editProject({ id, bodyData }));
+    dispatch(deleteTagLocally(tag));
   };
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       try {
         if (projectId) {
-          await dispatch(projectAction.getById({ id: projectId }));
+          await dispatch(projectAction.getByUrl({ id: projectId }));
         }
       } catch (error) {
         toast.error('Error fetching project:', error);
@@ -85,6 +84,94 @@ const ProjectReworked: FC = () => {
 
     fetchData();
   }, [dispatch, projectId]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        setDescriptionClicked(false);
+        setEditFieldClicked(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
+  const changeHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ): void => {
+    setTestEditForm({ [e.target.name]: e.target.value });
+  };
+
+  const changeHandlerPhoto = (field: string, file: string | File): void => {
+    const id = project.projectId;
+    const logo = file as File;
+    dispatch(editLogo({ id, logo }));
+  };
+
+  const createBodyData = (
+    itemName: string,
+  ): { op: string; path: string; value: string | string[] }[] => {
+    const bodyData = [];
+
+    if (itemName === 'tags') {
+      bodyData.push({ op: 'replace', path: '/tags', value: project.tags });
+      Object.keys(testEditForm).forEach((item) => {
+        const key: string = item;
+
+        bodyData.push({
+          op: 'add',
+          path: '/tags/-',
+          value: testEditForm[key as keyof typeof testEditForm] || null,
+        });
+      });
+    } else {
+      Object.keys(testEditForm).forEach((item) => {
+        const key: string = item;
+
+        bodyData.push({
+          op: 'replace',
+          path: `/${key}`,
+          value: testEditForm[key as keyof typeof testEditForm] || null,
+        });
+      });
+    }
+
+    return bodyData;
+  };
+
+  const submitHandler = async (
+    event: React.FormEvent<HTMLFormElement>,
+    itemName: string,
+  ): Promise<void> => {
+    event.preventDefault();
+
+    const bodyData = createBodyData(itemName);
+
+    const id = project.projectId;
+
+    if (project.tags.length >= 5) {
+      toast.warn('Тегів може бути не більше 5');
+
+      return;
+    }
+
+    dispatch(editProject({ id, bodyData }));
+
+    if (itemName === 'title') {
+      dispatch(editTitleLocally(bodyData[0].value));
+      setEditFieldClicked(!editFieldClicked);
+    } else if (itemName === 'description') {
+      dispatch(editDescriptionLocally(bodyData[0].value));
+      setDescriptionClicked(!descriptionClicked);
+    } else if (itemName === 'tags') {
+      dispatch(addTagLocally(bodyData[1].value as string));
+      setTagsClicked(!tagsClicked);
+    }
+  };
 
   return (
     <>
@@ -112,22 +199,38 @@ const ProjectReworked: FC = () => {
             >
               <Grid maxWidth={390} width={390} container>
                 <ImageUploader
-                  handleChange={handleChange}
-                  component="project-page"
                   xs={5}
+                  component="project-page"
+                  handleChange={changeHandlerPhoto}
+                  imageUrl={project.logoImgUrl}
                 />
                 <Grid item xs={7}>
-                  <Typography
-                    variant="h2"
-                    color={'rgb(0, 29, 108)'}
-                    fontSize={32}
-                    fontWeight={700}
-                    lineHeight={'100%'}
-                    letterSpacing={'1px'}
-                    textAlign={'center'}
-                  >
-                    {project && project.title}
-                  </Typography>
+                  {editFieldClicked ? (
+                    <InputField
+                      onChange={changeHandler}
+                      onSubmit={submitHandler}
+                      placeholder={project && project.title}
+                      itemName="title"
+                    />
+                  ) : (
+                    <Typography
+                      variant="h2"
+                      color={'rgb(0, 29, 108)'}
+                      fontSize={32}
+                      fontWeight={700}
+                      lineHeight={'100%'}
+                      letterSpacing={'1px'}
+                      textAlign={'center'}
+                      sx={{
+                        cursor: 'pointer',
+                      }}
+                      onClick={(): void =>
+                        setEditFieldClicked(!editFieldClicked)
+                      }
+                    >
+                      {project && project.title}
+                    </Typography>
+                  )}
                   <Link href={generateGoogleMapsLink(project)}>
                     <Typography
                       variant="h6"
@@ -155,24 +258,67 @@ const ProjectReworked: FC = () => {
                     Послідовників: 123
                   </Typography>
                 </Grid>
-                <Grid item xs={12} padding={'10px 0 0 0'}>
-                  {project &&
-                    project.tags.map((tag, index) => (
-                      <Chip
-                        key={index}
-                        label={tag}
-                        variant="outlined"
-                        sx={{
-                          fontFamily: 'Roboto',
-                          fontWeight: 400,
-                          fontSize: '13px',
-                          lineHeight: '18px',
-                          letterSpacing: '0.16px',
-                          color: '#4F4F4F',
-                          margin: '5px',
-                        }}
-                      />
+                <Grid item xs={12} padding={'10px 0 0 0'} container>
+                  <Box
+                    display={'flex'}
+                    justifyContent={'center'}
+                    alignItems={'start'}
+                    flexDirection={'column'}
+                    gap={'5px'}
+                    flexGrow={1}
+                    flexShrink={0}
+                  >
+                    {project.tags.map((tag, index) => (
+                      <>
+                        <Chip
+                          key={index}
+                          label={tag}
+                          variant="outlined"
+                          sx={{
+                            fontFamily: 'Roboto',
+                            fontWeight: 400,
+                            fontSize: '13px',
+                            lineHeight: '18px',
+                            letterSpacing: '0.16px',
+                            color: '#4F4F4F',
+                            margin: '5px',
+                            maxWidth: '20%',
+                            cursor: 'pointer',
+                          }}
+                          onMouseEnter={(): void => setShowButton(!showButton)}
+                        />
+                        {showButton && (
+                          <IconButton
+                            size="small"
+                            className={tag}
+                            onClick={(): void => {
+                              setShowButton(!showButton);
+                              handleDeleteTag(tag);
+                            }}
+                          >
+                            -
+                          </IconButton>
+                        )}
+                      </>
                     ))}
+                  </Box>
+                  <Box
+                    display={'flex'}
+                    maxWidth={'40px'}
+                    alignItems={'center'}
+                    sx={{ cursor: 'pointer' }}
+                    onClick={(): void => setTagsClicked(!tagsClicked)}
+                  >
+                    <AddIcon />
+                  </Box>
+                  {tagsClicked && (
+                    <InputField
+                      onSubmit={submitHandler}
+                      onChange={changeHandler}
+                      itemName="tags"
+                      placeholder="Введіть назву тега"
+                    />
+                  )}
                 </Grid>
               </Grid>
               <Box
@@ -256,7 +402,7 @@ const ProjectReworked: FC = () => {
                   },
                 }}
               >
-                Про проєкт
+                {t('about')}
               </Button>
               <Button
                 sx={{
@@ -272,7 +418,7 @@ const ProjectReworked: FC = () => {
                   },
                 }}
               >
-                Команда
+                {t('team')}
               </Button>
               <Button
                 sx={{
@@ -288,7 +434,7 @@ const ProjectReworked: FC = () => {
                   },
                 }}
               >
-                Допомогти проєкту
+                {t('help_project')}
               </Button>
               <Button
                 sx={{
@@ -304,34 +450,28 @@ const ProjectReworked: FC = () => {
                   },
                 }}
               >
-                Коментарі
+                {t('comments')}
               </Button>
             </Box>
           </Grid>
           <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
-            <Box component={'article'} maxWidth={'620px'}>
-              Ідея: Ми віримо у потенціал кожної ідеї та важливість підтримки та
-              розвитку цих ідей. Наша мета - зробити інвестування доступним та
-              простим для всіх, незалежно від їхнього ... досвіду чи фінансових
-              можливостей. Проблема, яку вирішує ваш проєкт: Ми віримо у
-              потенціал кожної ідеї та важливість підтримки та розвитку цих
-              ідей. Наша мета - зробити інвестування доступним та простим для
-              всіх, незалежно від їхнього ... досвіду чи фінансових можливостей.
-              Як доказ ідеї - сам цей проєкт буде першим, що реалізується на цій
-              ідеї: “зробіть щось для нас, і ми не забудемо”. Приєднатись до
-              проєкта: Потрібні фахівці: -текст -текст -текст Гроші будуть
-              використанні на: Ми віримо у потенціал кожної ідеї та важливість
-              підтримки та розвитку цих ідей. Наша мета - зробити інвестування
-              доступним та простим для всіх, незалежно від їхнього ... досвіду
-              чи фінансових можливостей. Як доказ ідеї - сам цей проєкт буде
-              першим, що реалізується на цій ідеї: “зробіть щось для нас, і ми
-              не забудемо”. Пропозиція до інвесторів: Ми віримо у потенціал
-              кожної ідеї та важливість підтримки та розвитку цих ідей. Наша
-              мета - зробити інвестування доступним та простим для всіх,
-              незалежно від їхнього ... досвіду чи фінансових можливостей. Як
-              доказ ідеї - сам цей проєкт буде першим, що реалізується на цій
-              ідеї: “зробіть щось для нас, і ми не забудемо”.
-            </Box>
+            {descriptionClicked ? (
+              <InputField
+                onChange={changeHandler}
+                onSubmit={submitHandler}
+                placeholder={project.description}
+                itemName="description"
+              />
+            ) : (
+              <Box
+                component={'article'}
+                maxWidth={'620px'}
+                onClick={(): void => setDescriptionClicked(!descriptionClicked)}
+                sx={{ cursor: 'pointer' }}
+              >
+                {project.description}
+              </Box>
+            )}
           </Grid>
           <Grid item xs={4} container justifyContent={'end'}>
             <Box
@@ -343,7 +483,9 @@ const ProjectReworked: FC = () => {
             >
               <Box>
                 <Typography>Всього зібрано</Typography>
-                <Typography>100/700</Typography>
+                <Typography>
+                  {project && `${project.collectedSum}/${project.goalSum}`}
+                </Typography>
               </Box>
               <Box>
                 <CustomTimeline
