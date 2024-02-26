@@ -111,11 +111,13 @@ const projectSlice = createSlice({
         state.projects = null;
       })
       .addCase(getAllProjectsAddMore.fulfilled, (state, { payload }) => {
-        if (state.projects != null) {
-          state.projects.content = [
-            ...state.projects.content,
-            ...(payload?.content ?? []),
-          ];
+        if(state.projects != null) {
+          const uniquePayloadContent = payload?.content
+            ? payload.content.filter((item) =>
+              !state.projects?.content.some((existingItem)=>
+                existingItem.projectId === item.projectId))
+            : [];
+          state.projects.content = [...state.projects.content,  ...uniquePayloadContent];
         }
       })
       .addCase(createNew.rejected, (state) => {
