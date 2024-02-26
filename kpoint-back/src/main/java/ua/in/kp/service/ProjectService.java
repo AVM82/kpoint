@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.project.*;
-import ua.in.kp.dto.subscribtion.StringResponseDto;
+import ua.in.kp.dto.subscribtion.MessageResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
@@ -97,7 +97,7 @@ public class ProjectService {
         return projectMapper.toDto(projectEntity);
     }
 
-    public StringResponseDto updateProjectLogo(String projectId, MultipartFile file) {
+    public MessageResponseDto updateProjectLogo(String projectId, MultipartFile file) {
         log.info("update project logo by projectId {}", projectId);
         UserEntity user = userService.getAuthenticated();
         ProjectEntity project = projectRepository.findByOwnerAndProjectId(user, projectId)
@@ -107,7 +107,7 @@ public class ProjectService {
                             String.format("User %s does not have project with id %s", user.getUsername(), projectId));
                 });
         project.setLogoImgUrl(s3Service.uploadLogo(file));
-        return new StringResponseDto(projectRepository.save(project).getLogoImgUrl());
+        return new MessageResponseDto(projectRepository.save(project).getLogoImgUrl());
     }
 
     public Page<GetAllProjectsDto> getAllProjects(Pageable pageable, Authentication auth) {
@@ -206,17 +206,17 @@ public class ProjectService {
         return projectRepository.findAllByOwner(userEntity, pageable);
     }
 
-    public StringResponseDto subscribeUserToProject(String projectId, Authentication auth) {
+    public MessageResponseDto subscribeUserToProject(String projectId, Authentication auth) {
         UserEntity user = getCurrentUser(auth);
         ProjectEntity project = getProjectIfExist(projectId);
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isPresent()) {
-            return new StringResponseDto("User is already subscribed to project " + projectId);
+            return new MessageResponseDto("User is already subscribed to project " + projectId);
         } else {
             saveSubscription(projectId);
             emailService.sendProjectSubscriptionMessage(project, user);
-            return new StringResponseDto("User subscribed to project " + project.getTitle() + " successfully");
+            return new MessageResponseDto("User subscribed to project " + project.getTitle() + " successfully");
         }
     }
 
@@ -255,7 +255,7 @@ public class ProjectService {
         return usersId;
     }
 
-    public StringResponseDto unsubscribeUserFromProject(String projectId) {
+    public MessageResponseDto unsubscribeUserFromProject(String projectId) {
         UserEntity user = userService.getAuthenticated();
         log.info("User {} unsubscribe from project with id {}", user.getUsername(), projectId);
         Optional<ProjectSubscribeEntity> existingSubscription =
@@ -271,7 +271,7 @@ public class ProjectService {
         String projectUrl = projectRepository.findBy(projectId).orElseThrow().getUrl();
         emailService.sendUnsubscribeMessage(user.getEmail(), projectUrl);
         log.info("User {} has been unsubscribed from project with id {}", user.getUsername(), projectId);
-        return new StringResponseDto(translator.getLocaleMessage("project.unsubscribed",
+        return new MessageResponseDto(translator.getLocaleMessage("project.unsubscribed",
                 user.getUsername(), projectId));
     }
 
