@@ -90,7 +90,6 @@ const projectSlice = createSlice({
       state.project.isFollowed = action.payload;
     },
     subscribeToProjectPage: (state, action) => {
-      console.log(action.payload);
       state.project.isFollowed = action.payload;
     },
   },
