@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 interface ProjectItemProps {
   title: string;
+  url: string;
 }
 
-const ProjectItem: FC<ProjectItemProps> = ({ title }) => {
+const ProjectItem: FC<ProjectItemProps> = ({ title, url }) => {
   const navigate = useNavigate();
 
   return (
@@ -18,7 +19,7 @@ const ProjectItem: FC<ProjectItemProps> = ({ title }) => {
       padding={'16px'}
       borderBottom={'1px solid rgb(189, 189, 189)'}
       sx={{ cursor: 'pointer' }}
-      onClick={(): void => navigate(`/projects/${title}`)}
+      onClick={(): void => navigate(`/projects/${url}`)}
     >
       <Box display={'flex'} gap={'23px'}>
         <Box
