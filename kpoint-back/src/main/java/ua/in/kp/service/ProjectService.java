@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.project.*;
-import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
+import ua.in.kp.dto.subscribtion.MessageResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
@@ -95,6 +95,19 @@ public class ProjectService {
         log.info("ProjectEntity saved, id {}", projectEntity.getProjectId());
 
         return projectMapper.toDto(projectEntity);
+    }
+
+    public MessageResponseDto updateProjectLogo(String projectId, MultipartFile file) {
+        log.info("update project logo by projectId {}", projectId);
+        UserEntity user = userService.getAuthenticated();
+        ProjectEntity project = projectRepository.findByOwnerAndProjectId(user, projectId)
+                .orElseThrow(() -> {
+                    log.warn("User {} does not have project with id {}", user.getUsername(), projectId);
+                    return new ApplicationException(HttpStatus.NOT_FOUND,
+                            String.format("User %s does not have project with id %s", user.getUsername(), projectId));
+                });
+        project.setLogoImgUrl(s3Service.uploadLogo(file));
+        return new MessageResponseDto(projectRepository.save(project).getLogoImgUrl());
     }
 
     public Page<GetAllProjectsDto> getAllProjects(Pageable pageable, Authentication auth) {
@@ -193,17 +206,17 @@ public class ProjectService {
         return projectRepository.findAllByOwner(userEntity, pageable);
     }
 
-    public SubscribeResponseDto subscribeUserToProject(String projectId, Authentication auth) {
+    public MessageResponseDto subscribeUserToProject(String projectId, Authentication auth) {
         UserEntity user = getCurrentUser(auth);
         ProjectEntity project = getProjectIfExist(projectId);
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isPresent()) {
-            return new SubscribeResponseDto("User is already subscribed to project " + projectId);
+            return new MessageResponseDto("User is already subscribed to project " + projectId);
         } else {
             saveSubscription(projectId);
             emailService.sendProjectSubscriptionMessage(project, user);
-            return new SubscribeResponseDto("User subscribed to project " + project.getTitle() + " successfully");
+            return new MessageResponseDto("User subscribed to project " + project.getTitle() + " successfully");
         }
     }
 
@@ -242,7 +255,7 @@ public class ProjectService {
         return usersId;
     }
 
-    public SubscribeResponseDto unsubscribeUserFromProject(String projectId) {
+    public MessageResponseDto unsubscribeUserFromProject(String projectId) {
         UserEntity user = userService.getAuthenticated();
         log.info("User {} unsubscribe from project with id {}", user.getUsername(), projectId);
         Optional<ProjectSubscribeEntity> existingSubscription =
@@ -258,7 +271,7 @@ public class ProjectService {
         String projectUrl = projectRepository.findBy(projectId).orElseThrow().getUrl();
         emailService.sendUnsubscribeMessage(user.getEmail(), projectUrl);
         log.info("User {} has been unsubscribed from project with id {}", user.getUsername(), projectId);
-        return new SubscribeResponseDto(translator.getLocaleMessage("project.unsubscribed",
+        return new MessageResponseDto(translator.getLocaleMessage("project.unsubscribed",
                 user.getUsername(), projectId));
     }
 

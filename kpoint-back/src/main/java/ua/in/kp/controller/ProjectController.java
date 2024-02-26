@@ -14,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.project.*;
-import ua.in.kp.dto.subscribtion.SubscribeResponseDto;
+import ua.in.kp.dto.subscribtion.MessageResponseDto;
 import ua.in.kp.service.ProfileService;
 import ua.in.kp.service.ProjectService;
 
@@ -34,6 +34,13 @@ public class ProjectController {
             @RequestPart(value = "file", required = false) MultipartFile file) {
         return new ResponseEntity<>(projectService
                 .createProject(createdProject, file), HttpStatus.CREATED);
+    }
+
+    @PatchMapping (path = "/{projectId}/logo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<MessageResponseDto> updateProjectLogo(@PathVariable String projectId,
+                                                                @RequestPart(value = "file") MultipartFile file) {
+        return new ResponseEntity<>(projectService
+                .updateProjectLogo(projectId, file), HttpStatus.OK);
     }
 
     @GetMapping()
@@ -66,13 +73,13 @@ public class ProjectController {
     }
 
     @PostMapping("/{projectId}/subscribe")
-    public ResponseEntity<SubscribeResponseDto> subscribeToProject(@PathVariable String projectId) {
+    public ResponseEntity<MessageResponseDto> subscribeToProject(@PathVariable String projectId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return new ResponseEntity<>(projectService.subscribeUserToProject(projectId, auth), HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectId}/unsubscribe")
-    public ResponseEntity<SubscribeResponseDto> unsubscribeToProject(@PathVariable String projectId) {
+    public ResponseEntity<MessageResponseDto> unsubscribeToProject(@PathVariable String projectId) {
         return new ResponseEntity<>(projectService.unsubscribeUserFromProject(projectId), HttpStatus.OK);
     }
 
