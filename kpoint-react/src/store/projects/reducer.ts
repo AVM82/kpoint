@@ -125,7 +125,6 @@ const projectSlice = createSlice({
         state.project = payload;
       })
       .addCase(subscribeToProject.fulfilled, (state, { payload }) => {
-        console.log(payload);
         state.subscribe = payload;
       })
       .addCase(subscribeToProject.rejected, (state) => {
