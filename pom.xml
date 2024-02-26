@@ -27,7 +27,9 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
-        <revision>0.0.5</revision>
+
+        <revision>0.0.9</revision>
+
     </properties>
 
 </project>

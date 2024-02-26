@@ -15,6 +15,15 @@ const login = createAsyncThunk<ResponseType, SignInType, AsyncThunkConfig>(
   },
 );
 
+const loginWithOAuth2 = createAsyncThunk<ResponseType, { code: string }, AsyncThunkConfig>(
+  ActionType.LOGIN_OAUTH2,
+  async (payload, { extra }) => {
+    const { authApi } = extra;
+
+    return authApi.loginWithOAuth2(payload);
+  },
+);
+
 const register = createAsyncThunk<string, SignUpType, AsyncThunkConfig>(
   ActionType.REGISTER,
   async (payload, { extra }) => {
@@ -24,4 +33,4 @@ const register = createAsyncThunk<string, SignUpType, AsyncThunkConfig>(
   },
 );
 
-export { login, register };
+export { login, loginWithOAuth2, register };

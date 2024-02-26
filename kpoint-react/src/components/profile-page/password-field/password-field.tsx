@@ -5,10 +5,12 @@ import { FC, useState } from 'react';
 type Props =  {
     label: string;
     id: string;
-    handleChange: (e: React.ChangeEvent<HTMLInputElement>,id:string) => void
+    handleChange: (e: React.ChangeEvent<HTMLInputElement>,id:string) => void;
+    handleFocus: (e: React.FocusEvent<HTMLInputElement>,id:string) => void;
+    error: boolean;
 };
 
-export const PasswordField: FC<Props> = ({ label, id, handleChange }) => {
+export const PasswordField: FC<Props> = ({ label, id, handleChange, handleFocus, error }) => {
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,6 +28,9 @@ export const PasswordField: FC<Props> = ({ label, id, handleChange }) => {
         id="new-password"
         type={showPassword ? 'text' : 'password'}
         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => handleChange(e,id)}
+        onFocus={(e: React.FocusEvent<HTMLInputElement>): void => handleFocus(e,id)}
+        error={error}
+        required={true}
         endAdornment={
           <InputAdornment position="end">
             <IconButton

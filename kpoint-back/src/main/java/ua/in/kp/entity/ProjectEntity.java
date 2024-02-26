@@ -45,7 +45,6 @@ public class ProjectEntity {
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @SoftDelete
     private Set<TagEntity> tags;
 
     @Column(name = "logo_img_url", columnDefinition = "TEXT")

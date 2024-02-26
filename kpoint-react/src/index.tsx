@@ -3,7 +3,7 @@ import 'index.css';
 
 import { CssBaseline } from '@mui/material';
 import { MyProfile } from 'components/profile-page/my-profile/my-profile';
-import { ProfilePassword } from 'components/profile-page/profile-password/ProfilePassword';
+import { ProfilePassword } from 'components/profile-page/profile-password/profile-password';
 import { ProjectReworked } from 'components/project-page/project-reworked';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

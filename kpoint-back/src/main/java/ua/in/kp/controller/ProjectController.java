@@ -42,9 +42,9 @@ public class ProjectController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth instanceof UsernamePasswordAuthenticationToken) {
             return new ResponseEntity<>(profileService
-                    .getRecommendedProjects(auth.getName(), pageable), HttpStatus.OK);
+                    .getRecommendedProjects(pageable), HttpStatus.OK);
         }
-        return new ResponseEntity<>(projectService.getAllProjects(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.getAllProjects(pageable, auth), HttpStatus.OK);
     }
 
     @GetMapping("/id/{projectId}")
@@ -67,7 +67,8 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/subscribe")
     public ResponseEntity<SubscribeResponseDto> subscribeToProject(@PathVariable String projectId) {
-        return new ResponseEntity<>(projectService.subscribeUserToProject(projectId), HttpStatus.OK);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return new ResponseEntity<>(projectService.subscribeUserToProject(projectId, auth), HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectId}/unsubscribe")

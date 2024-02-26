@@ -25,7 +25,6 @@ const ProjectsPage: FC = () => {
   const isAuthenticated = useAppSelector((state) => state.token.isloggedIn);
 
   const [page, setPage] = useState(1);
-
   useLayoutEffect(() => {
     dispatch(
       projectAction.getAllProjectsDefault({
@@ -33,7 +32,8 @@ const ProjectsPage: FC = () => {
         number: page - 1,
       }),
     );
-  }, [dispatch, page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
@@ -65,7 +65,7 @@ const ProjectsPage: FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {projects?.content.map((project) => (
+        {projects?.content?.map((project) => (
           <Grid item key={project.projectId}>
             <ProjectCard
               projectId={project.projectId}
@@ -75,6 +75,7 @@ const ProjectsPage: FC = () => {
               logoImgUrl={project.logoImgUrl}
               tags={project.tags}
               isAuthenticated={isAuthenticated}
+              isFollowed={project.isFollowed}
             />
           </Grid>
         ))}
