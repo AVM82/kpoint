@@ -18,7 +18,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { authAction } from 'store/actions';
-import { setIsLogin } from 'store/auth/reducer';
 
 import { ENV, StorageKey } from '../../common/enums/enums';
 import { ResponseType } from '../../common/types/response/response';
@@ -56,8 +55,6 @@ const SignInPage: FC = () => {
         toast.error(`Error while logging: ${error.message}`);
         setLoginError('Невірний логін або пароль');
       });
-
-    dispatch(setIsLogin());
   };
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>): void => {

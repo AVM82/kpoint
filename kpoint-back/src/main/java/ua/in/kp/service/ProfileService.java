@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.in.kp.dto.profile.PasswordDto;
@@ -80,8 +82,14 @@ public class ProfileService {
                         .collect(Collectors.toSet());
         subscribedProjectIds.addAll(ownedProjectIds);
         Set<TagEntity> tags = userRepository.findByEmail(user.getEmail()).orElseThrow().getTags();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return projectService.retrieveRecommendedProjects(tags, subscribedProjectIds, pageable)
-                .map(projectMapper::getAllToDto);
+                .map(project -> {
+                    boolean isFollowed = projectService.checkIsFollowed(project, auth);
+                    GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
+                    dto.setFollowed(isFollowed);
+                    return dto;
+                });
     }
 
     public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(Pageable pageable) {
