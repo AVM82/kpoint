@@ -1,11 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpMethod } from 'common/enums/http/http-method.enum';
 import { TestRequest } from 'common/types/projects/testRequest';
-import {
-  ProjectsPageType,
-  ProjectType,
-} from 'common/types/types';
+import { ProjectsPageType, ProjectType } from 'common/types/types';
 
-// import qs from 'query-string';
 import { ContentType } from '../../common/enums/file/content-type.enum';
 import { SubscribeStatusType } from '../../common/types/projects/subscribe-status.type';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
@@ -15,6 +12,12 @@ type Constructor = {
   http: Http;
   apiPrefix: string;
 };
+
+export interface ProjectEdit {
+  title: string;
+  description: string;
+  tags: string[];
+}
 
 class ProjectApi {
   #http: Http;
@@ -26,7 +29,7 @@ class ProjectApi {
     this.#apiPrefix = apiPrefix;
   }
 
-  public getById(payload: { id: string }): Promise<ProjectType> {
+  public getByUrl(payload: { id: string }): Promise<ProjectType> {
     return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}`, {
       method: HttpMethod.GET,
     });
@@ -70,8 +73,12 @@ class ProjectApi {
 
   public createNew(payload: TestRequest): Promise<ProjectType> {
     const formData = new FormData();
-    formData.append('createdProject', new Blob([JSON.stringify(payload.createdProject)],
-      { type: 'application/json' }));
+    formData.append(
+      'createdProject',
+      new Blob([JSON.stringify(payload.createdProject)], {
+        type: 'application/json',
+      }),
+    );
     formData.append('file', payload.file);
 
     return this.#http.load(`${this.#apiPrefix}/projects`, {
@@ -80,12 +87,54 @@ class ProjectApi {
     });
   }
 
-  public subscribeToProject(payload: { projectId: string }): Promise<SubscriptionRequestType> {
-    return this.#http.load(`${this.#apiPrefix}/projects/${payload.projectId}/subscribe`, {
-      method: HttpMethod.POST,
-      payload: JSON.stringify(payload),
-      contentType: ContentType.JSON,
-    });
+  public subscribeToProject(payload: {
+    projectId: string;
+  }): Promise<SubscriptionRequestType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/projects/${payload.projectId}/subscribe`,
+      {
+        method: HttpMethod.POST,
+        payload: JSON.stringify(payload),
+        contentType: ContentType.JSON,
+      },
+    );
+  }
+
+  public unSubscribe(payload: {
+    projectId: string;
+  }): Promise<SubscriptionRequestType> {
+    return this.#http.load(
+      `${this.#apiPrefix}/projects/${payload.projectId}/unsubscribe`,
+      {
+        method: HttpMethod.DELETE,
+        payload: JSON.stringify(payload),
+        contentType: ContentType.JSON,
+      },
+    );
+  }
+
+  public editProject(payload: { id: string; bodyData: any }): Promise<any> {
+    return this.#http.load(
+      `${this.#apiPrefix}/projects/${payload.id}/settings`,
+      {
+        method: HttpMethod.PATCH,
+        payload: JSON.stringify(payload.bodyData),
+        contentType: ContentType.PATCH,
+      },
+    );
+  }
+
+  public editLogo(payload: { id: string; logo: File }): Promise<any> {
+    const bodyData = new FormData();
+    bodyData.append('file', payload.logo);
+
+    return this.#http.load(
+      `${this.#apiPrefix}/projects/${payload.id}/logo`,
+      {
+        method: HttpMethod.PATCH,
+        payload: bodyData,
+      },
+    );
   }
 
   public checkIfSubscribed (payload: { id: string }): Promise<SubscribeStatusType> {

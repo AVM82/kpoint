@@ -9,7 +9,9 @@ import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ProjectCard } from './project-card';
+import { ProjectCardReworked } from './project-card-reworked';
 import { ProjectsPageHeader } from './projects-page-haeder';
 
 const ProjectsPage: FC = () => {
@@ -18,9 +20,7 @@ const ProjectsPage: FC = () => {
 
   const maxPageElements = 5;
 
-  const { projects  } = useAppSelector(({ project }) => ({
-    projects: project.projects,
-  }));
+  const projects = useAppSelector((state) => state.project.projects);
 
   const isAuthenticated = useAppSelector((state) => state.token.isloggedIn);
 
@@ -65,20 +65,21 @@ const ProjectsPage: FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {projects?.content?.map((project) => (
-          <Grid item key={project.projectId}>
-            <ProjectCard
-              projectId={project.projectId}
-              url={project.url}
-              title={project.title}
-              summary={project.summary}
-              logoImgUrl={project.logoImgUrl}
-              tags={project.tags}
-              isAuthenticated={isAuthenticated}
-              isFollowed={project.isFollowed}
-            />
-          </Grid>
-        ))}
+        {projects &&
+          projects.content.map((project) => (
+            <Grid item key={project.projectId}>
+              <ProjectCardReworked
+                projectId={project.projectId}
+                url={project.url}
+                title={project.title}
+                summary={project.summary}
+                logoImgUrl={project.logoImgUrl}
+                tags={project.tags}
+                isAuthenticated={isAuthenticated}
+                isFollowed={project.isFollowed}
+              />
+            </Grid>
+          ))}
       </Grid>
       <Grid
         container
