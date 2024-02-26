@@ -90,6 +90,7 @@ const projectSlice = createSlice({
       state.project.isFollowed = action.payload;
     },
     subscribeToProjectPage: (state, action) => {
+      console.log(action.payload);
       state.project.isFollowed = action.payload;
     },
   },
@@ -125,6 +126,7 @@ const projectSlice = createSlice({
         state.project = payload;
       })
       .addCase(subscribeToProject.fulfilled, (state, { payload }) => {
+        console.log(payload);
         state.subscribe = payload;
       })
       .addCase(subscribeToProject.rejected, (state) => {
