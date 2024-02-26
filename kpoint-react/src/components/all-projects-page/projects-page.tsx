@@ -18,9 +18,7 @@ const ProjectsPage: FC = () => {
 
   const maxPageElements = 5;
 
-  const { projects  } = useAppSelector(({ project }) => ({
-    projects: project.projects,
-  }));
+  const projects = useAppSelector((state) => state.project.projects);
 
   const isAuthenticated = useAppSelector((state) => state.token.isloggedIn);
 
@@ -65,20 +63,21 @@ const ProjectsPage: FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {projects?.content?.map((project) => (
-          <Grid item key={project.projectId}>
-            <ProjectCard
-              projectId={project.projectId}
-              url={project.url}
-              title={project.title}
-              summary={project.summary}
-              logoImgUrl={project.logoImgUrl}
-              tags={project.tags}
-              isAuthenticated={isAuthenticated}
-              isFollowed={project.isFollowed}
-            />
-          </Grid>
-        ))}
+        {projects &&
+          projects.content.map((project) => (
+            <Grid item key={project.projectId}>
+              <ProjectCard
+                projectId={project.projectId}
+                url={project.url}
+                title={project.title}
+                summary={project.summary}
+                logoImgUrl={project.logoImgUrl}
+                tags={project.tags}
+                isAuthenticated={isAuthenticated}
+                isFollowed={project.isFollowed}
+              />
+            </Grid>
+          ))}
       </Grid>
       <Grid
         container

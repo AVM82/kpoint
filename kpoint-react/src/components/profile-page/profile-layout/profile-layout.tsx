@@ -83,7 +83,7 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
           justifyContent={'space-between'}>
           <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'200px'}>
             {/* <Box component={'img'} alt="avatar" src={profileImg}></Box> */}
-            <ImageUploader component="profile-page" xs={12} handleChange={handleChangeImage}/>
+            <ImageUploader component="profile-page" xs={12} handleChange={handleChangeImage} imageUrl={''}/>
           </Box>
           <Box
             sx={{

@@ -1,4 +1,4 @@
-import { Box, Button, Container, CssBaseline, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { Box, Button, Container, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { TestRequest } from 'common/types/projects/testRequest';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +44,7 @@ export const ProjectCreate: FC = () => {
     }
 
     const testData: TestRequest = {
-      file: projectData.logo,
+      file: projectData.logo ? projectData.logo : '',
       createdProject:
         {
           title: projectData.title,
@@ -57,11 +57,6 @@ export const ProjectCreate: FC = () => {
           networksLinks: { FACEBOOK: 'https://www.facebook.com/example' },
         },
     };
-
-    const a = new FormData();
-    a.append('file', testData.file);
-    const b  = JSON.stringify(testData.createdProject);
-    a.append('createdProject', b);
 
     if (activeStep === steps.length) {
       dispatch(projectAction.createNew( { testData } ))
@@ -137,7 +132,7 @@ export const ProjectCreate: FC = () => {
           projectData={projectData}
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
-          errors={errors}
+          errors={errors}          
         />
       );
     case 3:
@@ -146,7 +141,7 @@ export const ProjectCreate: FC = () => {
           projectData={projectData}
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
-          errors={errors}
+          errors={errors}          
         />
       );
     default:
@@ -156,7 +151,6 @@ export const ProjectCreate: FC = () => {
 
   return (
     <React.Fragment>
-      <CssBaseline />
       <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
         <Typography component="h1" variant="h4" align="center" sx={{ p: 2 }}>
           {t('new_project')}
