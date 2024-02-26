@@ -3,6 +3,7 @@ import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { storage } from 'services/services';
 import { profileAction } from 'store/actions';
@@ -15,6 +16,8 @@ const DEFAULT_FORM_VALUES = { firstName: '', lastName: '', email: '', username: 
 
 const MyProfile: FC = () => {
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
 
   const [user, setUser]
     = useState<UserType>();
@@ -84,6 +87,8 @@ const MyProfile: FC = () => {
           .unwrap()
           .then((action): void => {
 
+            const isUpdateEmail = user.email !== action.email;
+
             setEditForm(() => ({
               firstName: action.firstName,
               lastName: action.lastName,
@@ -99,14 +104,21 @@ const MyProfile: FC = () => {
                 user['username'] = action.username;
               }
 
-              // Store the updated user object back in storage
-              storage.setItem(StorageKey.USER, JSON.stringify(user));
+              if (isUpdateEmail) {
+                storage.removeItem(StorageKey.TOKEN);
+                storage.removeItem(StorageKey.USER);
+                toast.success(t('success.profile_email_updated'));
+                navigate('/sign-in', { state: { userData: JSON.stringify(user) } });
+              } else {
+                storage.setItem(StorageKey.USER, JSON.stringify(user));
+                toast.success(t('success.profile_updated'));
+              }
 
               return user;
             });
           })
-          .catch((reason) => {
-            toast.error(`Can\\'t update profile, because: ${reason}`);
+          .catch(() => {
+            toast.error(t('errors.profile_can_not_update'));
           });
 
       } catch (error) {
