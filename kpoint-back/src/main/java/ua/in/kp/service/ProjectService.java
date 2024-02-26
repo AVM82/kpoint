@@ -111,12 +111,11 @@ public class ProjectService {
         return toReturn;
     }
 
-    private boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
+    public boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
             Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
             if (userOpt.isPresent()) {
                 UserEntity user = userOpt.get();
-                log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
                 return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
             }
         }
@@ -196,15 +195,15 @@ public class ProjectService {
 
     public SubscribeResponseDto subscribeUserToProject(String projectId, Authentication auth) {
         UserEntity user = getCurrentUser(auth);
-        String projUrl = getProjectUriIfExist(projectId);
+        ProjectEntity project = getProjectIfExist(projectId);
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isPresent()) {
             return new SubscribeResponseDto("User is already subscribed to project " + projectId);
         } else {
             saveSubscription(projectId);
-            emailService.sendProjectSubscriptionMessage(projectId, projUrl, user);
-            return new SubscribeResponseDto("User subscribed to project " + projectId + " successfully");
+            emailService.sendProjectSubscriptionMessage(project, user);
+            return new SubscribeResponseDto("User subscribed to project " + project.getTitle() + " successfully");
         }
     }
 
@@ -218,33 +217,12 @@ public class ProjectService {
         }
     }
 
-    public ProjectResponseDto updateProject(String projectId, ProjectCreateRequestDto projectCreateRequestDto) {
-        UserEntity user = userService.getAuthenticated();
-        ProjectEntity existingProject = getProjectIfExist(user, projectId);
-
-        ProjectEntity toUpdate = projectMapper.toEntity(projectCreateRequestDto);
-        toUpdate.setOwner(user);
-        existingProject.setCollectedSum(toUpdate.getCollectedSum());
-        existingProject.setDescription(projectCreateRequestDto.getDescription());
-        projectRepository.save(existingProject);
-        emailService.sendUpdateProjectMail(projectId, existingProject.getUrl());
-        return projectMapper.toDto(existingProject);
-    }
-
-    private ProjectEntity getProjectIfExist(UserEntity user, String projectId) {
-        Optional<ProjectEntity> projectForUpdate = projectRepository.findByOwnerAndProjectId(user, projectId);
-        if (projectForUpdate.isEmpty()) {
-            throw new RuntimeException("Project not found");
-        }
-        return projectForUpdate.get();
-    }
-
-    private String getProjectUriIfExist(String projectId) {
+    private ProjectEntity getProjectIfExist(String projectId) {
         Optional<ProjectEntity> projectForUpdate = projectRepository.findBy(projectId);
         if (projectForUpdate.isEmpty()) {
             throw new RuntimeException("Project not found");
         }
-        return projectForUpdate.get().getUrl();
+        return projectForUpdate.get();
     }
 
     private void saveSubscription(String projectId) {
