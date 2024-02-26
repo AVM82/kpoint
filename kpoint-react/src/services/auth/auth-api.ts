@@ -24,7 +24,6 @@ class AuthApi {
   public register(payload: SignUpType): Promise<string> {
     return this.#http.load(`${this.#apiPrefix}/auth/register`, {
       method: HttpMethod.POST,
-      // hasAuth: false,
       contentType: ContentType.JSON,
       payload: JSON.stringify(payload),
     });
@@ -33,7 +32,14 @@ class AuthApi {
   public login(payload: SignInType): Promise<ResponseType> {
     return this.#http.load(`${this.#apiPrefix}/auth/login`, {
       method: HttpMethod.POST,
-      // hasAuth: false,
+      contentType: ContentType.JSON,
+      payload: JSON.stringify(payload),
+    });
+  }
+
+  public loginWithOAuth2(payload: { code: string } ): Promise<ResponseType> {
+    return this.#http.load(`${this.#apiPrefix}/auth/oauth2`, {
+      method: HttpMethod.POST,
       contentType: ContentType.JSON,
       payload: JSON.stringify(payload),
     });

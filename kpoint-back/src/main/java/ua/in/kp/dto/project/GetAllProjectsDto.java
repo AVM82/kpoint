@@ -1,5 +1,6 @@
 package ua.in.kp.dto.project;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Set;
@@ -22,4 +23,7 @@ public class GetAllProjectsDto {
     private String state;
 
     private int goalSum;
+
+    @JsonProperty("isFollowed")
+    private boolean isFollowed;
 }

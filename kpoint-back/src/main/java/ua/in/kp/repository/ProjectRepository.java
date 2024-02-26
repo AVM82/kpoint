@@ -53,4 +53,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
     @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags LEFT JOIN FETCH p.networksLinks "
             + "LEFT JOIN FETCH p.tags WHERE p.owner = :owner AND p.projectId=:id")
     Optional<ProjectEntity> findByOwnerAndProjectId(UserEntity owner, @Param("id") String projectId);
+
+    @Query("SELECT p FROM ProjectEntity p WHERE p.projectId IN :projectIds")
+    Page<ProjectEntity> findByProjectIds(List<String> projectIds, Pageable pageable);
 }

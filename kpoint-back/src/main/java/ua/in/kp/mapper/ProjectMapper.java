@@ -23,6 +23,8 @@ public interface ProjectMapper {
 
     GetAllProjectsDto getAllToDto(ProjectEntity projectEntity);
 
+    GetAllProjectsDto projectEntityToGetAllDto(ProjectEntity projectEntity);
+
     ProjectSubscribeDto toDtoSubscribe(ProjectSubscribeEntity subscribeEntity);
 
     ProjectEntity changeDtoToEntity(ProjectChangeDto dto, @MappingTarget ProjectEntity projectEntity);

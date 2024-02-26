@@ -34,7 +34,7 @@ public class AuthService {
         if (userService.existsByEmail(requestDto.email())) {
             log.warn("User with email {} already exist", requestDto.email());
             throw new ApplicationException(HttpStatus.CONFLICT, translator.getLocaleMessage(
-                    "exception.user.register-failed", requestDto.email()));
+                    "exception.user.register-email-failed", requestDto.email()));
         }
         return userService.create(requestDto);
     }

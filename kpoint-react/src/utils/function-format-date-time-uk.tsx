@@ -4,54 +4,51 @@ export function formatDateTimeUk(dateTime: string): string {
   const inputDate = new Date(dateTime);
   const timeDifferenceInSeconds = Math.floor((currentDate.getTime() - inputDate.getTime()) / 1000);
 
-  const roundToNearestMultiple = (value: number, multiple: number): number => {
-    return Math.floor(value / multiple) * multiple;
-  };
-
   if (timeDifferenceInSeconds < 60) {
     // Less than a minute
     return '1 секунду тому';
   }
 
-  if (timeDifferenceInSeconds < 3600) {
-    // Less than an hour
-    const minutesAgo = roundToNearestMultiple(Math.floor(timeDifferenceInSeconds / 60), 5);
+  const timeInMinutes = Math.floor(timeDifferenceInSeconds / 60);
 
-    return `${minutesAgo} хвилин тому`;
+  if (timeInMinutes < 60){
+    return convertTimeToString(timeInMinutes, 'хвилину', 'хвилини', 'хвилин');
   }
 
-  if (timeDifferenceInSeconds < 86400) {
-    // Less than a day
-    const hoursAgo = Math.floor(timeDifferenceInSeconds / 3600); // 3600 seconds in an hour
+  const timeInHours = Math.floor(timeInMinutes / 60);
 
-    if (hoursAgo === 1) {
-      return '1 година тому';
-    }
-
-    if (hoursAgo >= 2 && hoursAgo <= 4) {
-      return `${hoursAgo} години тому`;
-    }
-
-    return `${hoursAgo} годин тому`;
-
+  if (timeInHours < 24) {
+    return convertTimeToString(timeInHours, 'година', 'години', 'годин');
   }
 
-  if (timeDifferenceInSeconds < 2592000) {
-    // Less than a month (30 days)
-    const daysAgo = roundToNearestMultiple(Math.floor(timeDifferenceInSeconds / 86400), 5);
+  const timeInDays = Math.floor(timeInHours / 24);
 
-    return `${daysAgo} днів тому`;
+  if (timeInDays < 30) {
+    return convertTimeToString(timeInDays, 'день', 'дні', 'днів');
   }
 
-  if (timeDifferenceInSeconds < 31536000) {
-    // Less than a year
-    const monthsAgo = roundToNearestMultiple(Math.floor(timeDifferenceInSeconds / 2592000), 5);
+  const timeInMonths = Math.floor(timeInDays / 30);
 
-    return `${monthsAgo} місяців тому`;
+  if (timeInMonths < 12) {
+    return convertTimeToString(timeInMonths, 'місяць', 'місяці', 'місяців');
   }
-  // Over a year
-  const yearsAgo = roundToNearestMultiple(Math.floor(timeDifferenceInSeconds / 31536000), 5);
 
-  return `${yearsAgo} років тому`;
+  const timeInYears = Math.floor(timeInMonths / 12);
+
+  return convertTimeToString(timeInYears, 'рік', 'роки', 'років');
+
+}
+
+function convertTimeToString(date: number, singleForm: string,secondForm: string, pluralForm: string): string {
+
+  if (Number.parseInt(date.toString().charAt(date.toString().length-1)) === 1 && date !== 11) {
+    return `${date} ${singleForm} тому`;
+  }
+
+  if (date < 5 || (date > 20 && Number.parseInt(date.toString().charAt(date.toString().length-1)) < 5)) {
+    return `${date} ${secondForm} тому`;
+  }
+
+  return `${date} ${pluralForm} тому`;
 
 }

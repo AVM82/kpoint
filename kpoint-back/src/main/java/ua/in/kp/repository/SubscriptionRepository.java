@@ -1,5 +1,7 @@
 package ua.in.kp.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ua.in.kp.entity.ProjectSubscribeEntity;
@@ -16,4 +18,8 @@ public interface SubscriptionRepository extends JpaRepository<ProjectSubscribeEn
 
     @Query("SELECT p FROM ProjectSubscribeEntity p WHERE p.projectId = :projectId")
     List<ProjectSubscribeEntity> findUserIdsByProjectId(String projectId);
+
+    Page<ProjectSubscribeEntity> findByUserId(String userId, Pageable pageable);
+
+    boolean existsByUserIdAndProjectId(String userId, String projectId);
 }
