@@ -89,14 +89,6 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.updateProjectData(projectId, patch));
     }
 
-    @PutMapping("/{projectId}/update")
-    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable String projectId,
-                                                            @Valid @RequestBody
-                                                            ProjectCreateRequestDto createdProject) {
-        return new ResponseEntity<>(projectService
-                .updateProject(projectId, createdProject), HttpStatus.CREATED);
-    }
-
     @GetMapping("/{projectId}/subscribe-users")
     public ResponseEntity<List<ProjectSubscribeDto>> getSubscribedUsers(@PathVariable String projectId) {
         return new ResponseEntity<>(projectService.getSubscribedUsers(projectId), HttpStatus.OK);

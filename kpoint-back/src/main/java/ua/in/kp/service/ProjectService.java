@@ -29,10 +29,7 @@ import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
 import ua.in.kp.util.PatchUtil;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -127,12 +124,11 @@ public class ProjectService {
         return toReturn;
     }
 
-    private boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
+    public boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
             Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
             if (userOpt.isPresent()) {
                 UserEntity user = userOpt.get();
-                log.info("User {} is followed on project {}", user.getEmail(), project.getTitle());
                 return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
             }
         }
@@ -212,15 +208,15 @@ public class ProjectService {
 
     public StringResponseDto subscribeUserToProject(String projectId, Authentication auth) {
         UserEntity user = getCurrentUser(auth);
-        String projUrl = getProjectUriIfExist(projectId);
+        ProjectEntity project = getProjectIfExist(projectId);
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isPresent()) {
             return new StringResponseDto("User is already subscribed to project " + projectId);
         } else {
             saveSubscription(projectId);
-            emailService.sendProjectSubscriptionMessage(projectId, projUrl, user);
-            return new StringResponseDto("User subscribed to project " + projectId + " successfully");
+            emailService.sendProjectSubscriptionMessage(project, user);
+            return new StringResponseDto("User subscribed to project " + project.getTitle() + " successfully");
         }
     }
 
@@ -234,33 +230,12 @@ public class ProjectService {
         }
     }
 
-    public ProjectResponseDto updateProject(String projectId, ProjectCreateRequestDto projectCreateRequestDto) {
-        UserEntity user = userService.getAuthenticated();
-        ProjectEntity existingProject = getProjectIfExist(user, projectId);
-
-        ProjectEntity toUpdate = projectMapper.toEntity(projectCreateRequestDto);
-        toUpdate.setOwner(user);
-        existingProject.setCollectedSum(toUpdate.getCollectedSum());
-        existingProject.setDescription(projectCreateRequestDto.getDescription());
-        projectRepository.save(existingProject);
-        emailService.sendUpdateProjectMail(projectId, existingProject.getUrl());
-        return projectMapper.toDto(existingProject);
-    }
-
-    private ProjectEntity getProjectIfExist(UserEntity user, String projectId) {
-        Optional<ProjectEntity> projectForUpdate = projectRepository.findByOwnerAndProjectId(user, projectId);
-        if (projectForUpdate.isEmpty()) {
-            throw new RuntimeException("Project not found");
-        }
-        return projectForUpdate.get();
-    }
-
-    private String getProjectUriIfExist(String projectId) {
+    private ProjectEntity getProjectIfExist(String projectId) {
         Optional<ProjectEntity> projectForUpdate = projectRepository.findBy(projectId);
         if (projectForUpdate.isEmpty()) {
             throw new RuntimeException("Project not found");
         }
-        return projectForUpdate.get().getUrl();
+        return projectForUpdate.get();
     }
 
     private void saveSubscription(String projectId) {
@@ -321,10 +296,27 @@ public class ProjectService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.project.cannot-updated"));
         }
+        List<String> changedFields = findChangedFields(projectDto, patchedDto);
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
         ProjectEntity updatedUser = projectRepository.save(updatedProject);
-        emailService.sendUpdateProjectMail(projectId, projectEntity.getUrl());
+        emailService.sendProjectUpdateEmail(projectId, changedFields, updatedUser);
         return projectMapper.toChangeDto(updatedUser);
+    }
+
+    private List<String> findChangedFields(ProjectChangeDto originalDto, ProjectChangeDto patchedDto) {
+        List<String> changedFields = new ArrayList<>();
+
+        if (!Objects.equals(originalDto.title(), patchedDto.title())) {
+            changedFields.add("Значення поля 'Назва проекту' змінено на " + patchedDto.title());
+        }
+        if (!Objects.equals(originalDto.description(), patchedDto.description())) {
+            changedFields.add("Значення поля 'Опис' змінено на " + patchedDto.description());
+        }
+        if (!Objects.equals(originalDto.tags(), patchedDto.tags())) {
+            changedFields.add("Значення поля 'Теги' змінено на" + patchedDto.tags());
+        }
+
+        return changedFields;
     }
 }
