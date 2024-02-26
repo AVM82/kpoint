@@ -124,6 +124,19 @@ class ProjectApi {
     );
   }
 
+  public editLogo(payload: { id: string; logo: File }): Promise<any> {
+    const bodyData = new FormData();
+    bodyData.append('file', payload.logo);
+
+    return this.#http.load(
+      `${this.#apiPrefix}/projects/${payload.id}/logo`,
+      {
+        method: HttpMethod.PATCH,
+        payload: bodyData,
+      },
+    );
+  }
+
   public checkIfSubscribed (payload: { id: string }): Promise<SubscribeStatusType> {
     return this.#http.load(`${this.#apiPrefix}/projects/${payload.id}/subscribe-users`, {
       method: HttpMethod.GET,

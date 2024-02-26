@@ -79,6 +79,14 @@ const editProject = createAsyncThunk<
   return projectApi.editProject(payload);
 });
 
+const editLogo = createAsyncThunk<any, { id: string, logo: File },
+ AsyncThunkConfig>(ActionType.EDIT_LOGO,
+   async (payload, { extra }) => {
+     const { projectApi } = extra;
+
+     return projectApi.editLogo(payload);
+   });
+
 const checkIfSubscribed = createAsyncThunk<
   SubscribeStatusType,
   { id: string },
@@ -92,6 +100,7 @@ const checkIfSubscribed = createAsyncThunk<
 export {
   checkIfSubscribed,
   createNew,
+  editLogo,
   editProject,
   getAllProjectsAddMore,
   getAllProjectsDefault,

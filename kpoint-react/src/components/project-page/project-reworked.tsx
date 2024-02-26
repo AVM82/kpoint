@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
-import { editProject } from 'store/projects/actions';
+import { editLogo, editProject } from 'store/projects/actions';
 import {
   addTagLocally,
   deleteTagLocally,
@@ -107,7 +107,9 @@ const ProjectReworked: FC = () => {
   };
 
   const changeHandlerPhoto = (field: string, file: string | File): void => {
-    toast.success(field + '' + file);
+    const id = project.projectId;
+    const logo = file as File;
+    dispatch(editLogo({ id, logo }));
   };
 
   const createBodyData = (

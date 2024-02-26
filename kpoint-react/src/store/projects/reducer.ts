@@ -5,6 +5,7 @@ import { ProjectType } from '../../common/types/projects/project.type';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
 import {
   createNew,
+  editLogo,
   getAllProjectsAddMore,
   getAllProjectsDefault,
   getByUrl,
@@ -85,13 +86,11 @@ const projectSlice = createSlice({
       );
       proj?.forEach((p) => (p.isFollowed = true));
     },
-
+    unsubscribeFromProjectLocally: (state, action) => {
+      state.project.isFollowed = action.payload;
+    },
     subscribeToProjectPage: (state, action) => {
-      const content = state.project;
-
-      if (content && content?.projectId === action.payload) {
-        content.isFollowed = true;
-      }
+      state.project.isFollowed = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -133,6 +132,9 @@ const projectSlice = createSlice({
       })
       .addCase(unSubscribe.fulfilled, (state, { payload }) => {
         state.subscribe = payload;
+      })
+      .addCase(editLogo.fulfilled, (state, { payload }) => {
+        state.project.logoImgUrl = payload;
       });
   },
 });
@@ -144,6 +146,7 @@ const {
   editLogoLocally,
   subscribeToProjectLocally,
   subscribeToProjectPage,
+  unsubscribeFromProjectLocally,
 } = projectSlice.actions;
 
 const projectReducer = projectSlice.reducer;
@@ -157,4 +160,5 @@ export {
   projectReducer,
   subscribeToProjectLocally,
   subscribeToProjectPage,
+  unsubscribeFromProjectLocally,
 };
