@@ -8,6 +8,7 @@ import {
   getFavoriteProjects,
   getMyProjects,
   getRecommendedProjects,
+  updateAvatar,
   updateMyProfile,
 } from './actions';
 
@@ -70,6 +71,11 @@ const profileSlice = createSlice({
       })
       .addCase(existsUsername.fulfilled, (state, { payload }) => {
         state.status = payload.message;
+      })
+      .addCase(updateAvatar.fulfilled, (state, { payload }) => {
+        if (state.profile !== null) {
+          state.status = payload.message;
+        }
       });
   },
 });

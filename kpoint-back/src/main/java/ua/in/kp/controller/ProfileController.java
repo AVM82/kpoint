@@ -10,12 +10,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.profile.PasswordDto;
 import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
+import ua.in.kp.dto.subscribtion.MessageResponseDto;
 import ua.in.kp.locale.Translator;
 import ua.in.kp.service.ProfileService;
 
@@ -75,5 +79,13 @@ public class ProfileController {
         profileService.changePassword(auth.getName(), dto);
         return ResponseEntity.ok(new ua.in.kp.dto.ApiResponse(translator.getLocaleMessage(
                 "profile.change-password.successfully")));
+    }
+
+    @PatchMapping (path = "/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<MessageResponseDto> updateUserAvatar(@RequestPart(value = "file") MultipartFile file) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        log.info("updateUserAvatar {} {}", auth.getName(), file.getName());
+        return new ResponseEntity<>(profileService
+                .updateUserAvatar(auth.getName(), file), HttpStatus.OK);
     }
 }
