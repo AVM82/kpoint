@@ -64,14 +64,13 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
               orientation="vertical"
               variant="text"
               aria-label="outlined button group"
-              sx={{ margin: 1 }}
+              sx={{ margin: 1, backgroundColor: 'rgb(242, 244, 248)' }}
             >
               <Button
                 size="small"
                 startIcon={<PeopleAltTwoToneIcon />}
                 sx={{ justifyContent: 'right',
                   borderRadius: '5px',
-                  backgroundColor: 'rgb(242, 244, 248)',
                   border: 'none',
                   textTransform: 'none',
                   borderBottom: 'none',
@@ -90,7 +89,7 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
               <Button
                 size="small"
                 startIcon={<MonetizationOnTwoToneIcon />}
-                sx={{ justifyContent: 'right' }}
+                sx={{ justifyContent: 'right'  }}
               >
                 {t('buttons.donate_projects_page')}
               </Button>
