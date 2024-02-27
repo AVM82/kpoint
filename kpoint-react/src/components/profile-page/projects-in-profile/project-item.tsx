@@ -22,23 +22,17 @@ const ProjectItem: FC<ProjectItemProps> = ({ title, url, logoImgUrl }) => {
       sx={{ cursor: 'pointer' }}
       onClick={(): void => navigate(`/projects/${url}`)}
     >
-      <Box
-        display={'flex'}
-        flexDirection={'column'}
-        width={'80px'}
-        height={'80px'}
-        borderRadius={2}
-        alignItems={'center'}
-        justifyContent={'center'}>
-        <img
-          alt={title}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            maxWidth: '80px',
-            maxHeight: '80px',
-            justifyContent: 'center' }}
-          src={ logoImgUrl } />
+      <Box display={'flex'} gap={'23px'}>
+        <Box
+          width={'80px'}
+          height={'80px'}
+          display={'flex'}
+          justifyContent={'center'}
+          alignItems={'center'}
+        >
+          <Box component={'img'} src={logoImgUrl} alt="project logo" maxWidth={'100%'} maxHeight={'100%'}
+            borderRadius={'6px'} sx={{ objectFit: 'fill' }} ></Box>
+        </Box>
         <Typography>{title}</Typography>
       </Box>
       <Box display={'flex'} justifyContent={'space-between'} gap={'70px'}>
