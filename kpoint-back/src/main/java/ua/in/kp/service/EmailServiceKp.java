@@ -90,6 +90,9 @@ public class EmailServiceKp {
     }
 
     public void sendProjectUpdateEmail(String projectId, List<String> changedFields, ProjectEntity project) {
+        if (changedFields == null || changedFields.isEmpty()) {
+            return;
+        }
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
         String htmlContent = getHtmlContent(projectId, changedFields, project);
