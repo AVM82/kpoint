@@ -103,7 +103,7 @@ const SuggestionCard: FC<CommentProps> = ({
                   </h3>
                 </Grid>
 
-                {testUser && testUser.id === user.userId && likeCount === 0 && (
+                {(testUser?.id === user.userId && (likeCount === 0 || (likeCount === 1 && liked))) && (
                   <CardActions>
                     <IconButton
                       aria-label="Delete"
