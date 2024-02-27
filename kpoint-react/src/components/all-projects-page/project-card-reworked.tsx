@@ -1,5 +1,4 @@
 import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
-import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone';
 import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
 import ShareTwoToneIcon from '@mui/icons-material/ShareTwoTone';
@@ -51,31 +50,22 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
           justifyContent="space-between"
           alignItems="flex-start"
         >
-          <Grid item>
-            <IconButton href="#">
-              <BookmarkTwoToneIcon sx={{ margin: 1, color: 'blue' }} />
-            </IconButton>
-            <IconButton href="#">
-              <ShareTwoToneIcon sx={{ margin: 1, color: 'blue' }} />
-            </IconButton>
-          </Grid>
+          <IconButton href="#"
+            sx={{ margin: 1,
+              backgroundColor: 'rgba(242, 244, 248, 0.75)' }}>
+            <ShareTwoToneIcon sx={{ margin: 1, color: 'blue' }} />
+          </IconButton>
           <Grid item>
             <ButtonGroup
               orientation="vertical"
               variant="text"
               aria-label="outlined button group"
-              sx={{ margin: 1, backgroundColor: 'rgb(242, 244, 248)' }}
+              sx={{ margin: 1, backgroundColor: 'rgba(242, 244, 248, 0.75)' }}
             >
               <Button
                 size="small"
                 startIcon={<PeopleAltTwoToneIcon />}
-                sx={{ justifyContent: 'right',
-                  borderRadius: '5px',
-                  border: 'none',
-                  textTransform: 'none',
-                  borderBottom: 'none',
-                  borderBottomLeftRadius: 0,
-                  borderBottomRightRadius: 0 }}
+                sx={{ justifyContent: 'right' }}
               >
                 {t('buttons.help')}
               </Button>
@@ -89,7 +79,7 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
               <Button
                 size="small"
                 startIcon={<MonetizationOnTwoToneIcon />}
-                sx={{ justifyContent: 'right'  }}
+                sx={{ justifyContent: 'right' }}
               >
                 {t('buttons.donate_projects_page')}
               </Button>
