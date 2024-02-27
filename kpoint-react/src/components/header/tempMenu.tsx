@@ -14,6 +14,7 @@ import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
 import * as React from 'react';
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { storage } from 'services/services';
 
@@ -22,6 +23,7 @@ interface MenuProps {
 }
 
 const AccountMenu: FC<MenuProps> = ({ onClick }) => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -50,7 +52,7 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Tooltip title="Account settings">
+        <Tooltip title={t('menu.account_settings')}>
           <IconButton
             onClick={handleClick}
             size="small"
@@ -104,29 +106,29 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem onClick={handleClickProfile}>
-          <Avatar /> Profile
+          <Avatar /> {t('menu.profile')}
         </MenuItem>
         <MenuItem onClick={handleClose}>
-          <Avatar /> My account
+          <Avatar /> {t('menu.my_account')}
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
-          Add another account
+          {t('menu.add_another_account')}
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
-          Settings
+          {t('menu.settings')}
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          {t('menu.logout')}
         </MenuItem>
       </Menu>
     </React.Fragment>

@@ -106,6 +106,14 @@ const enTranslation = {
     profile_updated: 'Profile data changed successfully',
     profile_avatar_updated: 'Profile avatar successfully changed',
   },
+  menu: {
+    account_settings: 'Account settings',
+    profile: 'Profile',
+    my_account: 'My account',
+    add_another_account : 'Add another account',
+    settings: 'Settings',
+    logout: 'Loguut',
+  },
 };
 
 export { enTranslation };

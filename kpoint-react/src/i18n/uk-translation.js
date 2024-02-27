@@ -106,6 +106,14 @@ const ukTranslation = {
     profile_updated: 'Данні профілю успішно змінені',
     profile_avatar_updated: 'Аватар профілю успішно змінено',
   },
+  menu: {
+    account_settings: 'Налаштування аккаунта',
+    profile: 'Профіль',
+    my_account: 'Мій аккаунт',
+    add_another_account : 'Добавити інший аккаунт',
+    settings: 'Налаштування',
+    logout: 'Вихід',
+  },
 };
 
 export { ukTranslation };
