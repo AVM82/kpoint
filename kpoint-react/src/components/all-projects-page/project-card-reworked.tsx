@@ -30,7 +30,7 @@ interface ProjectsProps {
   isFollowed: boolean;
 }
 
-const ProjectCard: FC<ProjectsProps> = ({
+const ProjectCardReworked: FC<ProjectsProps> = ({
   projectId,
   url,
   title,
@@ -43,7 +43,7 @@ const ProjectCard: FC<ProjectsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Card sx={{ maxWidth: 500 }}>
+    <Card sx={{ minWidth: '370px' }}>
       <CardMedia sx={{ height: 200 }} image={logoImgUrl} title={title}>
         <Grid
           container
@@ -64,12 +64,18 @@ const ProjectCard: FC<ProjectsProps> = ({
               orientation="vertical"
               variant="text"
               aria-label="outlined button group"
-              sx={{ margin: 1 }}
+              sx={{ margin: 1, backgroundColor: 'rgb(242, 244, 248)' }}
             >
               <Button
                 size="small"
                 startIcon={<PeopleAltTwoToneIcon />}
-                sx={{ justifyContent: 'right' }}
+                sx={{ justifyContent: 'right',
+                  borderRadius: '5px',
+                  border: 'none',
+                  textTransform: 'none',
+                  borderBottom: 'none',
+                  borderBottomLeftRadius: 0,
+                  borderBottomRightRadius: 0 }}
               >
                 {t('buttons.help')}
               </Button>
@@ -83,7 +89,7 @@ const ProjectCard: FC<ProjectsProps> = ({
               <Button
                 size="small"
                 startIcon={<MonetizationOnTwoToneIcon />}
-                sx={{ justifyContent: 'right' }}
+                sx={{ justifyContent: 'right'  }}
               >
                 {t('buttons.donate_projects_page')}
               </Button>
@@ -117,4 +123,4 @@ const ProjectCard: FC<ProjectsProps> = ({
   );
 };
 
-export { ProjectCard };
+export { ProjectCardReworked };

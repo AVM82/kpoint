@@ -1,68 +1,127 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProjectsEditType, ProjectsPageType } from 'common/types/types';
 
 import { ProjectType } from '../../common/types/projects/project.type';
 import { SubscriptionRequestType } from '../../common/types/projects/subscription-request.type';
-import { createNew, getAllProjectsAddMore, getAllProjectsDefault, getById, subscribeToProject }
-  from './actions';
+import {
+  createNew,
+  editLogo,
+  getAllProjectsAddMore,
+  getAllProjectsDefault,
+  getByUrl,
+  subscribeToProject,
+  unSubscribe,
+} from './actions';
 
-type State={
-  project: ProjectType | null,
-  projects: ProjectsPageType | null,
-  editProject: ProjectsEditType | null,
-  subscribe: SubscriptionRequestType | null,
+type State = {
+  project: ProjectType;
+  projects: ProjectsPageType | null;
+  editProject: ProjectsEditType | null;
+  subscribe: SubscriptionRequestType | null;
+  error: string;
 };
 
 const initialState: State = {
-  project: null,
+  project: {
+    owner: {
+      ownerId: '',
+      firstName: '',
+      lastName: '',
+    },
+    projectId: '',
+    title: '',
+    logoImgUrl: '',
+    url: '',
+    description: '',
+    tags: [],
+    collectDeadline: '',
+    goalDeadline: '',
+    goalSum: 0,
+    summary: '',
+    latitude: 0,
+    longitude: 0,
+    state: '',
+    ownerSum: 0,
+    collectedSum: 0,
+    createdAt: '',
+    networksLinks: {
+      FACEBOOK: '',
+      INSTAGRAM: '',
+      YOUTUBE: '',
+    },
+    startSum: 0,
+    isFollowed: false,
+  },
   projects: null,
   editProject: null,
   subscribe: null,
+  error: '',
 };
 
 const projectSlice = createSlice({
   name: 'project',
   initialState,
   reducers: {
+    addTagLocally: (state, action: PayloadAction<string>) => {
+      state.project.tags.push(action.payload);
+    },
+    deleteTagLocally: (state, action: PayloadAction<string>) => {
+      state.project.tags = state.project.tags.filter(
+        (tag) => tag !== action.payload,
+      );
+    },
+    editTitleLocally: (state, action) => {
+      state.project.title = action.payload;
+    },
+    editDescriptionLocally: (state, action) => {
+      state.project.description = action.payload;
+    },
+    editLogoLocally: (state, action) => {
+      state.project.logoImgUrl = action.payload;
+    },
     subscribeToProjectLocally: (state, action) => {
       const content = state.projects?.content;
-      const proj = content?.filter((content) =>
-        content.projectId === action.payload);
-      proj?.forEach((p) => p.isFollowed = true);
+      const proj = content?.filter(
+        (content) => content.projectId === action.payload,
+      );
+      proj?.forEach((p) => (p.isFollowed = true));
     },
-
+    unsubscribeFromProjectLocally: (state, action) => {
+      state.project.isFollowed = action.payload;
+    },
     subscribeToProjectPage: (state, action) => {
-      const content = state.project;
-
-      if (content && content?.projectId === action.payload) {
-        content.isFollowed = true;
-      }
+      state.project.isFollowed = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getById.rejected, (state ) => {
-        state.project = null;
+      .addCase(getByUrl.rejected, (state) => {
+        state.error = 'rejected';
       })
-      .addCase(getById.fulfilled, (state, { payload }) => {
+      .addCase(getByUrl.fulfilled, (state, { payload }) => {
         state.project = payload;
       })
-      .addCase(getAllProjectsDefault.rejected, (state ) => {
+      .addCase(getAllProjectsDefault.rejected, (state) => {
         state.projects = null;
       })
       .addCase(getAllProjectsDefault.fulfilled, (state, { payload }) => {
         state.projects = payload;
       })
-      .addCase(getAllProjectsAddMore.rejected, (state ) => {
+      .addCase(getAllProjectsAddMore.rejected, (state) => {
         state.projects = null;
       })
       .addCase(getAllProjectsAddMore.fulfilled, (state, { payload }) => {
         if(state.projects != null) {
-          state.projects.content = [...state.projects.content, ...payload?.content ?? []];
+          const uniquePayloadContent = payload?.content
+            ? payload.content.filter((item) =>
+              !state.projects?.content.some((existingItem)=>
+                existingItem.projectId === item.projectId))
+            : [];
+          state.projects.content = [...state.projects.content,  ...uniquePayloadContent];
         }
       })
       .addCase(createNew.rejected, (state) => {
-        state.project = null;
+        state.error = 'rejected';
       })
       .addCase(createNew.fulfilled, (state, { payload }) => {
         state.project = payload;
@@ -72,13 +131,36 @@ const projectSlice = createSlice({
       })
       .addCase(subscribeToProject.rejected, (state) => {
         state.subscribe = null;
+      })
+      .addCase(unSubscribe.fulfilled, (state, { payload }) => {
+        state.subscribe = payload;
+      })
+      .addCase(editLogo.fulfilled, (state, { payload }) => {
+        state.project.logoImgUrl = payload;
       });
   },
 });
+const {
+  addTagLocally,
+  deleteTagLocally,
+  editTitleLocally,
+  editDescriptionLocally,
+  editLogoLocally,
+  subscribeToProjectLocally,
+  subscribeToProjectPage,
+  unsubscribeFromProjectLocally,
+} = projectSlice.actions;
 
-const { subscribeToProjectLocally } = projectSlice.actions;
-
-const { subscribeToProjectPage } = projectSlice.actions;
 const projectReducer = projectSlice.reducer;
 
-export { projectReducer, subscribeToProjectLocally, subscribeToProjectPage };
+export {
+  addTagLocally,
+  deleteTagLocally,
+  editDescriptionLocally,
+  editLogoLocally,
+  editTitleLocally,
+  projectReducer,
+  subscribeToProjectLocally,
+  subscribeToProjectPage,
+  unsubscribeFromProjectLocally,
+};

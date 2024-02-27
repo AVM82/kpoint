@@ -12,10 +12,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.profile.PasswordDto;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
 import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
+import ua.in.kp.dto.subscribtion.MessageResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
@@ -43,6 +45,7 @@ public class ProfileService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final S3Service s3Service;
     private final Translator translator;
 
     public Page<GetAllProjectsDto> getMyProjects(Pageable pageable) {
@@ -71,34 +74,26 @@ public class ProfileService {
     }
 
     public Page<GetAllProjectsDto> getRecommendedProjects(Pageable pageable) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = userService.getAuthenticated();
         log.info("Get recommended projects for user {}", user.getUsername());
         Set<String> subscribedProjectIds =
                 subscriptionRepository.findByUserId(user.getId(), pageable).stream()
                         .map(ProjectSubscribeEntity::getProjectId)
                         .collect(Collectors.toSet());
-        log.info("Sub proj {}", subscribedProjectIds.size());
         Set<String> ownedProjectIds =
                 projectService.getProjectsByUser(user, pageable).stream()
                         .map(ProjectEntity::getProjectId)
                         .collect(Collectors.toSet());
-        log.info("Own proj {}", ownedProjectIds.size());
-        log.info("Get recommended projects for user {}", user.getUsername());
         subscribedProjectIds.addAll(ownedProjectIds);
-        log.info("Sub proj 2 {}", subscribedProjectIds.size());
-        log.info("Get recommended projects for user {}", user.getUsername());
         Set<TagEntity> tags = userRepository.findByEmail(user.getEmail()).orElseThrow().getTags();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return projectService.retrieveRecommendedProjects(tags, subscribedProjectIds, pageable)
-                .map(projectMapper::getAllToDto);
-//        return projectService.retrieveRecommendedProjects(tags, subscribedProjectIds, pageable)
-//                .map(project -> {
-//
-//                    boolean isFollowed = checkIsFollowed(project, auth);
-//                    GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
-//                    dto.setFollowed(isFollowed);
-//                    return dto;
-//                });
+                .map(project -> {
+                    boolean isFollowed = projectService.checkIsFollowed(project, auth);
+                    GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
+                    dto.setFollowed(isFollowed);
+                    return dto;
+                });
     }
 
     public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(Pageable pageable) {
@@ -142,5 +137,12 @@ public class ProfileService {
                     "exception.user.invalid-old-password"));
         }
         userService.changeUserPassword(user, dto.newPassword());
+    }
+
+    public MessageResponseDto updateUserAvatar(String email, MultipartFile file) {
+        log.info("update avatar by user {}", email);
+        UserEntity userEntity = userService.getByEmail(email);
+        userEntity.setAvatarImgUrl(s3Service.uploadLogo(file));
+        return new MessageResponseDto(userRepository.save(userEntity).getAvatarImgUrl());
     }
 }

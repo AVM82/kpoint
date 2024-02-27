@@ -55,11 +55,12 @@ const enTranslation = {
     log_out: 'Log out',
     create_project: 'Create project',
     suggestions: 'Suggestions',
+    edit: 'edit',
     cancel: 'CANCEL',
   },
   owner: 'Owner',
   description: 'Description',
-  about:'About project',
+  about: 'About project',
   team: 'Team',
   help_project: 'Help Project',
   comments: 'Comments',
@@ -82,18 +83,29 @@ const enTranslation = {
   stages_implementation: 'Tasks and Stages of Implementation',
   stage: 'Stage',
   errors: {
-    project_title: 'The project name cannot be empty or have more than 30 characters',
+    project_title:
+      'The project name cannot be empty or have more than 30 characters',
     project_url: 'Project URL length must be from 5 to 30 symbols',
     project_tags: 'The number of tags can be from 1 to 5',
     user_tags: 'The number of tags can be from 1 to 10',
-    project_summary: 'Short description and purpose cannot be empty or have more than 150 characters',
-    project_description: 'The project description cannot be empty or have more than 512 characters',
-    project_deadline: 'The collection deadline cannot be later than the goal deadline',
+    project_summary:
+      'Short description and purpose cannot be empty or have more than 150 characters',
+    project_description:
+      'The project description cannot be empty or have more than 512 characters',
+    project_deadline:
+      'The collection deadline cannot be later than the goal deadline',
     suggestion_size: 'The field must contain from 1 to 200 characters',
     profile_password_not_same: 'New and repeat passwords are not the same',
-    profile_password_new_current: 'The new profile password must be different from the current one',
+    profile_password_new_current:
+      'The new profile password must be different from the current one',
+    can_not_login: 'Can`t login',
+    profile_can_not_update: 'Can`t update profile',
+  },
+  success: {
+    profile_email_updated: 'Email address changed. Please sign in with your new email to continue',
+    profile_updated: 'Profile data changed successfully',
+    profile_avatar_updated: 'Profile avatar successfully changed',
   },
 };
 
 export { enTranslation };
-

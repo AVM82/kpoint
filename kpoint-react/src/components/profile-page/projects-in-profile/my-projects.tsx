@@ -34,7 +34,7 @@ const MyProjects: FC = () => {
       <Navbar />
       {response &&
         response.map((proj) => {
-          return <ProjectItem title={proj.title} />;
+          return <ProjectItem title={proj.title} url={proj.url} logoImgUrl={proj.logoImgUrl} />;
         })}
     </Box>
   );

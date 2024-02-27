@@ -104,7 +104,10 @@ const SuggestionsPage: FC = () => {
             </Box>
           </Box>
           {modalOpen && (
-            <AddSuggestionModal handleCloseModal={handleCloseModal} currentPage={page} />
+            <AddSuggestionModal
+              handleCloseModal={handleCloseModal}
+              currentPage={page}
+            />
           )}
           <Grid item>
             {suggestions?.content.map((suggestion) => (
@@ -175,7 +178,10 @@ const SuggestionsPage: FC = () => {
               </Button>
             </Box>
             {modalOpen && (
-              <AddSuggestionModal handleCloseModal={handleCloseModal} currentPage={page}/>
+              <AddSuggestionModal
+                handleCloseModal={handleCloseModal}
+                currentPage={page}
+              />
             )}
           </Box>
           <Box component={'img'} src={suggestionsImage}></Box>
