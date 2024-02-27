@@ -31,7 +31,6 @@ import ua.in.kp.repository.UserRepository;
 import ua.in.kp.util.PatchUtil;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 

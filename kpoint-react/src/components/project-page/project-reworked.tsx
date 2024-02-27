@@ -32,8 +32,11 @@ import {
   editTitleLocally,
 } from 'store/projects/reducer';
 
+import { StorageKey } from '../../common/enums/app/storage-key.enum';
+import { storage } from '../../services/services';
 import { generateGoogleMapsLink } from '../../utils/function-generate-google-maps-link';
 import { ProjectSocials } from './project-socials';
+import { SubscribeButton } from './SubscribeButton';
 
 // function getTabAccessibilityProps(index: number): {
 //   id: string;
@@ -55,6 +58,8 @@ const ProjectReworked: FC = () => {
   const [tagsClicked, setTagsClicked] = useState(false);
   const [testEditForm, setTestEditForm] = useState<object>({});
   const [showButton, setShowButton] = useState(false);
+  const user = storage.getItem(StorageKey.TOKEN);
+  const isAuthenticated = user !== undefined && user !== null;
 
   const handleDeleteTag = (tag: string): void => {
     const bodyData = [];
@@ -191,7 +196,21 @@ const ProjectReworked: FC = () => {
             flexDirection={'column'}
             padding={'72px 0 44px 0'}
           >
-            <ProjectSocials project={project} />
+            <Box
+              display={'flex'}
+              justifyContent={'space-between'}
+              alignItems={'center'}
+            >
+
+              <ProjectSocials project={project} />
+              {project &&
+              <SubscribeButton
+                projectId={project.projectId}
+                isAuthenticated={isAuthenticated}
+                isFollowed={project.isFollowed}
+              />
+              }
+            </Box>
             <Box
               display={'flex'}
               justifyContent={'space-between'}
@@ -328,15 +347,13 @@ const ProjectReworked: FC = () => {
                 alignSelf={'end'}
                 gap={'16px'}
               >
-                {/*{<SubscribeButton projectId={projects?.content.map((project) => project.projectId)}*/}
-                {/*  isAuthenticated={isAuthenticated}*/}
-                {/*  isFollowed={projects?.content.map((project) => project.isFollowed) ?? false}/>}*/}
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
                     borderRadius: '5px',
                     background: 'rgb(255, 255, 255)',
-                    width: '100%',
+                    width: '260px',
+                    height: '46px',
                     color: 'rgb(130, 130, 130)',
                     fontSize: '14px',
                     fontWeight: 500,
@@ -346,14 +363,13 @@ const ProjectReworked: FC = () => {
                 >
                   <PersonAddIcon /> {t('buttons.support')}
                 </Button>
-                {/*{project &&<SubscribeButton projectId={project.projectId}*/}
-                {/*  isAuthenticated={isAuthenticated} isFollowed={isFollowed}/>}*/}
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
                     borderRadius: '5px',
                     background: 'rgb(255, 255, 255)',
-                    width: '100%',
+                    width: '260px',
+                    height: '46px',
                     color: 'rgb(130, 130, 130)',
                     fontSize: '14px',
                     fontWeight: 500,
