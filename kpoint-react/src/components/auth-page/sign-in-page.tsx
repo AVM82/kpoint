@@ -48,7 +48,6 @@ const SignInPage: FC = () => {
         const user = responseType.user;
         storage.setItem(StorageKey.TOKEN, responseType.token);
         storage.setItem(StorageKey.USER, JSON.stringify(user));
-        toast(JSON.stringify(responseType.user));
         navigate('/');
       })
       .catch((error) => {

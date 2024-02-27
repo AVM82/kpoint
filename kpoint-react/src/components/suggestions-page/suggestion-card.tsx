@@ -1,9 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import React, { FC, useEffect, useState } from 'react';
@@ -23,7 +23,6 @@ interface CommentProps {
   suggestion: string;
   likeCount: number;
   createdAt: string;
-  logoImgUrl: string;
   liked: boolean;
   onDelete: (id: string) => void;
 }
@@ -43,7 +42,6 @@ const SuggestionCard: FC<CommentProps> = ({
   suggestion,
   likeCount: initialLikeCount,
   createdAt,
-  logoImgUrl,
   liked: initialLiked,
   onDelete,
 }) => {
@@ -70,10 +68,6 @@ const SuggestionCard: FC<CommentProps> = ({
         liked: boolean;
       };
 
-      toast.success(
-        `Suggestion updated: Like Count - ${updatedSuggestion.likeCount}, Liked - ${updatedSuggestion.liked}`,
-      );
-
       setLikeCount(updatedSuggestion.likeCount);
       setLiked(updatedSuggestion.liked);
     } catch (error) {
@@ -85,9 +79,6 @@ const SuggestionCard: FC<CommentProps> = ({
     <Card>
       <CardContent>
         <Grid container spacing={2}>
-          <Grid item>
-            <Avatar src={logoImgUrl} style={{ width: 80, height: 80 }} />
-          </Grid>
           <Grid item xs={10}>
             <div
               className="user-info"
@@ -102,35 +93,35 @@ const SuggestionCard: FC<CommentProps> = ({
                     {formatDateTimeUk(createdAt)}
                   </h3>
                 </Grid>
-
-                {testUser && testUser.id === user.userId && likeCount === 0 && (
-                  <CardActions>
-                    <IconButton
-                      aria-label="Delete"
-                      onClick={(): void => onDelete(id)}
-                      style={{ marginLeft: 'auto' }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </CardActions>
-                )}
               </Grid>
             </div>
             <div className="comment">
-              <p className="comment-text">{suggestion}</p>
+              <p className="comment-text" style={{ marginLeft: '10px', marginBottom: '4px' }}>
+                {suggestion}
+              </p>
             </div>
-            <CardActions disableSpacing>
-              <IconButton onClick={handleLike}>
-                <ThumbUpIcon
-                  style={liked ? iconStylesLiked : iconStylesNotLiked}
-                />
-                &nbsp;
-                <p>{likeCount}</p>
+          </Grid>
+          <Grid item xs={2} style={{ textAlign: 'right' }}>
+            {(testUser?.id === user.userId && (likeCount === 0 || (likeCount === 1 && liked))) && (
+              <IconButton
+                aria-label="Delete"
+                onClick={(): void => onDelete(id)}
+                style={{ marginTop: '8px' }}
+              >
+                <CloseIcon />
               </IconButton>
-            </CardActions>
+            )}
           </Grid>
         </Grid>
       </CardContent>
+      <Divider />
+      <CardActions disableSpacing style={{ paddingTop: '2px', paddingBottom: '2px' }}>
+        <IconButton onClick={handleLike}>
+          <ThumbUpIcon style={liked ? iconStylesLiked : iconStylesNotLiked} />
+          &nbsp;
+          <p>{likeCount}</p>
+        </IconButton>
+      </CardActions>
     </Card>
   );
 };
