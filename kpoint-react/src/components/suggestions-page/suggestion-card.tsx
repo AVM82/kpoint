@@ -102,7 +102,7 @@ const SuggestionCard: FC<CommentProps> = ({
             </div>
           </Grid>
           <Grid item xs={2} style={{ textAlign: 'right' }}>
-            {testUser && testUser.id === user.userId && likeCount === 0 && (
+            {(testUser?.id === user.userId && (likeCount === 0 || (likeCount === 1 && liked))) && (
               <IconButton
                 aria-label="Delete"
                 onClick={(): void => onDelete(id)}
