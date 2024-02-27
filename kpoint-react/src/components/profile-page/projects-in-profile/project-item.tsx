@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 interface ProjectItemProps {
   title: string;
   url: string;
+  logoImgUrl: string;
 }
 
-const ProjectItem: FC<ProjectItemProps> = ({ title, url }) => {
+const ProjectItem: FC<ProjectItemProps> = ({ title, url, logoImgUrl }) => {
   const navigate = useNavigate();
 
   return (
@@ -25,9 +26,13 @@ const ProjectItem: FC<ProjectItemProps> = ({ title, url }) => {
         <Box
           width={'80px'}
           height={'80px'}
-          bgcolor={'gray'}
-          borderRadius={'6px'}
-        ></Box>
+          display={'flex'}
+          justifyContent={'center'}
+          alignItems={'center'}
+        >
+          <Box component={'img'} src={logoImgUrl} alt="project logo" maxWidth={'100%'} maxHeight={'100%'}
+            borderRadius={'6px'} sx={{ objectFit: 'fill' }} ></Box>
+        </Box>
         <Typography>{title}</Typography>
       </Box>
       <Box display={'flex'} justifyContent={'space-between'} gap={'70px'}>
