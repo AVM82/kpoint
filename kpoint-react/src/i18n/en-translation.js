@@ -104,6 +104,7 @@ const enTranslation = {
   success: {
     profile_email_updated: 'Email address changed. Please sign in with your new email to continue',
     profile_updated: 'Profile data changed successfully',
+    profile_avatar_updated: 'Profile avatar successfully changed',
   },
 };
 

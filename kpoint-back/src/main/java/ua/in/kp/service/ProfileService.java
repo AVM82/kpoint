@@ -12,10 +12,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.profile.PasswordDto;
 import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
 import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
+import ua.in.kp.dto.subscribtion.MessageResponseDto;
 import ua.in.kp.entity.ProjectEntity;
 import ua.in.kp.entity.ProjectSubscribeEntity;
 import ua.in.kp.entity.TagEntity;
@@ -42,6 +44,7 @@ public class ProfileService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final S3Service s3Service;
     private final Translator translator;
 
     public Page<GetAllProjectsDto> getMyProjects(Pageable pageable) {
@@ -133,5 +136,12 @@ public class ProfileService {
                     "exception.user.invalid-old-password"));
         }
         userService.changeUserPassword(user, dto.newPassword());
+    }
+
+    public MessageResponseDto updateUserAvatar(String email, MultipartFile file) {
+        log.info("update avatar by user {}", email);
+        UserEntity userEntity = userService.getByEmail(email);
+        userEntity.setAvatarImgUrl(s3Service.uploadLogo(file));
+        return new MessageResponseDto(userRepository.save(userEntity).getAvatarImgUrl());
     }
 }
