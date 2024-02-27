@@ -78,6 +78,17 @@ const existsUsername = createAsyncThunk<
       return profileApi.existsUsername(payload);
     });
 
+const updateAvatar = createAsyncThunk<
+  ApiResponseType,
+  { logo: File },
+  AsyncThunkConfig>(
+    ActionType.UPDATE_AVATAR,
+    async (payload, { extra }) => {
+      const { profileApi } = extra;
+
+      return profileApi.updateAvatar(payload);
+    });
+
 export {
   changePassword,
   existsEmail,
@@ -85,5 +96,6 @@ export {
   getFavoriteProjects,
   getMyProjects,
   getRecommendedProjects,
+  updateAvatar,
   updateMyProfile,
 };
