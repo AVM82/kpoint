@@ -190,6 +190,10 @@ public class ProjectService {
         return projectMapper.toDto(projectEntity);
     }
 
+    public Page<ProjectEntity> retrieveRecommendedProjectsById(String userId, Pageable pageable) {
+        return projectRepository.findByUserIdAndSortByTagsCountThenGoalSumOrSortByCreatedAt(userId, pageable);
+    }
+
     public Page<ProjectEntity> retrieveRecommendedProjects(
             Set<TagEntity> tags, Set<String> userProjectsIds, Pageable pageable) {
         if (userProjectsIds.isEmpty()) {
