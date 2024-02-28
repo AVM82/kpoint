@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.profile.PasswordDto;
-import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
 import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.subscribtion.MessageResponseDto;
