@@ -49,7 +49,7 @@ public class ProjectController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth instanceof UsernamePasswordAuthenticationToken) {
             return new ResponseEntity<>(profileService
-                    .getRecommendedProjects(pageable), HttpStatus.OK);
+                    .getRecommendedProjectsById(pageable), HttpStatus.OK);
         }
         return new ResponseEntity<>(projectService.getAllProjects(pageable, auth), HttpStatus.OK);
     }
