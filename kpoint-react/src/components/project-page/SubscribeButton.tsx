@@ -55,12 +55,6 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
         letterSpacing: '0.5px',
       }}
       size="small"
-      sx={{ textAlign: 'center', border: '2px solid #828282', color: '#828282', 
-        '&:hover': {
-          backgroundColor: '#636B74',
-          color: 'white',
-        },
-      }}
       onClick={handleButtonSubClick}
     >
       {isFollowed ? (<RemoveCircleOutlineIcon fontSize="small"/>) : (<ControlPointTwoToneIcon fontSize="small"/>)}

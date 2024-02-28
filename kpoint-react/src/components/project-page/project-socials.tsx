@@ -1,14 +1,19 @@
 import { Box, Link } from '@mui/material';
+import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { ProjectType } from 'common/types/types';
 import { FC } from 'react';
+import { storage } from 'services/services';
 
 import { getSocialMediaIcon } from '../../utils/function-social-media-icons';
+import { SubscribeButton } from './SubscribeButton';
 
 interface ProjectSocialsProps {
   project: ProjectType | null;
 }
 const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
-
+  const user = storage.getItem(StorageKey.TOKEN);
+  const isAuthenticated = user !== undefined && user !== null;
+  
   return (
     <Box
       display={'flex'}
