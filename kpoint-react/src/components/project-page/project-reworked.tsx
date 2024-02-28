@@ -32,10 +32,13 @@ import {
   editTitleLocally,
 } from 'store/projects/reducer';
 
+import { StorageKey } from '../../common/enums/app/storage-key.enum';
+import { storage } from '../../services/services';
 import { generateGoogleMapsLink } from '../../utils/function-generate-google-maps-link';
 import { ProjectSocials } from './project-socials';
 import { Description } from './project-tabs/description';
 import { OurTeam } from './project-tabs/our-team';
+import { SubscribeButton } from './SubscribeButton';
 
 // function getTabAccessibilityProps(index: number): {
 //   id: string;
@@ -56,6 +59,8 @@ const ProjectReworked: FC = () => {
   const [tagsClicked, setTagsClicked] = useState(false);
   const [testEditForm, setTestEditForm] = useState<object>({});
   const [showButton, setShowButton] = useState(false);
+  const user = storage.getItem(StorageKey.TOKEN);
+  const isAuthenticated = user !== undefined && user !== null;
 
   const handleDeleteTag = (tag: string): void => {
     const bodyData = [];
@@ -191,7 +196,21 @@ const ProjectReworked: FC = () => {
             flexDirection={'column'}
             padding={'72px 0 44px 0'}
           >
-            <ProjectSocials project={project} />
+            <Box
+              display={'flex'}
+              justifyContent={'space-between'}
+              alignItems={'center'}
+            >
+
+              <ProjectSocials project={project} />
+              {project &&
+                <SubscribeButton
+                  projectId={project.projectId}
+                  isAuthenticated={isAuthenticated}
+                  isFollowed={project.isFollowed}
+                />
+              }
+            </Box>
             <Box
               display={'flex'}
               justifyContent={'space-between'}

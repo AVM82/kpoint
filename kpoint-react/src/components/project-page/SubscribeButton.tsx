@@ -42,6 +42,18 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
 
   return (
     <Button
+      sx={{
+        border: '2px solid rgb(130, 130, 130)',
+        borderRadius: '5px',
+        background: 'rgb(255, 255, 255, 0)',
+        width: '260px',
+        height: '46px',
+        color: 'rgb(130, 130, 130)',
+        fontSize: '14px',
+        fontWeight: 500,
+        lineHeight: '100%',
+        letterSpacing: '0.5px',
+      }}
       size="small"
       sx={{ textAlign: 'center', border: '2px solid #828282', color: '#828282', 
         '&:hover': {

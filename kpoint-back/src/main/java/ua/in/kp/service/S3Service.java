@@ -1,11 +1,13 @@
 package ua.in.kp.service;
 
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -13,10 +15,12 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class S3Service {
     public static final int WIDTH = 240;
     public static final int HEIGHT = 240;
@@ -50,11 +54,13 @@ public class S3Service {
                     .acl(ObjectCannedACL.PUBLIC_READ)
                     .build(), RequestBody.fromBytes(logoBytes));
 
+            log.info("Logo was uploaded to S3");
             return s3Client.utilities().getUrl(GetUrlRequest.builder()
                     .bucket(s3Bucket)
                     .key(folder + logoImgUrl)
                     .build()).toExternalForm();
         } catch (Exception e) {
+            log.warn("Logo could not be loaded on S3 ");
             return e.getMessage();
         }
     }
@@ -78,5 +84,22 @@ public class S3Service {
                 .outputFormat("jpg")
                 .toOutputStream(outputStream);
         return outputStream.toByteArray();
+    }
+
+    public void deleteImageByUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return;
+        }
+        try {
+            URI uri = new URI(imageUrl);
+            String key = uri.getPath().substring(1);
+            s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(s3Bucket)
+                    .key(key)
+                    .build());
+            log.info("Logo was removed from S3");
+        } catch (Exception e) {
+            log.warn("Logo could not be removed from S3 " + e.getMessage());
+        }
     }
 }

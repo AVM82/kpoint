@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - demo
+    paths:
+      - 'config/**'
 
 jobs:
   build-and-deploy:
@@ -42,3 +44,14 @@ jobs:
           deployment_package: ${{ env.jar_file }}
           wait_for_deployment: true
           wait_for_environment_recovery: true
+
+      - name: Deploy prometheus and grafana
+        uses: bitovi/github-actions-deploy-prometheus@v0.1.0
+        with:
+          # AWS config
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+
+          # observability config
+          grafana_datasource_dir: config/datasources
+          prometheus_config: config/prometheus.yml
