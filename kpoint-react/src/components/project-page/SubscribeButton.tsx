@@ -1,4 +1,6 @@
 import ControlPointTwoToneIcon from '@mui/icons-material/ControlPointTwoTone';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,11 +43,17 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
   return (
     <Button
       size="small"
-      startIcon={<ControlPointTwoToneIcon />}
-      sx={{ justifyContent: 'right' }}
+      sx={{ textAlign: 'center', border: '2px solid #828282', color: '#828282', 
+        '&:hover': {
+          backgroundColor: '#636B74',
+          color: 'white',
+        },
+      }}
       onClick={handleButtonSubClick}
     >
-      {isFollowed ? t('buttons.unfollow') : t('buttons.follow')}
+      {isFollowed ? (<RemoveCircleOutlineIcon fontSize="small"/>) : (<ControlPointTwoToneIcon fontSize="small"/>)}
+      {isFollowed ? <Typography textTransform={'none'}>{t('buttons.unfollow')}</Typography>
+        : <Typography textTransform={'none'}>{t('buttons.follow')}</Typography>}
     </Button>
   );
 };

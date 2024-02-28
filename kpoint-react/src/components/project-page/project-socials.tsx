@@ -23,25 +23,6 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
       width={'100%'}
       marginBottom={'50px'}
     >
-      {/*<Button*/}
-      {/*  sx={{*/}
-      {/*    padding: '16px 12px 16px 12px',*/}
-      {/*    border: '2px solid rgb(130, 130, 130)',*/}
-      {/*    borderRadius: '5px',*/}
-      {/*    maxHeight: '40px',*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <AddIcon />*/}
-      {/*  {t('buttons.subscribe')}*/}
-      {/*</Button>*/}
-      {project &&
-        <SubscribeButton
-          projectId={project.projectId}
-          isAuthenticated={isAuthenticated}
-          isFollowed={project.isFollowed}
-        />
-      }
-
       <Box
         display={'flex'}
         justifyContent={'space-between'}
@@ -55,6 +36,12 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
             </Link>
           ))}
       </Box>
+      {project && 
+      <SubscribeButton
+        projectId={project.projectId}
+        isAuthenticated={isAuthenticated}
+        isFollowed={project.isFollowed}
+      />}
     </Box>
   );
 };
