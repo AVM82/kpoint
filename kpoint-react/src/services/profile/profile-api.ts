@@ -119,6 +119,21 @@ class ProfileApi {
       },
     );
   }
+
+  public updateAvatar(payload: {
+    logo: File;
+  }): Promise<ApiResponseType> {
+    const bodyData = new FormData();
+    bodyData.append('file', payload.logo);
+
+    return this.#http.load(
+      `${this.#apiPrefix}/profile/avatar`,
+      {
+        method: HttpMethod.PATCH,
+        payload: bodyData,
+      },
+    );
+  }
 }
 
 export { ProfileApi };

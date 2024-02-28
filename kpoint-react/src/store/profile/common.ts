@@ -6,6 +6,7 @@ enum ActionType {
   CHANGE_PASSWORD = 'profile/changePassword',
   EXISTS_EMAIL = 'username/existsEmail',
   EXISTS_USERNAME = 'username/existsUsername',
+  UPDATE_AVATAR = 'profile/updateAvatar',
 }
 
 export { ActionType };

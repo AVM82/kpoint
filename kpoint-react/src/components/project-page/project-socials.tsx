@@ -1,9 +1,9 @@
 import { Box, Link } from '@mui/material';
+import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { ProjectType } from 'common/types/types';
 import { FC } from 'react';
+import { storage } from 'services/services';
 
-import { StorageKey } from '../../common/enums/app/storage-key.enum';
-import { storage } from '../../services/services';
 import { getSocialMediaIcon } from '../../utils/function-social-media-icons';
 import { SubscribeButton } from './SubscribeButton';
 
@@ -11,9 +11,11 @@ interface ProjectSocialsProps {
   project: ProjectType | null;
 }
 const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
+  const token = storage.getItem(StorageKey.TOKEN);
+  const user = storage.getItem(StorageKey.USER);
+  const isMyProject = project?.owner.ownerId === JSON.parse(user || '{}').id;
 
-  const user = storage.getItem(StorageKey.TOKEN);
-  const isAuthenticated = user !== undefined && user !== null;
+  const isAuthenticated = token !== undefined && token !== null;
 
   return (
     <Box
@@ -23,25 +25,6 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
       width={'100%'}
       marginBottom={'50px'}
     >
-      {/*<Button*/}
-      {/*  sx={{*/}
-      {/*    padding: '16px 12px 16px 12px',*/}
-      {/*    border: '2px solid rgb(130, 130, 130)',*/}
-      {/*    borderRadius: '5px',*/}
-      {/*    maxHeight: '40px',*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <AddIcon />*/}
-      {/*  {t('buttons.subscribe')}*/}
-      {/*</Button>*/}
-      {project &&
-        <SubscribeButton
-          projectId={project.projectId}
-          isAuthenticated={isAuthenticated}
-          isFollowed={project.isFollowed}
-        />
-      }
-
       <Box
         display={'flex'}
         justifyContent={'space-between'}
@@ -55,6 +38,12 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
             </Link>
           ))}
       </Box>
+      {project && !isMyProject &&
+      <SubscribeButton
+        projectId={project.projectId}
+        isAuthenticated={isAuthenticated}
+        isFollowed={project.isFollowed}
+      />}
     </Box>
   );
 };

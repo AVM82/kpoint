@@ -143,8 +143,7 @@ const SignUpPage: FC = () => {
         }
       })
       .catch((error) => {
-        toast.error(`Невірно введені дані: ${error.message}`);
-        setRegisterError('Невірно введені дані');
+        setRegisterError('Невірно введені дані: ' + error.message);
       });
   };
 

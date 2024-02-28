@@ -178,4 +178,14 @@ public class UserService {
         return new ApiResponse(translator.getLocaleMessage(
                 "exception.user.register-username-failed", username));
     }
+
+    public void verifyBannedUserByEmail(String email) {
+        log.info("findBannedUserByEmail {}", email);
+        userRepository.findBannedUserByEmail(email)
+                .ifPresent(user -> {
+                    log.warn("User by email {} is banned", email);
+                    throw new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                            "exception.user.banned", "email", email));
+                });
+    }
 }

@@ -31,6 +31,7 @@ public class AuthService {
     private final Translator translator;
 
     public UserResponseDto register(UserRegisterRequestDto requestDto) {
+        userService.verifyBannedUserByEmail(requestDto.email());
         if (userService.existsByEmail(requestDto.email())) {
             log.warn("User with email {} already exist", requestDto.email());
             throw new ApplicationException(HttpStatus.CONFLICT, translator.getLocaleMessage(
@@ -51,6 +52,7 @@ public class AuthService {
     }
 
     public UserLoginResponseDto oauth2Login(ApplicantEntity applicant) {
+        userService.verifyBannedUserByEmail(applicant.getEmail());
         UserLoginResponseDto responseDto;
         if (userService.existsByEmail(applicant.getEmail())) {
             UserResponseDto userFromDb = userService
