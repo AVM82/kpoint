@@ -58,8 +58,10 @@ const ProjectReworked: FC = () => {
   const [tagsClicked, setTagsClicked] = useState(false);
   const [testEditForm, setTestEditForm] = useState<object>({});
   const [showButton, setShowButton] = useState(false);
-  const user = storage.getItem(StorageKey.TOKEN);
-  const isAuthenticated = user !== undefined && user !== null;
+  const token = storage.getItem(StorageKey.TOKEN);
+  const user = storage.getItem(StorageKey.USER);
+  const isAuthenticated = token !== undefined && token !== null;
+  const isMyProject = project.owner.ownerId === JSON.parse(user || '{}').id;
 
   const handleDeleteTag = (tag: string): void => {
     const bodyData = [];
@@ -203,7 +205,7 @@ const ProjectReworked: FC = () => {
             >
 
               <ProjectSocials project={project} />
-              {project &&
+              {project && !isMyProject &&
                 <SubscribeButton
                   projectId={project.projectId}
                   isAuthenticated={isAuthenticated}
