@@ -16,7 +16,6 @@ import * as React from 'react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { authAction } from 'store/actions';
 
 import { ENV, StorageKey } from '../../common/enums/enums';
@@ -50,8 +49,7 @@ const SignInPage: FC = () => {
         storage.setItem(StorageKey.USER, JSON.stringify(user));
         navigate('/');
       })
-      .catch((error) => {
-        toast.error(`Error while logging: ${error.message}`);
+      .catch(() => {
         setLoginError('Невірний логін або пароль');
       });
   };

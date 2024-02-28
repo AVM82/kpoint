@@ -1,7 +1,6 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import { FC, useEffect } from 'react';
 import GoogleButton from 'react-google-button';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { authAction } from 'store/actions';
@@ -11,7 +10,6 @@ import { useAppDispatch } from '../../hooks/hooks';
 import { storage } from '../../services/services';
 
 const OAuth2: FC = () => {
-  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -34,9 +32,6 @@ const OAuth2: FC = () => {
               storage.setItem(StorageKey.TOKEN, action.token);
               navigate('/');
             }
-          })
-          .catch(() => {
-            toast.error(t('can_not_login'));
           });
       } catch (error) {
         toast.error(`Error making POST request to backend: ${error.message}`);
