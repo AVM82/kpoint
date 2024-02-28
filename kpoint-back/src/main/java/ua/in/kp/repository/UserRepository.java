@@ -16,14 +16,24 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Query("FROM UserEntity u LEFT JOIN FETCH u.roles WHERE u.email=:email")
     Optional<UserEntity> findByEmailFetchRoles(String email);
 
+    @Query(value = "SELECT * FROM public.users AS u "
+            + "WHERE u.email=:email AND u.deleted", nativeQuery = true)
+    Optional<UserEntity> findBannedUserByEmail(String email);
+
     @EntityGraph(attributePaths = {"roles", "tags", "socialNetworks", "projectsOwned", "projectsFavourite"})
     Optional<UserEntity> findByEmail(String email);
 
     @Query("FROM UserEntity u WHERE u.username=:username")
     Optional<UserEntity> findByUsernameFetchNothing(String username);
 
+    @Query(value = "SELECT CASE WHEN count(id) > 0 THEN true ELSE FALSE END "
+            + "FROM public.users "
+            + "WHERE email=:email", nativeQuery = true)
     boolean existsByEmail(String email);
 
+    @Query(value = "SELECT CASE WHEN count(id) > 0 THEN true ELSE FALSE END "
+            + "FROM public.users "
+            + "WHERE username=:username", nativeQuery = true)
     boolean existsByUsername(String username);
 
     @EntityGraph(attributePaths = {"socialNetworks", "roles"})
