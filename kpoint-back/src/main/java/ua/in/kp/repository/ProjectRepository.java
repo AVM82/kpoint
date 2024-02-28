@@ -70,7 +70,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
                     + "                (select count(t2_0.tags_name) "
                     + "                 from public.projects_tags t2_0 "
                     + "                 where pe1_0.project_id = t2_0.project_entity_project_id "
-                    + "                 and not t2_0.deleted) AS tagsSort "
+                    + "                 and not t2_0.deleted) "
                     + "from projects pe1_0 "
                     + "       left join public.projects_tags t1_0 on pe1_0.project_id = t1_0.project_entity_project_id "
                     + "       left join public.tags_index t1_1 on t1_1.name = t1_0.tags_name "
