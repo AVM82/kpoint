@@ -56,7 +56,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
         <Box
           component={'img'}
           src={previewUrl.length > 0 ? previewUrl : imageUrl}
-          sx={{ objectFit: 'cover', maxWidth: '100%', maxHeight: '100%' }}
+          sx={{ objectFit: 'cover', maxWidth: '100%', maxHeight: '100%', borderRadius: '6px' }}
         ></Box>
       </div>
       <input
@@ -76,7 +76,6 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
           right: 0,
           left: 0,
           width: '100%',
-          height: '100%',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
