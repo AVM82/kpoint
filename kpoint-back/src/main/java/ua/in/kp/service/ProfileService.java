@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ua.in.kp.dto.profile.PasswordDto;
-import ua.in.kp.dto.profile.ProjectsProfileResponseDto;
 import ua.in.kp.dto.profile.UserChangeDto;
 import ua.in.kp.dto.project.GetAllProjectsDto;
 import ua.in.kp.dto.subscribtion.MessageResponseDto;
@@ -72,6 +71,20 @@ public class ProfileService {
         return projectService.getProjectByIds(projectIds, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<GetAllProjectsDto> getRecommendedProjectsById(Pageable pageable) {
+        UserEntity user = userService.getAuthenticated();
+        log.info("Get recommended projects for user {}", user.getUsername());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return projectService.retrieveRecommendedProjectsById(user.getId(), pageable)
+                .map(project -> {
+                    boolean isFollowed = projectService.checkIsFollowed(project, auth);
+                    GetAllProjectsDto dto = projectMapper.projectEntityToGetAllDto(project);
+                    dto.setFollowed(isFollowed);
+                    return dto;
+                });
+    }
+
     public Page<GetAllProjectsDto> getRecommendedProjects(Pageable pageable) {
         UserEntity user = userService.getAuthenticated();
         log.info("Get recommended projects for user {}", user.getUsername());
@@ -93,21 +106,6 @@ public class ProfileService {
                     dto.setFollowed(isFollowed);
                     return dto;
                 });
-    }
-
-    public ProjectsProfileResponseDto getRecommendedProjectsByFavourite(Pageable pageable) {
-        UserEntity user = userService.getAuthenticated();
-        log.info("Get recommended projects for user {}", user.getUsername());
-        UserEntity userEntity =
-                userService.getByEmail(user.getEmail());
-        Set<TagEntity> tags = userEntity.getTags();
-        Set<ProjectEntity> allProjects = userEntity.getProjectsOwned();
-        allProjects.addAll(userEntity.getProjectsFavourite());
-        Set<String> projectsIds = projectService.retrieveProjectsIds(allProjects);
-        Page<GetAllProjectsDto> recommendedProjectsDtos =
-                projectService.retrieveRecommendedProjects(tags, projectsIds, pageable)
-                        .map(projectMapper::getAllToDto);
-        return new ProjectsProfileResponseDto(userEntity.getId(), recommendedProjectsDtos);
     }
 
     public UserChangeDto updateUserData(String email, JsonPatch patch) {
