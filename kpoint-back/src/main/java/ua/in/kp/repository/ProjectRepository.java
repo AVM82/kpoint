@@ -48,7 +48,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
     Page<ProjectEntity> findAllExceptOwnedAndFavouriteWithSortByCreatedAt(Set<String> allProjectIds, Pageable pageable);
 
     @Query(value = """
-             (select distinct pe1_0.*, 
+             select distinct pe1_0.*, 
                              (select count(t2_0.tags_name) 
                               from public.projects_tags t2_0 
                               where pe1_0.project_id = t2_0.project_entity_project_id 
@@ -64,8 +64,8 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
                and pe1_0.project_id not in (select project_id 
              from public.project_subscriptions 
              where user_id = :userId) 
-               and not pe1_0.deleted) 
-             union distinct 
+               and not pe1_0.deleted 
+             /*union distinct 
              (select distinct pe1_0.*, 
                              (select count(t2_0.tags_name) 
                               from public.projects_tags t2_0 
@@ -82,7 +82,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
                and pe1_0.project_id not in (select project_id  
              from public.project_subscriptions 
              where user_id = :userId) 
-             and not pe1_0.deleted) 
+             and not pe1_0.deleted) */
              order by tagsSort desc, goal_sum desc, created_at desc
             """, nativeQuery = true)
     Page<ProjectEntity> findByUserIdAndSortByTagsCountThenGoalSumOrSortByCreatedAt(
