@@ -11,9 +11,12 @@ interface ProjectSocialsProps {
   project: ProjectType | null;
 }
 const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
-  const user = storage.getItem(StorageKey.TOKEN);
-  const isAuthenticated = user !== undefined && user !== null;
-  
+  const token = storage.getItem(StorageKey.TOKEN);
+  const user = storage.getItem(StorageKey.USER);
+  const isMyProject = project?.owner.ownerId === JSON.parse(user || '{}').id;
+
+  const isAuthenticated = token !== undefined && token !== null;
+
   return (
     <Box
       display={'flex'}
@@ -35,7 +38,7 @@ const ProjectSocials: FC<ProjectSocialsProps> = ({ project }) => {
             </Link>
           ))}
       </Box>
-      {project && 
+      {project && !isMyProject &&
       <SubscribeButton
         projectId={project.projectId}
         isAuthenticated={isAuthenticated}

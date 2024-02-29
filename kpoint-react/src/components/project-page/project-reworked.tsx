@@ -62,7 +62,7 @@ const ProjectReworked: FC = () => {
   const [showButton, setShowButton] = useState(false);
   const [tabClicked, setTabClicked] = useState('about');
   const user = storage.getItem(StorageKey.TOKEN);
-  
+
   const handleDeleteTag = (tag: string): void => {
     const bodyData = [];
     bodyData.push({ op: 'replace', path: '/tags', value: [] });
@@ -287,7 +287,7 @@ const ProjectReworked: FC = () => {
                     flexShrink={0}
                     padding={'10px 0 10px 0'}
                   >
-                    {project.tags.length < 5 && 
+                    {project.tags.length < 5 &&
                     <Box
                       display={'flex'}
                       alignItems={'center'}
@@ -316,7 +316,7 @@ const ProjectReworked: FC = () => {
                     </Box>}
                     {project.tags.map((tag, index) => (
                       <Box display={'flex'} justifyContent={'space-between'}
-                        alignItems={'center'} minWidth={'55px'} flexDirection={'column'} position={'relative'}> 
+                        alignItems={'center'} minWidth={'55px'} flexDirection={'column'} position={'relative'}>
                         <Chip
                           key={index}
                           label={tag}
