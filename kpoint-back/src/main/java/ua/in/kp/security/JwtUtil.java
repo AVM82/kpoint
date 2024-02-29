@@ -3,8 +3,10 @@ package ua.in.kp.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -19,21 +21,26 @@ import java.util.Date;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtUtil {
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String HEADER_NAME = "Authorization";
-    private final SecretKey secretKey;
+    private final Encryptor encryptor;
+    private  SecretKey secretKey;
     @Value("${jwt.token.expiration.time}")
     private Long expirationTime;
+    @Value("${jwt.token.secret}")
+    private String secret;
 
-    public JwtUtil(@Value("${jwt.token.secret}") String secret) {
+    @PostConstruct
+    private void init() {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String subject) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         return Jwts.builder()
-                .subject(Encryptor.encrypt(subject))
+                .subject(encryptor.encrypt(subject))
                 .issuedAt(mapToDate(currentDateTime))
                 .expiration(mapToDate(currentDateTime.plusMinutes(expirationTime)))
                 .signWith(secretKey)
@@ -62,7 +69,7 @@ public class JwtUtil {
 
     public String getSubjectFromToken(String token) {
         try {
-            return Encryptor.decrypt(getClaims(token).getSubject());
+            return encryptor.decrypt(getClaims(token).getSubject());
         } catch (Exception e) {
             log.warn("Can't decrypt subject from token", e);
             throw new ApplicationException(HttpStatus.UNAUTHORIZED, "Can't decrypt subject from token");
