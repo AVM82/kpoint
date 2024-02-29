@@ -106,8 +106,11 @@ public class ProjectService {
                     return new ApplicationException(HttpStatus.NOT_FOUND,
                             String.format("User %s does not have project with id %s", user.getUsername(), projectId));
                 });
+        String oldLogoUrl = project.getLogoImgUrl();
         project.setLogoImgUrl(s3Service.uploadLogo(file));
-        return new MessageResponseDto(projectRepository.save(project).getLogoImgUrl());
+        projectRepository.save(project);
+        s3Service.deleteImageByUrl(oldLogoUrl);
+        return new MessageResponseDto(project.getLogoImgUrl());
     }
 
     public Page<GetAllProjectsDto> getAllProjects(Pageable pageable, Authentication auth) {
@@ -185,6 +188,10 @@ public class ProjectService {
                                 });
         log.info("Project with title {} retrieved.", projectEntity.getUrl());
         return projectMapper.toDto(projectEntity);
+    }
+
+    public Page<ProjectEntity> retrieveRecommendedProjectsById(String userId, Pageable pageable) {
+        return projectRepository.findByUserIdAndSortByTagsCountThenGoalSumOrSortByCreatedAt(userId, pageable);
     }
 
     public Page<ProjectEntity> retrieveRecommendedProjects(

@@ -7,7 +7,7 @@ import { ProjectApi } from './projects/project-api';
 import { Storage } from './storage/storage.service';
 import { SuggestionApi } from './suggestions/suggestion-api';
 
-const storage = new Storage({ storage: sessionStorage });
+const storage = new Storage({ storage: localStorage });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const http = new Http({ storage });

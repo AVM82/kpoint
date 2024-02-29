@@ -9,8 +9,6 @@ import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ProjectCard } from './project-card';
 import { ProjectCardReworked } from './project-card-reworked';
 import { ProjectsPageHeader } from './projects-page-haeder';
 

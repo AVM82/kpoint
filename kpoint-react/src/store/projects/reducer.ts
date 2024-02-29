@@ -27,6 +27,7 @@ const initialState: State = {
       ownerId: '',
       firstName: '',
       lastName: '',
+      avatarImgUrl: '',
     },
     projectId: '',
     title: '',

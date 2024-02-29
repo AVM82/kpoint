@@ -104,6 +104,15 @@ const ukTranslation = {
   success: {
     profile_email_updated: 'Електронна пошта змінена. Щоб продовжити, увійдіть з новою поштою',
     profile_updated: 'Данні профілю успішно змінені',
+    profile_avatar_updated: 'Аватар профілю успішно змінено',
+  },
+  menu: {
+    account_settings: 'Налаштування аккаунта',
+    profile: 'Профіль',
+    my_account: 'Мій аккаунт',
+    add_another_account : 'Добавити інший аккаунт',
+    settings: 'Налаштування',
+    logout: 'Вихід',
   },
 };
 

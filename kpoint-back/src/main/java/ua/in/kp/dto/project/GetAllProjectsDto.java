@@ -24,6 +24,8 @@ public class GetAllProjectsDto {
 
     private int goalSum;
 
+    private String createdAt;
+
     @JsonProperty("isFollowed")
     private boolean isFollowed;
 }
