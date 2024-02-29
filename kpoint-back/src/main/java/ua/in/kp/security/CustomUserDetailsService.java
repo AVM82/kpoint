@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> {
                     log.warn("Authentication Failed. User {} not found", email);
                     return new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
-                            "exception.user.not-found", "email1", email));
+                            "exception.user.not-found", "email", email));
                 });
     }
 }

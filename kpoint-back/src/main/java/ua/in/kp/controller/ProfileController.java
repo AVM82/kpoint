@@ -49,7 +49,7 @@ public class ProfileController {
 
     @GetMapping("/recommendedProjects")
     public ResponseEntity<Page<GetAllProjectsDto>> getRecommendedProjects(Pageable pageable) {
-        return ResponseEntity.ok(profileService.getRecommendedProjects(pageable));
+        return ResponseEntity.ok(profileService.getRecommendedProjectsById(pageable));
     }
 
     @PatchMapping(path = "/settings")
