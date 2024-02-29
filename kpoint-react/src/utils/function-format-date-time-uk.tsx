@@ -1,8 +1,10 @@
 
 export function formatDateTimeUk(dateTime: string): string {
   const currentDate = new Date();
+  const offsetMinutes = currentDate.getTimezoneOffset();
+  const localTime = new Date(currentDate.getTime() + offsetMinutes * 60 * 1000);
   const inputDate = new Date(dateTime);
-  const timeDifferenceInSeconds = Math.floor((currentDate.getTime() - inputDate.getTime()) / 1000);
+  const timeDifferenceInSeconds = Math.floor((localTime.getTime() - inputDate.getTime()) / 1000);
 
   if (timeDifferenceInSeconds < 60) {
     // Less than a minute
