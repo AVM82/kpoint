@@ -20,6 +20,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        log.info("loadUserByUsername {}", email);
+        userRepository.findBannedUserByEmail(email)
+                .ifPresent(user -> {
+                    log.warn("User by email {} is banned", email);
+                    throw new ApplicationException(HttpStatus.NOT_FOUND, translator.getLocaleMessage(
+                            "exception.user.banned", "email", email));
+                });
         return userRepository.findByEmailFetchRoles(email)
                 .orElseThrow(() -> {
                     log.warn("Authentication Failed. User {} not found", email);
