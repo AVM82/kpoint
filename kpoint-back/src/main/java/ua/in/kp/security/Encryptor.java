@@ -2,9 +2,11 @@ package ua.in.kp.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import ua.in.kp.exception.ApplicationException;
-
 import jakarta.annotation.PostConstruct;
+
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -15,8 +17,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
@@ -28,7 +28,7 @@ public class Encryptor {
     private String secret;
 
     @PostConstruct
-    private void init () {
+    private void init() {
         try {
             cipher = Cipher.getInstance(ENCRYPTION_TYPE);
             key = new SecretKeySpec(secret.getBytes(), ENCRYPTION_TYPE);

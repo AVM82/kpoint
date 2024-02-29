@@ -26,7 +26,7 @@ public class JwtUtil {
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String HEADER_NAME = "Authorization";
     private final Encryptor encryptor;
-    private  SecretKey secretKey;
+    private SecretKey secretKey;
     @Value("${jwt.token.expiration.time}")
     private Long expirationTime;
     @Value("${jwt.token.secret}")
