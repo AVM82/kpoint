@@ -3,8 +3,10 @@ import { Container } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
-import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
+import { StorageKey } from 'common/enums/enums';
+import { ChangeEvent, FC, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { storage } from 'services/services';
 import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
@@ -33,6 +35,21 @@ const ProjectsPage: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
+  useEffect(() => {
+    // Function to clear token from localStorage
+    const clearTokenAndUser = (): void => {
+      storage.removeItem(StorageKey.TOKEN);
+      storage.removeItem(StorageKey.USER);
+    };
+
+    // Add event listener to the beforeunload event
+    window.addEventListener('beforeunload', clearTokenAndUser);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('beforeunload', clearTokenAndUser);
+    };
+  }, []);
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
       projectAction.getAllProjectsDefault({
