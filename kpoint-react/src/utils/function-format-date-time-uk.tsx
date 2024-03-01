@@ -8,7 +8,7 @@ export function formatDateTimeUk(dateTime: string): string {
 
   if (timeDifferenceInSeconds < 60) {
     // Less than a minute
-    return '1 секунду тому';
+    return 'щойно створено';
   }
 
   const timeInMinutes = Math.floor(timeDifferenceInSeconds / 60);
