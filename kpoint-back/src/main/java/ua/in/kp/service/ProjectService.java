@@ -104,7 +104,9 @@ public class ProjectService {
                 .orElseThrow(() -> {
                     log.warn("User {} does not have project with id {}", user.getUsername(), projectId);
                     return new ApplicationException(HttpStatus.NOT_FOUND,
-                            String.format("User %s does not have project with id %s", user.getUsername(), projectId));
+                            translator.getLocaleMessage("exception.user.has.not.defined.project", user.getUsername(), projectId));
+//                    return new ApplicationException(HttpStatus.NOT_FOUND,
+//                            String.format("User %s does not have project with id %s", user.getUsername(), projectId));
                 });
         String oldLogoUrl = project.getLogoImgUrl();
         project.setLogoImgUrl(s3Service.uploadLogo(file));
@@ -219,11 +221,13 @@ public class ProjectService {
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isPresent()) {
-            return new MessageResponseDto("User is already subscribed to project " + projectId);
+            return unsubscribeUserFromProject(projectId);
         } else {
             saveSubscription(projectId);
+            log.info("User {} has been subscribed to project with id {}", user.getUsername(), projectId);
             emailService.sendProjectSubscriptionMessage(project, user);
-            return new MessageResponseDto("User subscribed to project " + project.getTitle() + " successfully");
+            return new MessageResponseDto(translator.getLocaleMessage("project.subscribed",
+                    user.getUsername(), project.getTitle()));
         }
     }
 
@@ -240,7 +244,8 @@ public class ProjectService {
     private ProjectEntity getProjectIfExist(String projectId) {
         Optional<ProjectEntity> projectForUpdate = projectRepository.findBy(projectId);
         if (projectForUpdate.isEmpty()) {
-            throw new RuntimeException("Project not found");
+            throw new ApplicationException(HttpStatus.NOT_FOUND,
+                    translator.getLocaleMessage("exception.project.not-found"));
         }
         return projectForUpdate.get();
     }
