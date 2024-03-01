@@ -100,7 +100,7 @@ export const ProjectCreate: FC = () => {
       break;
     }
     case 2: {
-      if (!data.description.trim() || data.description.trim().length > 512) {
+      if (!data.description.trim() || data.description.trim().length > 3000) {
         errors.description = t('errors.project_description');
       }
       break;
@@ -132,7 +132,7 @@ export const ProjectCreate: FC = () => {
           projectData={projectData}
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
-          errors={errors}          
+          errors={errors}
         />
       );
     case 3:
@@ -141,7 +141,7 @@ export const ProjectCreate: FC = () => {
           projectData={projectData}
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
-          errors={errors}          
+          errors={errors}
         />
       );
     default:
