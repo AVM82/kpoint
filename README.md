@@ -66,6 +66,8 @@ Feedback1
 
 `JWT_SECRET` - Line of text for secret key generation (min 256 bit)
 
+`ENCRYPTOR_SECRET` - The secret key used by the encryption algorithm
+
 `AWS_ACCESS_KEY_ID` - AWS coinnection ID
 
 `AWS_SECRET_ACCESS_KEY` - AWS coinnection KEY
