@@ -160,12 +160,6 @@ const ProjectReworked: FC = () => {
 
     const id = project.projectId;
 
-    if (project.tags.length >= 5) {
-      toast.warn('Тегів може бути не більше 5');
-
-      return;
-    }
-
     dispatch(editProject({ id, bodyData }));
 
     if (itemName === 'title') {

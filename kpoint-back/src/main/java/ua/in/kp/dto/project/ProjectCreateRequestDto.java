@@ -29,7 +29,7 @@ public class ProjectCreateRequestDto {
     private String summary;
 
     @NotBlank(message = "{project.description.not.null}")
-    @Size(max = 512, message = "{project.description.max}")
+    @Size(max = 3000, message = "{project.description.max}")
     private String description;
 
     @NotEmpty(message = "{project.tag.not.null}")
