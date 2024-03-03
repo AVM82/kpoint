@@ -26,6 +26,7 @@ import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.SubscriptionRepository;
+import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
 import ua.in.kp.util.PatchUtil;
 
@@ -42,6 +43,7 @@ public class ProfileService {
     private final ProjectMapper projectMapper;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final S3Service s3Service;
     private final Translator translator;
@@ -108,6 +110,7 @@ public class ProfileService {
                 });
     }
 
+    @Transactional
     public UserChangeDto updateUserData(String email, JsonPatch patch) {
         log.info("update user data by user with email {}", email);
         UserEntity userEntity = userService.getByEmail(email);
@@ -120,8 +123,10 @@ public class ProfileService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.user.cannot-updated"));
         }
+        patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         UserEntity updatedUser = userRepository.save(userMapper.changeDtoToEntity(patchedDto, userEntity));
-        return userMapper.toChangeDto(updatedUser);
+        UserEntity savedUser = userRepository.save(updatedUser);
+        return userMapper.toChangeDto(savedUser);
     }
 
     public void changePassword(String email, PasswordDto dto) {
