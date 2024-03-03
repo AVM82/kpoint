@@ -38,10 +38,8 @@ const ProjectItem: FC<ProjectItemProps> = ({ title, url, logoImgUrl }) => {
       <Box display={'flex'} justifyContent={'space-between'} gap={'70px'}>
         <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
           <Typography sx={{ padding: '4px' }}>Статус</Typography>
-          <Typography sx={{ padding: '4px' }}>Статус</Typography>
         </Box>
         <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
-          <Typography sx={{ padding: '4px' }}>Прогрес</Typography>
           <Typography sx={{ padding: '4px' }}>Прогрес</Typography>
         </Box>
       </Box>

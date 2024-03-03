@@ -10,7 +10,7 @@ type Props =  {
     error: boolean;
 };
 
-export const PasswordField: FC<Props> = ({ label, id, handleChange, handleFocus, error }) => {
+export const InputPassword: FC<Props> = ({ label, id, handleChange, handleFocus, error }) => {
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -22,15 +22,16 @@ export const PasswordField: FC<Props> = ({ label, id, handleChange, handleFocus,
   };
 
   return(
-    <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
+    <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
       <FormLabel>{label}</FormLabel>
       <OutlinedInput
-        id="new-password"
+        id={id}
+        name={id}
         type={showPassword ? 'text' : 'password'}
         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => handleChange(e,id)}
         onFocus={(e: React.FocusEvent<HTMLInputElement>): void => handleFocus(e,id)}
         error={error}
-        required={true}
+        required
         endAdornment={
           <InputAdornment position="end">
             <IconButton

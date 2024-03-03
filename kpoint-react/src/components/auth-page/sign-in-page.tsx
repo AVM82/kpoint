@@ -16,6 +16,7 @@ import * as React from 'react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { authAction } from 'store/actions';
 
 import { ENV, StorageKey } from '../../common/enums/enums';
@@ -23,6 +24,7 @@ import { ResponseType } from '../../common/types/response/response';
 import { SignInType } from '../../common/types/sign-in/sign-in';
 import { useAppDispatch } from '../../hooks/hooks';
 import { storage } from '../../services/services';
+import { EmailRegx } from '../common/inputField/email-regx';
 import { OAuth2 } from './oauth2';
 
 const defaultTheme = createTheme();
@@ -32,14 +34,43 @@ const SignInPage: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState<SignInType>({
     email: '',
     password: '',
   });
 
+  const validateForm = (data: SignInType): Record<string, string> => {
+    const errors: Record<string, string> = {};
+
+    if(!EmailRegx.test(data.email) || data.email.trim() === '') {
+      toast.error(t('errors.invalid_email'));
+      errors.email = t('errors.invalid_email');
+    }
+
+    if (data.password.trim().length === 0) {
+      errors.password = t('errors.password_short');
+      errors.confirmPassword = t('errors.password_short');
+      toast.error(t('errors.password_short'), { position: 'top-right' });
+    }
+
+    return errors;
+  };
+
+  const handleFieldFocus = (field: string): void => {
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+
+    const formErrors = validateForm(formData);
+    setErrors(formErrors);
+
+    if (Object.keys(formErrors).length > 0) {
+      return;
+    }
 
     dispatch(authAction.login(formData))
       .then((action) => {
@@ -92,7 +123,10 @@ const SignInPage: FC = () => {
                 value={formData.email}
                 autoComplete="email"
                 onChange={handleOnChange}
+                onFocus={(): void => handleFieldFocus('email')}
                 autoFocus
+                error={!!errors.email}
+                helperText={errors.email}
               />
             </Grid>
             <Grid item xs={3} md={6} marginTop={2}>
@@ -106,6 +140,8 @@ const SignInPage: FC = () => {
                 value={formData.password}
                 autoComplete="current-password"
                 onChange={handleOnChange}
+                onFocus={(): void => handleFieldFocus('password')}
+                error={!!errors.password}
               />
             </Grid>
             {loginError && <Typography color="error">{loginError}</Typography>}

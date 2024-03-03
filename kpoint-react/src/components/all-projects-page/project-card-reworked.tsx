@@ -42,7 +42,7 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Card sx={{ minWidth: '370px' }}>
+    <Card sx={{ minWidth: '330px' }}>
       <CardMedia sx={{ height: 200 }} image={logoImgUrl} title={title}>
         <Grid
           container
