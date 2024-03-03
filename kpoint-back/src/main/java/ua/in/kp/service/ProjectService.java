@@ -311,9 +311,9 @@ public class ProjectService {
         List<String> changedFields = findChangedFields(projectDto, patchedDto);
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
-        ProjectEntity updatedUser = projectRepository.save(updatedProject);
-        emailService.sendProjectUpdateEmail(projectId, changedFields, updatedUser);
-        return projectMapper.toChangeDto(updatedUser);
+        ProjectEntity savedProject = projectRepository.save(updatedProject);
+        emailService.sendProjectUpdateEmail(projectId, changedFields, savedProject);
+        return projectMapper.toChangeDto(savedProject);
     }
 
     private List<String> findChangedFields(ProjectChangeDto originalDto, ProjectChangeDto patchedDto) {
