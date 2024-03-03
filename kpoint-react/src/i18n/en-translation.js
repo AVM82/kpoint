@@ -57,6 +57,8 @@ const enTranslation = {
     suggestions: 'Suggestions',
     edit: 'edit',
     cancel: 'CANCEL',
+    user_subscribed: 'You have successfully subscribed to the project',
+    user_unsubscribed: 'You have successfully unsubscribed from the project',
   },
   owner: 'Owner',
   description: 'Description',

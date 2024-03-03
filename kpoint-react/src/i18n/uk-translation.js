@@ -57,6 +57,8 @@ const ukTranslation = {
     suggestions: 'Пропозиції',
     edit: 'Редагувати',
     cancel: 'СКАСУВАТИ',
+    user_subscribed: 'Ви успішно підписані на проект',
+    user_unsubscribed: 'Ви успішно відписалися від проекту',
   },
   owner: 'Власник',
   description: 'Опис',
