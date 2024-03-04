@@ -11,8 +11,8 @@ const enTranslation = {
   password: 'Password',
   current_password: 'Current password',
   new_password: 'New password',
-  new_password_again: 'New password again',
-  repeated_password: 'Repeated password',
+  new_password_confirm: 'New password again',
+  confirm_password: 'Repeated password',
   avatar_url: 'AvatarUrl',
   tags: 'Tags',
   already_have_an_account: 'Already have an account? Sign in',
@@ -90,6 +90,7 @@ const enTranslation = {
     project_url: 'Project URL length must be from 5 to 30 symbols',
     project_tags: 'The number of tags can be from 1 to 5',
     user_tags: 'The number of tags can be from 1 to 10',
+    tag_length: 'The length of the tag can be from 1 to 10 characters',
     project_summary:
       'Short description and purpose cannot be empty or have more than 150 characters',
     project_description:
@@ -98,10 +99,16 @@ const enTranslation = {
       'The collection deadline cannot be later than the goal deadline',
     suggestion_size: 'The field must contain from 1 to 200 characters',
     profile_password_not_same: 'New and repeat passwords are not the same',
+    password_short: 'The entered password is short',
     profile_password_new_current:
       'The new profile password must be different from the current one',
     can_not_login: 'Can`t login',
     profile_can_not_update: 'Can`t update profile',
+    sign_up_password_not_same: 'Passwords are not the same',
+    invalid_email: 'Invalid email',
+    invalid_username: 'Invalid username. The field must contain at least 1 character.',
+    invalid_firstname: 'Invalid firstname',
+    invalid_lastname: 'Invalid lastname',
   },
   success: {
     profile_email_updated: 'Email address changed. Please sign in with your new email to continue',

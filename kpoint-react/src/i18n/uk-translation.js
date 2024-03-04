@@ -11,8 +11,8 @@ const ukTranslation = {
   password: 'Пароль',
   current_password: 'Поточний пароль',
   new_password: 'Новий пароль',
-  new_password_again: 'Новий пароль ще раз',
-  repeated_password: 'Повторіть пароль',
+  new_password_confirm: 'Новий пароль ще раз',
+  confirm_password: 'Повторіть пароль',
   avatar_url: 'Посилання на аватар',
   tags: 'Теги',
   already_have_an_account: 'Вже маєте акаунт? Увійти',
@@ -90,6 +90,7 @@ const ukTranslation = {
     project_url: 'Довжина URL проекта має бути від 5 до 30 символів',
     project_tags: 'Кількість тегів може бути від 1 до 5',
     user_tags: 'Кількість тегів може бути від 1 до 10',
+    tag_length: 'Довжина тега може бути від 1 до 10 символів',
     project_summary:
       'Короткий опис і мета не може бути пуста або мати більше 150 символів',
     project_description:
@@ -102,6 +103,12 @@ const ukTranslation = {
       'Новий пароль профілю має відрізнятися від поточного',
     can_not_login: 'Не можу увійти',
     profile_can_not_update: 'Не вдається оновити профіль',
+    sign_up_password_not_same: 'Введені паролі не збігаються',
+    password_short: 'Введений пароль короткий',
+    invalid_email: 'Невірна електронна пошта',
+    invalid_username: 'Невірне іʼмя користувача. Поле повинне містити від 1 символа',
+    invalid_firstname: 'Невірне іʼмя',
+    invalid_lastname: 'Невірне прізвище',
   },
   success: {
     profile_email_updated: 'Електронна пошта змінена. Щоб продовжити, увійдіть з новою поштою',

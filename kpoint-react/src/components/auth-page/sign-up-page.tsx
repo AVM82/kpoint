@@ -1,5 +1,15 @@
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Chip, ListItem } from '@mui/material';
+import {
+  Chip,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  IconButton,
+  InputAdornment,
+  ListItem,
+  OutlinedInput,
+} from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -19,6 +29,7 @@ import { toast } from 'react-toastify';
 import { SignUpType } from '../../common/types/sign-up/sign-up';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { authAction } from '../../store/actions';
+import { EmailRegx, InputPassword } from '../common/common';
 
 const defaultTheme = createTheme();
 
@@ -39,7 +50,6 @@ const SignUpPage: FC = () => {
     username: '',
     email: '',
     password: '',
-    repeatedPassword: '',
     avatarImgUrl: '',
     description: '',
     tags: [],
@@ -51,6 +61,7 @@ const SignUpPage: FC = () => {
     email: '',
     avatarImgUrl: '',
   });
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
     if (location.state && location.state.userData) {
@@ -64,7 +75,7 @@ const SignUpPage: FC = () => {
   const getChipTags = (): ChipTag[] => {
     const result: ChipTag[] = [];
     for (let i = 0; i < formData.tags.length; i++) {
-      result.push({ key: i, tag: formData.tags[i] });
+      result.push({ key: i, tag: formData.tags[i].trim().toLowerCase() });
     }
 
     return result;
@@ -75,45 +86,75 @@ const SignUpPage: FC = () => {
   const validateForm = (data: SignUpType): Record<string, string> => {
     const errors: Record<string, string> = {};
 
+    if (data.username.length < 2) {
+      toast.error(t('errors.invalid_username'));
+      errors.username = t('errors.invalid_username');
+    }
+
+    if(!EmailRegx.test(data.email) || data.email.trim() === '') {
+      toast.error(t('errors.invalid_email'));
+      errors.email = t('errors.invalid_email');
+    }
+
+    if (data.password.trim().length === 0) {
+      errors.password = t('errors.password_short');
+      errors.confirmPassword = t('errors.password_short');
+      toast.error(t('errors.password_short'), { position: 'top-right' });
+    } else if (data.password.trim() !== confirmPassword.trim()) {
+      errors.password = t('errors.sign_up_password_not_same');
+      errors.confirmPassword = t('errors.sign_up_password_not_same');
+      toast.error(t('errors.sign_up_password_not_same'), { position: 'top-right' });
+    }
+
     if (data.tags.length === 0 || data.tags.length > 10) {
-      toast.warn(t('errors.user_tags'));
-      errors.tag = 'tag error';
-      setErrors(errors);
+      toast.error(t('errors.user_tags'));
+      errors.tag = t('errors.user_tags');
     }
 
     return errors;
   };
 
   const handleDeleteTag = (chipToDelete: ChipTag) => () => {
-    if (tag.length > 0 || tag.length === 10) {
-      errors.tags = '';
-    }
-
     setChipTags((chips) =>
       chips.filter((chip) => chip.key !== chipToDelete.key),
     );
-    formData.tags = formData.tags.filter((tag) => tag !== chipToDelete.tag);
+    formData.tags = formData.tags.filter((tag) => tag.trim() !== chipToDelete.tag.trim());
   };
 
-  const handleAddTag = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+  const handleClickAddTag = (): void => {
+    if (tag.trim().length === 0) {
+      return;
+    }
+
+    if (formData.tags.length === 10) {
+      toast.warn(t('errors.user_tags'));
+
+      return;
+    }
+
+    if (tag.trim().length > 10) {
+      errors.tags = t('errors.tag_length');
+      setErrors(errors);
+
+      return;
+    }
+
+    if (formData.tags.indexOf(tag.toLowerCase().trim()) === -1) {
+      formData.tags.push(tag.trim().toLowerCase());
+      setChipTags(getChipTags);
+      setTag('');
+    }
+  };
+
+  const handleAddTag = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     if (event.key === 'Enter') {
-      if (formData.tags.length === 10) {
-        toast.warn('Тегів не може бути більше 10');
-
-        return;
-      }
-
-      if (tag.length > 0 || tag.length === 10) {
-        errors.tags = '';
-      }
-
-      if (tag.trim().length > 0 && formData.tags.indexOf(tag.trim()) === -1) {
-        formData.tags.push(tag);
-        setChipTags(getChipTags);
-        setTag('');
-      }
+      handleClickAddTag();
       event.preventDefault();
     }
+  };
+
+  const handleMouseDownAddTag = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
   };
 
   const handleSubmit = async (
@@ -123,9 +164,7 @@ const SignUpPage: FC = () => {
     const formErrors = validateForm(formData);
     setErrors(formErrors);
 
-    if (
-      Object.keys(formErrors).length !== 0
-    ) {
+    if (Object.keys(formErrors).length > 0 || tag.trim().length > 0) {
       return;
     }
 
@@ -133,6 +172,7 @@ const SignUpPage: FC = () => {
       ...formData,
       email: userData.email || formData.email,
       avatarImgUrl: userData.avatarImgUrl || 'placeholder',
+      tags: Array.from(formData.tags),
     };
 
     await dispatch(authAction.register(dataToSend))
@@ -156,6 +196,27 @@ const SignUpPage: FC = () => {
     }));
   };
 
+  const handleOnChangeConfirmPassword = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    event.preventDefault();
+    setConfirmPassword(event.target.value);
+  };
+
+  const handleFieldFocus = (field: string): void => {
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
+  };
+
+  const handleOnChangeTag = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    event.preventDefault();
+
+    if (event.target.value.trim().length > 10) {
+      errors.tags = t('errors.tag_length');
+    } else {
+      errors.tags = '';
+    }
+    setTag(event.target.value);
+    setErrors(errors);
+  };
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -177,105 +238,135 @@ const SignUpPage: FC = () => {
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label={t('first_name')}
-                  onChange={handleOnChange}
-                  autoFocus
-                />
+                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                  <FormLabel>{t('first_name')}</FormLabel>
+                  <TextField
+                    autoComplete="given-name"
+                    name="firstName"
+                    required
+                    fullWidth
+                    id="firstName"
+                    onChange={handleOnChange}
+                    onFocus={(): void => handleFieldFocus('firstName')}
+                    autoFocus
+                    error={!!errors.firstName}
+                    helperText={errors.firstName}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label={t('last_name')}
-                  name="lastName"
-                  autoComplete="family-name"
-                  onChange={handleOnChange}
-                />
+                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                  <FormLabel>{t('last_name')}</FormLabel>
+                  <TextField
+                    required
+                    fullWidth
+                    id="lastName"
+                    name="lastName"
+                    autoComplete="family-name"
+                    onChange={handleOnChange}
+                    onFocus={(): void => handleFieldFocus('lastName')}
+                    error={!!errors.lastName}
+                    helperText={errors.lastName}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="username"
-                  label={t('username')}
-                  name="username"
-                  autoComplete="username"
-                  onChange={handleOnChange}
-                />
+                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                  <FormLabel>{t('username')}</FormLabel>
+                  <TextField
+                    required
+                    fullWidth
+                    id="username"
+                    name="username"
+                    autoComplete="username"
+                    onChange={handleOnChange}
+                    onFocus={(): void => handleFieldFocus('username')}
+                    error={!!errors.username}
+                    helperText={errors.username}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label={t('email')}
-                  name="email"
-                  value={userData.email || formData.email}
-                  autoComplete="email"
-                  onChange={handleOnChange}
-                  disabled={!!userData.email}
-                />
+                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                  <FormLabel>{t('email')}</FormLabel>
+                  <TextField
+                    required
+                    fullWidth
+                    id="email"
+                    name="email"
+                    value={userData.email || formData.email}
+                    autoComplete="email"
+                    onChange={handleOnChange}
+                    onFocus={(): void => handleFieldFocus('email')}
+                    disabled={!!userData.email}
+                    error={!!errors.email}
+                    helperText={errors.email}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
+                <InputPassword
                   label={t('password')}
-                  type="password"
                   id="password"
-                  autoComplete="new-password"
-                  onChange={handleOnChange}
+                  handleChange={handleOnChange}
+                  handleFocus={(): void => handleFieldFocus('password')}
+                  error={!!errors.password}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="repeatedPassword"
-                  label={t('repeated_password')}
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  onChange={handleOnChange}
+                <InputPassword
+                  label={t('confirm_password')}
+                  id="confirmPassword"
+                  handleChange={handleOnChangeConfirmPassword}
+                  handleFocus={(): void => handleFieldFocus('confirmPassword')}
+                  error={!!errors.confirmPassword}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  name="description"
-                  label={t('description')}
-                  id="description"
-                  onChange={handleOnChange}
-                />
+                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                  <FormLabel>{t('description')}</FormLabel>
+                  <TextField
+                    fullWidth
+                    name="description"
+                    id="description"
+                    onChange={handleOnChange}
+                    onFocus={(): void => handleFieldFocus('description')}
+                    error={!!errors.description}
+                    helperText={errors.description}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  type={'text'}
-                  id="projectTags"
-                  name="projectTags"
-                  value={tag}
-                  label="Теги"
-                  fullWidth
-                  error={!!errors.tags}
-                  helperText={
-                    errors.tags ||
-                    'Введіть від 1 до 10 тегів, розділяючи їх "ENTER"'
-                  }
-                  variant="outlined"
-                  onChange={(event): void => {
-                    event.preventDefault();
-                    setTag(event.target.value);
-                  }}
-                  onKeyDown={(event): void => handleAddTag(event)}
-                />
+                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                  <FormLabel>{t('tags')}</FormLabel>
+                  <OutlinedInput
+                    type={'text'}
+                    id="projectTags"
+                    name="projectTags"
+                    value={tag}
+                    fullWidth
+                    error={!!errors.tags}
+                    onChange={handleOnChangeTag}
+                    onFocus={(): void => handleFieldFocus('tags')}
+                    onKeyDown={(event): void => handleAddTag(event)}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleClickAddTag}
+                          onMouseDown={handleMouseDownAddTag}
+                          edge="end"
+                        >
+                          <AddCircleOutlineIcon/>
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                  <FormHelperText id="projectTags-error"
+                    error={!!errors.tags}>
+                    {errors.tags ||
+                      'Введіть від 1 до 10 тегів, розділяючи їх "ENTER"'}
+                  </FormHelperText>
+                </FormControl>
                 <Grid
                   sx={{
                     // display: 'flex',

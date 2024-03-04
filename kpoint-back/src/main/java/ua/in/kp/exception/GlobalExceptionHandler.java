@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -67,6 +68,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleAuthorizationException(RuntimeException ex) {
         log.warn("handleAuthorizationException", ex);
         return createApiError(HttpStatus.FORBIDDEN, ex.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(value = {BadCredentialsException.class})
+    protected ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
+        log.warn("handleBadCredentialsException", ex);
+        return createApiError(HttpStatus.UNAUTHORIZED, translator.getLocaleMessage("exception.user.bad-credentials"));
     }
 
     @ExceptionHandler(value = {AuthenticationException.class})
