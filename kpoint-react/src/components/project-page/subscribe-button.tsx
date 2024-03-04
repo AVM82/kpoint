@@ -32,11 +32,11 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
         projectAction.subscribeToProject({ projectId: projectId }),
       );
       dispatch(subscribeToProjectPage(projectId));
-      toast.success('Ви успішно підписані на проект');
+      toast.success(t('buttons.user_subscribed'));
     } else if (isFollowed) {
       dispatch(projectAction.unSubscribe({ projectId: projectId }));
       dispatch(unsubscribeFromProjectLocally(!isFollowed));
-      toast.success('Ви успішно відписалися від проекту');
+      toast.success(t('buttons.user_unsubscribed'));
     }
   };
 
