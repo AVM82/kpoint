@@ -58,14 +58,15 @@ const ProjectsPage: FC = () => {
       <ProjectsPageHeader />
       <Grid
         container
-        spacing={5}
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 2, sm: 6, md: 8, lg: 10, xl: 12 }}
         direction="row"
         justifyContent="center"
-        alignItems="center"
+        alignItems="top"
       >
         {projects &&
           projects.content.map((project) => (
-            <Grid item key={project.projectId}>
+            <Grid item key={project.projectId} xs={ 4 } lg={ 3 }>
               <ProjectCardReworked
                 projectId={project.projectId}
                 url={project.url}

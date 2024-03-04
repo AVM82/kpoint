@@ -10,6 +10,7 @@ import { profileAction } from 'store/actions';
 
 import { ProfileType } from '../../../common/types/types';
 import { useAppDispatch } from '../../../hooks/hooks';
+import { EmailRegx } from '../../common/common';
 import { ProfileLayout } from '../profile-layout/profile-layout';
 
 const DEFAULT_FORM_VALUES = { firstName: '', lastName: '', email: '', username: '' };
@@ -137,23 +138,22 @@ const MyProfile: FC = () => {
 
     const errors: Record<string, string> = {};
 
-    // eslint-disable-next-line max-len
-    const emailRegx =  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    if(!emailRegx.test(data.email) || data.email.trim() === '') {
-      errors.email = 'Invalid email';
+    if(!EmailRegx.test(data.email) || data.email.trim() === '') {
+      toast.error(t('errors.invalid_email'));
+      errors.email = t('errors.invalid_email');
     }
 
     if (data.username.trim().length < 2) {
-      errors.username = 'Invalid username';
+      toast.error(t('errors.invalid_username'));
+      errors.username = t('errors.invalid_username');
     }
 
     if (data.firstName.trim().length === 0) {
-      errors.firstName = 'Invalid firstName';
+      errors.firstName = t('errors.invalid_firstname');
     }
 
     if (data.lastName.trim().length === 0) {
-      errors.lastName = 'Invalid lastName';
+      errors.lastName = t('errors.invalid_lastname');
     }
 
     if (errors.email === undefined && data.email.trim() !== user?.email.trim()){

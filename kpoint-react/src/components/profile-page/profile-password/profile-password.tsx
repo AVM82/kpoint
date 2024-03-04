@@ -7,13 +7,13 @@ import { toast } from 'react-toastify';
 import { profileAction } from 'store/actions';
 
 import { useAppDispatch } from '../../../hooks/hooks';
-import { PasswordField } from '../password-field/password-field';
+import { InputPassword } from '../../common/common';
 import { ProfileLayout } from '../profile-layout/profile-layout';
 
 const DEFAULT_PASSWORDS_VALUES = {
   'oldPassword': '',
   'newPassword': '',
-  'repeatPassword': '',
+  'confirmPassword': '',
 };
 
 export const ProfilePassword: FC = () => {
@@ -36,19 +36,23 @@ export const ProfilePassword: FC = () => {
       errors.oldPassword = true;
     }
 
-    if(!passwordsValues.repeatPassword) {
-      errors.repeatPassword = true;
+    if(!passwordsValues.confirmPassword) {
+      errors.confirmPassword = true;
     }
 
-    if (passwordsValues.newPassword !== passwordsValues.repeatPassword) {
+    if (passwordsValues.newPassword.trim().length === 0) {
       errors.newPassword = true;
-      errors.repeatPassword = true;
+      errors.confirmPassword = true;
+      toast.error(t('errors.password_short'), { position: 'top-right' });
+    } else if (passwordsValues.newPassword.trim() !== passwordsValues.confirmPassword.trim()) {
+      errors.newPassword = true;
+      errors.confirmPassword = true;
       toast.error(t('errors.profile_password_not_same'), { position: 'top-right' });
     }
 
-    if (passwordsValues.newPassword === passwordsValues.oldPassword) {
+    if (passwordsValues.newPassword.trim() === passwordsValues.oldPassword.trim()) {
       errors.newPassword = true;
-      errors.repeatPassword = true;
+      errors.confirmPassword = true;
       toast.error(t('errors.profile_password_new_current'), { position: 'top-right' });
     }
 
@@ -105,26 +109,26 @@ export const ProfilePassword: FC = () => {
     <ProfileLayout>
       <Grid container spacing={2} flexDirection={'column'} width={'350px'}>
         <Grid>
-          <PasswordField
+          <InputPassword
             label={t('current_password')}
             id="oldPassword"
             handleChange={handleChangePasswordsValue}
-            handleFocus={(): void => handleFieldFocus('oldPassword')}
+            handleFocus={(): void => handleFieldFocus('currentPassword')}
             error={errors.oldPassword}
           />
-          <PasswordField
+          <InputPassword
             label={t('new_password')}
             id="newPassword"
             handleChange={handleChangePasswordsValue}
             handleFocus={(): void => handleFieldFocus('newPassword')}
             error={errors.newPassword}
           />
-          <PasswordField
-            label={t('new_password_again')}
-            id="repeatPassword"
+          <InputPassword
+            label={t('new_password_confirm')}
+            id="confirmPassword"
             handleChange={handleChangePasswordsValue}
-            handleFocus={(): void => handleFieldFocus('repeatPassword')}
-            error={errors.repeatPassword}
+            handleFocus={(): void => handleFieldFocus('confirmPassword')}
+            error={errors.confirmPassword}
           />
         </Grid>
         <Grid>

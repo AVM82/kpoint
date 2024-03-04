@@ -104,7 +104,8 @@ public class ProjectService {
                 .orElseThrow(() -> {
                     log.warn("User {} does not have project with id {}", user.getUsername(), projectId);
                     return new ApplicationException(HttpStatus.NOT_FOUND,
-                            translator.getLocaleMessage("exception.user.has.not.defined.project", user.getUsername(), projectId));
+                            translator.getLocaleMessage("exception.user.has.not.defined.project",
+                                    user.getUsername(), projectId));
 //                    return new ApplicationException(HttpStatus.NOT_FOUND,
 //                            String.format("User %s does not have project with id %s", user.getUsername(), projectId));
                 });
