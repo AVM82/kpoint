@@ -4,7 +4,6 @@ export type SignUpType = {
   username: string,
   email: string,
   password: string,
-  repeatedPassword: string,
   avatarImgUrl: string,
   description: string,
   tags: string[],
