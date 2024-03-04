@@ -87,7 +87,7 @@ public class S3Service {
     }
 
     public void deleteImageByUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isEmpty()) {
+        if (imageUrl == null || imageUrl.isEmpty() || imageUrl.equals(DEFAULT_LOGO_URI)) {
             return;
         }
         try {
