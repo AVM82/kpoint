@@ -5,7 +5,7 @@ import { FC } from 'react';
 import { storage } from 'services/services';
 
 import { getSocialMediaIcon } from '../../utils/function-social-media-icons';
-import { SubscribeButton } from './SubscribeButton';
+import { SubscribeButton } from './subscribe-button';
 
 interface ProjectSocialsProps {
   project: ProjectType | null;
