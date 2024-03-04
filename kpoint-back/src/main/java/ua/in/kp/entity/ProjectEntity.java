@@ -83,7 +83,6 @@ public class ProjectEntity {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Column(name = "networks_links")
-    @SoftDelete
     private Map<String, String> networksLinks;
 
     @Override
