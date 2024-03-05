@@ -12,6 +12,7 @@ interface ContactsProps {
   ) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>, itemName: string) => void;
   canIEditThis: () => boolean;
+  handleDelete: (itemName: string, value: string) => void;
 }
 
 const Contacts: FC<ContactsProps> = ({
@@ -19,6 +20,7 @@ const Contacts: FC<ContactsProps> = ({
   onChange,
   onSubmit,
   canIEditThis,
+  handleDelete,
 }) => {
   const [addContactClicked, setAddContactClicked] = useState(false);
 
@@ -33,7 +35,11 @@ const Contacts: FC<ContactsProps> = ({
     >
       {project &&
         Object.entries(project.networksLinks).map(([network, link]) => (
-          <ContactItem network={network} link={link} />
+          <ContactItem
+            network={network}
+            link={link}
+            handleDelete={handleDelete}
+          />
         ))}
       <Button
         size="small"

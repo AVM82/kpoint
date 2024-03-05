@@ -48,19 +48,40 @@ const ProjectReworked: FC = () => {
   const token = storage.getItem(StorageKey.TOKEN);
   const user: UserType = JSON.parse(storage.getItem(StorageKey.USER) as string);
 
-  const handleDeleteTag = (tag: string): void => {
+  const handleDelete = (itemName: string, value: string): void => {
     const bodyData = [];
-    bodyData.push({ op: 'replace', path: '/tags', value: [] });
 
-    project.tags.forEach((item) => {
-      if (item !== tag) {
-        bodyData.push({ op: 'add', path: '/tags/-', value: item });
-      }
-    });
+    if (itemName === 'tag') {
+      bodyData.push({ op: 'replace', path: '/tags', value: [] });
 
-    const id = project.projectId;
-    dispatch(editProject({ id, bodyData }));
-    dispatch(deleteTagLocally(tag));
+      project.tags.forEach((item) => {
+        if (item !== value) {
+          bodyData.push({ op: 'add', path: '/tags/-', value: item });
+        }
+      });
+
+      const id = project.projectId;
+      dispatch(editProject({ id, bodyData }));
+      dispatch(deleteTagLocally(value));
+    } else if (itemName === 'link') {
+      bodyData.push({
+        op: 'replace',
+        path: '/networksLinks',
+        value: project.networksLinks,
+      });
+
+      const newLinks = { ...project.networksLinks };
+      delete (newLinks as { [key: string]: string })[value];
+
+      bodyData.push({
+        op: 'replace',
+        path: '/networksLinks',
+        value: newLinks,
+      });
+
+      const id = project.projectId;
+      dispatch(editProject({ id, bodyData }));
+    }
   };
 
   useEffect(() => {
@@ -104,6 +125,16 @@ const ProjectReworked: FC = () => {
     dispatch(editLogo({ id, logo }));
   };
 
+  function extractWordBetweenWWWAndCom(url: string): string {
+    const startIndex = url.indexOf('www.') + 'www.'.length;
+
+    const endIndex = url.indexOf('.com');
+
+    const extractedWord = url.substring(startIndex, endIndex);
+
+    return extractedWord;
+  }
+
   const createBodyData = (
     itemName: string,
   ): { op: string; path: string; value: string | string[] | object }[] => {
@@ -116,22 +147,20 @@ const ProjectReworked: FC = () => {
 
         bodyData.push({
           op: 'add',
-          path: '/tags/-',
+          path: `/${key}/-`,
           value: testEditForm[key as keyof typeof testEditForm] || null,
         });
       });
     } else if (itemName === 'networksLinks') {
-      bodyData.push({
-        op: 'replace',
-        path: '/tags',
-        value: project.networksLinks,
-      });
       Object.keys(testEditForm).forEach((item) => {
         const key: string = item;
+        const linkName = extractWordBetweenWWWAndCom(
+          testEditForm[key as keyof typeof testEditForm],
+        ).toUpperCase();
 
         bodyData.push({
           op: 'add',
-          path: '/tags/-',
+          path: `/${key}/${linkName}`,
           value: testEditForm[key as keyof typeof testEditForm] || null,
         });
       });
@@ -370,7 +399,7 @@ const ProjectReworked: FC = () => {
                             }}
                             onClick={(): void => {
                               setShowButton(!showButton);
-                              handleDeleteTag(tag);
+                              handleDelete('tag', tag);
                             }}
                           >
                             <RemoveIcon fontSize="small" />
@@ -560,6 +589,7 @@ const ProjectReworked: FC = () => {
               onChange={changeHandler}
               onSubmit={submitHandler}
               canIEditThis={canIEditThis}
+              handleDelete={handleDelete}
             />
           )}
           {tabClicked === 'comments' && <Comments />}
