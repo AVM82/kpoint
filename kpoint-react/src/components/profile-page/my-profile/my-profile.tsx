@@ -210,7 +210,7 @@ const MyProfile: FC = () => {
       >
         <Grid container spacing={2}>
           <Grid item xs={3} md={6}>
-            <FormLabel>{t('email')}</FormLabel>
+            <FormLabel required>{t('email')}</FormLabel>
             <TextField
               fullWidth
               name="email"
@@ -222,7 +222,7 @@ const MyProfile: FC = () => {
             />
           </Grid>
           <Grid item xs={3} md={6}>
-            <FormLabel>{t('username')}</FormLabel>
+            <FormLabel required>{t('username')}</FormLabel>
             <TextField
               fullWidth
               name="username"
@@ -234,7 +234,7 @@ const MyProfile: FC = () => {
             />
           </Grid>
           <Grid item xs={3} md={6}>
-            <FormLabel>{t('first_name')}</FormLabel>
+            <FormLabel required>{t('first_name')}</FormLabel>
             <TextField
               fullWidth
               name="firstName"
@@ -246,7 +246,7 @@ const MyProfile: FC = () => {
             />
           </Grid>
           <Grid item xs={3} md={6}>
-            <FormLabel>{t('last_name')}</FormLabel>
+            <FormLabel required>{t('last_name')}</FormLabel>
             <TextField
               fullWidth
               name="lastName"
