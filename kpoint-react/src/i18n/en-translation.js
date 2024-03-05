@@ -6,7 +6,7 @@ const enTranslation = {
   sign_up: 'Sign up',
   first_name: 'First name',
   last_name: 'Last name',
-  username: 'Username (required)',
+  username: 'Username',
   email: 'Email Address',
   password: 'Password',
   current_password: 'Current password',
@@ -117,11 +117,18 @@ const enTranslation = {
   },
   menu: {
     account_settings: 'Account settings',
+    profile_settings: 'Profile settings',
     profile: 'Profile',
     my_account: 'My account',
+    my_profile: 'My profile',
     add_another_account : 'Add another account',
     settings: 'Settings',
+    params: 'Parameters',
+    change_password: 'Change password',
     logout: 'Loguut',
+  },
+  info: {
+    develop: 'This section is under development',
   },
 };
 

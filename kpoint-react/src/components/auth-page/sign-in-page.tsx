@@ -114,7 +114,7 @@ const SignInPage: FC = () => {
           <Typography>{t('sign_in_to_continue')}</Typography>
           <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit}>
             <Grid item xs={3} md={6} marginTop={2}>
-              <FormLabel>{t('email')}</FormLabel>
+              <FormLabel required>{t('email')}</FormLabel>
               <TextField
                 required
                 fullWidth
@@ -130,7 +130,7 @@ const SignInPage: FC = () => {
               />
             </Grid>
             <Grid item xs={3} md={6} marginTop={2}>
-              <FormLabel>{t('password')}</FormLabel>
+              <FormLabel required>{t('password')}</FormLabel>
               <TextField
                 required
                 fullWidth

@@ -6,7 +6,7 @@ const ukTranslation = {
   sign_up: 'Зареєструватись',
   first_name: 'Імʼя',
   last_name: 'Прізвище',
-  username: 'Імʼя користувача (обовʼязково)',
+  username: 'Імʼя користувача',
   email: 'Електронна пошта',
   password: 'Пароль',
   current_password: 'Поточний пароль',
@@ -117,11 +117,18 @@ const ukTranslation = {
   },
   menu: {
     account_settings: 'Налаштування аккаунта',
+    profile_settings: 'Налаштування профіля',
     profile: 'Профіль',
     my_account: 'Мій аккаунт',
+    my_profile: 'Мій профіль',
     add_another_account : 'Добавити інший аккаунт',
     settings: 'Налаштування',
+    params: 'Параметри',
+    change_password: 'Зміна пароля',
     logout: 'Вихід',
+  },
+  info: {
+    develop: 'Цей розділ в розробці',
   },
 };
 
