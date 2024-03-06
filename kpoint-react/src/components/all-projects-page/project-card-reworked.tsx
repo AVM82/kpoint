@@ -13,31 +13,20 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { GetAllProjectsType } from 'common/types/types';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SubscribeButton } from './subscribe-button';
 
-interface ProjectsProps {
-  projectId: string;
-  url: string;
-  title: string;
-  summary: string;
-  logoImgUrl: string;
-  tags: [];
+interface ProjectCardProps {
+  project: GetAllProjectsType;
   isAuthenticated: boolean;
-  isFollowed: boolean;
 }
 
-const ProjectCardReworked: FC<ProjectsProps> = ({
-  projectId,
-  url,
-  title,
-  summary,
-  logoImgUrl,
-  tags,
+const ProjectCardReworked: FC<ProjectCardProps> = ({
+  project,
   isAuthenticated,
-  isFollowed,
 }) => {
   const { t } = useTranslation();
   const [showControls, setShowControls] = useState(false);
@@ -46,8 +35,8 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
     <Card sx={{ maxWidth: '370px' }}>
       <CardMedia
         sx={{ height: 200, position: 'relative' }}
-        image={logoImgUrl}
-        title={title}
+        image={project.logoImgUrl}
+        title={project.title}
         onMouseEnter={(): void => setShowControls(!showControls)}
         onMouseLeave={(): void => setShowControls(!showControls)}
       >
@@ -121,9 +110,9 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
                 </Button>
                 {
                   <SubscribeButton
-                    projectId={projectId}
+                    projectId={project.projectId}
                     isAuthenticated={isAuthenticated}
-                    isFollowed={isFollowed ?? false}
+                    isFollowed={project.isFollowed ?? false}
                   />
                 }
                 <Button
@@ -158,15 +147,15 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
       </CardMedia>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          {title}
+          {project.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {summary}
+          {project.summary}
         </Typography>
       </CardContent>
       <CardActions>
         <Stack direction="row" spacing={1} width={'70%'}>
-          {tags.map((tag, index) =>
+          {project.tags.map((tag, index) =>
             index < 3 ? (
               <Chip
                 label={tag}
@@ -199,7 +188,7 @@ const ProjectCardReworked: FC<ProjectsProps> = ({
             },
             borderRadius: 0,
           }}
-          href={'projects/'.concat(url)}
+          href={'projects/'.concat(project.url)}
         >
           <Typography sx={{ color: '#636B74', textTransform: 'none' }}>
             {t('buttons.learn_more')}
