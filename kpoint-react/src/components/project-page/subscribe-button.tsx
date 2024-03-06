@@ -2,7 +2,7 @@ import ControlPointTwoToneIcon from '@mui/icons-material/ControlPointTwoTone';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
@@ -25,8 +25,12 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const user = storage.getItem(StorageKey.TOKEN);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleButtonSubClick = async (): Promise<void> => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
     if (user && !isFollowed) {
       await dispatch(
         projectAction.subscribeToProject({ projectId: projectId }),
@@ -38,6 +42,7 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
       dispatch(unsubscribeFromProjectLocally(!isFollowed));
       toast.success(t('buttons.user_unsubscribed'));
     }
+    setIsProcessing(false);
   };
 
   return (
