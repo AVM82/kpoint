@@ -5,11 +5,12 @@ import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
 import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Masonry from 'react-responsive-masonry';
 import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-import { ProjectCardReworked } from './project-card-reworked';
+import { ProjectCard } from './project-card';
 import { ProjectsPageHeader } from './projects-page-haeder';
 
 const ProjectsPage: FC = () => {
@@ -44,42 +45,28 @@ const ProjectsPage: FC = () => {
   };
 
   const handleAddMoreClick = (): void => {
-    dispatch(
-      projectAction.getAllProjectsAddMore({
-        size: maxPageElements,
-        number: page,
-      }),
-    );
-    setPage(page + 1);
+    if (projects && page < projects.totalPages) {
+      dispatch(
+        projectAction.getAllProjectsAddMore({
+          size: maxPageElements,
+          number: page,
+        }),
+      );
+      setPage((prevPage) =>
+        prevPage < projects.totalPages ? prevPage + 1 : prevPage,
+      );
+    }
   };
 
   return (
     <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
-      <ProjectsPageHeader />
-      <Grid
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 2, sm: 6, md: 8, lg: 10, xl: 12 }}
-        direction="row"
-        justifyContent="center"
-        alignItems="top"
-      >
+      <ProjectsPageHeader key={'proj-page-header'}/>
+      <Masonry columnsCount={4} gutter={'10px'}>
         {projects &&
           projects.content.map((project) => (
-            <Grid item key={project.projectId} xs={ 4 } lg={ 3 }>
-              <ProjectCardReworked
-                projectId={project.projectId}
-                url={project.url}
-                title={project.title}
-                summary={project.summary}
-                logoImgUrl={project.logoImgUrl}
-                tags={project.tags}
-                isAuthenticated={isAuthenticated}
-                isFollowed={project.isFollowed}
-              />
-            </Grid>
+            <ProjectCard project={project} isAuthenticated={isAuthenticated} key={project.title}/>
           ))}
-      </Grid>
+      </Masonry>
       <Grid
         container
         direction="row"

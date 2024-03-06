@@ -37,6 +37,11 @@ public class AuthService {
             throw new ApplicationException(HttpStatus.CONFLICT, translator.getLocaleMessage(
                     "exception.user.register-email-failed", requestDto.email()));
         }
+        if (userService.existsByUsername(requestDto.username())) {
+            log.warn("User with username {} already exist", requestDto.username());
+            throw new ApplicationException(HttpStatus.CONFLICT, translator.getLocaleMessage(
+                    "exception.user.register-username-failed", requestDto.username()));
+        }
         return userService.create(requestDto);
     }
 

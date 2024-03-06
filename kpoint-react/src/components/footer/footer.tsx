@@ -30,7 +30,7 @@ const Footer: FC = () => {
   return (
     <Box
       component={'footer'}
-      sx={{ backgroundColor: '#474242', padding: '48px 80px' }}
+      sx={{ backgroundColor: '#535365', padding: '48px 80px' }}
       flexShrink={0}
     >
       <Box
@@ -48,14 +48,21 @@ const Footer: FC = () => {
           <Typography variant="h6" align="center" color={'white'}>
             KEY POINTS
           </Typography>
-          <Typography variant="body2" align="left" color={'white'} sx={{
-            borderRadius: '8px',
-            display: 'inline-flex',
-            alignItems: 'flex-start',
-            padding: '1px',
-            marginLeft: '2px',
-          }}>
-            <span style={{ fontSize: '12px' }}>{process.env.REACT_APP_VERSION}</span>
+          <Typography
+            variant="body2"
+            align="left"
+            color={'white'}
+            sx={{
+              borderRadius: '8px',
+              display: 'inline-flex',
+              alignItems: 'flex-start',
+              padding: '1px',
+              marginLeft: '2px',
+            }}
+          >
+            <span style={{ fontSize: '12px' }}>
+              {process.env.REACT_APP_VERSION}
+            </span>
           </Typography>
         </Box>
         <Box
@@ -97,17 +104,11 @@ const Footer: FC = () => {
           </Typography>
         </Box>
         <Box>
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
-            Eleven
+          <Link href="/" underline="none" color="#FFFFFF" sx={{ margin: 1 }} fontSize={16} padding={'2px'}>
+            {t('projects')}
           </Link>
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
-            Twelve
-          </Link>
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
-            Thirteen
-          </Link>
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
-            Fourteen
+          <Link href="#" underline="none" color="#FFFFFF" sx={{ margin: 1 }} fontSize={16} padding={'2px'}>
+            {t('about_us')}
           </Link>
           {loggedIn || isStillLoggedIn ? (
             <Link
@@ -115,6 +116,7 @@ const Footer: FC = () => {
               underline="none"
               color="#FFFFFF"
               sx={{ margin: 1 }}
+              fontSize={16}
             >
               {t('suggestions')}
             </Link>

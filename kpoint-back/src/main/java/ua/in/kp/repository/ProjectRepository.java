@@ -26,7 +26,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
 
     Optional<ProjectEntity> findByTitle(String title);
 
-    @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
+    @Query(value = "SELECT distinct p FROM ProjectEntity p LEFT JOIN FETCH p.tags "
             + "LEFT JOIN FETCH p.networksLinks")
     Page<ProjectEntity> findAll(Pageable pageable);
 
