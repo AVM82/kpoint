@@ -2,16 +2,10 @@ import AddIcon from '@mui/icons-material/Add';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import RemoveIcon from '@mui/icons-material/Remove';
-import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Grid,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Chip, Container, Grid, Typography } from '@mui/material';
 import Link from '@mui/material/Link';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
+import { UserType } from 'common/types/user/user';
 import {
   CustomTimeline,
   ImageUploader,
@@ -41,16 +35,6 @@ import { Description } from './project-tabs/description';
 import { HelpProject } from './project-tabs/help-project';
 import { OurTeam } from './project-tabs/our-team';
 
-// function getTabAccessibilityProps(index: number): {
-//   id: string;
-//   'aria-controls': string;
-// } {
-//   return {
-//     id: `simple-tab-${index}`,
-//     'aria-controls': `simple-tabpanel-${index}`,
-//   };
-// }
-
 const ProjectReworked: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -61,21 +45,43 @@ const ProjectReworked: FC = () => {
   const [testEditForm, setTestEditForm] = useState<object>({});
   const [showButton, setShowButton] = useState(false);
   const [tabClicked, setTabClicked] = useState('about');
-  const user = storage.getItem(StorageKey.TOKEN);
+  const token = storage.getItem(StorageKey.TOKEN);
+  const user: UserType = JSON.parse(storage.getItem(StorageKey.USER) as string);
 
-  const handleDeleteTag = (tag: string): void => {
+  const handleDelete = (itemName: string, value: string): void => {
     const bodyData = [];
-    bodyData.push({ op: 'replace', path: '/tags', value: [] });
 
-    project.tags.forEach((item) => {
-      if (item !== tag) {
-        bodyData.push({ op: 'add', path: '/tags/-', value: item });
-      }
-    });
+    if (itemName === 'tag') {
+      bodyData.push({ op: 'replace', path: '/tags', value: [] });
 
-    const id = project.projectId;
-    dispatch(editProject({ id, bodyData }));
-    dispatch(deleteTagLocally(tag));
+      project.tags.forEach((item) => {
+        if (item !== value) {
+          bodyData.push({ op: 'add', path: '/tags/-', value: item });
+        }
+      });
+
+      const id = project.projectId;
+      dispatch(editProject({ id, bodyData }));
+      dispatch(deleteTagLocally(value));
+    } else if (itemName === 'link') {
+      bodyData.push({
+        op: 'replace',
+        path: '/networksLinks',
+        value: project.networksLinks,
+      });
+
+      const newLinks = { ...project.networksLinks };
+      delete (newLinks as { [key: string]: string })[value];
+
+      bodyData.push({
+        op: 'replace',
+        path: '/networksLinks',
+        value: newLinks,
+      });
+
+      const id = project.projectId;
+      dispatch(editProject({ id, bodyData }));
+    }
   };
 
   useEffect(() => {
@@ -119,9 +125,19 @@ const ProjectReworked: FC = () => {
     dispatch(editLogo({ id, logo }));
   };
 
+  function extractWordBetweenWWWAndCom(url: string): string {
+    const startIndex = url.indexOf('www.') + 'www.'.length;
+
+    const endIndex = url.indexOf('.com');
+
+    const extractedWord = url.substring(startIndex, endIndex);
+
+    return extractedWord;
+  }
+
   const createBodyData = (
     itemName: string,
-  ): { op: string; path: string; value: string | string[] }[] => {
+  ): { op: string; path: string; value: string | string[] | object }[] => {
     const bodyData = [];
 
     if (itemName === 'tags') {
@@ -131,7 +147,20 @@ const ProjectReworked: FC = () => {
 
         bodyData.push({
           op: 'add',
-          path: '/tags/-',
+          path: `/${key}/-`,
+          value: testEditForm[key as keyof typeof testEditForm] || null,
+        });
+      });
+    } else if (itemName === 'networksLinks') {
+      Object.keys(testEditForm).forEach((item) => {
+        const key: string = item;
+        const linkName = extractWordBetweenWWWAndCom(
+          testEditForm[key as keyof typeof testEditForm],
+        ).toUpperCase();
+
+        bodyData.push({
+          op: 'add',
+          path: `/${key}/${linkName}`,
           value: testEditForm[key as keyof typeof testEditForm] || null,
         });
       });
@@ -173,6 +202,10 @@ const ProjectReworked: FC = () => {
     }
   };
 
+  const canIEditThis = (): boolean => {
+    return (token && project.owner.ownerId === user.id) as boolean;
+  };
+
   return (
     <>
       <Box sx={{ bgcolor: '#E4E5E9', width: '100%' }}>
@@ -204,7 +237,7 @@ const ProjectReworked: FC = () => {
               alignItems={'center'}
             >
               <Grid maxWidth={390} width={390} container>
-                {user ? (
+                {token ? (
                   <ImageUploader
                     xs={5}
                     component="project-page"
@@ -213,12 +246,17 @@ const ProjectReworked: FC = () => {
                   />
                 ) : (
                   <Grid item xs={5}>
-                    <Box component={'img'} maxWidth={'100%'} maxHeight={'100%'}
-                      sx={{ objectFit: 'cover', borderRadius: '6px' }} src={project.logoImgUrl}></Box>
+                    <Box
+                      component={'img'}
+                      maxWidth={'100%'}
+                      maxHeight={'100%'}
+                      sx={{ objectFit: 'cover', borderRadius: '6px' }}
+                      src={project.logoImgUrl}
+                    ></Box>
                   </Grid>
                 )}
                 <Grid item xs={7} paddingLeft={'30px'}>
-                  {editFieldClicked && user ? (
+                  {editFieldClicked && canIEditThis() ? (
                     <InputField
                       onChange={changeHandler}
                       onSubmit={submitHandler}
@@ -281,36 +319,52 @@ const ProjectReworked: FC = () => {
                     flexShrink={0}
                     padding={'10px 0 10px 0'}
                   >
-                    {project.tags.length < 5 &&
-                    <Box
-                      display={'flex'}
-                      alignItems={'center'}
-                      justifyContent={'center'}
-                      alignSelf={'center'}
-                      minWidth={'55px'}
-                      maxHeight={'24px'}
-                      position={'relative'}
-                      sx={{ cursor: 'pointer',
-                        borderRadius: '10px',
-                        border: '1px solid black' }}
-                      onClick={(): void => setTagsClicked(true)}
-                    >
-                      <AddIcon fontSize="small"/>
-                      <Box display={'flex'} justifyContent={'center'} alignItems={'center'}
-                        position={'absolute'} top={'25px'} width={'100%'} left={'115%'}>
-                        {tagsClicked && user && (
-                          <InputField
-                            onSubmit={submitHandler}
-                            onChange={changeHandler}
-                            itemName="tags"
-                            placeholder="Введіть назву тега"
-                          />
-                        )}
+                    {project.tags.length < 5 && canIEditThis() && (
+                      <Box
+                        display={'flex'}
+                        alignItems={'center'}
+                        justifyContent={'center'}
+                        alignSelf={'center'}
+                        minWidth={'55px'}
+                        maxHeight={'24px'}
+                        position={'relative'}
+                        sx={{
+                          cursor: 'pointer',
+                          borderRadius: '10px',
+                          border: '1px solid black',
+                        }}
+                        onClick={(): void => setTagsClicked(true)}
+                      >
+                        <AddIcon fontSize="small" />
+                        <Box
+                          display={'flex'}
+                          justifyContent={'center'}
+                          alignItems={'center'}
+                          position={'absolute'}
+                          top={'25px'}
+                          width={'100%'}
+                          left={'115%'}
+                        >
+                          {tagsClicked && token && (
+                            <InputField
+                              onSubmit={submitHandler}
+                              onChange={changeHandler}
+                              itemName="tags"
+                              placeholder="Введіть назву тега"
+                            />
+                          )}
+                        </Box>
                       </Box>
-                    </Box>}
+                    )}
                     {project.tags.map((tag, index) => (
-                      <Box display={'flex'} justifyContent={'space-between'}
-                        alignItems={'center'} minWidth={'55px'} flexDirection={'column'} position={'relative'}>
+                      <Box
+                        display={'flex'}
+                        justifyContent={'space-between'}
+                        alignItems={'center'}
+                        minWidth={'55px'}
+                        flexDirection={'column'}
+                        position={'relative'}
+                      >
                         <Chip
                           key={index}
                           label={tag}
@@ -328,7 +382,7 @@ const ProjectReworked: FC = () => {
                           }}
                           onMouseEnter={(): void => setShowButton(!showButton)}
                         />
-                        {showButton && user && (
+                        {showButton && token && (
                           <Box
                             display={'flex'}
                             alignItems={'center'}
@@ -338,15 +392,17 @@ const ProjectReworked: FC = () => {
                             maxHeight={'24px'}
                             position={'absolute'}
                             top={'40px'}
-                            sx={{ cursor: 'pointer',
+                            sx={{
+                              cursor: 'pointer',
                               borderRadius: '10px',
-                              border: '1px solid black' }}
+                              border: '1px solid black',
+                            }}
                             onClick={(): void => {
                               setShowButton(!showButton);
-                              handleDeleteTag(tag);
+                              handleDelete('tag', tag);
                             }}
                           >
-                            <RemoveIcon fontSize="small"/>
+                            <RemoveIcon fontSize="small" />
                           </Box>
                         )}
                       </Box>
@@ -376,7 +432,7 @@ const ProjectReworked: FC = () => {
                     letterSpacing: '0.5px',
                   }}
                 >
-                  <PersonAddIcon fontSize="small"/> {t('buttons.support')}
+                  <PersonAddIcon fontSize="small" /> {t('buttons.support')}
                 </Button>
                 <Button
                   sx={{
@@ -392,7 +448,7 @@ const ProjectReworked: FC = () => {
                     letterSpacing: '0.5px',
                   }}
                 >
-                  <AttachMoneyIcon fontSize="small"/>
+                  <AttachMoneyIcon fontSize="small" />
                   {t('buttons.donate')}
                 </Button>
               </Box>
@@ -511,12 +567,31 @@ const ProjectReworked: FC = () => {
               </Button>
             </Box>
           </Grid>
-          {tabClicked === 'about' &&
-           <Description description={project.description} onChange={changeHandler} onSubmit={submitHandler}/>}
-          {tabClicked === 'team' && <OurTeam firstName={project.owner.firstName} lastName={project.owner.lastName}
-            avatarImgUrl={project.owner.avatarImgUrl}/>}
+          {tabClicked === 'about' && (
+            <Description
+              description={project.description}
+              onChange={changeHandler}
+              onSubmit={submitHandler}
+              canIEditThis={canIEditThis}
+            />
+          )}
+          {tabClicked === 'team' && (
+            <OurTeam
+              firstName={project.owner.firstName}
+              lastName={project.owner.lastName}
+              avatarImgUrl={project.owner.avatarImgUrl}
+            />
+          )}
           {tabClicked === 'help' && <HelpProject />}
-          {tabClicked === 'contacts' && <Contacts project={project}/>}
+          {tabClicked === 'contacts' && (
+            <Contacts
+              project={project}
+              onChange={changeHandler}
+              onSubmit={submitHandler}
+              canIEditThis={canIEditThis}
+              handleDelete={handleDelete}
+            />
+          )}
           {tabClicked === 'comments' && <Comments />}
           <Grid item xs={4} container justifyContent={'end'}>
             <Box
