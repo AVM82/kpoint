@@ -10,7 +10,7 @@ import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-import { ProjectCardReworked } from './project-card-reworked';
+import { ProjectCard } from './project-card';
 import { ProjectsPageHeader } from './projects-page-haeder';
 
 const ProjectsPage: FC = () => {
@@ -52,20 +52,19 @@ const ProjectsPage: FC = () => {
           number: page,
         }),
       );
-      setPage((prevPage) => (prevPage < projects.totalPages ? prevPage + 1 : prevPage));
+      setPage((prevPage) =>
+        prevPage < projects.totalPages ? prevPage + 1 : prevPage,
+      );
     }
   };
 
   return (
     <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
-      <ProjectsPageHeader />
+      <ProjectsPageHeader key={'proj-page-header'}/>
       <Masonry columnsCount={4} gutter={'10px'}>
         {projects &&
           projects.content.map((project) => (
-            <ProjectCardReworked
-              project={project}
-              isAuthenticated={isAuthenticated}
-            />
+            <ProjectCard project={project} isAuthenticated={isAuthenticated} key={project.title}/>
           ))}
       </Masonry>
       <Grid
