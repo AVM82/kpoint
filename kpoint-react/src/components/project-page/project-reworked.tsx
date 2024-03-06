@@ -47,6 +47,8 @@ const ProjectReworked: FC = () => {
   const [tabClicked, setTabClicked] = useState('about');
   const token = storage.getItem(StorageKey.TOKEN);
   const user: UserType = JSON.parse(storage.getItem(StorageKey.USER) as string);
+  const userCur = storage.getItem(StorageKey.USER);
+  const isMyProject = project?.owner.ownerId === JSON.parse(userCur || '{}').id;
 
   const handleDelete = (itemName: string, value: string): void => {
     const bodyData = [];
@@ -418,6 +420,7 @@ const ProjectReworked: FC = () => {
                 maxWidth={'231px'}
                 gap={'16px'}
               >
+                {project && !isMyProject &&
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
@@ -434,6 +437,8 @@ const ProjectReworked: FC = () => {
                 >
                   <PersonAddIcon fontSize="small" /> {t('buttons.support')}
                 </Button>
+                }
+                {project && !isMyProject &&
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
@@ -451,6 +456,7 @@ const ProjectReworked: FC = () => {
                   <AttachMoneyIcon fontSize="small" />
                   {t('buttons.donate')}
                 </Button>
+                }
               </Box>
             </Box>
           </Box>
