@@ -94,7 +94,8 @@ const projectSlice = createSlice({
       proj?.forEach((p) => (p.isFollowed = true));
 
     },
-    unsubscribeFromProjectLocally: (state, action) => {
+    unsubscribeFromProjectLocally: (state
+      , action) => {
       state.project.isFollowed = action.payload;
     },
     subscribeToProjectPage: (state, action) => {
