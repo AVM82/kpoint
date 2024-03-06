@@ -23,7 +23,7 @@ export const InputPassword: FC<Props> = ({ label, id, handleChange, handleFocus,
 
   return(
     <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-      <FormLabel>{label}</FormLabel>
+      <FormLabel required>{label}</FormLabel>
       <OutlinedInput
         id={id}
         name={id}

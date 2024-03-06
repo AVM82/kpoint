@@ -7,3 +7,4 @@ export { type CitiesType,type GetAllProjectsType,type ProjectsEditType,
   type ProjectsPageType,type ProjectType } from './projects/projects';
 export { type SuggestionCreateType, type SuggestionsPageType,type SuggestionType } from './suggestions/suggestions';
 export { type ApiResponseType } from './user/api-response.type';
+export { type UserType } from './user/user';

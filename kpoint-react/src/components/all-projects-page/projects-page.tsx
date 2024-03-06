@@ -45,13 +45,15 @@ const ProjectsPage: FC = () => {
   };
 
   const handleAddMoreClick = (): void => {
-    dispatch(
-      projectAction.getAllProjectsAddMore({
-        size: maxPageElements,
-        number: page,
-      }),
-    );
-    setPage(page + 1);
+    if (projects && page < projects.totalPages) {
+      dispatch(
+        projectAction.getAllProjectsAddMore({
+          size: maxPageElements,
+          number: page,
+        }),
+      );
+      setPage((prevPage) => (prevPage < projects.totalPages ? prevPage + 1 : prevPage));
+    }
   };
 
   return (

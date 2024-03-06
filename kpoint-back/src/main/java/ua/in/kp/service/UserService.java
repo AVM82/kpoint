@@ -89,6 +89,10 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
     public UserEntity getAuthenticated() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return (UserEntity) customUserDetailsService.loadUserByUsername(email);
