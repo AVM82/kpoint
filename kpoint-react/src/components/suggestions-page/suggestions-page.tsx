@@ -51,13 +51,16 @@ const SuggestionsPage: FC = () => {
   };
 
   const handleAddMoreClick = (): void => {
-    dispatch(
-      suggestionAction.getAllSuggestionsAddMore({
-        size: maxPageElements,
-        number: page,
-      }),
-    );
-    setPage(page + 1);
+    if (suggestions && page < suggestions.totalPages) {
+      dispatch(
+        suggestionAction.getAllSuggestionsAddMore({
+          size: maxPageElements,
+          number: page,
+        }),
+      );
+      setPage(page + 1);
+      setPage((prevPage) => (prevPage < suggestions.totalPages ? prevPage + 1 : prevPage));
+    }
   };
 
   const [modalOpen, setModalOpen] = useState(false);
