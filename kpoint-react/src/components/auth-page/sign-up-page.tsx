@@ -337,7 +337,7 @@ const SignUpPage: FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel required>{t('description')}</FormLabel>
+                  <FormLabel>{t('description')}</FormLabel>
                   <TextField
                     fullWidth
                     name="description"
