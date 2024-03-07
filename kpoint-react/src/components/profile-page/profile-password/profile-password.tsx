@@ -71,8 +71,10 @@ export const ProfilePassword: FC = () => {
         .then((action): void => {
           toast.success(`${action.message}`);
         })
-        .catch((reason) => {
-          toast.error(`${reason}`);
+        .catch(() => {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            oldPassword: true }));
         });
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
