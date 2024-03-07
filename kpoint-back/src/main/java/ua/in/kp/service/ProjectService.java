@@ -54,7 +54,8 @@ public class ProjectService {
     public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
-                          Translator translator, UserRepository userRepository, MeterRegistry meterRegistry, ValidatorFactory factory, Validator validator) {
+                          Translator translator, UserRepository userRepository, MeterRegistry meterRegistry,
+                          ValidatorFactory factory, Validator validator) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userService = userService;
@@ -319,14 +320,13 @@ public class ProjectService {
 
         Set<ConstraintViolation<ProjectChangeDto>> violations = validator.validate(patchedDto);
         String error = "";
-        if(!violations.isEmpty()) {
+        if (!violations.isEmpty()) {
             for (ConstraintViolation<ProjectChangeDto> violation : violations) {
                 log.warn(violation.getMessage());
                 error = violation.getMessage();
             }
             throw new ApplicationException(HttpStatus.BAD_REQUEST, error);
         }
-
 
         List<String> changedFields = findChangedFields(projectDto, patchedDto);
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
