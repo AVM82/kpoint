@@ -4,6 +4,7 @@ services:
 
   prometheus:
     image: prom/prometheus
+    user: root
     ports:
       - ${PROMETHEUS_PORT}:9090
     volumes:
@@ -13,9 +14,12 @@ services:
       monitoring:
         aliases:
           - prometheus
+    env_file:
+      - .env
 
   grafana:
     image: grafana/grafana
+    user: root
     ports:
       - ${GRAFANA_PORT}:3000
     volumes:
@@ -27,6 +31,8 @@ services:
       monitoring:
         aliases:
           - grafana
+    env_file:
+      - .env
 
 networks:
   monitoring:

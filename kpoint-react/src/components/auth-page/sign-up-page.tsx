@@ -67,6 +67,11 @@ const SignUpPage: FC = () => {
     if (location.state && location.state.userData) {
       const { email, avatarImgUrl } = location.state.userData;
       setUserData({ email, avatarImgUrl });
+      setFormData((formData) => ({
+        ...formData,
+        email: email,
+        avatarImgUrl: avatarImgUrl,
+      }));
     }
   }, [location.state]);
 
@@ -190,10 +195,18 @@ const SignUpPage: FC = () => {
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     event.preventDefault();
     const { name, value } = event.target;
-    setFormData((formData) => ({
-      ...formData,
-      [name]: value,
-    }));
+
+    if (name === 'email' && userData.email && userData.email !== formData.email) {
+      setFormData((formData) => ({
+        ...formData,
+        email: userData.email,
+      }));
+    } else {
+      setFormData((formData) => ({
+        ...formData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleOnChangeConfirmPassword = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -239,7 +252,7 @@ const SignUpPage: FC = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel>{t('first_name')}</FormLabel>
+                  <FormLabel required>{t('first_name')}</FormLabel>
                   <TextField
                     autoComplete="given-name"
                     name="firstName"
@@ -256,7 +269,7 @@ const SignUpPage: FC = () => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel>{t('last_name')}</FormLabel>
+                  <FormLabel required>{t('last_name')}</FormLabel>
                   <TextField
                     required
                     fullWidth
@@ -272,7 +285,7 @@ const SignUpPage: FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel>{t('username')}</FormLabel>
+                  <FormLabel required>{t('username')}</FormLabel>
                   <TextField
                     required
                     fullWidth
@@ -288,7 +301,7 @@ const SignUpPage: FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel>{t('email')}</FormLabel>
+                  <FormLabel required>{t('email')}</FormLabel>
                   <TextField
                     required
                     fullWidth
@@ -338,7 +351,7 @@ const SignUpPage: FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel>{t('tags')}</FormLabel>
+                  <FormLabel required>{t('tags')}</FormLabel>
                   <OutlinedInput
                     type={'text'}
                     id="projectTags"

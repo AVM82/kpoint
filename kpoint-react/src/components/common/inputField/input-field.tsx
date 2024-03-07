@@ -52,7 +52,7 @@ export const InputField: FC<IInputField> = ({
             type="text"
             placeholder={placeholder}
             name={itemName}
-            maxLength={16}
+            maxLength={itemName === 'tags' ? 10 : 30}
             minLength={1}
             required
             onChange={(

@@ -35,7 +35,7 @@ import { Description } from './project-tabs/description';
 import { HelpProject } from './project-tabs/help-project';
 import { OurTeam } from './project-tabs/our-team';
 
-const ProjectReworked: FC = () => {
+const ProjectPage: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { projectId } = useParams();
@@ -47,8 +47,6 @@ const ProjectReworked: FC = () => {
   const [tabClicked, setTabClicked] = useState('about');
   const token = storage.getItem(StorageKey.TOKEN);
   const user: UserType = JSON.parse(storage.getItem(StorageKey.USER) as string);
-  const userCur = storage.getItem(StorageKey.USER);
-  const isMyProject = project?.owner.ownerId === JSON.parse(userCur || '{}').id;
 
   const handleDelete = (itemName: string, value: string): void => {
     const bodyData = [];
@@ -118,6 +116,7 @@ const ProjectReworked: FC = () => {
   const changeHandler = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ): void => {
+
     setTestEditForm({ [e.target.name]: e.target.value });
   };
 
@@ -127,7 +126,7 @@ const ProjectReworked: FC = () => {
     dispatch(editLogo({ id, logo }));
   };
 
-  function extractWordBetweenWWWAndCom(url: string): string {
+  const extractWordBetweenWWWAndCom = (url: string): string => {
     const startIndex = url.indexOf('www.') + 'www.'.length;
 
     const endIndex = url.indexOf('.com');
@@ -135,48 +134,32 @@ const ProjectReworked: FC = () => {
     const extractedWord = url.substring(startIndex, endIndex);
 
     return extractedWord;
-  }
+  };
 
-  const createBodyData = (
+  const createBodyDataForPost = (
     itemName: string,
   ): { op: string; path: string; value: string | string[] | object }[] => {
-    const bodyData = [];
+    const bodyData:
+    { op: string; path: string; value: string | string[] | object }[]
+    = [];
 
-    if (itemName === 'tags') {
-      bodyData.push({ op: 'replace', path: '/tags', value: project.tags });
-      Object.keys(testEditForm).forEach((item) => {
-        const key: string = item;
+    Object.keys(testEditForm).forEach((item) => {
+      const key: string = item;
 
-        bodyData.push({
-          op: 'add',
-          path: `/${key}/-`,
-          value: testEditForm[key as keyof typeof testEditForm] || null,
-        });
+      const linkName = itemName === 'networksLink' ? extractWordBetweenWWWAndCom(
+        testEditForm[key as keyof typeof testEditForm],
+      ).toUpperCase() : '';
+
+      const op = itemName !== 'tags' && itemName !== 'networksLinks' ? 'replace' : 'add';
+
+      const path = itemName === 'tags' ? `/${key}/-` : itemName === 'networksLinks' ? `/${key}/${linkName}` : `/${key}`;
+
+      bodyData.push({
+        op,
+        path,
+        value: testEditForm[key as keyof typeof testEditForm] || null,
       });
-    } else if (itemName === 'networksLinks') {
-      Object.keys(testEditForm).forEach((item) => {
-        const key: string = item;
-        const linkName = extractWordBetweenWWWAndCom(
-          testEditForm[key as keyof typeof testEditForm],
-        ).toUpperCase();
-
-        bodyData.push({
-          op: 'add',
-          path: `/${key}/${linkName}`,
-          value: testEditForm[key as keyof typeof testEditForm] || null,
-        });
-      });
-    } else {
-      Object.keys(testEditForm).forEach((item) => {
-        const key: string = item;
-
-        bodyData.push({
-          op: 'replace',
-          path: `/${key}`,
-          value: testEditForm[key as keyof typeof testEditForm] || null,
-        });
-      });
-    }
+    });
 
     return bodyData;
   };
@@ -187,21 +170,36 @@ const ProjectReworked: FC = () => {
   ): Promise<void> => {
     event.preventDefault();
 
-    const bodyData = createBodyData(itemName);
+    const bodyData = createBodyDataForPost(itemName);
 
     const id = project.projectId;
 
-    dispatch(editProject({ id, bodyData }));
-
-    if (itemName === 'title') {
+    switch (itemName) {
+    case 'title':
       dispatch(editTitleLocally(bodyData[0].value));
       setEditFieldClicked(!editFieldClicked);
-    } else if (itemName === 'description') {
+      break;
+
+    case 'description':
       dispatch(editDescriptionLocally(bodyData[0].value));
-    } else if (itemName === 'tags') {
-      dispatch(addTagLocally(bodyData[1].value as string));
+      break;
+      
+    case 'tags':
+      if (project.tags.includes(bodyData[0].value as string)) {
+        toast.warn('Теги проєкту мають бути унікальні');
+
+        return;
+      }
+
+      dispatch(addTagLocally(bodyData[0].value as string));
       setTagsClicked(!tagsClicked);
+      break;
+      
+    default:
+      break;
     }
+    
+    await dispatch(editProject({ id, bodyData }));
   };
 
   const canIEditThis = (): boolean => {
@@ -238,8 +236,8 @@ const ProjectReworked: FC = () => {
               justifyContent={'space-between'}
               alignItems={'center'}
             >
-              <Grid maxWidth={390} width={390} container>
-                {token ? (
+              <Grid maxWidth={500} width={500} container>
+                {token && canIEditThis() ? (
                   <ImageUploader
                     xs={5}
                     component="project-page"
@@ -379,10 +377,12 @@ const ProjectReworked: FC = () => {
                             letterSpacing: '0.16px',
                             color: '#4F4F4F',
                             margin: '5px',
-                            cursor: 'pointer',
                             maxHeight: '24px',
                           }}
-                          onMouseEnter={(): void => setShowButton(!showButton)}
+                          onMouseEnter={(): void => {
+                            if (project.tags.length > 1) {
+                              setShowButton(!showButton);
+                            }}}
                         />
                         {showButton && token && (
                           <Box
@@ -420,7 +420,6 @@ const ProjectReworked: FC = () => {
                 maxWidth={'231px'}
                 gap={'16px'}
               >
-                {project && !isMyProject &&
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
@@ -437,8 +436,6 @@ const ProjectReworked: FC = () => {
                 >
                   <PersonAddIcon fontSize="small" /> {t('buttons.support')}
                 </Button>
-                }
-                {project && !isMyProject &&
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
@@ -456,7 +453,6 @@ const ProjectReworked: FC = () => {
                   <AttachMoneyIcon fontSize="small" />
                   {t('buttons.donate')}
                 </Button>
-                }
               </Box>
             </Box>
           </Box>
@@ -634,4 +630,4 @@ const ProjectReworked: FC = () => {
   );
 };
 
-export { ProjectReworked };
+export { ProjectPage };
