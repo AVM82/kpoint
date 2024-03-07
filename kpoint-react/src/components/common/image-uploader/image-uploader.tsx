@@ -41,7 +41,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
     };
 
     window.addEventListener('keydown', handleEscape);
-  
+
     return () => {
       window.removeEventListener('keydown', handleEscape);
     };
@@ -51,13 +51,15 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
 
   return (
     <CustomGrid item container xs={xs} >
-      <div style={CustomBox}
-      >
-        <Box
-          component={'img'}
-          src={previewUrl.length > 0 ? previewUrl : imageUrl}
-          sx={{ objectFit: 'cover', maxWidth: '100%', maxHeight: '100%', borderRadius: '6px' }}
-        ></Box>
+      <div style={CustomBox} >
+        <Box display={'flex'} justifyContent="center" >
+          <Box
+            component={'img'}
+            src={previewUrl.length > 0 ? previewUrl : imageUrl}
+            sx={{ objectFit: 'cover', maxWidth: '100%', height: '200px', borderRadius: '6px' }}
+          ></Box>
+        </Box>
+
       </div>
       <input
         type="file"
