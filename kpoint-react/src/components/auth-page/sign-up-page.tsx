@@ -188,7 +188,7 @@ const SignUpPage: FC = () => {
         }
       })
       .catch((error) => {
-        setRegisterError('Невірно введені дані: ' + error.message);
+        setRegisterError(error.message);
       });
   };
 
