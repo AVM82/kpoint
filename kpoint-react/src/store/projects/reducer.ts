@@ -85,9 +85,17 @@ const projectSlice = createSlice({
       const proj = content?.filter(
         (content) => content.projectId === action.payload,
       );
+
+      if (state.projects) {
+        state.projects.content = state.projects.content.filter(
+          (content) => content.projectId !== action.payload,
+        );
+      }
       proj?.forEach((p) => (p.isFollowed = true));
+
     },
-    unsubscribeFromProjectLocally: (state, action) => {
+    unsubscribeFromProjectLocally: (state
+      , action) => {
       state.project.isFollowed = action.payload;
     },
     subscribeToProjectPage: (state, action) => {
