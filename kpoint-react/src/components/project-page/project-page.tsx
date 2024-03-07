@@ -575,6 +575,7 @@ const ProjectPage: FC = () => {
               onChange={changeHandler}
               onSubmit={submitHandler}
               canIEditThis={canIEditThis}
+              id={project.projectId}
             />
           )}
           {tabClicked === 'team' && (

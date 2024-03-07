@@ -4,8 +4,8 @@ import 'index.css';
 import { CssBaseline } from '@mui/material';
 import { MyProfile } from 'components/profile-page/my-profile/my-profile';
 import { ProfilePassword } from 'components/profile-page/profile-password/profile-password';
-import { ProjectReworked } from 'components/project-page/project-reworked';
-import React, { StrictMode } from 'react';
+import { ProjectPage } from 'components/project-page/project-page';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -32,13 +32,16 @@ root.render(
           <Routes>
             <Route path="/" element={<ProjectsPage />} />
             <Route path="/:username" element={<ProfilePage />} />
-            <Route path="/projects/:projectId" element={<ProjectReworked />} />
+            <Route path="/projects/:projectId" element={<ProjectPage />} />
             <Route path="/projects/new" element={<ProjectCreate />} />
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/sign-up" element={<SignUpPage />} />
             <Route path="/suggestions" element={<SuggestionsPage />} />
             <Route path="/settings/profile" element={<MyProfile />}></Route>
-            <Route path="/password/profile" element={<ProfilePassword />}></Route>
+            <Route
+              path="/password/profile"
+              element={<ProfilePassword />}
+            ></Route>
 
             {/*<Route path="/add-suggestions" element={<AddSuggestionModal/>}/>*/}
           </Routes>
