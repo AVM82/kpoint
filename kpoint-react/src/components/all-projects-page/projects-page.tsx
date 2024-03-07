@@ -17,7 +17,7 @@ const ProjectsPage: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  const maxPageElements = 5;
+  const maxPageElements = 8;
 
   const projects = useAppSelector((state) => state.project.projects);
 
