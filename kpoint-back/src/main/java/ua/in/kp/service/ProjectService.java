@@ -5,6 +5,9 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,11 +48,13 @@ public class ProjectService {
     private final Translator translator;
     private final UserRepository userRepository;
     private final MeterRegistry meterRegistry;
+    private final ValidatorFactory factory;
+    private final Validator validator;
 
     public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
-                          Translator translator, UserRepository userRepository, MeterRegistry meterRegistry) {
+                          Translator translator, UserRepository userRepository, MeterRegistry meterRegistry, ValidatorFactory factory, Validator validator) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userService = userService;
@@ -60,6 +65,8 @@ public class ProjectService {
         this.translator = translator;
         this.userRepository = userRepository;
         this.meterRegistry = meterRegistry;
+        this.factory = factory;
+        this.validator = validator;
 
         Gauge.builder("projects_count", projectRepository::count)
                 .description("A current number of projects in the system")
@@ -309,6 +316,18 @@ public class ProjectService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.project.cannot-updated"));
         }
+
+        Set<ConstraintViolation<ProjectChangeDto>> violations = validator.validate(patchedDto);
+        String error = "";
+        if(!violations.isEmpty()) {
+            for (ConstraintViolation<ProjectChangeDto> violation : violations) {
+                log.warn(violation.getMessage());
+                error = violation.getMessage();
+            }
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, error);
+        }
+
+
         List<String> changedFields = findChangedFields(projectDto, patchedDto);
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
