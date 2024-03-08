@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { GetAllProjectsType, ProfileType } from 'common/types/types';
+import { ProfileType, ProjectsPageType } from 'common/types/types';
 
 import {
   changePassword,
@@ -13,13 +13,13 @@ import {
 } from './actions';
 
 type State = {
-  response: Array<GetAllProjectsType>;
+  projects: ProjectsPageType | null;
   profile: ProfileType | null;
   status: string;
 };
 
 const initialState: State = {
-  response: [],
+  projects: null,
   profile: null,
   status: '',
 };
@@ -34,19 +34,19 @@ const profileSlice = createSlice({
         state.status = 'error';
       })
       .addCase(getMyProjects.fulfilled, (state, { payload }) => {
-        state.response = payload.content;
+        state.projects = payload;
       })
       .addCase(getRecommendedProjects.rejected, (state) => {
         state.status = 'error';
       })
       .addCase(getRecommendedProjects.fulfilled, (state, { payload }) => {
-        state.response = payload.content;
+        state.projects = payload;
       })
       .addCase(getFavoriteProjects.rejected, (state) => {
         state.status = 'error';
       })
       .addCase(getFavoriteProjects.fulfilled, (state, { payload }) => {
-        state.response = payload.content;
+        state.projects = payload;
       })
       .addCase(updateMyProfile.rejected, (state) => {
         state.status = 'error';

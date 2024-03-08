@@ -126,7 +126,7 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
           // name="citi"
           // defaultValue={project.city}
           renderInput={(params): ReactElement => (
-            <TextField label={t('city')} {...params} required fullWidth />
+            <TextField label={t('city')} {...params} fullWidth />
           )}
         />
       </Grid>

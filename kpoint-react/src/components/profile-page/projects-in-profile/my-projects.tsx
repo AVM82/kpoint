@@ -1,12 +1,46 @@
-import { Box, Typography } from '@mui/material';
+import { Box   } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
-import { FC } from 'react';
+import { ChangeEvent, FC, useState } from 'react';
+import { profileAction } from 'store/actions';
 
+import { useAppDispatch } from '../../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { Navbar } from './navbar';
 import { ProjectItem } from './project-item';
 
 const MyProjects: FC = () => {
-  const response = useAppSelector((state) => state.profile.response);
+  const response = useAppSelector((state) => state.profile.projects);
+  const dispatch = useAppDispatch();
+  const [activeButton, setActiveButton] = useState('myProjects');
+  const maxPageElements = 4;
+  const [pages, setPages]
+    = useState<Record<string, number>>(
+      {
+        'myProjects': 1,
+        'favoriteProjects': 1,
+        'recommendedProjects': 1,
+      });
+
+  const handleChange = (value: number, button: string): void => {
+    setPages((prev) => ({ ...prev, [button]: value }));
+
+    switch (button) {
+    case 'myProjects': {
+      dispatch(profileAction.getMyProjects({ size: maxPageElements, number: value - 1 }));
+      break;
+    }
+    case 'favoriteProjects': {
+      dispatch(profileAction.getFavoriteProjects({ size: maxPageElements, number: value - 1 }));
+      break;
+    }
+    case 'recommendedProjects': {
+      dispatch(profileAction.getRecommendedProjects({ size: maxPageElements, number: value - 1 }));
+      break;
+    }
+    default: break;
+    }
+    setActiveButton(button);
+  };
 
   return (
     <Box
@@ -25,17 +59,32 @@ const MyProjects: FC = () => {
         borderBottom={'1px solid rgb(189, 189, 189)'}
         width={'80%'}
       >
-        <Typography
-          sx={{ color: '#21272A', fontSize: '20px', fontWeight: '500' }}
-        >
-          Мої Проєкти
-        </Typography>
       </Box>
-      <Navbar />
+      <Navbar activeButton={activeButton} pages={pages} handleOnClick={handleChange}/>
       {response &&
-        response.map((proj) => {
-          return <ProjectItem title={proj.title} url={proj.url} logoImgUrl={proj.logoImgUrl} key={proj.title} />;
-        })}
+          response.content.map((project) => (
+            <ProjectItem
+              key={project.projectId}
+              title={project.title}
+              url={project.url}
+              logoImgUrl={project.logoImgUrl}
+            />
+          ))}
+      <Box
+        display={'flex'}
+        justifyContent={'center'}
+        width={'100%'}
+      >
+        <Pagination
+          count={response?.totalPages}
+          page={pages[activeButton]}
+          onChange={(event: ChangeEvent<unknown>, value: number): void => handleChange(value, activeButton)}
+          showFirstButton
+          showLastButton
+          sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
+        />
+      </Box>
+
     </Box>
   );
 };
