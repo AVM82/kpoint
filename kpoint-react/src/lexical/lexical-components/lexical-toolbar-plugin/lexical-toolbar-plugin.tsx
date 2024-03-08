@@ -35,6 +35,18 @@ import {
   $getNearestNodeOfType,
   mergeRegister,
 } from '@lexical/utils';
+import { FormatAlignCenterOutlined, FormatListBulletedOutlined, FormatListNumberedOutlined,
+  FormatQuoteOutlined, SegmentOutlined } from '@mui/icons-material';
+import CodeIcon from '@mui/icons-material/Code';
+import FormatAlignJustifyOutlined from '@mui/icons-material/FormatAlignJustifyOutlined';
+import FormatAlignLeftOutlined from '@mui/icons-material/FormatAlignLeftOutlined';
+import FormatAlignRightOutlined from '@mui/icons-material/FormatAlignRightOutlined';
+import FormatBoldOutlinedIcon from '@mui/icons-material/FormatBoldOutlined';
+import FormatItalicOutlinedIcon from '@mui/icons-material/FormatItalicOutlined';
+import FormatUnderlinedOutlinedIcon from '@mui/icons-material/FormatUnderlinedOutlined';
+import InsertLinkOutlinedIcon from '@mui/icons-material/InsertLinkOutlined';
+import RedoOutlinedIcon from '@mui/icons-material/RedoOutlined';
+import UndoOutlinedIcon from '@mui/icons-material/UndoOutlined';
 import {
   $createParagraphNode,
   $getNodeByKey,
@@ -56,6 +68,7 @@ import {
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from 'lexical';
+import { FormatHeader1, FormatHeader2, FormatHeader3, FormatListChecks } from 'mdi-material-ui';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { getSelectedNode } from '../../utils/get-select-node';
@@ -229,8 +242,7 @@ const BlockFormatDropDown: FC<BlockFormatDropDownProps> = ({
   return (
     <DropDown
       disabled={disabled}
-      buttonClassName="toolbar-item block-controls"
-      buttonIconClassName={'icon block-type ' + blockType}
+      buttonClassName="toolbar-item block-controls style-dropdown"
       buttonLabel={blockTypeToBlockName[blockType]}
       buttonAriaLabel="Formatting options for text style"
     >
@@ -238,63 +250,63 @@ const BlockFormatDropDown: FC<BlockFormatDropDownProps> = ({
         className={'item ' + dropDownActiveClass(blockType === 'paragraph')}
         onClick={formatParagraph}
       >
-        <i className="icon paragraph" />
+        <SegmentOutlined fontSize="small"/>
         <span className="text">Normal</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h1')}
         onClick={(): void => formatHeading('h1')}
       >
-        <i className="icon h1" />
+        <FormatHeader1 fontSize="small"/>
         <span className="text">Heading 1</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h2')}
         onClick={(): void => formatHeading('h2')}
       >
-        <i className="icon h2" />
+        <FormatHeader2 fontSize="small"/>
         <span className="text">Heading 2</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'h3')}
         onClick={(): void => formatHeading('h3')}
       >
-        <i className="icon h3" />
+        <FormatHeader3 fontSize="small"/>
         <span className="text">Heading 3</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'bullet')}
         onClick={formatBulletList}
       >
-        <i className="icon bullet-list" />
+        <FormatListBulletedOutlined fontSize="small"/>
         <span className="text">Bullet List</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'number')}
         onClick={formatNumberedList}
       >
-        <i className="icon numbered-list" />
+        <FormatListNumberedOutlined fontSize="small"/>
         <span className="text">Numbered List</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'check')}
         onClick={formatCheckList}
       >
-        <i className="icon check-list" />
+        <FormatListChecks fontSize="small"/>
         <span className="text">Check List</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'quote')}
         onClick={formatQuote}
       >
-        <i className="icon quote" />
+        <FormatQuoteOutlined fontSize="small"/>
         <span className="text">Quote</span>
       </DropDownItem>
       <DropDownItem
         className={'item ' + dropDownActiveClass(blockType === 'code')}
         onClick={formatCode}
       >
-        <i className="icon code" />
+        <CodeIcon fontSize="small"/>
         <span className="text">Code Block</span>
       </DropDownItem>
     </DropDown>
@@ -334,11 +346,8 @@ const FontDropDown: FC<FontDropDownProps> = ({
   return (
     <DropDown
       disabled={disabled}
-      buttonClassName={'toolbar-item ' + style}
+      buttonClassName={'toolbar-item ' + style + ' font-dropdown'}
       buttonLabel={value}
-      buttonIconClassName={
-        style === 'font-family' ? 'icon block-type font-family' : ''
-      }
       buttonAriaLabel={buttonAriaLabel}
     >
       {(style === 'font-family' ? FONT_FAMILY_OPTIONS : FONT_SIZE_OPTIONS).map(
@@ -546,7 +555,7 @@ const ToolbarPlugin: FC = () => {
   }, [editor, isLink]);
 
   return (
-    <div className="toolbar">
+    <div className="toolbar proj-create-page">
       <button
         disabled={!canUndo || !isEditable}
         onClick={(): void => {
@@ -554,10 +563,10 @@ const ToolbarPlugin: FC = () => {
         }}
         title={IS_APPLE ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)'}
         type="button"
-        className="toolbar-item spaced"
+        className="toolbar-item spaced undo"
         aria-label="Undo"
       >
-        <i className="format undo" />
+        <UndoOutlinedIcon fontSize="small"/>
       </button>
       <button
         disabled={!canRedo || !isEditable}
@@ -566,12 +575,11 @@ const ToolbarPlugin: FC = () => {
         }}
         title={IS_APPLE ? 'Redo (⌘Y)' : 'Redo (Ctrl+Y)'}
         type="button"
-        className="toolbar-item"
+        className="toolbar-item redo"
         aria-label="Redo"
       >
-        <i className="format redo" />
+        <RedoOutlinedIcon fontSize="small"/>
       </button>
-      <Divider />
       {blockType in blockTypeToBlockName && activeEditor === editor && (
         <>
           <BlockFormatDropDown
@@ -579,7 +587,6 @@ const ToolbarPlugin: FC = () => {
             blockType={blockType}
             editor={editor}
           />
-          <Divider />
         </>
       )}
       {blockType === 'code' ? (
@@ -609,12 +616,14 @@ const ToolbarPlugin: FC = () => {
         <>
           <FontDropDown
             disabled={!isEditable}
+            // eslint-disable-next-line react/style-prop-object
             style={'font-family'}
             value={fontFamily}
             editor={editor}
           />
           <FontDropDown
             disabled={!isEditable}
+            // eslint-disable-next-line react/style-prop-object
             style={'font-size'}
             value={fontSize}
             editor={editor}
@@ -624,70 +633,68 @@ const ToolbarPlugin: FC = () => {
             onClick={(): void => {
               activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
             }}
-            className={'toolbar-item spaced ' + (isBold ? 'active' : '')}
+            className={'toolbar-item spaced bold' + (isBold ? 'active' : '')}
             title={IS_APPLE ? 'Bold (⌘B)' : 'Bold (Ctrl+B)'}
             type="button"
             aria-label={`Format text as bold. Shortcut: ${
               IS_APPLE ? '⌘B' : 'Ctrl+B'
             }`}
           >
-            <i className="format bold" />
+            <FormatBoldOutlinedIcon fontSize="small"/>
           </button>
           <button
             disabled={!isEditable}
             onClick={(): void => {
               activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
             }}
-            className={'toolbar-item spaced ' + (isItalic ? 'active' : '')}
+            className={'toolbar-item spaced italic' + (isItalic ? 'active' : '')}
             title={IS_APPLE ? 'Italic (⌘I)' : 'Italic (Ctrl+I)'}
             type="button"
             aria-label={`Format text as italics. Shortcut: ${
               IS_APPLE ? '⌘I' : 'Ctrl+I'
             }`}
           >
-            <i className="format italic" />
+            <FormatItalicOutlinedIcon fontSize="small"/>
           </button>
           <button
             disabled={!isEditable}
             onClick={(): void => {
               activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
             }}
-            className={'toolbar-item spaced ' + (isUnderline ? 'active' : '')}
+            className={'toolbar-item spaced underline' + (isUnderline ? 'active' : '')}
             title={IS_APPLE ? 'Underline (⌘U)' : 'Underline (Ctrl+U)'}
             type="button"
             aria-label={`Format text to underlined. Shortcut: ${
               IS_APPLE ? '⌘U' : 'Ctrl+U'
             }`}
           >
-            <i className="format underline" />
+            <FormatUnderlinedOutlinedIcon fontSize="small"/>
           </button>
           <button
             disabled={!isEditable}
             onClick={(): void => {
               activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
             }}
-            className={'toolbar-item spaced ' + (isCode ? 'active' : '')}
+            className={'toolbar-item spaced code' + (isCode ? 'active' : '')}
             title="Insert code block"
             type="button"
             aria-label="Insert code block"
           >
-            <i className="format code" />
+            <CodeIcon fontSize="small"/>
           </button>
           <button
             disabled={!isEditable}
             onClick={insertLink}
-            className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
+            className={'toolbar-item spaced link' + (isLink ? 'active' : '')}
             aria-label="Insert link"
             title="Insert link"
             type="button"
           >
-            <i className="format link" />
+            <InsertLinkOutlinedIcon fontSize="small"/>
           </button>
-          <Divider />
           <DropDown
             disabled={!isEditable}
             buttonLabel="Align"
-            buttonIconClassName="icon left-align"
             buttonClassName="toolbar-item spaced alignment"
             buttonAriaLabel="Formatting options for text alignment"
           >
@@ -697,7 +704,7 @@ const ToolbarPlugin: FC = () => {
               }}
               className="item"
             >
-              <i className="icon left-align" />
+              <FormatAlignLeftOutlined fontSize="small"/>
               <span className="text">Left Align</span>
             </DropDownItem>
             <DropDownItem
@@ -706,7 +713,7 @@ const ToolbarPlugin: FC = () => {
               }}
               className="item"
             >
-              <i className="icon center-align" />
+              <FormatAlignCenterOutlined fontSize="small"/>
               <span className="text">Center Align</span>
             </DropDownItem>
             <DropDownItem
@@ -715,7 +722,7 @@ const ToolbarPlugin: FC = () => {
               }}
               className="item"
             >
-              <i className="icon right-align" />
+              <FormatAlignRightOutlined fontSize="small"/>
               <span className="text">Right Align</span>
             </DropDownItem>
             <DropDownItem
@@ -724,14 +731,13 @@ const ToolbarPlugin: FC = () => {
               }}
               className="item"
             >
-              <i className="icon justify-align" />
+              <FormatAlignJustifyOutlined fontSize="small"/>
               <span className="text">Justify Align</span>
             </DropDownItem>
-            <Divider />
           </DropDown>
         </>
       )}
-    </div>
+    </div>  
   );
 };
 

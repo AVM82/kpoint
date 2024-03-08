@@ -7,6 +7,7 @@ import {
 } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
+import { CancelRounded, CheckCircleRounded, DeleteRounded, EditRounded } from '@mui/icons-material';
 import {
   $getSelection,
   $isRangeSelection,
@@ -219,7 +220,7 @@ function FloatingLinkEditor({
               onClick={(): void => {
                 setIsLinkEditMode(false);
               }}
-            />
+            ><CancelRounded fontSize="medium"/></div>
 
             <div
               className="link-confirm"
@@ -227,7 +228,7 @@ function FloatingLinkEditor({
               tabIndex={0}
               onMouseDown={(event): void => event.preventDefault()}
               onClick={handleLinkSubmission}
-            />
+            ><CheckCircleRounded fontSize="medium"/></div>
           </div>
         </>
       ) : (
@@ -248,7 +249,7 @@ function FloatingLinkEditor({
               setEditedLinkUrl(linkUrl);
               setIsLinkEditMode(true);
             }}
-          />
+          ><EditRounded fontSize="medium"/></div>
           <div
             className="link-trash"
             role="button"
@@ -257,7 +258,7 @@ function FloatingLinkEditor({
             onClick={(): void => {
               editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
             }}
-          />
+          ><DeleteRounded fontSize="medium"/></div>
         </div>
       )}
     </div>

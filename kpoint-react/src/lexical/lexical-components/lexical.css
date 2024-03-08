@@ -336,14 +336,19 @@
   }
   
   .toolbar {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     margin-bottom: 1px;
     background: hsl(0, 0%, 100%);
     padding: 4px;
-    width: 780px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     vertical-align: middle;
+  }
+
+  .toolbar.proj-create-page {
+    border: 1px solid gray;
   }
   
   .toolbar button.toolbar-item {
@@ -354,6 +359,7 @@
     padding: 8px;
     cursor: pointer;
     vertical-align: middle;
+    justify-content: center;
   }
   
   .toolbar button.toolbar-item:disabled {
@@ -406,6 +412,7 @@
     vertical-align: middle;
     -webkit-appearance: none;
     -moz-appearance: none;
+    appearance: none;
     width: 70px;
     font-size: 14px;
     color: #777;
@@ -465,7 +472,6 @@
     display: inline-block;
     height: 8px;
     width: 8px;
-    background-image: url('../images/icons/chevron-down.svg');
   }
   
   #block-controls button:hover {
@@ -482,34 +488,6 @@
     width: 18px;
     height: 18px;
     margin: 2px;
-  }
-  
-  #block-controls span.block-type.paragraph {
-    background-image: url('../images/icons/text-paragraph.svg');
-  }
-  
-  #block-controls span.block-type.h1 {
-    background-image: url('../images/icons/type-h1.svg');
-  }
-  
-  #block-controls span.block-type.h2 {
-    background-image: url('../images/icons/type-h2.svg');
-  }
-  
-  #block-controls span.block-type.quote {
-    background-image: url('../images/icons/chat-square-quote.svg');
-  }
-  
-  #block-controls span.block-type.ul {
-    background-image: url('../images/icons/list-ul.svg');
-  }
-  
-  #block-controls span.block-type.ol {
-    background-image: url('../images/icons/list-ol.svg');
-  }
-  
-  #block-controls span.block-type.code {
-    background-image: url('../images/icons/code.svg');
   }
   
   .dropdown {
@@ -578,86 +556,6 @@
     background-size: contain;
   }
   
-  i.undo {
-    background-image: url('../images/icons/arrow-counterclockwise.svg');
-  }
-  
-  i.redo {
-    background-image: url('../images/icons/arrow-clockwise.svg');
-  }
-  
-  .icon.paragraph {
-    background-image: url('../images/icons/text-paragraph.svg');
-  }
-  
-  .icon.large-heading,
-  .icon.h1 {
-    background-image: url('../images/icons/type-h1.svg');
-  }
-  
-  .icon.small-heading,
-  .icon.h2 {
-    background-image: url('../images/icons/type-h2.svg');
-  }
-  
-  .icon.bullet-list,
-  .icon.ul {
-    background-image: url('../images/icons/list-ul.svg');
-  }
-  
-  .icon.numbered-list,
-  .icon.ol {
-    background-image: url('../images/icons/list-ol.svg');
-  }
-  
-  .icon.quote {
-    background-image: url('../images/icons/chat-square-quote.svg');
-  }
-  
-  .icon.code {
-    background-image: url('../images/icons/code.svg');
-  }
-  
-  i.bold {
-    background-image: url('../images/icons/type-bold.svg');
-  }
-  
-  i.italic {
-    background-image: url('../images/icons/type-italic.svg');
-  }
-  
-  i.underline {
-    background-image: url('../images/icons/type-underline.svg');
-  }
-  
-  i.strikethrough {
-    background-image: url('../images/icons/type-strikethrough.svg');
-  }
-  
-  i.code {
-    background-image: url('../images/icons/code.svg');
-  }
-  
-  i.link {
-    background-image: url('../images/icons/link.svg');
-  }
-  
-  i.left-align {
-    background-image: url('../images/icons/text-left.svg');
-  }
-  
-  i.center-align {
-    background-image: url('../images/icons/text-center.svg');
-  }
-  
-  i.right-align {
-    background-image: url('../images/icons/text-right.svg');
-  }
-  
-  i.justify-align {
-    background-image: url('../images/icons/justify.svg');
-  }
-  
   .link-editor .button.active,
   .toolbar .button.active {
     background-color: rgb(223, 232, 250);
@@ -700,7 +598,9 @@
   }
   
   .link-editor div.link-edit {
-    background-image: url('../images/icons/pencil-fill.svg');
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-size: 16px;
     background-position: center;
     background-repeat: no-repeat;
@@ -714,7 +614,9 @@
   }
   
   .link-editor div.link-trash {
-    background-image: url('../images/icons/trash.svg');
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-size: 16px;
     background-position: center;
     background-repeat: no-repeat;
@@ -728,7 +630,9 @@
   }
   
   .link-editor div.link-cancel {
-    background-image: url('../images/icons/close.svg');
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-size: 16px;
     background-position: center;
     background-repeat: no-repeat;
@@ -743,7 +647,9 @@
   }
   
   .link-editor div.link-confirm {
-    background-image: url('../images/icons/success-alt.svg');
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-size: 16px;
     background-position: center;
     background-repeat: no-repeat;

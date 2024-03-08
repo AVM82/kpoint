@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import '../../../lexical/lexical-components/lexical.css';
 
 import { Box, Button, Grid, Typography } from '@mui/material';
-import { InputField } from 'components/common/common';
 import { useAppDispatch } from 'hooks/hooks';
 import { Editor } from 'lexical/lexical-components/lexical-editor/lexical-editor';
 import { FC, useEffect, useRef, useState } from 'react';
@@ -41,9 +39,11 @@ const Description: FC<DescriptionProps> = ({
     setDescriptionClicked(!descriptionClicked);
   };
   
-  if (descriptionRef.current) {
-    descriptionRef.current.innerHTML = description;
-  }
+  useEffect(() => {
+    if (descriptionRef.current) {
+      descriptionRef.current.innerHTML = description;
+    }
+  }, [description]);
   
   return (
     <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
@@ -60,7 +60,15 @@ const Description: FC<DescriptionProps> = ({
                 backgroundColor: 'rgb(84, 84, 160)',
               },
             }}
-            onClick={(): void => setDescriptionClicked(!descriptionClicked)}
+            onClick={(): void => { setDescriptionClicked(!descriptionClicked);
+
+              setTimeout(() => {
+                if (descriptionRef.current) {
+      
+                  descriptionRef.current.innerHTML = description;
+                }
+              }, 0);
+            }}
           >
             <Typography>Відмінити</Typography>
           </Button>

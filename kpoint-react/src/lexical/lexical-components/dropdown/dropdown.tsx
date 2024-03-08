@@ -6,6 +6,7 @@
  *
  */
 
+import { ExpandMoreOutlined } from '@mui/icons-material';
 import {
   FC,
   ReactNode,
@@ -227,7 +228,7 @@ const DropDown: FC<DropDownProps> = ({
         {buttonLabel && (
           <span className="text dropdown-button-text">{buttonLabel}</span>
         )}
-        <i className="chevron-down" />
+        <ExpandMoreOutlined fontSize="small"/>
       </button>
   
       {showDropDown &&
