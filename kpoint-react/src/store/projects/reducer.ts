@@ -76,7 +76,6 @@ const projectSlice = createSlice({
     },
     editDescriptionLocally: (state, action) => {
       state.project.description = action.payload;
-      console.log(action.payload);
     },
     editLogoLocally: (state, action) => {
       state.project.logoImgUrl = action.payload;
