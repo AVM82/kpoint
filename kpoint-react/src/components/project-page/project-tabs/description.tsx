@@ -1,6 +1,12 @@
-import { Box, Button, Grid } from '@mui/material';
-import { InputField } from 'components/common/common';
-import { FC, useState } from 'react';
+
+import '../../../lexical/lexical-components/lexical.css';
+
+import { Box, Button, Grid, Typography } from '@mui/material';
+import { useAppDispatch } from 'hooks/hooks';
+import { Editor } from 'lexical/lexical-components/lexical-editor/lexical-editor';
+import { FC, useEffect, useRef, useState } from 'react';
+import { editProject } from 'store/projects/actions';
+import { editDescriptionLocally } from 'store/projects/reducer';
 
 interface DescriptionProps {
   description: string;
@@ -9,40 +15,85 @@ interface DescriptionProps {
   ) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>, itemName: string) => void;
   canIEditThis: () => boolean;
+  id: string;
 }
 
 const Description: FC<DescriptionProps> = ({
   description,
-  onChange,
-  onSubmit,
   canIEditThis,
+  id,
 }) => {
   const [descriptionClicked, setDescriptionClicked] = useState(false);
+  const [descValue, setDescValue] = useState('');
+  const dispatch = useAppDispatch();
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const handleChange = (htmlString: string): void => {
+    setDescValue(htmlString);
+  };
 
+  const handleSubmit = async (): Promise<void> => {
+    const bodyData = [{ op: 'replace', path: '/description', value: descValue }];
+
+    dispatch(editDescriptionLocally(descValue));
+    await dispatch(editProject({ id, bodyData }));
+    setDescriptionClicked(!descriptionClicked);
+  };
+  
+  useEffect(() => {
+    if (descriptionRef.current) {
+      descriptionRef.current.innerHTML = description;
+    }
+  }, [description]);
+  
   return (
     <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
       {descriptionClicked && canIEditThis() ? (
         <>
-          <InputField
-            onChange={onChange}
-            onSubmit={onSubmit}
-            placeholder={description}
-            itemName="description"
-          />
+          <Editor onChange={handleChange} description={description}/>
           <Button
-            onClick={(): void => setDescriptionClicked(!descriptionClicked)}
+            variant="contained"
+            sx={{
+              margin: 1,
+              backgroundColor: '#535365',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: 'rgb(84, 84, 160)',
+              },
+            }}
+            onClick={(): void => { setDescriptionClicked(!descriptionClicked);
+
+              setTimeout(() => {
+                if (descriptionRef.current) {
+      
+                  descriptionRef.current.innerHTML = description;
+                }
+              }, 0);
+            }}
           >
-            Відмінити
+            <Typography>Відмінити</Typography>
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              margin: 1,
+              backgroundColor: '#535365',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: 'rgb(84, 84, 160)',
+              },
+            }}
+            onClick={handleSubmit}
+          >
+            <Typography>Зберегти</Typography>
           </Button>
         </>
       ) : (
         <Box
-          component={'article'}
+          ref={descriptionRef}
           maxWidth={'620px'}
           onClick={(): void => setDescriptionClicked(!descriptionClicked)}
           sx={{ cursor: 'pointer' }}
         >
-          {description}
         </Box>
       )}
     </Grid>
