@@ -7,9 +7,10 @@ interface ContactItemProps {
   network: string;
   link: string;
   handleDelete: (itemName: string, value: string) => void;
+  canIEditThis: () => boolean;
 }
 
-const ContactItem: FC<ContactItemProps> = ({ network, link, handleDelete }) => {
+const ContactItem: FC<ContactItemProps> = ({ network, link, handleDelete, canIEditThis }) => {
   const [linkHover, setLinkHover] = useState(false);
 
   return (
@@ -23,7 +24,7 @@ const ContactItem: FC<ContactItemProps> = ({ network, link, handleDelete }) => {
         {getSocialMediaIcon(network)}
       </Link>
       <Typography>Опис соц мережі</Typography>
-      {linkHover && (
+      {linkHover && canIEditThis() && (
         <Box
           display={'flex'}
           alignItems={'center'}

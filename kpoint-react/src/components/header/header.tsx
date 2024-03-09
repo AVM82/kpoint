@@ -21,7 +21,7 @@ const Header: FC = () => {
   return (
     <AppBar
       sx={{
-        backgroundColor: '#E9EFF4',
+        backgroundColor: '#fff',
         width: '100%',
         padding: '16px 80px',
         flexShrink: 0,
@@ -53,7 +53,7 @@ const Header: FC = () => {
               fontSize={24}
               fontWeight={700}
               color={'black'}
-              sx={{ cursor: 'pointer', textAlign: 'center' }} // Center the title within the grid cell
+              sx={{ cursor: 'pointer', textAlign: 'center' }}
               onClick={handleTitleClick}
             >
         K-POINTS

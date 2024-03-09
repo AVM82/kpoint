@@ -1,4 +1,4 @@
-import { Button, Grid } from '@mui/material';
+import { Box, Button, Grid } from '@mui/material';
 import { ProjectType } from 'common/types/types';
 import { InputField } from 'components/common/common';
 import { FC, useState } from 'react';
@@ -31,30 +31,62 @@ const Contacts: FC<ContactsProps> = ({
       maxWidth={'620px'}
       marginTop={'10px'}
       container
-      justifyContent={'space-between'}
+      gap={'100px'}
+      direction={'column'}
     >
-      {project &&
+      <Box display={'flex'} justifyContent={'space-between'}>
+        {project &&
         Object.entries(project.networksLinks).map(([network, link]) => (
           <ContactItem
             network={network}
             link={link}
             handleDelete={handleDelete}
+            canIEditThis={canIEditThis}
           />
         ))}
-      <Button
-        size="small"
-        onClick={(): void => setAddContactClicked(!addContactClicked)}
-      >
+      </Box>
+      <Box display={'flex'} flexDirection={'column'}>
+        <Button
+          variant="contained"
+          sx={{
+            margin: 1,
+            backgroundColor: '#535365',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: 'rgb(84, 84, 160)',
+            },
+            width: '30%',
+            display: `${addContactClicked ? 'none' : 'block'}`,
+          }}
+          onClick={(): void => setAddContactClicked(!addContactClicked)}
+        >
         Додати контакт
-      </Button>
-      {addContactClicked && canIEditThis() && (
-        <InputField
-          itemName="networksLinks"
-          onChange={onChange}
-          onSubmit={onSubmit}
-          placeholder="Введіть контактні дані"
-        />
-      )}
+        </Button>
+        {addContactClicked && canIEditThis() && (
+          <>
+            <InputField
+              itemName="networksLinks"
+              onChange={onChange}
+              onSubmit={onSubmit}
+              placeholder="Введіть контактні дані" />
+            <Button
+              variant="contained"
+              sx={{
+                margin: 1,
+                backgroundColor: '#535365',
+                textTransform: 'none',
+                '&:hover': {
+                  backgroundColor: 'rgb(84, 84, 160)',
+                },
+                width: '19.3%',
+                alignSelf: 'end',
+              }}
+              onClick={(): void => setAddContactClicked(!addContactClicked)}
+            >
+              Відмінити
+            </Button></>
+        )}
+      </Box>
     </Grid>
   );
 };

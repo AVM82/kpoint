@@ -15,7 +15,7 @@ import { projectDefault } from './components/project-default';
 
 export const ProjectCreate: FC = () => {
   const { t } = useTranslation();
-
+  
   const steps: string[] = [
     t('general_information'),
     t('about'),
@@ -150,8 +150,9 @@ export const ProjectCreate: FC = () => {
   };
 
   return (
-    <React.Fragment>
-      <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+    <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+      <Box 
+        display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'ceneter'}>
         <Typography component="h1" variant="h4" align="center" sx={{ p: 2 }}>
           {t('new_project')}
         </Typography>
@@ -167,7 +168,7 @@ export const ProjectCreate: FC = () => {
             ))}
           </Stepper>
           {activeStep > steps.length ?  <>{setActiveStep(1)}</> : (
-            <React.Fragment>
+            <Box>
               {getStepContent(activeStep)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 1 && (
@@ -185,10 +186,10 @@ export const ProjectCreate: FC = () => {
                     : t('buttons.next')}
                 </Button>
               </Box>
-            </React.Fragment>
+            </Box>
           )}
         </Paper>
-      </Container>
-    </React.Fragment>
+      </Box>
+    </Container>
   );
 };

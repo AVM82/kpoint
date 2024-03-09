@@ -112,10 +112,9 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
             display={'flex'}
             justifyContent={'center'}
             alignItems={'center'}
-            height={'200px'}
-            width={'200px'}
+            maxWidth={'200px'}
+            maxHeight={'200px'}
           >
-            {/* <Box component={'img'} alt="avatar" src={profileImg}></Box> */}
             <ImageUploader
               component="profile-page"
               xs={12}
