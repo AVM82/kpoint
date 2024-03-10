@@ -143,7 +143,7 @@ public class ProjectService {
             Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
             if (userOpt.isPresent()) {
                 UserEntity user = userOpt.get();
-                return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
+                return subscriptionRepository.existsByUserIdAndProjectProjectId(user.getId(), project.getProjectId());
             }
         }
         return false;
@@ -261,8 +261,8 @@ public class ProjectService {
 
     private void saveSubscription(String projectId) {
         ProjectSubscribeEntity subscription = new ProjectSubscribeEntity();
-        subscription.setUserId(userService.getAuthenticated().getId());
-        subscription.setProjectId(projectId);
+        subscription.setUser(userService.getAuthenticated());
+        subscription.setProject(getProjectIfExist(projectId));
         subscriptionRepository.save(subscription);
     }
 

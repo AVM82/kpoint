@@ -16,7 +16,11 @@ public class ProjectSubscribeEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
-    private String projectId;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private ProjectEntity project;
 }

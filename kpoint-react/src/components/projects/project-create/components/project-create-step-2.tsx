@@ -4,7 +4,7 @@ import { Editor } from 'lexical/lexical-components/lexical-editor/lexical-editor
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { EditProjectsPropsType } from '../../../../common/types/projects/projects';
+import { EditProjectsPropsType } from '../../../../common/types/types';
 import { descriptionPlaceholder } from './project-default';
 
 export const ProjectCreateStep2Form: FC<EditProjectsPropsType> = (
