@@ -1,5 +1,5 @@
 export { AppRoute, DataStatus, ENV, StorageKey } from './app/app';
-export { ContentType } from './file/file';
+export { AcceptLanguage, ContentType } from './file/file';
 export {
   HttpCode,
   HttpHeader,
