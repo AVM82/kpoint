@@ -30,7 +30,6 @@ import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
 import ua.in.kp.util.PatchUtil;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,19 +57,20 @@ public class ProfileService {
     public Page<GetAllProjectsDto> getFavouriteProjects(Pageable pageable) {
         UserEntity user = userService.getAuthenticated();
         log.info("Get favourite projects for user {}", user.getUsername());
-        return userService.getUserEntityByUsernameFetchedFavouriteProjects(user.getUsername(), pageable)
+        Page<GetAllProjectsDto> dtos = userService
+                .getUserEntityByUsernameFetchedFavouriteProjects(user.getUsername(), pageable)
                 .map(projectMapper::getAllToDto);
+        log.info("{}", dtos.getTotalElements());
+        return dtos;
     }
 
     @Transactional(readOnly = true)
     public Page<GetAllProjectsDto> getSubscribedProjects(Pageable pageable) {
         UserEntity user = userService.getAuthenticated();
-        log.info("Get favourite projects for user {}", user.getUsername());
-        List<String> projectIds =
-                subscriptionRepository.findByUserId(user.getId(), pageable)
-                        .map(ProjectSubscribeEntity::getProjectId)
-                        .toList();
-        return projectService.getProjectByIds(projectIds, pageable);
+        log.info("Get subscribed projects for user {}", user.getUsername());
+        return subscriptionRepository.findByUserId(user.getId(), pageable)
+                .map(ProjectSubscribeEntity::getProject)
+                .map(projectMapper::getAllToDto);
     }
 
     @Transactional(readOnly = true)
@@ -92,7 +92,7 @@ public class ProfileService {
         log.info("Get recommended projects for user {}", user.getUsername());
         Set<String> subscribedProjectIds =
                 subscriptionRepository.findByUserId(user.getId(), pageable).stream()
-                        .map(ProjectSubscribeEntity::getProjectId)
+                        .map(projectSubscribeEntity -> projectSubscribeEntity.getProject().getProjectId())
                         .collect(Collectors.toSet());
         Set<String> ownedProjectIds =
                 projectService.getProjectsByUser(user, pageable).stream()

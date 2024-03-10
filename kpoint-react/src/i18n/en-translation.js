@@ -74,8 +74,9 @@ const enTranslation = {
   project_url: 'Project URL',
   city: 'City',
   category: 'Category',
-  tag_placeholder: 'Enter tag and press [Enter]',
+  tag_placeholder: 'Enter 1 to 5 tags, separated by "ENTER"',
   url_placeholder: 'You can enter only lat letters and numbers in this field',
+  summary_placeholder: 'Max 150',
   summary: 'Brief description and purpose',
   project_idea: 'Idea. The problem that the project solves',
   financing: 'Financing',
@@ -83,6 +84,7 @@ const enTranslation = {
   collect_deadline: 'Start date',
   goal_deadline: 'End date',
   stages_implementation: 'Tasks and Stages of Implementation',
+  start_sum: 'Amount for project implementation',
   stage: 'Stage',
   errors: {
     project_title:

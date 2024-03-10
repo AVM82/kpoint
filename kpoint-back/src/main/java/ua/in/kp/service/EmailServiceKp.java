@@ -60,7 +60,7 @@ public class EmailServiceKp {
 
     public List<ProjectSubscribeEntity> getUsersSubscribedToProject(String projectId) {
         log.info("SUBSCRIBERS ");
-        return subscriptionRepository.findByProjectId(projectId);
+        return subscriptionRepository.findByProjectProjectId(projectId);
     }
 
     private List<String> setUsersMailsList(String projectId) {
@@ -69,7 +69,7 @@ public class EmailServiceKp {
         log.info("ПІДПИСНИКИ " + subscriptions.toString() + " List size " + subscriptions.size());
 
         return subscriptions.stream()
-                .map(subscription -> userService.getById(subscription.getUserId()).getEmail())
+                .map(subscription -> subscription.getUser().getEmail())
                 .toList();
     }
 
