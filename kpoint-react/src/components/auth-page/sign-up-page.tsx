@@ -2,6 +2,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {
   Chip,
+  Divider,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -14,12 +15,13 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { ENV } from 'common/enums/enums';
 import * as React from 'react';
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +32,7 @@ import { SignUpType } from '../../common/types/sign-up/sign-up';
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { authAction } from '../../store/actions';
 import { EmailRegx, InputPassword } from '../common/common';
+import { OAuth2 } from './oauth2';
 
 const defaultTheme = createTheme();
 
@@ -233,7 +236,6 @@ const SignUpPage: FC = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
         <Box
           sx={{
             marginTop: 8,
@@ -354,8 +356,8 @@ const SignUpPage: FC = () => {
                   <FormLabel required>{t('tags')}</FormLabel>
                   <OutlinedInput
                     type={'text'}
-                    id="projectTags"
-                    name="projectTags"
+                    id="userTags"
+                    name="userTags"
                     value={tag}
                     fullWidth
                     error={!!errors.tags}
@@ -374,7 +376,7 @@ const SignUpPage: FC = () => {
                       </InputAdornment>
                     }
                   />
-                  <FormHelperText id="projectTags-error"
+                  <FormHelperText id="userTags-error"
                     error={!!errors.tags}>
                     {errors.tags ||
                       'Введіть від 1 до 10 тегів, розділяючи їх "ENTER"'}
@@ -382,14 +384,8 @@ const SignUpPage: FC = () => {
                 </FormControl>
                 <Grid
                   sx={{
-                    // display: 'flex',
-                    // justifyContent: 'center',
-                    // flexWrap: 'no-wrap',
-                    // listStyle: 'none',
-                    // p: 0.5,
-                    // m: 0,
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', // Adjust 100px to your desired width
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
                     gridAutoRows: 'auto',
                     rowGap: '5px',
                     justifyContent: 'center',
@@ -430,10 +426,37 @@ const SignUpPage: FC = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, bgcolor: '#757575' }}
+              sx={{ mt: 3, mb: 2, bgcolor: '#535365',
+                '&:hover': {
+                  backgroundColor: 'rgb(84, 84, 160)',
+                } }}
             >
               {t('sign_up')}
             </Button>
+            <Divider sx={{
+              width: '100%',
+              margin: '20px 0',
+            }}/>
+            <Grid item container justifyContent={'center'}>
+              <Typography marginBottom={'10px'} textAlign={'center'} justifySelf={'center'}>
+                Або зареєструватись за допомгою:
+              </Typography>
+            </Grid>
+            <Grid
+              container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <GoogleOAuthProvider clientId={ENV.OAUTH2_GOOGLE_CLIENT_ID}>
+                <OAuth2></OAuth2>
+              </GoogleOAuthProvider>
+            </Grid>
+            <Divider sx={{
+              width: '100%',
+              margin: '20px 0',
+            }}/>
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href={'/sign-in'} variant="body2">

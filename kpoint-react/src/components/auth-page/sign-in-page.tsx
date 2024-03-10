@@ -1,5 +1,5 @@
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { FormLabel } from '@mui/material';
+import { Divider, FormLabel } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -103,6 +103,7 @@ const SignInPage: FC = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            height: '100dvh',
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: '#757575' }}>
@@ -161,10 +162,22 @@ const SignInPage: FC = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2, bgcolor: '#757575' }}
+                sx={{ mt: 3, bgcolor: '#535365',
+                  '&:hover': {
+                    backgroundColor: 'rgb(84, 84, 160)',
+                  } }}
               >
                 {t('sign_in')}
               </Button>
+              <Divider sx={{
+                width: '100%',
+                margin: '20px 0',
+              }}/>
+              <Grid item container justifyContent={'center'}>
+                <Typography marginBottom={'10px'} textAlign={'center'} justifySelf={'center'}>
+                Або увійдіть за допомгою:
+                </Typography>
+              </Grid>
               <Grid
                 container
                 spacing={0}
@@ -176,6 +189,10 @@ const SignInPage: FC = () => {
                   <OAuth2></OAuth2>
                 </GoogleOAuthProvider>
               </Grid>
+              <Divider sx={{
+                width: '100%',
+                margin: '20px 0',
+              }}/>
               <Grid item>
                 {t('dont_have_an_account')}
                 <Link href={'sign-up'} variant="body2" sx={{ ml: 3 }}>

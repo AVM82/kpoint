@@ -263,7 +263,15 @@ const MyProfile: FC = () => {
             </Button>
           </Grid>
           <Grid item xs={6} textAlign={'right'}>
-            <Button sx={{ marginTop: '56px' }} type="submit">
+            <Button variant="contained"
+              sx={{
+                marginTop: '56px',
+                backgroundColor: '#535365',
+                textTransform: 'none',
+                '&:hover': {
+                  backgroundColor: 'rgb(84, 84, 160)',
+                },
+              }} type="submit">
               {t('buttons.save')}
             </Button>
           </Grid>

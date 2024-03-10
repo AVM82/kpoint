@@ -135,6 +135,7 @@ public class UserService {
     }
 
     public Page<ProjectEntity> getUserEntityByUsernameFetchedFavouriteProjects(String username, Pageable pageable) {
+        log.info("getUserEntityByUsernameFetchedFavouriteProjects");
         return userRepository.findByUsernameFetchProjectsFavourite(username, pageable);
     }
 

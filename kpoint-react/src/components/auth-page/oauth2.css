@@ -1,0 +1,10 @@
+.oauth2 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.oauth2 div div{
+    display: none !important;
+}

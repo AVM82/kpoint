@@ -73,8 +73,9 @@ const ukTranslation = {
   project_url: 'URL проєкту',
   city: 'Місто',
   category: 'Категорія',
-  tag_placeholder: 'Введіть тег і натисніть [Enter]',
+  tag_placeholder: 'Введіть від 1 до 5 тегів, розділяючи їх "ENTER"',
   url_placeholder: 'В це поле можна вводити лише латинські літери та цифри',
+  summary_placeholder: 'Максимум 150 символів',
   summary: 'Короткий опис і мета',
   project_idea: 'Ідея. Проблема, яку вирішує проєкт',
   financing: 'Фінансування',
@@ -82,6 +83,7 @@ const ukTranslation = {
   collect_deadline: 'Дата початку',
   goal_deadline: 'Дата закінчення',
   stages_implementation: 'Задачі та Етапи Реалізації',
+  start_sum: 'Сума для реалізації проєкта',
   stage: 'Етап',
   suggestions: 'Пропозиції',
   errors: {

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
-import { ProjectsEditType } from '../../../common/types/projects/projects';
+import { ProjectsEditType } from '../../../common/types/types';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { ProjectCreateStep1Form } from './components/project-create-step-1';
 import { ProjectCreateStep2Form } from './components/project-create-step-2';
@@ -54,6 +54,7 @@ export const ProjectCreate: FC = () => {
           tags: projectData.tags,
           goalDeadline: projectData.goalDeadline,
           collectDeadline: projectData.collectDeadline,
+          startSum: projectData.startSum,
           networksLinks: { FACEBOOK: 'https://www.facebook.com/example' },
         },
     };
@@ -150,8 +151,9 @@ export const ProjectCreate: FC = () => {
   };
 
   return (
-    <React.Fragment>
-      <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+    <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+      <Box
+        display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'ceneter'}>
         <Typography component="h1" variant="h4" align="center" sx={{ p: 2 }}>
           {t('new_project')}
         </Typography>
@@ -167,7 +169,7 @@ export const ProjectCreate: FC = () => {
             ))}
           </Stepper>
           {activeStep > steps.length ?  <>{setActiveStep(1)}</> : (
-            <React.Fragment>
+            <Box>
               {getStepContent(activeStep)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 1 && (
@@ -185,10 +187,10 @@ export const ProjectCreate: FC = () => {
                     : t('buttons.next')}
                 </Button>
               </Box>
-            </React.Fragment>
+            </Box>
           )}
         </Paper>
-      </Container>
-    </React.Fragment>
+      </Box>
+    </Container>
   );
 };

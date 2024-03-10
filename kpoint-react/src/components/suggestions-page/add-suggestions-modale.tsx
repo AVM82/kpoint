@@ -6,9 +6,12 @@ import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { StorageKey } from 'common/enums/app/storage-key.enum';
+import { UserType } from 'common/types/types';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { storage } from 'services/services';
 import { suggestionAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/hooks';
@@ -19,11 +22,11 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   bgcolor: 'background.paper',
-  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
   width: '540px',
   height: '340px',
+  borderRadius: '6px',
 };
 
 const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: number, }> = ({
@@ -33,13 +36,12 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
   const [inputText, setInputText] = React.useState('');
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-
+  const user: UserType = JSON.parse(storage.getItem(StorageKey.USER) || '{}') ;
+  
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
     event.preventDefault();
-
-    /*This dispatch don't return errors in try-catch */
 
     try {
       await dispatch(
@@ -62,7 +64,7 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
   }, []);
 
   return (
-    <div>
+    <Box>
       <Modal
         open={true}
         onClose={handleCloseModal}
@@ -81,14 +83,17 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
           >
             <CloseIcon />
           </IconButton>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Нас цікавить ваша думка
+          <Typography id="modal-modal-title" variant="h6" component="h2" marginBottom={'10px'}>
+            {`${user.username}, можеш додати свою пропозицію!`}
           </Typography>
           <form onSubmit={handleSubmit}>
             <TextField
               id="outlined-basic"
-              label="200 символів"
+              label="Пропонуйте"
               variant="outlined"
+              sx={{
+                position: 'relative',
+              }}
               fullWidth
               multiline
               rows={6}
@@ -96,15 +101,22 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
               onChange={handleChange}
               required
             />
+            <Typography sx={{
+              position: 'absolute',
+              right: 33,
+            }}>{`${inputText.length}/200`}</Typography>
             <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
-              <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-                {t('send_suggestion')}
+              <Button type="submit" variant="contained" sx={{ mt: 2, bgcolor: '#535365',
+                '&:hover': {
+                  backgroundColor: 'rgb(84, 84, 160)',
+                } }}>
+                {t('add_suggestion')}
               </Button>
             </Grid>
           </form>
         </Box>
       </Modal>
-    </div>
+    </Box>
   );
 };
 
