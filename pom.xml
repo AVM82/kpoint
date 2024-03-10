@@ -28,7 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 
-        <revision>1.0.7</revision>
+        <revision>1.0.8</revision>
 
     </properties>
 
