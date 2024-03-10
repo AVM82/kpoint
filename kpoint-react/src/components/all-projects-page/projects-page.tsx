@@ -62,8 +62,8 @@ const ProjectsPage: FC = () => {
     <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
       <ProjectsPageHeader key={'proj-page-header'}/>
       <Masonry columnsCount={4} gutter={'10px'}>
-        {projects &&
-          projects.content.map((project) => (
+        {
+          (projects?.content || []).map((project) => (
             <ProjectCard project={project} isAuthenticated={isAuthenticated} key={project.title}/>
           ))}
       </Masonry>

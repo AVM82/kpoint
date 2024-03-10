@@ -49,7 +49,7 @@ const ProfilePage: FC = () => {
       alignItems={'center'}
       justifyContent={'space-around'}
       width={'100%'}
-      bgcolor={'#e9eff4'}
+      bgcolor={'#fff'}
       flexGrow={1}
     >
       <ProfileMenu />

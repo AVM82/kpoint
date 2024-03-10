@@ -63,6 +63,7 @@ const ProjectPage: FC = () => {
       const id = project.projectId;
       dispatch(editProject({ id, bodyData }));
       dispatch(deleteTagLocally(value));
+      toast.success('Тег видалено');
     } else if (itemName === 'link') {
       bodyData.push({
         op: 'replace',
@@ -245,44 +246,55 @@ const ProjectPage: FC = () => {
                     imageUrl={project.logoImgUrl}
                   />
                 ) : (
-                  <Grid item xs={5}>
-                    <Box
-                      component={'img'}
-                      maxWidth={'100%'}
-                      maxHeight={'100%'}
-                      sx={{ objectFit: 'cover', borderRadius: '6px' }}
-                      src={project.logoImgUrl}
-                    ></Box>
+                  <Grid item xs={5} container>
+                    <Box maxHeight={'150px'} maxWidth={'150px'} display={'flex'}>
+                      <Box
+                        component={'img'}
+                        maxWidth={'100%'}
+                        maxHeight={'100%'}
+                        sx={{ objectFit: 'cover', borderRadius: '6px' }}
+                        src={project.logoImgUrl}
+                      ></Box></Box>                   
                   </Grid>
                 )}
-                <Grid item xs={7} paddingLeft={'30px'}>
-                  {editFieldClicked && canIEditThis() ? (
-                    <InputField
+                <Grid item xs={7} container direction={'column'}>
+                  <Box
+                    paddingBottom={'20px'}
+                    position={'relative'}
+                    minHeight={'52px'}
+                    width={'100%'}
+                  >
+                    {editFieldClicked && canIEditThis() ? (<InputField
                       onChange={changeHandler}
                       onSubmit={submitHandler}
                       placeholder={project && project.title}
                       itemName="title"
-                    />
-                  ) : (
-                    <Typography
-                      variant="h2"
-                      color={'rgb(0, 29, 108)'}
-                      fontSize={32}
-                      fontWeight={700}
-                      lineHeight={'100%'}
-                      letterSpacing={'1px'}
-                      textAlign={'start'}
-                      sx={{
-                        cursor: 'pointer',
-                      }}
-                      onClick={(): void =>
-                        setEditFieldClicked(!editFieldClicked)
-                      }
-                    >
-                      {project && project.title}
-                    </Typography>
-                  )}
-                  <Link href={generateGoogleMapsLink(project)}>
+                    />) : (
+                      <Typography
+                        variant="h2"
+                        color={'rgb(0, 29, 108)'}
+                        fontSize={32}
+                        fontWeight={700}
+                        lineHeight={'100%'}
+                        letterSpacing={'1px'}
+                        textAlign={'start'}
+                        width={'100%'}
+                        sx={{
+                          cursor: 'pointer',
+                        }}
+                        onClick={(): void =>
+                          setEditFieldClicked(!editFieldClicked)
+                        }
+                      >
+                      
+                        {project && project.title}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Link href={generateGoogleMapsLink(project)} sx={{
+                    width: 'fit-content;',
+                    display: 'block',
+                  }}>
                     <Typography
                       variant="h6"
                       color={'rgb(0, 31, 63)'}
@@ -291,7 +303,6 @@ const ProjectPage: FC = () => {
                       lineHeight={'100%'}
                       letterSpacing={'0.5px'}
                       textAlign={'start'}
-                      paddingLeft={'14px'}
                     >
                       {t('country')}
                     </Typography>
@@ -342,8 +353,8 @@ const ProjectPage: FC = () => {
                           alignItems={'center'}
                           position={'absolute'}
                           top={'25px'}
-                          width={'100%'}
-                          left={'115%'}
+                          width={'250px'}
+                          left={0}
                         >
                           {tagsClicked && token && (
                             <InputField

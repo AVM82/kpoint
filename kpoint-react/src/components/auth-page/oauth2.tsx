@@ -1,3 +1,5 @@
+import './oauth2.css';
+
 import { useGoogleLogin } from '@react-oauth/google';
 import { FC, useEffect } from 'react';
 import GoogleButton from 'react-google-button';
@@ -44,9 +46,20 @@ const OAuth2: FC = () => {
   }, [login]);
 
   return (
-    <div>
-      <GoogleButton onClick={login} type={'dark'}>
-        Login with Google
+    <div 
+      className="oauth2">
+      <GoogleButton onClick={login} 
+        label="Google"
+        style={{
+          backgroundColor: 'transparent',
+          width: '100%',
+          borderRadius: '6px',
+          border: '2px solid #535365',
+          color: '#535365',
+          fontWeight: 500,
+          letterSpacing: '1.25px',
+          textAlign: 'center',
+        }}>
       </GoogleButton>
     </div>
   );

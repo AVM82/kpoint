@@ -1,5 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, FormLabel } from '@mui/material';
+import { Box } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -47,7 +47,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
     };
   }, [imageUrl]);
 
-  const { CustomGrid, CustomBox }= getProperStyles({ component: component });
+  const { CustomGrid, CustomBox, CustomFormLabel }= getProperStyles({ component: component });
 
   return (
     <CustomGrid item container xs={xs} >
@@ -56,10 +56,9 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
           <Box
             component={'img'}
             src={previewUrl.length > 0 ? previewUrl : imageUrl}
-            sx={{ objectFit: 'cover', maxWidth: '100%', height: '200px', borderRadius: '6px' }}
+            sx={{ objectFit: 'cover', maxWidth: '100%', maxHeight: '100%', borderRadius: '6px' }}
           ></Box>
         </Box>
-
       </div>
       <input
         type="file"
@@ -70,26 +69,17 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
         }
         style={{ display: 'none' }}
       />
-      <FormLabel
+      <CustomFormLabel
         htmlFor="project-logo"
         sx={{
-          position: 'absolute',
-          cursor: 'pointer',
-          right: 0,
-          left: 0,
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          opacity: 0,
-          transition: 'opacity 0.3s linear',
           '&:hover': {
             opacity: 1,
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
           },
         }}
       >
-        <AddIcon fontSize="large" />
-      </FormLabel>
+        <AddIcon fontSize="large" color="primary"/>
+      </CustomFormLabel>
     </CustomGrid>
   );
 };

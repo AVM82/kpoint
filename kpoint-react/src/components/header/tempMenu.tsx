@@ -61,8 +61,7 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>
-              {Object.keys(user).length > 0 && user.username.substring(0, 2).toUpperCase()}
+            <Avatar sx={{ width: 32, height: 32 }} src={user.avatarImgUrl}>
             </Avatar>
           </IconButton>
         </Tooltip>
