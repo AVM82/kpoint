@@ -3,7 +3,6 @@ import { TestRequest } from 'common/types/projects/testRequest';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
 import { ProjectsEditType } from '../../../common/types/types';
@@ -66,8 +65,8 @@ export const ProjectCreate: FC = () => {
         .then((action): void => {
           navigate('/projects/' + action.url);
         })
-        .catch((reason) => {
-          toast.error(`Can\\'t create new project, because: ${reason}`);
+        .catch(() => {
+          return;
         });
     }
   };
