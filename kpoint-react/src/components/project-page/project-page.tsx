@@ -2,7 +2,7 @@ import AddIcon from '@mui/icons-material/Add';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Box, Button, Chip, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Chip, Container, Grid, LinearProgress,Typography  } from '@mui/material';
 import Link from '@mui/material/Link';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
@@ -120,7 +120,8 @@ const ProjectPage: FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ): void => {
 
-    setTestEditForm({ [e.target.name]: e.target.value });
+    setTestEditForm({ [e.target.name]: `${e.target.name === 'tags' ?
+      e.target.value.toLowerCase() : e.target.value}` });
   };
 
   const changeHandlerPhoto = (field: string, file: string | File): void => {
@@ -209,6 +210,10 @@ const ProjectPage: FC = () => {
     return (token && project.owner.ownerId === user.id) as boolean;
   };
 
+  const addCursorPointer = (): string => {
+    return canIEditThis() ? 'pointer' : 'default';
+  };
+
   return (
     <>
       <Box sx={{ bgcolor: '#E4E5E9', width: '100%' }}>
@@ -282,7 +287,7 @@ const ProjectPage: FC = () => {
                         textAlign={'start'}
                         width={'100%'}
                         sx={{
-                          cursor: 'pointer',
+                          cursor: addCursorPointer(),
                         }}
                         onClick={(): void =>
                           setEditFieldClicked(!editFieldClicked)
@@ -393,7 +398,7 @@ const ProjectPage: FC = () => {
                             maxHeight: '24px',
                           }}
                           onMouseEnter={(): void => {
-                            if (project.tags.length > 1) {
+                            if (project.tags.length > 1 && canIEditThis()) {
                               setShowButton(!showButton);
                             }}}
                         />
@@ -441,11 +446,14 @@ const ProjectPage: FC = () => {
                     background: 'rgb(255, 255, 255)',
                     width: '100%',
                     maxHeight: '46px',
+                    minHeight: '46px',
                     color: 'rgb(130, 130, 130)',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '100%',
                     letterSpacing: '0.5px',
+                    textTransform: 'none',
+                    gap: '5px',
                   }}
                 >
                   <PersonAddIcon fontSize="small" /> {t('buttons.support')}
@@ -459,11 +467,13 @@ const ProjectPage: FC = () => {
                     background: 'rgb(255, 255, 255)',
                     width: '100%',
                     maxHeight: '46px',
+                    minHeight: '46px',
                     color: 'rgb(130, 130, 130)',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '100%',
                     letterSpacing: '0.5px',
+                    textTransform: 'none',
                   }}
                 >
                   <AttachMoneyIcon fontSize="small" />
@@ -593,6 +603,7 @@ const ProjectPage: FC = () => {
               onSubmit={submitHandler}
               canIEditThis={canIEditThis}
               id={project.projectId}
+              addCursorPointer={addCursorPointer}
             />
           )}
           {tabClicked === 'team' && (
@@ -617,7 +628,7 @@ const ProjectPage: FC = () => {
             <Box
               maxWidth={'160px'}
               display={'flex'}
-              justifyContent={'end'}
+              justifyContent={'start'}
               alignItems={'center'}
               flexDirection={'column'}
             >
@@ -626,6 +637,16 @@ const ProjectPage: FC = () => {
                 <Typography>
                   {project && `${project.collectedSum}/${project.goalSum}`}
                 </Typography>
+                <LinearProgress variant="determinate" value={project.collectedSum} sx={{
+                  borderRadius: '6px',
+                  color: '#001D6C',
+                  bgcolor: '#C1C7CD',
+                  height: '8px',
+                  '& span': {
+                    borderRadius: '6px',
+                    bgcolor: '#001D6C',
+                  },
+                }}/>
               </Box>
               <Box>
                 <CustomTimeline

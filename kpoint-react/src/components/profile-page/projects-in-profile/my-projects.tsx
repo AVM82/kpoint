@@ -70,6 +70,7 @@ const MyProjects: FC = () => {
               logoImgUrl={project.logoImgUrl}
             />
           ))}
+      {response && response?.content.length >= 1 && 
       <Box
         display={'flex'}
         justifyContent={'center'}
@@ -79,12 +80,9 @@ const MyProjects: FC = () => {
           count={response?.totalPages}
           page={pages[activeButton]}
           onChange={(event: ChangeEvent<unknown>, value: number): void => handleChange(value, activeButton)}
-          showFirstButton
-          showLastButton
           sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
         />
-      </Box>
-
+      </Box>}    
     </Box>
   );
 };
