@@ -5,11 +5,10 @@ import { NavbarButton } from './navbarButton';
 
 interface NavbarProps {
   activeButton: string;
-  pages: Record<string, number>;
-  handleOnClick: (value: number, button: string) => void;
+  handleOnClick: (button: string) => void;
 }
 
-const Navbar: FC<NavbarProps> = ({ activeButton, pages, handleOnClick }) => {
+const Navbar: FC<NavbarProps> = ({ activeButton, handleOnClick }) => {
 
   return (
     <Box
@@ -23,17 +22,17 @@ const Navbar: FC<NavbarProps> = ({ activeButton, pages, handleOnClick }) => {
       <NavbarButton
         label="Мої Проєкти"
         isActive={activeButton === 'myProjects'}
-        onClick={(): void => handleOnClick(pages[activeButton], 'myProjects')}
+        onClick={(): void => handleOnClick('myProjects')}
       ></NavbarButton>
       <NavbarButton
         label="Улюблені проєкти"
         isActive={activeButton === 'favoriteProjects'}
-        onClick={(): void => handleOnClick(pages[activeButton], 'favoriteProjects')}
+        onClick={(): void => handleOnClick('favoriteProjects')}
       ></NavbarButton>
       <NavbarButton
         label="Рекомендовані проєкти"
         isActive={activeButton === 'recommendedProjects'}
-        onClick={(): void => handleOnClick(pages[activeButton], 'recommendedProjects')}
+        onClick={(): void => handleOnClick('recommendedProjects')}
       ></NavbarButton>
     </Box>
   );
