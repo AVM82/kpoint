@@ -11,6 +11,7 @@ import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +31,7 @@ import ua.in.kp.repository.ProjectRepository;
 import ua.in.kp.repository.SubscriptionRepository;
 import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
+import ua.in.kp.repository.spec.impl.ProjectSpecBuilder;
 import ua.in.kp.util.PatchUtil;
 
 import java.util.*;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final ProjectSpecBuilder projectSpecBuilder;
     private final ProjectMapper projectMapper;
     private final UserService userService;
     private final TagRepository tagRepository;
@@ -51,12 +54,14 @@ public class ProjectService {
     private final ValidatorFactory factory;
     private final Validator validator;
 
-    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
-                          UserService userService, TagRepository tagRepository, S3Service s3Service,
+    public ProjectService(ProjectRepository projectRepository, ProjectSpecBuilder projectSpecBuilder,
+                          ProjectMapper projectMapper, UserService userService,
+                          TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
                           Translator translator, UserRepository userRepository, MeterRegistry meterRegistry,
                           ValidatorFactory factory, Validator validator) {
         this.projectRepository = projectRepository;
+        this.projectSpecBuilder = projectSpecBuilder;
         this.projectMapper = projectMapper;
         this.userService = userService;
         this.tagRepository = tagRepository;
@@ -136,6 +141,12 @@ public class ProjectService {
         });
         log.info("Map all projectsEntity to DTO and return page with them.");
         return toReturn;
+    }
+
+    public Page<GetAllProjectsDto> getAllProjectsBySpec(ProjectSpecDto projectSpecDto, Pageable pageable) {
+        Specification<ProjectEntity> specification = projectSpecBuilder.build(projectSpecDto);
+        return projectRepository.findAll(specification, pageable)
+                .map(projectMapper::getAllToDto);
     }
 
     public boolean checkIsFollowed(ProjectEntity project, Authentication auth) {
