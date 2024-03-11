@@ -22,7 +22,6 @@ const MyProjects: FC = () => {
       });
 
   const handleChange = (value: number, button: string): void => {
-    setPages((prev) => ({ ...prev, [button]: value }));
 
     switch (button) {
     case 'myProjects': {
@@ -39,7 +38,6 @@ const MyProjects: FC = () => {
     }
     default: break;
     }
-    setActiveButton(button);
   };
 
   return (
@@ -60,7 +58,13 @@ const MyProjects: FC = () => {
         width={'80%'}
       >
       </Box>
-      <Navbar activeButton={activeButton} pages={pages} handleOnClick={handleChange}/>
+      <Navbar
+        activeButton={activeButton}
+        handleOnClick={(button: string): void => {
+          handleChange(pages[button], button);
+          setActiveButton(button);
+        }}
+      />
       {response &&
           response.content.map((project) => (
             <ProjectItem
@@ -70,7 +74,7 @@ const MyProjects: FC = () => {
               logoImgUrl={project.logoImgUrl}
             />
           ))}
-      {response && response?.content.length >= 1 && 
+      {response && response?.content.length >= 1 &&
       <Box
         display={'flex'}
         justifyContent={'center'}
@@ -79,10 +83,13 @@ const MyProjects: FC = () => {
         <Pagination
           count={response?.totalPages}
           page={pages[activeButton]}
-          onChange={(event: ChangeEvent<unknown>, value: number): void => handleChange(value, activeButton)}
+          onChange={(event: ChangeEvent<unknown>, value: number): void => {
+            setPages((prev) => ({ ...prev, [activeButton]: value }));
+            handleChange(value, activeButton);
+          }}
           sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
         />
-      </Box>}    
+      </Box>}
     </Box>
   );
 };
