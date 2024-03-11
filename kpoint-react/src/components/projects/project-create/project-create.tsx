@@ -3,10 +3,9 @@ import { TestRequest } from 'common/types/projects/testRequest';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
-import { ProjectsEditType } from '../../../common/types/projects/projects';
+import { ProjectsEditType } from '../../../common/types/types';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { ProjectCreateStep1Form } from './components/project-create-step-1';
 import { ProjectCreateStep2Form } from './components/project-create-step-2';
@@ -15,7 +14,7 @@ import { projectDefault } from './components/project-default';
 
 export const ProjectCreate: FC = () => {
   const { t } = useTranslation();
-  
+
   const steps: string[] = [
     t('general_information'),
     t('about'),
@@ -54,6 +53,7 @@ export const ProjectCreate: FC = () => {
           tags: projectData.tags,
           goalDeadline: projectData.goalDeadline,
           collectDeadline: projectData.collectDeadline,
+          startSum: projectData.startSum,
           networksLinks: { FACEBOOK: 'https://www.facebook.com/example' },
         },
     };
@@ -65,8 +65,8 @@ export const ProjectCreate: FC = () => {
         .then((action): void => {
           navigate('/projects/' + action.url);
         })
-        .catch((reason) => {
-          toast.error(`Can\\'t create new project, because: ${reason}`);
+        .catch(() => {
+          return;
         });
     }
   };
@@ -151,7 +151,7 @@ export const ProjectCreate: FC = () => {
 
   return (
     <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
-      <Box 
+      <Box
         display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'ceneter'}>
         <Typography component="h1" variant="h4" align="center" sx={{ p: 2 }}>
           {t('new_project')}

@@ -47,6 +47,8 @@ const ProjectPage: FC = () => {
   const [tabClicked, setTabClicked] = useState('about');
   const token = storage.getItem(StorageKey.TOKEN);
   const user: UserType = JSON.parse(storage.getItem(StorageKey.USER) as string);
+  const user2 = storage.getItem(StorageKey.USER);
+  const isMyProject = project?.owner.ownerId === JSON.parse(user2 || '{}').id;
 
   const handleDelete = (itemName: string, value: string): void => {
     const bodyData = [];
@@ -185,7 +187,7 @@ const ProjectPage: FC = () => {
     case 'description':
       dispatch(editDescriptionLocally(bodyData[0].value));
       break;
-      
+
     case 'tags':
       if (project.tags.includes(bodyData[0].value as string)) {
         toast.warn('Теги проєкту мають бути унікальні');
@@ -196,11 +198,11 @@ const ProjectPage: FC = () => {
       dispatch(addTagLocally(bodyData[0].value as string));
       setTagsClicked(!tagsClicked);
       break;
-      
+
     default:
       break;
     }
-    
+
     await dispatch(editProject({ id, bodyData }));
   };
 
@@ -259,7 +261,7 @@ const ProjectPage: FC = () => {
                         maxHeight={'100%'}
                         sx={{ objectFit: 'cover', borderRadius: '6px' }}
                         src={project.logoImgUrl}
-                      ></Box></Box>                   
+                      ></Box></Box>
                   </Grid>
                 )}
                 <Grid item xs={7} container direction={'column'}>
@@ -291,7 +293,7 @@ const ProjectPage: FC = () => {
                           setEditFieldClicked(!editFieldClicked)
                         }
                       >
-                      
+
                         {project && project.title}
                       </Typography>
                     )}
@@ -309,7 +311,7 @@ const ProjectPage: FC = () => {
                       letterSpacing={'0.5px'}
                       textAlign={'start'}
                     >
-                      {t('country')}
+                      {t('project_page.country')}
                     </Typography>
                   </Link>
                   <Typography
@@ -322,7 +324,7 @@ const ProjectPage: FC = () => {
                     textAlign={'start'}
                     padding={'80px 0 0 0'}
                   >
-                    Послідовників: 123
+                    {t('project_page.followers')}: 0
                   </Typography>
                 </Grid>
                 <Grid item xs={12} container>
@@ -436,6 +438,7 @@ const ProjectPage: FC = () => {
                 maxWidth={'231px'}
                 gap={'16px'}
               >
+                {project && !isMyProject &&
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
@@ -455,6 +458,8 @@ const ProjectPage: FC = () => {
                 >
                   <PersonAddIcon fontSize="small" /> {t('buttons.support')}
                 </Button>
+                }
+                {project && !isMyProject &&
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
@@ -474,6 +479,7 @@ const ProjectPage: FC = () => {
                   <AttachMoneyIcon fontSize="small" />
                   {t('buttons.donate')}
                 </Button>
+                }
               </Box>
             </Box>
           </Box>
@@ -514,7 +520,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('about')}
               >
-                {t('about')}
+                {t('project_page.about')}
               </Button>
               <Button
                 sx={{
@@ -532,7 +538,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('team')}
               >
-                {t('team')}
+                {t('project_page.team')}
               </Button>
               <Button
                 sx={{
@@ -550,7 +556,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('help')}
               >
-                {t('help_project')}
+                {t('project_page.help_project')}
               </Button>
               <Button
                 sx={{
@@ -568,7 +574,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('contacts')}
               >
-                Контакти
+                {t('project_page.contacts')}
               </Button>
               <Button
                 sx={{
@@ -586,7 +592,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('comments')}
               >
-                {t('comments')}
+                {t('project_page.comments')}
               </Button>
             </Box>
           </Grid>
@@ -626,7 +632,7 @@ const ProjectPage: FC = () => {
               flexDirection={'column'}
             >
               <Box>
-                <Typography>Всього зібрано</Typography>
+                <Typography>{t('project_page.total_collected')}</Typography>
                 <Typography>
                   {project && `${project.collectedSum}/${project.goalSum}`}
                 </Typography>

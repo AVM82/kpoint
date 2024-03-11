@@ -1,15 +1,25 @@
-import { Autocomplete, Chip, Grid, TextField } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import {
+  Autocomplete,
+  Chip,
+  FormHelperText,
+  FormLabel,
+  Grid, IconButton,
+  InputAdornment,
+  TextField,
+} from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { ImageUploader } from 'components/common/common';
 import React, { FC, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import getSlug from 'speakingurl';
 
 import {
   CitiesType,
   EditProjectsPropsType,
-} from '../../../../common/types/projects/projects';
+} from '../../../../common/types/types';
 import { cities } from './cities';
 
 const citiesProps = {
@@ -44,6 +54,41 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
 
   const [projectURL, setProjectURL] = useState('');
 
+  const handleClickAddTag = (): void => {
+    if (tag.trim().length === 0) {
+      return;
+    }
+
+    if (projectData.tags.length === 5) {
+      toast.warn(t('errors.project_tags'));
+
+      return;
+    }
+
+    if (tag.trim().length > 10) {
+      errors.tags = t('errors.tag_length');
+
+      return;
+    }
+
+    if (projectData.tags.indexOf(tag.toLowerCase().trim()) === -1) {
+      projectData.tags.push(tag.trim().toLowerCase());
+      setChipTags(getChipTags);
+      setTag('');
+    }
+  };
+
+  const handleAddTag = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === 'Enter') {
+      handleClickAddTag();
+      event.preventDefault();
+    }
+  };
+
+  const handleMouseDownAddTag = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
+  };
+
   const handleDeleteTag = (chipToDelete: ChipTag) => () => {
     setChipTags((chips) =>
       chips.filter((chip: ChipTag): boolean => chip.key !== chipToDelete.key),
@@ -54,16 +99,16 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
   };
 
   return (
-    <Grid container rowSpacing={3}>
+    <Grid container rowSpacing={1}>
       <Grid container justifyContent={'space-between'}>
         <ImageUploader handleChange={handleChange} component="default" xs={3} imageUrl={''}/>
         <Grid item xs={8}>
           <Grid item xs={true}>
+            <FormLabel required>{t('project_name')}</FormLabel>
             <TextField
-              label={t('project_name')}
               fullWidth
+              sx={{ marginTop: 0 }}
               value={projectData.title}
-              // defaultValue={project.title}
               onChange={(e): void => {
                 handleChange('title', e.target.value);
                 let slug = getSlug(e.target.value, {
@@ -80,24 +125,19 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
               onFocus={(): void => handleFieldFocus('title')}
               error={!!errors.title}
               helperText={errors.title}
-              // placeholder={'1234'}
-              // type={'text'}
               required
               margin={'normal'}
               autoComplete="given-name"
               variant="outlined"
             />
           </Grid>
-          <Typography>
-            {'http://k-points.in.ua/projects/'.concat(projectURL)}
-          </Typography>
           <Grid item xs={true}>
+            <FormLabel required>{t('project_url')}</FormLabel>
             <TextField
-              label={t('project_url')}
               fullWidth
+              sx={{ marginTop: 0 }}
               placeholder={t('url_placeholder')}
               value={projectData.url}
-              // defaultValue={defaultURL}
               onChange={(e): void => {
                 const slug = getSlug(e.target.value, {
                   maintainCase: true,
@@ -109,14 +149,15 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
               onFocus={(): void => handleFieldFocus('url')}
               error={!!errors.url}
               helperText={errors.url}
-              // placeholder={'1234'}
-              // type={'text'}
               required
-              margin={'normal'}
+              // margin={'normal'}
               autoComplete="given-name"
               variant="outlined"
             />
           </Grid>
+          <Typography>
+            {'http://k-points.in.ua/projects/'.concat(projectURL)}
+          </Typography>
         </Grid>
       </Grid>
       <Grid item xs={true}>
@@ -126,61 +167,54 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
           // name="citi"
           // defaultValue={project.city}
           renderInput={(params): ReactElement => (
-            <TextField label={t('city')} {...params} fullWidth />
+            <>
+              <FormLabel>{t('city')}</FormLabel>
+              <TextField {...params} fullWidth />
+            </>
           )}
         />
       </Grid>
       <Grid item xs={12}>
+        <FormLabel>{t('category')}</FormLabel>
         <TextField
-          label={t('category')}
           fullWidth
-          // value={projectData}
-          // type={'text'}
-          // required
-          // id="projectCategory"
-          // name="projectCategory"
-          margin={'normal'}
           autoComplete="given-name"
           variant="outlined"
         />
       </Grid>
       <Grid item xs={12}>
+        <FormLabel required>{t('tags')}</FormLabel>
         <TextField
-          label={t('tags')}
+          type={'text'}
           fullWidth
-          // type={'text'}
           required
-          placeholder={t('tag_placeholder')}
-          // id="projectTags"
-          // name="projectTags"
           value={tag}
-          // autoComplete="given-name"
-          variant="outlined"
           onChange={(event): void => {
             event.preventDefault();
             setTag(event.target.value);
           }}
           onFocus={(): void => handleFieldFocus('tags')}
           error={!!errors.tags}
-          helperText={errors.tags}
-          onKeyDown={(event): void => {
-            if (event.key === 'Enter') {
-              if (projectData.tags.length === 5) {
-                return;
-              }
-
-              if (
-                tag.trim().length > 0 &&
-                projectData.tags.indexOf(tag.trim()) === -1
-              ) {
-                projectData.tags.push(tag);
-                setChipTags(getChipTags());
-                setTag('');
-              }
-              event.preventDefault();
-            }
+          onKeyDown={(event): void => handleAddTag(event)}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={handleClickAddTag}
+                  onMouseDown={handleMouseDownAddTag}
+                  edge="end"
+                >
+                  <AddCircleOutlineIcon/>
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
         />
+        <FormHelperText
+          id="userTags-error"
+          error={!!errors.tags}>
+          {errors.tags || t('tag_placeholder')}
+        </FormHelperText>
         <Grid
           sx={{
             // display: 'flex',
@@ -221,22 +255,20 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
           })}
         </Grid>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} sx={{ paddingTop: 0 }}>
+        <FormLabel required>{t('summary')}</FormLabel>
         <TextField
-          label={t('summary')}
           fullWidth
           value={projectData.summary}
           onChange={(e): void => handleChange('summary', e.target.value)}
           onFocus={(): void => handleFieldFocus('summary')}
           error={!!errors.summary}
           helperText={errors.summary}
-          // type={'text'}
+          placeholder={t('summary_placeholder')}
           required
           multiline
           rows={4}
-          // autoComplete="given-name"
           variant="outlined"
-          // defaultValue={project.title}
         />
       </Grid>
     </Grid>

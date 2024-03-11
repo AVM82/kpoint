@@ -1,4 +1,5 @@
 import {
+  AcceptLanguage,
   ContentType,
   HttpHeader,
   HttpMethod,
@@ -28,9 +29,10 @@ class Http {
       payload = null,
       contentType,
       hasAuth = true,
+      acceptLanguage = AcceptLanguage.UK,
       queryString,
     } = options;
-    const headers = this.getHeaders(contentType, hasAuth);
+    const headers = this.getHeaders(acceptLanguage, contentType, hasAuth);
 
     return fetch(this.getUrlWithQueryString(url, queryString), {
       method,
@@ -42,8 +44,12 @@ class Http {
       .catch(this.throwError);
   }
 
-  private getHeaders(contentType?: ContentType, hasAuth?: boolean): Headers {
+  private getHeaders(acceptLanguage?: AcceptLanguage, contentType?: ContentType, hasAuth?: boolean): Headers {
     const headers = new Headers();
+
+    if (acceptLanguage) {
+      headers.append(HttpHeader.ACCEPT_LANGUAGE, acceptLanguage);
+    }
 
     if (contentType) {
       headers.append(HttpHeader.CONTENT_TYPE, contentType);

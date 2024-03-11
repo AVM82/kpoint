@@ -356,8 +356,8 @@ const SignUpPage: FC = () => {
                   <FormLabel required>{t('tags')}</FormLabel>
                   <OutlinedInput
                     type={'text'}
-                    id="projectTags"
-                    name="projectTags"
+                    id="userTags"
+                    name="userTags"
                     value={tag}
                     fullWidth
                     error={!!errors.tags}
@@ -376,7 +376,7 @@ const SignUpPage: FC = () => {
                       </InputAdornment>
                     }
                   />
-                  <FormHelperText id="projectTags-error"
+                  <FormHelperText id="userTags-error"
                     error={!!errors.tags}>
                     {errors.tags ||
                       'Введіть від 1 до 10 тегів, розділяючи їх "ENTER"'}
