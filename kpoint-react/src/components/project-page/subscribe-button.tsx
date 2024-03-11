@@ -1,5 +1,5 @@
-import ControlPointTwoToneIcon from '@mui/icons-material/ControlPointTwoTone';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { FC, useState } from 'react';
@@ -51,7 +51,7 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
         border: '2px solid rgb(130, 130, 130)',
         borderRadius: '5px',
         background: 'rgb(255, 255, 255, 0)',
-        width: '260px',
+        width: '148px',
         height: '46px',
         color: 'rgb(130, 130, 130)',
         fontSize: '14px',
@@ -62,7 +62,7 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
       size="small"
       onClick={handleButtonSubClick}
     >
-      {isFollowed ? (<RemoveCircleOutlineIcon fontSize="small"/>) : (<ControlPointTwoToneIcon fontSize="small"/>)}
+      {isFollowed ? (<RemoveIcon fontSize="small"/>) : (<AddIcon fontSize="small"/>)}
       {isFollowed ? <Typography textTransform={'none'}>{t('buttons.unfollow')}</Typography>
         : <Typography textTransform={'none'}>{t('buttons.follow')}</Typography>}
     </Button>

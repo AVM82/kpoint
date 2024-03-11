@@ -29,7 +29,7 @@ const Contacts: FC<ContactsProps> = ({
       item
       xs={8}
       maxWidth={'620px'}
-      marginTop={'10px'}
+      marginTop={'32px'}
       container
       gap={'100px'}
       direction={'column'}
@@ -45,7 +45,7 @@ const Contacts: FC<ContactsProps> = ({
           />
         ))}
       </Box>
-      <Box display={'flex'} flexDirection={'column'}>
+      {canIEditThis() && <Box display={'flex'} flexDirection={'column'}>
         <Button
           variant="contained"
           sx={{
@@ -62,7 +62,7 @@ const Contacts: FC<ContactsProps> = ({
         >
         Додати контакт
         </Button>
-        {addContactClicked && canIEditThis() && (
+        {addContactClicked && (
           <>
             <InputField
               itemName="networksLinks"
@@ -86,7 +86,7 @@ const Contacts: FC<ContactsProps> = ({
               Відмінити
             </Button></>
         )}
-      </Box>
+      </Box>}
     </Grid>
   );
 };
