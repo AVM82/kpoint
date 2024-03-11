@@ -603,6 +603,7 @@ const ProjectPage: FC = () => {
               onSubmit={submitHandler}
               canIEditThis={canIEditThis}
               id={project.projectId}
+              addCursorPointer={addCursorPointer}
             />
           )}
           {tabClicked === 'team' && (

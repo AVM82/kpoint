@@ -16,12 +16,14 @@ interface DescriptionProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>, itemName: string) => void;
   canIEditThis: () => boolean;
   id: string;
+  addCursorPointer: () => string;
 }
 
 const Description: FC<DescriptionProps> = ({
   description,
   canIEditThis,
   id,
+  addCursorPointer,
 }) => {
   const [descValue, setDescValue] = useState('');
   const [descriptionClicked, setDescriptionClicked] = 
@@ -97,7 +99,7 @@ const Description: FC<DescriptionProps> = ({
           ref={descriptionRef}
           maxWidth={'620px'}
           onClick={(): void => setDescriptionClicked(!descriptionClicked)}
-          sx={{ cursor: 'pointer', overflowWrap: 'break-word' }}
+          sx={{ cursor: addCursorPointer(), overflowWrap: 'break-word' }}
         >
         </Box>
       )}
