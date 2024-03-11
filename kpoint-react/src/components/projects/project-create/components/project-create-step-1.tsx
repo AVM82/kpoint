@@ -34,7 +34,7 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
   const getChipTags = (): ChipTag[] => {
     const result: ChipTag[] = [];
     for (let i = 0; i < projectData.tags.length; i++) {
-      result.push({ key: i, tag: projectData.tags[i] });
+      result.push({ key: i, tag: projectData.tags[i].toLowerCase() });
     }
 
     return result;

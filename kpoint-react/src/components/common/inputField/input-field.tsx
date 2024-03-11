@@ -6,7 +6,7 @@ interface IInputField {
   id?: number;
   placeholder: string;
   onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>, itemName: string) => void;
   itemName: string;
@@ -40,18 +40,33 @@ export const InputField: FC<IInputField> = ({
           width: '100%',
         }}
       >
-        <Input
-          type="text"
-          defaultValue={placeholder}
-          name={itemName}
-          inputProps={{
-            maxLength: `${itemName === 'tags' ? 10 : 30}`,
-          }}
-          required
-          onChange={(
-            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-          ): void => onChange(e)}
-        />
+        {itemName === 'tags' ? (
+          <Input
+            type="text"
+            placeholder={placeholder}
+            name={itemName}
+            inputProps={{
+              maxLength: '10',
+            }}
+            required
+            onChange={(
+              e: React.ChangeEvent<HTMLInputElement>,
+            ): void => onChange(e)}
+          />
+        ) : (
+          <Input
+            type="text"
+            defaultValue={placeholder}
+            name={itemName}
+            inputProps={{
+              maxLength: '30',
+            }}
+            required
+            onChange={(
+              e: React.ChangeEvent<HTMLInputElement>,
+            ): void => onChange(e)}
+          />
+        )}
         <Button type="submit"
           variant="contained"
           sx={{

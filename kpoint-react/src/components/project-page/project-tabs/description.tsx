@@ -23,8 +23,9 @@ const Description: FC<DescriptionProps> = ({
   canIEditThis,
   id,
 }) => {
-  const [descriptionClicked, setDescriptionClicked] = useState(false);
   const [descValue, setDescValue] = useState('');
+  const [descriptionClicked, setDescriptionClicked] = 
+  useState(false);
   const dispatch = useAppDispatch();
   const descriptionRef = useRef<HTMLDivElement>(null);
   const handleChange = (htmlString: string): void => {
@@ -34,26 +35,30 @@ const Description: FC<DescriptionProps> = ({
   const handleSubmit = async (): Promise<void> => {
     const bodyData = [{ op: 'replace', path: '/description', value: descValue }];
 
+    setDescriptionClicked(descValue.replace(/<[^>]*>/g, '').length < 1 ? true : !descriptionClicked);
     dispatch(editDescriptionLocally(descValue));
     await dispatch(editProject({ id, bodyData }));
-    setDescriptionClicked(!descriptionClicked);
   };
   
   useEffect(() => {
-    if (descriptionRef.current) {
-      descriptionRef.current.innerHTML = description;
-    }
+    setTimeout(() => {
+      if (descriptionRef.current) {
+
+        descriptionRef.current.innerHTML = description;
+      }
+    }, 0);
   }, [description]);
   
   return (
     <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
-      {descriptionClicked && canIEditThis() ? (
+      {(descriptionClicked || description.replace(/<[^>]*>/g, '').length < 1) && canIEditThis() ? (
         <>
           <Editor onChange={handleChange} description={description}/>
+          <Box display={'flex'} justifyContent={'start'} alignItems={'center'} gap={'16px'}>
+            {description.replace(/<[^>]*>/g, '').length > 0 && 
           <Button
             variant="contained"
             sx={{
-              margin: 1,
               backgroundColor: '#535365',
               textTransform: 'none',
               '&:hover': {
@@ -71,28 +76,28 @@ const Description: FC<DescriptionProps> = ({
             }}
           >
             <Typography>Відмінити</Typography>
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              margin: 1,
-              backgroundColor: '#535365',
-              textTransform: 'none',
-              '&:hover': {
-                backgroundColor: 'rgb(84, 84, 160)',
-              },
-            }}
-            onClick={handleSubmit}
-          >
-            <Typography>Зберегти</Typography>
-          </Button>
+          </Button>}
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#535365',
+                textTransform: 'none',
+                '&:hover': {
+                  backgroundColor: 'rgb(84, 84, 160)',
+                },
+              }}
+              onClick={handleSubmit}
+            >
+              <Typography>Зберегти</Typography>
+            </Button>
+          </Box>
         </>
       ) : (
         <Box
           ref={descriptionRef}
           maxWidth={'620px'}
           onClick={(): void => setDescriptionClicked(!descriptionClicked)}
-          sx={{ cursor: 'pointer' }}
+          sx={{ cursor: 'pointer', overflowWrap: 'break-word' }}
         >
         </Box>
       )}

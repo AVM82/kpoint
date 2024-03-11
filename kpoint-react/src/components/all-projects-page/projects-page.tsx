@@ -78,7 +78,7 @@ const ProjectsPage: FC = () => {
             variant="text"
             onClick={handleAddMoreClick}
             startIcon={<SyncTwoToneIcon />}
-            sx={{ margin: 2 }}
+            sx={{ margin: 2, color: '#636B74' }}
           >
             {t('buttons.show_more')}
           </Button>
@@ -88,8 +88,6 @@ const ProjectsPage: FC = () => {
         count={projects?.totalPages}
         page={page}
         onChange={handleChange}
-        showFirstButton
-        showLastButton
         sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
       />
     </Container>
