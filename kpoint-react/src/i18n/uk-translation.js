@@ -1,5 +1,4 @@
 const ukTranslation = {
-  country: 'Україна',
   projects: 'Проєкти',
   about_us: 'Про нас',
   sign_in: 'Увійти',
@@ -62,11 +61,8 @@ const ukTranslation = {
   },
   owner: 'Власник',
   description: 'Опис',
-  about: 'Про проєкт',
-  team: 'Команда',
-  help_project: 'Допомогти проєкту',
-  comments: 'Коментарі',
   general_information: 'Загальна інформація',
+  about_project: 'Про проєкт',
   implementation_plan: 'План реалізації',
   new_project: 'Новий проєкт',
   project_name: 'Назва проєкту',
@@ -85,6 +81,16 @@ const ukTranslation = {
   stages_implementation: 'Задачі та Етапи Реалізації',
   start_sum: 'Сума для реалізації проєкта',
   stage: 'Етап',
+  project_page:{
+    followers: 'Послідовників',
+    total_collected: 'Всього зібрано',
+    about: 'Про проєкт',
+    team: 'Команда',
+    help_project: 'Допомогти проєкту',
+    contacts: 'Контакти',
+    comments: 'Коментарі',
+    country: 'Україна',
+  },
   suggestions: 'Пропозиції',
   errors: {
     project_title:
