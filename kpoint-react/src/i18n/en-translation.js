@@ -1,5 +1,4 @@
 const enTranslation = {
-  country: 'Ukraine',
   projects: 'Projects',
   about_us: 'About us',
   sign_in: 'Sign in',
@@ -62,10 +61,6 @@ const enTranslation = {
   },
   owner: 'Owner',
   description: 'Description',
-  about: 'About project',
-  team: 'Team',
-  help_project: 'Help Project',
-  comments: 'Comments',
   general_information: 'General information',
   about_project: 'About the project',
   implementation_plan: 'Implementation plan',
@@ -86,6 +81,17 @@ const enTranslation = {
   stages_implementation: 'Tasks and Stages of Implementation',
   start_sum: 'Amount for project implementation',
   stage: 'Stage',
+  project_page:{
+    followers: 'Followers',
+    total_collected: 'Collected sum',
+    about: 'About project',
+    team: 'Team',
+    help_project: 'Help Project',
+    comments: 'Comments',
+    contacts: 'Contacts',
+    country: 'Ukraine',
+  },
+  suggestions: 'Suggestions',
   errors: {
     project_title:
       'The project name cannot be empty or have more than 30 characters',

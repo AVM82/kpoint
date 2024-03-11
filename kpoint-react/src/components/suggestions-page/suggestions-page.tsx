@@ -160,8 +160,6 @@ const SuggestionsPage: FC = () => {
             count={suggestions?.totalPages}
             page={page}
             onChange={handleChange}
-            showFirstButton
-            showLastButton
             sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
           />
         </Box>

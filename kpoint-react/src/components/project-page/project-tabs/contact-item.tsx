@@ -23,7 +23,7 @@ const ContactItem: FC<ContactItemProps> = ({ network, link, handleDelete, canIEd
       <Link key={network} href={link} underline="none" color="white">
         {getSocialMediaIcon(network)}
       </Link>
-      <Typography>Опис соц мережі</Typography>
+      <Typography padding={'8px'}>Опис соц мережі</Typography>
       {linkHover && canIEditThis() && (
         <Box
           display={'flex'}
@@ -33,7 +33,7 @@ const ContactItem: FC<ContactItemProps> = ({ network, link, handleDelete, canIEd
           minWidth={'20px'}
           maxHeight={'24px'}
           position={'absolute'}
-          top={'80px'}
+          top={'95px'}
           sx={{
             cursor: 'pointer',
             borderRadius: '10px',
