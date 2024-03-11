@@ -306,7 +306,7 @@ const ProjectPage: FC = () => {
                       letterSpacing={'0.5px'}
                       textAlign={'start'}
                     >
-                      {t('country')}
+                      {t('project_page.country')}
                     </Typography>
                   </Link>
                   <Typography
@@ -319,7 +319,7 @@ const ProjectPage: FC = () => {
                     textAlign={'start'}
                     padding={'80px 0 0 0'}
                   >
-                    Послідовників: 123
+                    {t('project_page.followers')}: 0
                   </Typography>
                 </Grid>
                 <Grid item xs={12} container>
@@ -510,7 +510,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('about')}
               >
-                {t('about')}
+                {t('project_page.about')}
               </Button>
               <Button
                 sx={{
@@ -528,7 +528,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('team')}
               >
-                {t('team')}
+                {t('project_page.team')}
               </Button>
               <Button
                 sx={{
@@ -546,7 +546,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('help')}
               >
-                {t('help_project')}
+                {t('project_page.help_project')}
               </Button>
               <Button
                 sx={{
@@ -564,7 +564,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('contacts')}
               >
-                Контакти
+                {t('project_page.contacts')}
               </Button>
               <Button
                 sx={{
@@ -582,7 +582,7 @@ const ProjectPage: FC = () => {
                 }}
                 onClick={(): void => setTabClicked('comments')}
               >
-                {t('comments')}
+                {t('project_page.comments')}
               </Button>
             </Box>
           </Grid>
@@ -622,7 +622,7 @@ const ProjectPage: FC = () => {
               flexDirection={'column'}
             >
               <Box>
-                <Typography>Всього зібрано</Typography>
+                <Typography>{t('project_page.total_collected')}</Typography>
                 <Typography>
                   {project && `${project.collectedSum}/${project.goalSum}`}
                 </Typography>
