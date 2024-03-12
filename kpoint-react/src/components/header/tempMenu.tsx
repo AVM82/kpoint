@@ -1,11 +1,6 @@
-import Logout from '@mui/icons-material/Logout';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
@@ -81,6 +76,8 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             mt: 1.5,
+            bgcolor: '#DCDEEE',
+            padding: '8px',
             '& .MuiAvatar-root': {
               width: 32,
               height: 32,
@@ -95,7 +92,7 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
               right: 14,
               width: 10,
               height: 10,
-              bgcolor: 'background.paper',
+              bgcolor: '#DCDEEE',
               transform: 'translateY(-50%) rotate(45deg)',
               zIndex: 0,
             },
@@ -104,29 +101,19 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClickProfile}>
-          <Avatar /> {t('menu.profile')}
+        <MenuItem sx={{
+          marginBottom: '5px',
+        }} onClick={handleClickProfile}>
+          <Avatar src={user.avatarImgUrl} /> {t('menu.my_profile')}
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> {t('menu.my_account')}
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          {t('menu.add_another_account')}
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
+        <MenuItem 
+          sx={{
+            marginBottom: '5px',
+          }}
+          onClick={handleClose}>
           {t('menu.settings')}
         </MenuItem>
         <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
           {t('menu.logout')}
         </MenuItem>
       </Menu>

@@ -41,6 +41,16 @@ const ProjectItem: FC<ProjectItemProps> = ({ title, url, logoImgUrl }) => {
         </Box>
         <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
           <Typography sx={{ padding: '4px' }}>Прогрес</Typography>
+          {/* <LinearProgress variant="determinate" value={collectedSum} sx={{
+            borderRadius: '6px',
+            color: '#001D6C',
+            bgcolor: '#C1C7CD',
+            height: '8px',
+            '& span': {
+              borderRadius: '6px',
+              bgcolor: '#001D6C',
+            },
+          }}/> */}
         </Box>
       </Box>
     </Box>

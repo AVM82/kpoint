@@ -27,6 +27,9 @@ const ukTranslation = {
   add_suggestion: 'Додати',
   send_suggestion: 'Надіслати',
   subscribe_message: 'Ви успішно підписані на проект',
+  myProjects: 'Мої проєкти',
+  favoriteProjects: 'Улюблені проєкти',
+  recommendedProjects: 'Рекомендовані проєкти',
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',
@@ -126,7 +129,7 @@ const ukTranslation = {
   menu: {
     account_settings: 'Налаштування аккаунта',
     profile_settings: 'Налаштування профіля',
-    profile: 'Профіль',
+    back_to_projects: 'Назад до проєктів',
     my_account: 'Мій аккаунт',
     my_profile: 'Мій профіль',
     add_another_account : 'Добавити інший аккаунт',

@@ -150,7 +150,6 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
               error={!!errors.url}
               helperText={errors.url}
               required
-              // margin={'normal'}
               autoComplete="given-name"
               variant="outlined"
             />
@@ -163,9 +162,6 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
       <Grid item xs={true}>
         <Autocomplete
           {...citiesProps}
-          // id="citi"
-          // name="citi"
-          // defaultValue={project.city}
           renderInput={(params): ReactElement => (
             <>
               <FormLabel>{t('city')}</FormLabel>
@@ -217,14 +213,8 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
         </FormHelperText>
         <Grid
           sx={{
-            // display: 'flex',
-            // justifyContent: 'center',
-            // flexWrap: 'wrap',
-            // listStyle: 'none',
-            // p: 0.5,
-            // m: 0,
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', // Adjust 100px to your desired width
+            gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', 
             gridAutoRows: 'auto',
             rowGap: '5px',
             justifyContent: 'center',

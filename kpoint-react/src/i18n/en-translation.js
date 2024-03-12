@@ -27,6 +27,9 @@ const enTranslation = {
   add_suggestion: 'Add',
   send_suggestion: 'Send',
   subscribe_message: 'You successfully subscribed',
+  myProjects: 'My projects',
+  favoriteProjects: 'Favorite projects',
+  recommendedProjects: 'Recommended projects',
   statuses: {
     NEW: 'New',
     GATHERING_FOR_START: 'Gathering for start',
@@ -126,7 +129,7 @@ const enTranslation = {
   menu: {
     account_settings: 'Account settings',
     profile_settings: 'Profile settings',
-    profile: 'Profile',
+    back_to_projects: 'Back to projects',
     my_account: 'My account',
     my_profile: 'My profile',
     add_another_account : 'Add another account',

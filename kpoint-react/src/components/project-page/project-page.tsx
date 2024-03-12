@@ -50,6 +50,10 @@ const ProjectPage: FC = () => {
   const user2 = storage.getItem(StorageKey.USER);
   const isMyProject = project?.owner.ownerId === JSON.parse(user2 || '{}').id;
 
+  useEffect(() => {
+    document.body.style.backgroundColor = '#fff';
+  }, []);
+
   const handleDelete = (itemName: string, value: string): void => {
     const bodyData = [];
 
@@ -603,6 +607,7 @@ const ProjectPage: FC = () => {
               onSubmit={submitHandler}
               canIEditThis={canIEditThis}
               id={project.projectId}
+              summary={project.summary}
               addCursorPointer={addCursorPointer}
             />
           )}

@@ -1,4 +1,6 @@
-import { Box, Button, FormLabel, Grid, TextField } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { Box, Button, Chip, FormLabel, Grid, Input, TextField } from '@mui/material';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { UserType } from 'common/types/user/user';
 import React, { FC, useEffect, useState } from 'react';
@@ -25,7 +27,8 @@ const MyProfile: FC = () => {
 
   const [editForm, setEditForm]
     = useState<ProfileType>(DEFAULT_FORM_VALUES);
-
+  const [showButton, setShowButton] = useState(false);
+  const [tagsClicked, setTagsClicked] = useState(false);
   useEffect(() => {
     const currentUser = storage.getItem(StorageKey.USER);
 
@@ -126,6 +129,21 @@ const MyProfile: FC = () => {
         toast.error('Error updating profile settings:', error.message);
       }
     }
+  };
+
+  const handleDelete = (value: string): void => {
+    const bodyData = [];
+    
+    bodyData.push({ op: 'replace', path: '/tags', value: [] });
+
+    if (user) user.tags.forEach((item) => {
+      if (item !== value) {
+        bodyData.push({ op: 'add', path: '/tags/-', value: item });
+      }
+    });
+    
+    toast.success('Тег видалено');
+    
   };
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -256,6 +274,92 @@ const MyProfile: FC = () => {
               error={!!errors.lastName}
               helperText={errors.lastName}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <Box
+              display={'flex'}
+              gap={'5px'}
+              flexGrow={1}
+              flexShrink={0}
+              padding={'10px 0 10px 0'}>
+              {user && user.tags.length < 5 && (
+                <Box
+                  display={'flex'}
+                  alignItems={'center'}
+                  justifyContent={'center'}
+                  alignSelf={'center'}
+                  minWidth={'55px'}
+                  maxHeight={'24px'}
+                  position={'relative'}
+                  sx={{
+                    cursor: 'pointer',
+                    borderRadius: '10px',
+                    border: '1px solid black',
+                  }}
+                  onClick={(): void => setTagsClicked(true)}
+                >
+                  <AddIcon fontSize="small" />
+                  <Box
+                    display={'flex'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    position={'absolute'}
+                    top={'25px'}
+                    width={'250px'}
+                    left={0}
+                  >
+                    {tagsClicked && (
+                      <Input placeholder="Введіть назву тега"/>
+                    )}
+                  </Box>
+                </Box>
+              )}
+              {user && user?.tags.map((tag, index) => {
+                return <><Chip
+                  key={index}
+                  label={tag}
+                  variant="outlined"
+                  sx={{
+                    fontFamily: 'Roboto',
+                    fontWeight: 400,
+                    fontSize: '13px',
+                    lineHeight: '18px',
+                    letterSpacing: '0.16px',
+                    color: '#4F4F4F',
+                    margin: '5px',
+                    maxHeight: '24px',
+                  }}
+                  onMouseEnter={(): void => {
+                    if (user.tags.length > 1) {
+                      setShowButton(!showButton);
+                    }}}
+                />
+                {showButton && (
+                  <Box
+                    display={'flex'}
+                    alignItems={'center'}
+                    justifyContent={'center'}
+                    alignSelf={'center'}
+                    minWidth={'20px'}
+                    maxHeight={'24px'}
+                    position={'absolute'}
+                    top={'40px'}
+                    sx={{
+                      cursor: 'pointer',
+                      borderRadius: '10px',
+                      border: '1px solid black',
+                    }}
+                    onClick={(): void => {
+                      setShowButton(!showButton);
+                      handleDelete(tag);
+                    }}
+                  >
+                    <RemoveIcon fontSize="small" />
+                  </Box>
+                )}
+                </>;
+              })}
+            </Box>
           </Grid>
           <Grid item xs={3} md={6}>
             <Button sx={{ alignSelf: 'end', marginTop: '56px',  color: 'grey' }} onClick={handleReset}>

@@ -1,7 +1,8 @@
-import { Box   } from '@mui/material';
+import { Box, Typography   } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
 import { ChangeEvent, FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { profileAction } from 'store/actions';
 
 import { useAppDispatch } from '../../../hooks/use-app-dispatch/use-app-dispatch.hook';
@@ -13,6 +14,7 @@ const MyProjects: FC = () => {
   const dispatch = useAppDispatch();
   const [activeButton, setActiveButton] = useState('myProjects');
   const maxPageElements = 4;
+  const { t } = useTranslation();
   const [pages, setPages]
     = useState<Record<string, number>>(
       {
@@ -41,31 +43,34 @@ const MyProjects: FC = () => {
   };
 
   return (
-    <Box
-      display={'flex'}
-      justifyContent={'space-around'}
-      alignItems={'start'}
-      flexDirection={'column'}
-      width={'60%'}
-      alignSelf={'start'}
-    >
+    <Box height={'100dvh'} width={'60%'}>
       <Box
         display={'flex'}
-        alignItems={'center'}
-        justifyContent={'start'}
-        padding={'0px 16px 16px 16px'}
-        borderBottom={'1px solid rgb(189, 189, 189)'}
-        width={'80%'}
+        justifyContent={'space-around'}
+        alignItems={'start'}
+        flexDirection={'column'}
+        width={'100%'}
+        alignSelf={'start'}
+        overflow={'hidden'}
       >
-      </Box>
-      <Navbar
-        activeButton={activeButton}
-        handleOnClick={(button: string): void => {
-          handleChange(pages[button], button);
-          setActiveButton(button);
-        }}
-      />
-      {response &&
+        <Typography fontSize={'20px'} color={'#21272A'} fontWeight={500}>{t(activeButton)}</Typography>
+        <Box
+          display={'flex'}
+          alignItems={'center'}
+          justifyContent={'start'}
+          padding={'0px 16px 16px 16px'}
+          borderBottom={'1px solid rgb(189, 189, 189)'}
+          width={'80%'}
+        >
+        </Box>
+        <Navbar
+          activeButton={activeButton}
+          handleOnClick={(button: string): void => {
+            handleChange(pages[button], button);
+            setActiveButton(button);
+          }}
+        />
+        {response &&
           response.content.map((project) => (
             <ProjectItem
               key={project.projectId}
@@ -74,7 +79,7 @@ const MyProjects: FC = () => {
               logoImgUrl={project.logoImgUrl}
             />
           ))}
-      {response && response?.content.length >= 1 &&
+        {response && response?.content.length >= 1 &&
       <Box
         display={'flex'}
         justifyContent={'center'}
@@ -90,7 +95,9 @@ const MyProjects: FC = () => {
           sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
         />
       </Box>}
+      </Box>
     </Box>
+    
   );
 };
 
