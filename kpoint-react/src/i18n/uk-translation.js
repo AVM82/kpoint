@@ -27,6 +27,8 @@ const ukTranslation = {
   add_suggestion: 'Додати',
   send_suggestion: 'Надіслати',
   subscribe_message: 'Ви успішно підписані на проект',
+  register_message: 'Ви успішно зареєстровані',
+  follow_unauthenticated_message: 'Увійдіть, щоб мати можливість стежити за проектом',
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',

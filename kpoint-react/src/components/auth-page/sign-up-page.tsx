@@ -187,6 +187,7 @@ const SignUpPage: FC = () => {
       .unwrap()
       .then((user) => {
         if (user != null) {
+          toast.info(t('register_message'));
           navigate('/sign-in');
         }
       })
