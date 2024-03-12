@@ -27,6 +27,8 @@ const enTranslation = {
   add_suggestion: 'Add',
   send_suggestion: 'Send',
   subscribe_message: 'You successfully subscribed',
+  register_message: 'You are successfully registered',
+  follow_unauthenticated_message: 'Sign in to be able to follow the project',
   statuses: {
     NEW: 'New',
     GATHERING_FOR_START: 'Gathering for start',
