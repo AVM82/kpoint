@@ -18,6 +18,9 @@ public record ProjectChangeDto(
         @Size(max = 3000, message = "{project.description.max}")
         String description,
 
+        @Size(max = 150)
+        String summary,
+
         @NotEmpty(message = "{project.tag.not.null}")
         @CollectionLength(min = 1, max = 5, message = "{project.tag.not.null}")
         Set<String> tags,
