@@ -116,8 +116,8 @@ const ukTranslation = {
     sign_up_password_not_same: 'Введені паролі не збігаються',
     password_short: 'Введений пароль короткий',
     invalid_email: 'Невірна електронна пошта',
-    invalid_username: 'Невірне іʼмя користувача. Поле повинне містити від 1 символа',
-    invalid_firstname: 'Невірне іʼмя',
+    invalid_username: 'Невірне імʼя користувача. Поле повинне містити від 1 символа',
+    invalid_firstname: 'Невірне імʼя',
     invalid_lastname: 'Невірне прізвище',
   },
   success: {

@@ -3,9 +3,18 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Box, Button, Grid, Typography } from '@mui/material';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 const HelpProject: FC = () => {
   const { t } = useTranslation();
+
+  const handleHelpButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
+
+  const handleDonateButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
 
   return <Grid item xs={8} maxWidth={'620px'} marginTop={'42px'} container
     justifyContent={'space-between'} alignContent={'start'}>
@@ -22,6 +31,7 @@ const HelpProject: FC = () => {
            готовність долучитися до здійснення мрії разом з командою проєкту.
         </Typography>
         <Button
+          onClick={handleHelpButtonClick}
           sx={{
             border: '2px solid rgb(130, 130, 130)',
             borderRadius: '5px',
@@ -48,6 +58,7 @@ const HelpProject: FC = () => {
            готовність долучитися до здійснення мрії разом з командою проєкту.
         </Typography>
         <Button
+          onClick={handleDonateButtonClick}
           sx={{
             border: '2px solid rgb(130, 130, 130)',
             borderRadius: '5px',

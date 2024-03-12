@@ -46,15 +46,15 @@ const ProfileMenu: FC = () => {
       alignItems={'center'}
       border={'1px solid #DDE1E6'}
       borderRadius={'4px'}
-      minHeight={'256px'}
+      minHeight={'196px'}
       padding={'13px 0'}
       alignSelf={'start'}
       gap={'20px'}
     >
-      <MenuButton
-        label="Мої проєкти"
-        onClick={(): void => handleClick('myProjects')}
-      />
+      {/*<MenuButton*/}
+      {/*  label="Мої проєкти"*/}
+      {/*  onClick={(): void => handleClick('myProjects')}*/}
+      {/*/>*/}
 
       <MenuButton
         label="Розпочати новий проєкт"

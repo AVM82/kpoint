@@ -50,6 +50,14 @@ const ProjectPage: FC = () => {
   const user2 = storage.getItem(StorageKey.USER);
   const isMyProject = project?.owner.ownerId === JSON.parse(user2 || '{}').id;
 
+  const handleHelpButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
+
+  const handleDonateButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
+
   const handleDelete = (itemName: string, value: string): void => {
     const bodyData = [];
 
@@ -440,6 +448,7 @@ const ProjectPage: FC = () => {
               >
                 {project && !isMyProject &&
                 <Button
+                  onClick={handleHelpButtonClick}
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
                     borderRadius: '5px',
@@ -461,6 +470,7 @@ const ProjectPage: FC = () => {
                 }
                 {project && !isMyProject &&
                 <Button
+                  onClick={handleDonateButtonClick}
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
                     borderRadius: '5px',
