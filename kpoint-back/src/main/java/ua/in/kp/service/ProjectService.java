@@ -144,6 +144,7 @@ public class ProjectService {
     }
 
     public Page<GetAllProjectsDto> getAllProjectsBySpec(ProjectSpecDto projectSpecDto, Pageable pageable) {
+        log.info("Search projects by title {}", Arrays.toString(projectSpecDto.title()));
         Specification<ProjectEntity> specification = projectSpecBuilder.build(projectSpecDto);
         return projectRepository.findAll(specification, pageable)
                 .map(projectMapper::getAllToDto);
