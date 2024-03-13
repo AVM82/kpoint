@@ -117,9 +117,11 @@ const enTranslation = {
       'The project description cannot be empty or have more than 3000 characters',
     project_deadline:
       'The collection deadline cannot be later than the goal deadline',
+    project_start_sum_negative:
+      'The starting amount cannot be negative',
     suggestion_size: 'The field must contain from 1 to 200 characters',
     profile_password_not_same: 'New and repeat passwords are not the same',
-    password_short: 'The entered password is short',
+    password_short: 'The entered password is empty',
     profile_password_new_current:
       'The new profile password must be different from the current one',
     can_not_login: 'Can`t login',
