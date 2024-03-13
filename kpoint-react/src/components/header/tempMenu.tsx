@@ -1,6 +1,6 @@
 import Logout from '@mui/icons-material/Logout';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
+// import PersonAdd from '@mui/icons-material/PersonAdd';
+// import Settings from '@mui/icons-material/Settings';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -107,22 +107,22 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
         <MenuItem onClick={handleClickProfile}>
           <Avatar /> {t('menu.profile')}
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> {t('menu.my_account')}
-        </MenuItem>
+        {/*<MenuItem onClick={handleClose}>*/}
+        {/*  <Avatar /> {t('menu.my_account')}*/}
+        {/*</MenuItem>*/}
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          {t('menu.add_another_account')}
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          {t('menu.settings')}
-        </MenuItem>
+        {/*<MenuItem onClick={handleClose}>*/}
+        {/*  <ListItemIcon>*/}
+        {/*    <PersonAdd fontSize="small" />*/}
+        {/*  </ListItemIcon>*/}
+        {/*  {t('menu.add_another_account')}*/}
+        {/*</MenuItem>*/}
+        {/*<MenuItem onClick={handleClose}>*/}
+        {/*  <ListItemIcon>*/}
+        {/*    <Settings fontSize="small" />*/}
+        {/*  </ListItemIcon>*/}
+        {/*  {t('menu.settings')}*/}
+        {/*</MenuItem>*/}
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />

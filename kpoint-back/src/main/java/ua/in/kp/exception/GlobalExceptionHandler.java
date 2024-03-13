@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {AuthenticationException.class})
     protected ResponseEntity<Object> handleAuthenticationException(RuntimeException ex) {
         log.warn("handleAuthenticationException", ex);
-        return createApiError(HttpStatus.UNAUTHORIZED, ex.getLocalizedMessage());
+        return createApiError(HttpStatus.FORBIDDEN, ex.getLocalizedMessage());
     }
 
     @ExceptionHandler(SQLException.class)
