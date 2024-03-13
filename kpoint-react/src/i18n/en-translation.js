@@ -130,6 +130,14 @@ const enTranslation = {
     profile_email_updated: 'Email address changed. Please sign in with your new email to continue',
     profile_updated: 'Profile data changed successfully',
     profile_avatar_updated: 'Profile avatar successfully changed',
+    tag_deleted: 'Tag was successfully deleted',
+    tag_added: 'New tag was successfully added',
+    description_updated: 'Description was successfully updated',
+    title_updated: 'Title was successfully updated',
+    logo_updated: 'Logo was successfully updated',
+  },
+  warn: {
+    tag_unique: 'Project tags must be unique',
   },
   menu: {
     account_settings: 'Account settings',
