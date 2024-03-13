@@ -41,7 +41,7 @@ public class ProjectEntity {
     @Column(columnDefinition = "VARCHAR(150)", nullable = false)
     private String summary;
 
-    @Column(columnDefinition = "VARCHAR(512)", nullable = false)
+    @Column(columnDefinition = "VARCHAR(3000)", nullable = false)
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -83,7 +83,6 @@ public class ProjectEntity {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Column(name = "networks_links")
-    @SoftDelete
     private Map<String, String> networksLinks;
 
     @Override

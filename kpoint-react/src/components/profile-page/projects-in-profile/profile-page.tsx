@@ -22,6 +22,10 @@ const ProfilePage: FC = () => {
   }, []);
 
   useEffect(() => {
+    document.body.style.backgroundColor = '#fff';
+  }, []);
+
+  useEffect(() => {
     const fetchData = async (): Promise<void> => {
       if (testUser) {
         try {
@@ -49,7 +53,7 @@ const ProfilePage: FC = () => {
       alignItems={'center'}
       justifyContent={'space-around'}
       width={'100%'}
-      bgcolor={'#e9eff4'}
+      bgcolor={'#fff'}
       flexGrow={1}
     >
       <ProfileMenu />

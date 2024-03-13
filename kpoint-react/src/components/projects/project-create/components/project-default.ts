@@ -2,7 +2,10 @@ import { ProjectsEditType } from '../../../../common/types/projects/projects-edi
 
 const currentDate = new Date().toISOString().substring(0, 10);
 
-export const projectDefault: ProjectsEditType = {
+const descriptionPlaceholder = (): string => {
+  return '<p>Почніть писати опис проєкту</p>'; 
+};
+const projectDefault: ProjectsEditType = {
   title: '',
   url: '',
   summary: '',
@@ -24,3 +27,5 @@ export const projectDefault: ProjectsEditType = {
       YOUTUBE: null,
     },
 };
+
+export { descriptionPlaceholder, projectDefault };

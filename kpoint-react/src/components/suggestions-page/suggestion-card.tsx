@@ -48,7 +48,7 @@ const SuggestionCard: FC<CommentProps> = ({
   const dispatch = useAppDispatch();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [liked, setLiked] = useState(initialLiked);
-
+  const [deleteVisible, setDeleteVisible] = useState(false);
   const [testUser, setTestUser] = useState<UserType>();
 
   useEffect(() => {
@@ -76,7 +76,10 @@ const SuggestionCard: FC<CommentProps> = ({
   };
 
   return (
-    <Card>
+    <Card sx={{
+      boxShadow: 'none',
+    }} onMouseEnter={(): void => setDeleteVisible(!deleteVisible)}
+    onMouseLeave={(): void => setDeleteVisible(!deleteVisible)}>
       <CardContent>
         <Grid container spacing={2}>
           <Grid item xs={10}>
@@ -102,7 +105,7 @@ const SuggestionCard: FC<CommentProps> = ({
             </div>
           </Grid>
           <Grid item xs={2} style={{ textAlign: 'right' }}>
-            {(testUser?.id === user.userId && (likeCount === 0 || (likeCount === 1 && liked))) && (
+            {(testUser?.id === user.userId && (likeCount === 0 || (likeCount === 1 && liked))) && deleteVisible && (
               <IconButton
                 aria-label="Delete"
                 onClick={(): void => onDelete(id)}
@@ -116,8 +119,17 @@ const SuggestionCard: FC<CommentProps> = ({
       </CardContent>
       <Divider />
       <CardActions disableSpacing style={{ paddingTop: '2px', paddingBottom: '2px' }}>
-        <IconButton onClick={handleLike}>
-          <ThumbUpIcon style={liked ? iconStylesLiked : iconStylesNotLiked} />
+        <IconButton onClick={handleLike} sx={{
+          '&:hover': {
+            bgcolor: 'transparent',
+          },
+        }}>
+          <ThumbUpIcon style={liked ? iconStylesLiked : iconStylesNotLiked} fontSize="large" sx={{
+            color: 'gray !important',
+            '&:hover': {
+              color: 'blue !important',
+            },
+          }}/>
           &nbsp;
           <p>{likeCount}</p>
         </IconButton>

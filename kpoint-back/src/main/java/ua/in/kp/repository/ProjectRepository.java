@@ -26,7 +26,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
 
     Optional<ProjectEntity> findByTitle(String title);
 
-    @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
+    @Query(value = "SELECT distinct p FROM ProjectEntity p LEFT JOIN FETCH p.tags "
             + "LEFT JOIN FETCH p.networksLinks")
     Page<ProjectEntity> findAll(Pageable pageable);
 
@@ -48,70 +48,96 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
     Page<ProjectEntity> findAllExceptOwnedAndFavouriteWithSortByCreatedAt(Set<String> allProjectIds, Pageable pageable);
 
     @Query(value = """
-             (select distinct pe1_0.*, 
-                             (select count(t2_0.tags_name) 
-                              from public.projects_tags t2_0 
-                              where pe1_0.project_id = t2_0.project_entity_project_id 
-                              and not t2_0.deleted) AS tagsSort 
-             from public.projects pe1_0 
-                    left join public.projects_tags t1_0 on pe1_0.project_id = t1_0.project_entity_project_id 
-                    left join public.tags_index t1_1 on t1_1.name = t1_0.tags_name 
-             where t1_0.tags_name in (select tags_name 
-             from public.users_tags 
-             where user_entity_id = :userId 
-               and not deleted) 
-               and pe1_0.user_id <> :userId 
-               and pe1_0.project_id not in (select project_id 
-             from public.project_subscriptions 
-             where user_id = :userId) 
-               and not pe1_0.deleted) 
-             union distinct 
-             (select distinct pe1_0.*, 
-                             (select count(t2_0.tags_name) 
-                              from public.projects_tags t2_0 
-                              where pe1_0.project_id = t2_0.project_entity_project_id 
-                              and not t2_0.deleted) 
-             from projects pe1_0 
-                    left join public.projects_tags t1_0 on pe1_0.project_id = t1_0.project_entity_project_id 
-                    left join public.tags_index t1_1 on t1_1.name = t1_0.tags_name 
-             where t1_0.tags_name not in (select tags_name 
-             from public.users_tags 
-             where user_entity_id = :userId 
-             and not deleted) 
-               and pe1_0.user_id <> :userId 
-               and pe1_0.project_id not in (select project_id  
-             from public.project_subscriptions 
-             where user_id = :userId) 
-             and not pe1_0.deleted) 
-             order by tagsSort desc, goal_sum desc, created_at desc
+             SELECT DISTINCT pe1_0.*,
+                             (SELECT COUNT(t2_0.tags_name)
+                              FROM public.projects_tags t2_0
+                              WHERE pe1_0.project_id = t2_0.project_entity_project_id
+                                AND t2_0.tags_name IN (SELECT tags_name
+                                                       FROM public.users_tags
+                                                       WHERE user_entity_id = :userId
+                                                         AND NOT deleted)
+                                AND NOT t2_0.deleted) AS tagsSort
+             FROM public.projects pe1_0
+                      LEFT JOIN public.projects_tags t1_0 ON pe1_0.project_id = t1_0.project_entity_project_id
+                      LEFT JOIN public.tags_index t1_1 ON t1_1.name = t1_0.tags_name
+             WHERE t1_0.tags_name IN (SELECT tags_name
+                                      FROM public.users_tags
+                                      WHERE user_entity_id = :userId
+                                        AND NOT deleted)
+               AND pe1_0.user_id <> :userId
+               AND pe1_0.project_id NOT IN (SELECT project_id
+                                            FROM public.project_subscriptions
+                                            WHERE user_id = :userId)
+               AND NOT pe1_0.deleted
+             UNION DISTINCT
+             (SELECT DISTINCT pe1_0.*,
+                              (SELECT COUNT(t2_0.tags_name)
+                               FROM public.projects_tags t2_0
+                               WHERE pe1_0.project_id = t2_0.project_entity_project_id
+                                 AND t2_0.tags_name IN (SELECT tags_name
+                                                        FROM public.users_tags
+                                                        WHERE user_entity_id = :userId
+                                                          AND NOT deleted)
+                                 AND NOT t2_0.deleted)
+              FROM projects pe1_0
+                       LEFT JOIN public.projects_tags t1_0 ON pe1_0.project_id = t1_0.project_entity_project_id
+                       LEFT JOIN public.tags_index t1_1 ON t1_1.name = t1_0.tags_name
+              WHERE t1_0.tags_name NOT IN (SELECT tags_name
+                                           FROM public.users_tags
+                                           WHERE user_entity_id = :userId
+                                             AND NOT deleted)
+                AND pe1_0.user_id <> :userId
+                AND pe1_0.project_id NOT IN (SELECT project_id
+                                             FROM public.project_subscriptions
+                                             WHERE user_id = :userId)
+                AND NOT pe1_0.deleted)
+             ORDER BY tagsSort DESC, goal_sum DESC, created_at DESC;
+             
             """, nativeQuery = true, countQuery = """
-             (select count(project_id) 
-             from public.projects pe1_0 
-                    left join public.projects_tags t1_0 on pe1_0.project_id = t1_0.project_entity_project_id 
-                    left join public.tags_index t1_1 on t1_1.name = t1_0.tags_name 
-             where t1_0.tags_name in (select tags_name 
-             from public.users_tags 
-             where user_entity_id = :userId 
-               and not deleted) 
-               and pe1_0.user_id <> :userId 
-               and pe1_0.project_id not in (select project_id 
-             from public.project_subscriptions 
-             where user_id = :userId) 
-               and not pe1_0.deleted) 
-             union distinct 
-             (select count(project_id)
-             from projects pe1_0 
-                    left join public.projects_tags t1_0 on pe1_0.project_id = t1_0.project_entity_project_id 
-                    left join public.tags_index t1_1 on t1_1.name = t1_0.tags_name 
-             where t1_0.tags_name not in (select tags_name 
-             from public.users_tags 
-             where user_entity_id = :userId 
-             and not deleted) 
-               and pe1_0.user_id <> :userId 
-               and pe1_0.project_id not in (select project_id  
-             from public.project_subscriptions 
-             where user_id = :userId) 
-             and not pe1_0.deleted) 
+             SELECT DISTINCT pe1_0.*,
+                             (SELECT COUNT(t2_0.tags_name)
+                              FROM public.projects_tags t2_0
+                              WHERE pe1_0.project_id = t2_0.project_entity_project_id
+                                AND t2_0.tags_name IN (SELECT tags_name
+                                                       FROM public.users_tags
+                                                       WHERE user_entity_id = :userId
+                                                         AND NOT deleted)
+                                AND NOT t2_0.deleted) AS tagsSort
+             FROM public.projects pe1_0
+                      LEFT JOIN public.projects_tags t1_0 ON pe1_0.project_id = t1_0.project_entity_project_id
+                      LEFT JOIN public.tags_index t1_1 ON t1_1.name = t1_0.tags_name
+             WHERE t1_0.tags_name IN (SELECT tags_name
+                                      FROM public.users_tags
+                                      WHERE user_entity_id = :userId
+                                        AND NOT deleted)
+               AND pe1_0.user_id <> :userId
+               AND pe1_0.project_id NOT IN (SELECT project_id
+                                            FROM public.project_subscriptions
+                                            WHERE user_id = :userId)
+               AND NOT pe1_0.deleted
+             UNION
+             DISTINCT
+             (SELECT DISTINCT pe1_0.*,
+                              (SELECT COUNT(t2_0.tags_name)
+                               FROM public.projects_tags t2_0
+                               WHERE pe1_0.project_id = t2_0.project_entity_project_id
+                                 AND t2_0.tags_name IN (SELECT tags_name
+                                                        FROM public.users_tags
+                                                        WHERE user_entity_id = :userId
+                                                          AND NOT deleted)
+                                 AND NOT t2_0.deleted)
+              FROM projects pe1_0
+                       LEFT JOIN public.projects_tags t1_0 ON pe1_0.project_id = t1_0.project_entity_project_id
+                       LEFT JOIN public.tags_index t1_1 ON t1_1.name = t1_0.tags_name
+              WHERE t1_0.tags_name NOT IN (SELECT tags_name
+                                           FROM public.users_tags
+                                           WHERE user_entity_id = :userId
+                                             AND NOT deleted)
+                AND pe1_0.user_id <> :userId
+                AND pe1_0.project_id NOT IN (SELECT project_id
+                                             FROM public.project_subscriptions
+                                             WHERE user_id = :userId)
+                AND NOT pe1_0.deleted)
             """)
     Page<ProjectEntity> findByUserIdAndSortByTagsCountThenGoalSumOrSortByCreatedAt(
             @Param("userId") String userId, Pageable pageable);

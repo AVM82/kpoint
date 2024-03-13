@@ -1,12 +1,11 @@
 import { Box, Button, Container, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { TestRequest } from 'common/types/projects/testRequest';
-import React, { FC, ReactElement, useState } from 'react';
+import React, { FC, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
-import { ProjectsEditType } from '../../../common/types/projects/projects';
+import { ProjectsEditType } from '../../../common/types/types';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { ProjectCreateStep1Form } from './components/project-create-step-1';
 import { ProjectCreateStep2Form } from './components/project-create-step-2';
@@ -33,6 +32,9 @@ export const ProjectCreate: FC = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    document.body.style.backgroundColor = '#E4E5E9';
+  }, []);
   const handleNext = (): void => {
     const validationErrors = validateForm(projectData);
 
@@ -54,6 +56,7 @@ export const ProjectCreate: FC = () => {
           tags: projectData.tags,
           goalDeadline: projectData.goalDeadline,
           collectDeadline: projectData.collectDeadline,
+          startSum: projectData.startSum,
           networksLinks: { FACEBOOK: 'https://www.facebook.com/example' },
         },
     };
@@ -65,8 +68,8 @@ export const ProjectCreate: FC = () => {
         .then((action): void => {
           navigate('/projects/' + action.url);
         })
-        .catch((reason) => {
-          toast.error(`Can\\'t create new project, because: ${reason}`);
+        .catch(() => {
+          return;
         });
     }
   };
@@ -100,7 +103,7 @@ export const ProjectCreate: FC = () => {
       break;
     }
     case 2: {
-      if (!data.description.trim() || data.description.trim().length > 512) {
+      if (!data.description.trim() || data.description.trim().length > 3000) {
         errors.description = t('errors.project_description');
       }
       break;
@@ -108,6 +111,10 @@ export const ProjectCreate: FC = () => {
     case 3: {
       if (new Date(data.goalDeadline) < new Date(data.collectDeadline)) {
         errors.deadline = t('errors.project_deadline');
+      }
+
+      if (data.startSum < 0) {
+        errors.startSum = t('errors.project_start_sum_negative');
       }
       break;
     }
@@ -132,7 +139,7 @@ export const ProjectCreate: FC = () => {
           projectData={projectData}
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
-          errors={errors}          
+          errors={errors}
         />
       );
     case 3:
@@ -141,7 +148,7 @@ export const ProjectCreate: FC = () => {
           projectData={projectData}
           handleChange={handleChange}
           handleFieldFocus={handleFieldFocus}
-          errors={errors}          
+          errors={errors}
         />
       );
     default:
@@ -150,8 +157,9 @@ export const ProjectCreate: FC = () => {
   };
 
   return (
-    <React.Fragment>
-      <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+    <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+      <Box
+        display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'ceneter'}>
         <Typography component="h1" variant="h4" align="center" sx={{ p: 2 }}>
           {t('new_project')}
         </Typography>
@@ -167,28 +175,39 @@ export const ProjectCreate: FC = () => {
             ))}
           </Stepper>
           {activeStep > steps.length ?  <>{setActiveStep(1)}</> : (
-            <React.Fragment>
+            <Box>
               {getStepContent(activeStep)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 1 && (
-                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1,
+                    backgroundColor: '#535365',
+                    color: '#fff',
+                    letterSpacing: '1.25px',
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    } }}>
                     {t('buttons.back')}
                   </Button>
                 )}
                 <Button
                   variant="contained"
                   onClick={handleNext}
-                  sx={{ mt: 3, ml: 1 }}
+                  sx={{ mt: 3, ml: 1,
+                    backgroundColor: '#535365',
+                    letterSpacing: '1.25px',                    
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    } }}
                 >
                   {activeStep === steps.length
                     ? t('buttons.save')
                     : t('buttons.next')}
                 </Button>
               </Box>
-            </React.Fragment>
+            </Box>
           )}
         </Paper>
-      </Container>
-    </React.Fragment>
+      </Box>
+    </Container>
   );
 };

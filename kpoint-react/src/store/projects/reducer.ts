@@ -77,17 +77,40 @@ const projectSlice = createSlice({
     editDescriptionLocally: (state, action) => {
       state.project.description = action.payload;
     },
+    editSummaryLocally: (state, action) => {
+      state.project.summary = action.payload;
+    },
     editLogoLocally: (state, action) => {
       state.project.logoImgUrl = action.payload;
+    },
+    addContactLocally: (state, action) => {
+      Object.keys(state.project.networksLinks).forEach((item) => {
+
+        if (item !== action.payload.linkName) {
+          state.project.networksLinks[action.payload.linkName as
+            keyof typeof state.project.networksLinks] = action.payload.link;
+        }
+      });
+    },
+    deleteContactLocally: (state, action) => {
+      state.project.networksLinks = action.payload;
     },
     subscribeToProjectLocally: (state, action) => {
       const content = state.projects?.content;
       const proj = content?.filter(
         (content) => content.projectId === action.payload,
       );
+
+      if (state.projects) {
+        state.projects.content = state.projects.content.filter(
+          (content) => content.projectId !== action.payload,
+        );
+      }
       proj?.forEach((p) => (p.isFollowed = true));
+
     },
-    unsubscribeFromProjectLocally: (state, action) => {
+    unsubscribeFromProjectLocally: (state
+      , action) => {
       state.project.isFollowed = action.payload;
     },
     subscribeToProjectPage: (state, action) => {
@@ -150,15 +173,21 @@ const {
   subscribeToProjectLocally,
   subscribeToProjectPage,
   unsubscribeFromProjectLocally,
+  editSummaryLocally,
+  addContactLocally,
+  deleteContactLocally,
 } = projectSlice.actions;
 
 const projectReducer = projectSlice.reducer;
 
 export {
+  addContactLocally,
   addTagLocally,
+  deleteContactLocally,
   deleteTagLocally,
   editDescriptionLocally,
   editLogoLocally,
+  editSummaryLocally,
   editTitleLocally,
   projectReducer,
   subscribeToProjectLocally,

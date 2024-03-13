@@ -1,34 +1,21 @@
 import { TextField } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import { Editor } from 'lexical/lexical-components/lexical-editor/lexical-editor';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { EditProjectsPropsType } from '../../../../common/types/projects/projects';
+import { EditProjectsPropsType } from '../../../../common/types/types';
+import { descriptionPlaceholder } from './project-default';
 
 export const ProjectCreateStep2Form: FC<EditProjectsPropsType> = (
-  { projectData, handleChange, handleFieldFocus, errors }) => {
+  {  handleChange }) => {
 
   const { t } = useTranslation();
 
   return (
     <Grid container rowSpacing={3}>
       <Grid item xs={12}>
-        <TextField
-          label={t('description')}
-          fullWidth
-          value={projectData.description}
-          onChange={(e): void => handleChange('description', e.target.value)}
-          onFocus={(): void => handleFieldFocus('description')}
-          error={!!errors.description}
-          helperText={errors.description}
-          // type={'text'}
-          required
-          placeholder={t('project_idea')}
-          multiline
-          rows={4}
-          // autoComplete="given-name"
-          variant="outlined"
-        />
+        <Editor onCreate={handleChange} description={descriptionPlaceholder()}/>
       </Grid>
       <Grid item xs={12} mt={6}>
         <TextField

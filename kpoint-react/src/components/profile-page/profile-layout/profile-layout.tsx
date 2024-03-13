@@ -1,13 +1,14 @@
 import { Box, Typography } from '@mui/material';
 import { StorageKey } from 'common/enums/enums';
 import { ImageUploader } from 'components/common/common';
-import React, { FC, ReactNode, useEffect, useState } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { storage } from 'services/services';
 import { profileAction } from 'store/actions';
 
+import { UserType } from '../../../common/types/types';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { MyProfileMenuButton } from '../my-profile/my-profile-button';
 
@@ -19,16 +20,10 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const user: UserType = JSON.parse(storage.getItem(StorageKey.USER) || '{}') ;
 
-  const [ avatarImgUrl, setAvatarImgUrl ] = useState('');
-
-  useEffect(() => {
-    const currentUser = storage.getItem(StorageKey.USER);
-
-    if (currentUser) {
-      setAvatarImgUrl(JSON.parse(currentUser).avatarImgUrl);
-    }
-  }, []);
+  const [ avatarImgUrl, setAvatarImgUrl ]
+    = useState(user.avatarImgUrl || '');
 
   const handleLogout = (): void => {
     storage.removeItem(StorageKey.TOKEN);
@@ -46,6 +41,7 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
         if (currentUser) {
           const user = JSON.parse(currentUser);
           user.avatarImgUrl = action.message;
+          setAvatarImgUrl(action.message);
           storage.setItem(StorageKey.USER, JSON.stringify(user));
           toast.success(t('success.profile_avatar_updated'));
         }
@@ -54,11 +50,11 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
 
   const handleClick = (itemName: string): void => {
     switch (itemName) {
-    case 'myProjects':
-      // navigate('/userName');
+    case 'backToProjects':
+      navigate(`/${user.username}`);
       break;
-    case 'newProject':
-      // navigate('/projects/new');
+    case 'params':
+      toast.info(t('info.develop'));
       break;
     case 'profileSettings':
       navigate('/settings/profile');
@@ -97,7 +93,7 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
           textAlign={'center'}
           width={'30%'}
         >
-            Мій профіль
+          {t('menu.my_profile')}
         </Typography>
       </Box>
       <Box
@@ -116,10 +112,9 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
             display={'flex'}
             justifyContent={'center'}
             alignItems={'center'}
-            height={'200px'}
-            width={'200px'}
+            maxWidth={'200px'}
+            maxHeight={'200px'}
           >
-            {/* <Box component={'img'} alt="avatar" src={profileImg}></Box> */}
             <ImageUploader
               component="profile-page"
               xs={12}
@@ -135,22 +130,24 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
             }}
           >
             <MyProfileMenuButton
-              label="Профіль"
-              onClick={(): void => handleClick('profile')}
+              label={t('menu.back_to_projects')}
+              onClick={(): void => handleClick('backToProjects')}
             />
             <MyProfileMenuButton
-              label="Налаштування профіля"
+              label={t('menu.profile_settings')}
               onClick={(): void => handleClick('profileSettings')}
             />
             <MyProfileMenuButton
-              label="Параметри"
+              label={t('menu.params')}
               onClick={(): void => handleClick('params')}
             />
             <MyProfileMenuButton
-              label="Зміна пароля"
+              label={t('menu.change_password')}
               onClick={(): void => handleClick('changePassword')}
             />
-            <MyProfileMenuButton label="Вихід" onClick={handleLogout} />
+            <MyProfileMenuButton
+              label={t('menu.logout')}
+              onClick={handleLogout} />
           </Box>
         </Box>
         <Box>
