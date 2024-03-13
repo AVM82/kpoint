@@ -16,17 +16,32 @@ import Typography from '@mui/material/Typography';
 import { GetAllProjectsType } from 'common/types/types';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 import { SubscribeButton } from './subscribe-button';
 
 interface ProjectCardProps {
   project: GetAllProjectsType;
   isAuthenticated: boolean;
+  maxPageElements: number;
+  page: number;
 }
 
-const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
+const ProjectCard: FC<ProjectCardProps> = ({
+  project,
+  isAuthenticated,
+  maxPageElements,
+  page,
+}) => {
   const { t } = useTranslation();
   const [showControls, setShowControls] = useState(false);
+  const handleHelpButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
+
+  const handleDonateButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
 
   return (
     <Card sx={{ maxWidth: '370px' }}>
@@ -81,6 +96,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
                 }}
               >
                 <Button
+                  onClick={handleHelpButtonClick}
                   size="medium"
                   startIcon={
                     <PeopleOutlineIcon
@@ -110,9 +126,12 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
                     projectId={project.projectId}
                     isAuthenticated={isAuthenticated}
                     isFollowed={project.isFollowed ?? false}
+                    maxPageElements={maxPageElements}
+                    page={page}
                   />
                 }
                 <Button
+                  onClick={handleDonateButtonClick}
                   size="medium"
                   startIcon={
                     <AttachMoneyIcon
@@ -153,7 +172,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
       <CardActions>
         <Stack direction="row" spacing={1} width={'70%'}>
           {project.tags.map((tag, index) =>
-            index < 3 ? (
+            index < 2 ? (
               <Chip
                 label={tag}
                 key={tag}

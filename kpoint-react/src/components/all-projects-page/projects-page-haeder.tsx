@@ -1,12 +1,13 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Id, toast } from 'react-toastify';
 
 import { FilterOption } from './filter-option';
 
 const ProjectsPageHeader: FC = () => {
   const { t } = useTranslation();
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen] = useState(false);
 
   return (
     <Box
@@ -23,6 +24,7 @@ const ProjectsPageHeader: FC = () => {
       <Box display={'flex'} justifyContent={'space-between'} width={'100%'}>
         <TextField
           label={t('search_field')}
+          disabled
           sx={{
             display: 'flex',
             justifyContent: 'center',
@@ -41,8 +43,10 @@ const ProjectsPageHeader: FC = () => {
               width: '86px',
               border: '2px solid rgb(71, 66, 66)',
               borderRadius: '4px',
+              color: '#474242',
+              textTransform: 'none',
             }}
-            onClick={(): void => setFilterOpen(!filterOpen)}
+            onClick={(): Id => toast.info(t('info.develop'))}
           >
             Фільтр
           </Button>
@@ -86,7 +90,8 @@ const ProjectsPageHeader: FC = () => {
         justifyContent={'end'}
         width={'100%'}
       >
-        <Button sx={{ border: '2px solid rgb(130, 130, 130)' }}>
+        <Button sx={{ border: '2px solid rgb(130, 130, 130)',
+          color: '#474242', textTransform: 'none' }} onClick={(): Id => toast.info(t('info.develop'))}>
           Сортування
         </Button>
       </Box>

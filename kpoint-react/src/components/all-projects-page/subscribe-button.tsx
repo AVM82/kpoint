@@ -19,11 +19,15 @@ interface SubscribeButtonProps {
   projectId: string;
   isAuthenticated: boolean;
   isFollowed: boolean;
+  maxPageElements: number;
+  page: number;
 }
 
 const SubscribeButton: FC<SubscribeButtonProps> = ({
   projectId,
   isFollowed,
+  maxPageElements,
+  page,
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -34,12 +38,22 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
     if (isProcessing) return;
     setIsProcessing(true);
 
+    if (!user) {
+      toast.info(t('follow_unauthenticated_message'));
+    }
+
     if (user && !isFollowed) {
       await dispatch(
         projectAction.subscribeToProject({ projectId: projectId }),
       );
       dispatch(subscribeToProjectLocally(projectId));
       toast.success(t('buttons.user_subscribed'));
+      dispatch(
+        projectAction.getAllProjectsDefault({
+          size: maxPageElements,
+          number: page - 1,
+        }),
+      );
     } else if (user && isFollowed) {
       dispatch(projectAction.unSubscribe({ projectId: projectId }));
       dispatch(unsubscribeFromProjectLocally(!isFollowed));

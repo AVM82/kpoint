@@ -123,6 +123,11 @@ public class ProfileService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.user.cannot-updated"));
         }
+        if (!email.equals(patchedDto.email()) && userRepository.existsByEmail(patchedDto.email())) {
+            log.warn("cannot update user data: email {} already", patchedDto.email());
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    translator.getLocaleMessage("exception.user.register-email-failed", patchedDto.email()));
+        }
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         UserEntity updatedUser = userRepository.save(userMapper.changeDtoToEntity(patchedDto, userEntity));
         UserEntity savedUser = userRepository.save(updatedUser);

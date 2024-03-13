@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
-import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { suggestionAction } from 'store/actions';
@@ -37,6 +37,10 @@ const SuggestionsPage: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, status]);
 
+  useEffect(() => {
+    document.body.style.backgroundColor = '#fff';
+  }, []);
+  
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
       suggestionAction.getAllSuggestionsDefault({

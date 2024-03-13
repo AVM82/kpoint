@@ -11,6 +11,8 @@ public record UserChangeDto(
 
         String lastName,
 
+        String description,
+
         Set<String> tags
 ) {
 }
