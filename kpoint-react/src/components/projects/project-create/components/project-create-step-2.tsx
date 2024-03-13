@@ -16,22 +16,6 @@ export const ProjectCreateStep2Form: FC<EditProjectsPropsType> = (
     <Grid container rowSpacing={3}>
       <Grid item xs={12}>
         <Editor onCreate={handleChange} description={descriptionPlaceholder()}/>
-        {/* <TextField
-          label={t('description')}
-          fullWidth
-          value={projectData.description}
-          onChange={(e): void => handleChange('description', e.target.value)}
-          onFocus={(): void => handleFieldFocus('description')}
-          error={!!errors.description}
-          helperText={errors.description}
-          // type={'text'}
-          required
-          placeholder={t('project_idea')}
-          multiline
-          rows={4}
-          // autoComplete="given-name"
-          variant="outlined"
-        /> */}
       </Grid>
       <Grid item xs={12} mt={6}>
         <TextField

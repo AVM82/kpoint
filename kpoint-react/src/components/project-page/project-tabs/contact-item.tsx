@@ -6,7 +6,7 @@ import { getSocialMediaIcon } from 'utils/function-social-media-icons';
 interface ContactItemProps {
   network: string;
   link: string;
-  handleDelete: (itemName: string, value: string) => void;
+  handleDelete: (value: string) => void;
   canIEditThis: () => boolean;
 }
 
@@ -41,7 +41,7 @@ const ContactItem: FC<ContactItemProps> = ({ network, link, handleDelete, canIEd
           }}
           onClick={(): void => {
             setLinkHover(!linkHover);
-            handleDelete('link', network);
+            handleDelete(network);
           }}
         >
           <RemoveIcon fontSize="small" />
