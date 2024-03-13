@@ -46,7 +46,7 @@ const ProjectsPageHeader: FC = () => {
               color: '#474242',
               textTransform: 'none',
             }}
-            onClick={(): Id => toast.info('В розробці')}
+            onClick={(): Id => toast.info(t('info.develop'))}
           >
             Фільтр
           </Button>
@@ -91,7 +91,7 @@ const ProjectsPageHeader: FC = () => {
         width={'100%'}
       >
         <Button sx={{ border: '2px solid rgb(130, 130, 130)',
-          color: '#474242', textTransform: 'none' }} onClick={(): Id => toast.info('В розробці')}>
+          color: '#474242', textTransform: 'none' }} onClick={(): Id => toast.info(t('info.develop'))}>
           Сортування
         </Button>
       </Box>
