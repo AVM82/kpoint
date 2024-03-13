@@ -77,6 +77,7 @@ const MyProjects: FC = () => {
               title={project.title}
               url={project.url}
               logoImgUrl={project.logoImgUrl}
+              collectedSum={project.collectedSum}
             />
           ))}
         {response && response?.content.length >= 1 &&

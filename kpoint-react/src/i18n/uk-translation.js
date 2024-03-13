@@ -14,6 +14,7 @@ const ukTranslation = {
   confirm_password: 'Повторіть пароль',
   avatar_url: 'Посилання на аватар',
   tags: 'Теги',
+  contact: 'контакт',
   already_have_an_account: 'Вже маєте акаунт? Увійти',
   welcome: 'З поверненням!',
   sign_in_to_continue: 'Увійдіть, щоб продовжити',
@@ -30,6 +31,7 @@ const ukTranslation = {
   myProjects: 'Мої проєкти',
   favoriteProjects: 'Улюблені проєкти',
   recommendedProjects: 'Рекомендовані проєкти',
+  temp_contacts_msg: 'Зараз підтримуються посилання лише на Facebook, Instagram і Youtube',
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',
@@ -58,7 +60,8 @@ const ukTranslation = {
     create_project: 'Створити проєкт',
     suggestions: 'Пропозиції',
     edit: 'Редагувати',
-    cancel: 'СКАСУВАТИ',
+    add: 'Додати',
+    cancel: 'Скасувати',
     user_subscribed: 'Ви успішно підписані на проект',
     user_unsubscribed: 'Ви успішно відписалися від проекту',
   },
@@ -120,6 +123,12 @@ const ukTranslation = {
     invalid_username: 'Невірне іʼмя користувача. Поле повинне містити від 1 символа',
     invalid_firstname: 'Невірне іʼмя',
     invalid_lastname: 'Невірне прізвище',
+    invalid_tags: 'Tеги мають бути унікальні',
+    invalid_link: 'Це посилання не можна додати',
+    description_length: 'Опис має мати хоча б один символ',
+    summary_length: 'Короткий опис має мати хоча б один символ',
+    duplicate_links: 'Контакти не можуть повторюватись',
+
   },
   success: {
     profile_email_updated: 'Електронна пошта змінена. Щоб продовжити, увійдіть з новою поштою',

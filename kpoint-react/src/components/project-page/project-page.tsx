@@ -200,6 +200,7 @@ const ProjectPage: FC = () => {
       }
 
       dispatch(addTagLocally(bodyData[0].value as string));
+      toast.success('Тег додано');
       setTagsClicked(!tagsClicked);
       break;
 
@@ -622,10 +623,7 @@ const ProjectPage: FC = () => {
           {tabClicked === 'contacts' && (
             <Contacts
               project={project}
-              onChange={changeHandler}
-              onSubmit={submitHandler}
-              canIEditThis={canIEditThis}
-              handleDelete={handleDelete}
+              canIEditThis={canIEditThis}              
             />
           )}
           {tabClicked === 'comments' && <Comments />}

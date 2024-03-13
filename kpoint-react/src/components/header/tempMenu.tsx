@@ -37,6 +37,10 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
     navigate(`${user.username}`);
   };
 
+  const handleClickSettings = (): void => {
+    navigate('/settings/profile');
+  };
+
   const handleLogout = (): void => {
     storage.removeItem(StorageKey.TOKEN);
     storage.removeItem(StorageKey.USER);
@@ -110,7 +114,7 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
           sx={{
             marginBottom: '5px',
           }}
-          onClick={handleClose}>
+          onClick={handleClickSettings}>
           {t('menu.settings')}
         </MenuItem>
         <MenuItem onClick={handleLogout}>
