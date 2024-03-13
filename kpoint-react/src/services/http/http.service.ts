@@ -80,7 +80,7 @@ class Http {
       if (response.status === 401) {
         this.#storage.removeItem(StorageKey.USER);
         this.#storage.removeItem(StorageKey.TOKEN);
-        // window.location.href = '/sign-in';
+        window.location.href = '/sign-in';
         parsedException.message = 'Дія токена закінчилась. Перелогіньтесь';
       }
 
