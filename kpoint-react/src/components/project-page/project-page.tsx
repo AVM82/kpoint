@@ -430,6 +430,7 @@ const ProjectPage: FC = () => {
                     letterSpacing: '0.5px',
                     textTransform: 'none',
                     gap: '5px',
+                    display: { xs: 'none', lg: 'block' },
                   }}
                 >
                   <PersonAddIcon fontSize="small" /> {t('buttons.support')}
@@ -451,6 +452,7 @@ const ProjectPage: FC = () => {
                     lineHeight: '100%',
                     letterSpacing: '0.5px',
                     textTransform: 'none',
+                    display: { xs: 'none', lg: 'block' },
                   }}
                 >
                   <AttachMoneyIcon fontSize="small" />
