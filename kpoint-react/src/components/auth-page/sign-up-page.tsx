@@ -80,6 +80,10 @@ const SignUpPage: FC = () => {
 
   const [tag, setTag] = useState('');
 
+  React.useEffect(() => {
+    document.body.style.backgroundColor = '#E4E5E9';
+  }, []);
+
   const getChipTags = (): ChipTag[] => {
     const result: ChipTag[] = [];
     for (let i = 0; i < formData.tags.length; i++) {
@@ -245,227 +249,240 @@ const SignUpPage: FC = () => {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: '#757575' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            {t('sign_up')}
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel required>{t('first_name')}</FormLabel>
-                  <TextField
-                    autoComplete="given-name"
-                    name="firstName"
-                    required
-                    fullWidth
-                    id="firstName"
-                    onChange={handleOnChange}
-                    onFocus={(): void => handleFieldFocus('firstName')}
-                    autoFocus
-                    error={!!errors.firstName}
-                    helperText={errors.firstName}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              borderRadius: '8px',
+              padding: '80px',
+              bgcolor: '#fff',
+              minWidth: '600px',
+              maxWidth: '600px',
+              marginBottom: '50px',
+            }}>
+            <Avatar sx={{ m: 1, bgcolor: '#757575' }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              {t('sign_up')}
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                    <FormLabel required>{t('first_name')}</FormLabel>
+                    <TextField
+                      autoComplete="given-name"
+                      name="firstName"
+                      required
+                      fullWidth
+                      id="firstName"
+                      onChange={handleOnChange}
+                      onFocus={(): void => handleFieldFocus('firstName')}
+                      autoFocus
+                      error={!!errors.firstName}
+                      helperText={errors.firstName}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                    <FormLabel required>{t('last_name')}</FormLabel>
+                    <TextField
+                      required
+                      fullWidth
+                      id="lastName"
+                      name="lastName"
+                      autoComplete="family-name"
+                      onChange={handleOnChange}
+                      onFocus={(): void => handleFieldFocus('lastName')}
+                      error={!!errors.lastName}
+                      helperText={errors.lastName}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                    <FormLabel required>{t('username')}</FormLabel>
+                    <TextField
+                      required
+                      fullWidth
+                      id="username"
+                      name="username"
+                      autoComplete="username"
+                      onChange={handleOnChange}
+                      onFocus={(): void => handleFieldFocus('username')}
+                      error={!!errors.username}
+                      helperText={errors.username}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                    <FormLabel required>{t('email')}</FormLabel>
+                    <TextField
+                      required
+                      fullWidth
+                      id="email"
+                      name="email"
+                      value={userData.email || formData.email}
+                      autoComplete="email"
+                      onChange={handleOnChange}
+                      onFocus={(): void => handleFieldFocus('email')}
+                      disabled={!!userData.email}
+                      error={!!errors.email}
+                      helperText={errors.email}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <InputPassword
+                    label={t('password')}
+                    id="password"
+                    handleChange={handleOnChange}
+                    handleFocus={(): void => handleFieldFocus('password')}
+                    error={!!errors.password}
                   />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel required>{t('last_name')}</FormLabel>
-                  <TextField
-                    required
-                    fullWidth
-                    id="lastName"
-                    name="lastName"
-                    autoComplete="family-name"
-                    onChange={handleOnChange}
-                    onFocus={(): void => handleFieldFocus('lastName')}
-                    error={!!errors.lastName}
-                    helperText={errors.lastName}
+                </Grid>
+                <Grid item xs={12}>
+                  <InputPassword
+                    label={t('confirm_password')}
+                    id="confirmPassword"
+                    handleChange={handleOnChangeConfirmPassword}
+                    handleFocus={(): void => handleFieldFocus('confirmPassword')}
+                    error={!!errors.confirmPassword}
                   />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel required>{t('username')}</FormLabel>
-                  <TextField
-                    required
-                    fullWidth
-                    id="username"
-                    name="username"
-                    autoComplete="username"
-                    onChange={handleOnChange}
-                    onFocus={(): void => handleFieldFocus('username')}
-                    error={!!errors.username}
-                    helperText={errors.username}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel required>{t('email')}</FormLabel>
-                  <TextField
-                    required
-                    fullWidth
-                    id="email"
-                    name="email"
-                    value={userData.email || formData.email}
-                    autoComplete="email"
-                    onChange={handleOnChange}
-                    onFocus={(): void => handleFieldFocus('email')}
-                    disabled={!!userData.email}
-                    error={!!errors.email}
-                    helperText={errors.email}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <InputPassword
-                  label={t('password')}
-                  id="password"
-                  handleChange={handleOnChange}
-                  handleFocus={(): void => handleFieldFocus('password')}
-                  error={!!errors.password}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputPassword
-                  label={t('confirm_password')}
-                  id="confirmPassword"
-                  handleChange={handleOnChangeConfirmPassword}
-                  handleFocus={(): void => handleFieldFocus('confirmPassword')}
-                  error={!!errors.confirmPassword}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel>{t('description')}</FormLabel>
-                  <TextField
-                    fullWidth
-                    name="description"
-                    id="description"
-                    onChange={handleOnChange}
-                    onFocus={(): void => handleFieldFocus('description')}
-                    error={!!errors.description}
-                    helperText={errors.description}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
-                  <FormLabel required>{t('tags')}</FormLabel>
-                  <OutlinedInput
-                    type={'text'}
-                    id="userTags"
-                    name="userTags"
-                    value={tag}
-                    fullWidth
-                    error={!!errors.tags}
-                    onChange={handleOnChangeTag}
-                    onFocus={(): void => handleFieldFocus('tags')}
-                    onKeyDown={(event): void => handleAddTag(event)}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={handleClickAddTag}
-                          onMouseDown={handleMouseDownAddTag}
-                          edge="end"
-                        >
-                          <AddCircleOutlineIcon/>
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                  <FormHelperText id="userTags-error"
-                    error={!!errors.tags}>
-                    {errors.tags ||
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                    <FormLabel>{t('description')}</FormLabel>
+                    <TextField
+                      fullWidth
+                      name="description"
+                      id="description"
+                      onChange={handleOnChange}
+                      onFocus={(): void => handleFieldFocus('description')}
+                      error={!!errors.description}
+                      helperText={errors.description}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{ mt: 1 }} variant="outlined">
+                    <FormLabel required>{t('tags')}</FormLabel>
+                    <OutlinedInput
+                      type={'text'}
+                      id="userTags"
+                      name="userTags"
+                      value={tag}
+                      fullWidth
+                      error={!!errors.tags}
+                      onChange={handleOnChangeTag}
+                      onFocus={(): void => handleFieldFocus('tags')}
+                      onKeyDown={(event): void => handleAddTag(event)}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleClickAddTag}
+                            onMouseDown={handleMouseDownAddTag}
+                            edge="end"
+                          >
+                            <AddCircleOutlineIcon/>
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    />
+                    <FormHelperText id="userTags-error"
+                      error={!!errors.tags}>
+                      {errors.tags ||
                       'Введіть від 1 до 10 тегів, розділяючи їх "ENTER"'}
-                  </FormHelperText>
-                </FormControl>
-                <Grid
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
-                    gridAutoRows: 'auto',
-                    rowGap: '5px',
-                    justifyContent: 'center',
-                    listStyle: 'none',
-                    p: 0.5,
-                    m: 0,
-                  }}
-                  component="ul"
-                >
-                  {chipTags.map((data) => {
-                    return (
-                      <ListItem
-                        alignItems={'center'}
-                        key={data.key}
-                        disablePadding
-                      >
-                        <Chip
-                          sx={{
-                            height: 'auto',
-                            '& .MuiChip-label': {
-                              display: 'block',
-                              whiteSpace: 'normal',
-                            },
-                          }}
-                          label={data.tag}
-                          onDelete={handleDeleteTag(data)}
-                        />
-                      </ListItem>
-                    );
-                  })}
+                    </FormHelperText>
+                  </FormControl>
+                  <Grid
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
+                      gridAutoRows: 'auto',
+                      rowGap: '5px',
+                      justifyContent: 'center',
+                      listStyle: 'none',
+                      p: 0.5,
+                      m: 0,
+                    }}
+                    component="ul"
+                  >
+                    {chipTags.map((data) => {
+                      return (
+                        <ListItem
+                          alignItems={'center'}
+                          key={data.key}
+                          disablePadding
+                        >
+                          <Chip
+                            sx={{
+                              height: 'auto',
+                              '& .MuiChip-label': {
+                                display: 'block',
+                                whiteSpace: 'normal',
+                              },
+                            }}
+                            label={data.tag}
+                            onDelete={handleDeleteTag(data)}
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </Grid>
+                </Grid>
+                {registerError && (
+                  <Typography color="error">{registerError}</Typography>
+                )}
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, bgcolor: '#535365',
+                  '&:hover': {
+                    backgroundColor: 'rgb(84, 84, 160)',
+                  } }}
+              >
+                {t('sign_up')}
+              </Button>
+              <Divider sx={{
+                width: '100%',
+                margin: '20px 0',
+              }}/>
+              <Grid item container justifyContent={'center'}>
+                <Typography marginBottom={'10px'} textAlign={'center'} justifySelf={'center'}>
+                Або зареєструватись за допомгою:
+                </Typography>
+              </Grid>
+              <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <GoogleOAuthProvider clientId={ENV.OAUTH2_GOOGLE_CLIENT_ID}>
+                  <OAuth2></OAuth2>
+                </GoogleOAuthProvider>
+              </Grid>
+              <Divider sx={{
+                width: '100%',
+                margin: '20px 0',
+              }}/>
+              <Grid container justifyContent="flex-end">
+                <Grid item>
+                  <Link href={'/sign-in'} variant="body2">
+                    {t('already_have_an_account')}
+                  </Link>
                 </Grid>
               </Grid>
-              {registerError && (
-                <Typography color="error">{registerError}</Typography>
-              )}
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2, bgcolor: '#535365',
-                '&:hover': {
-                  backgroundColor: 'rgb(84, 84, 160)',
-                } }}
-            >
-              {t('sign_up')}
-            </Button>
-            <Divider sx={{
-              width: '100%',
-              margin: '20px 0',
-            }}/>
-            <Grid item container justifyContent={'center'}>
-              <Typography marginBottom={'10px'} textAlign={'center'} justifySelf={'center'}>
-                Або зареєструватись за допомгою:
-              </Typography>
-            </Grid>
-            <Grid
-              container
-              spacing={0}
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <GoogleOAuthProvider clientId={ENV.OAUTH2_GOOGLE_CLIENT_ID}>
-                <OAuth2></OAuth2>
-              </GoogleOAuthProvider>
-            </Grid>
-            <Divider sx={{
-              width: '100%',
-              margin: '20px 0',
-            }}/>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href={'/sign-in'} variant="body2">
-                  {t('already_have_an_account')}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
+            </Box>
+          </Box>  
         </Box>
       </Container>
     </ThemeProvider>

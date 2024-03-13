@@ -3,7 +3,7 @@ import { Container } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
-import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Masonry from 'react-responsive-masonry';
 import { projectAction } from 'store/actions';
@@ -34,6 +34,10 @@ const ProjectsPage: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
+  useEffect(() => {
+    document.body.style.backgroundColor = '#fff';
+  }, []);
+  
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
       projectAction.getAllProjectsDefault({

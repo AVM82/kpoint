@@ -14,6 +14,7 @@ const ukTranslation = {
   confirm_password: 'Повторіть пароль',
   avatar_url: 'Посилання на аватар',
   tags: 'Теги',
+  contact: 'контакт',
   already_have_an_account: 'Вже маєте акаунт? Увійти',
   welcome: 'З поверненням!',
   sign_in_to_continue: 'Увійдіть, щоб продовжити',
@@ -33,6 +34,10 @@ const ukTranslation = {
     no_my_projects: 'Ви ще не створили жодного проєкту',
     no_followed_projects: 'Ви ще не слідкуєте за жодним проєктом',
   },
+  myProjects: 'Мої проєкти',
+  favoriteProjects: 'Улюблені проєкти',
+  recommendedProjects: 'Рекомендовані проєкти',
+  temp_contacts_msg: 'Зараз підтримуються посилання лише на Facebook, Instagram і Youtube',
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',
@@ -61,7 +66,8 @@ const ukTranslation = {
     create_project: 'Створити проєкт',
     suggestions: 'Пропозиції',
     edit: 'Редагувати',
-    cancel: 'СКАСУВАТИ',
+    add: 'Додати',
+    cancel: 'Скасувати',
     user_subscribed: 'Ви успішно підписані на проект',
     user_unsubscribed: 'Ви успішно відписалися від проекту',
   },
@@ -111,6 +117,8 @@ const ukTranslation = {
       'Опис проєкта не може бути пуста або мати більше 3000 символів',
     project_deadline:
       'Дата дедлайну збору не може бути більшою за дату дедлайну повернення',
+    project_start_sum_negative:
+      'Сумма старту не може бути відʼємною',
     suggestion_size: 'Поле повинне містити від 1 до 200 символів',
     profile_password_not_same: 'Введені нові паролі не збігаються',
     profile_password_new_current:
@@ -118,11 +126,17 @@ const ukTranslation = {
     can_not_login: 'Не можу увійти',
     profile_can_not_update: 'Не вдається оновити профіль',
     sign_up_password_not_same: 'Введені паролі не збігаються',
-    password_short: 'Введений пароль короткий',
+    password_short: 'Введений пароль пустий',
     invalid_email: 'Невірна електронна пошта',
     invalid_username: 'Невірне імʼя користувача. Поле повинне містити від 1 символа',
     invalid_firstname: 'Невірне імʼя',
     invalid_lastname: 'Невірне прізвище',
+    invalid_tags: 'Tеги мають бути унікальні',
+    invalid_link: 'Це посилання не можна додати',
+    description_length: 'Опис має мати хоча б один символ',
+    summary_length: 'Короткий опис має мати хоча б один символ',
+    duplicate_links: 'Контакти не можуть повторюватись',
+
   },
   success: {
     profile_email_updated: 'Електронна пошта змінена. Щоб продовжити, увійдіть з новою поштою',
@@ -140,7 +154,7 @@ const ukTranslation = {
   menu: {
     account_settings: 'Налаштування аккаунта',
     profile_settings: 'Налаштування профіля',
-    profile: 'Профіль',
+    back_to_projects: 'Назад до проєктів',
     my_account: 'Мій аккаунт',
     my_profile: 'Мій профіль',
     add_another_account : 'Добавити інший аккаунт',
