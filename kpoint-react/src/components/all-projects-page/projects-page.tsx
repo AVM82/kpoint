@@ -68,7 +68,13 @@ const ProjectsPage: FC = () => {
       <Masonry columnsCount={4} gutter={'10px'}>
         {
           (projects?.content || []).map((project) => (
-            <ProjectCard project={project} isAuthenticated={isAuthenticated} key={project.title}/>
+            <ProjectCard
+              project={project}
+              isAuthenticated={isAuthenticated}
+              maxPageElements={maxPageElements}
+              page={page}
+              key={project.title}
+            />
           ))}
       </Masonry>
       <Grid
