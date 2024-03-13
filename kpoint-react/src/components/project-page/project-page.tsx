@@ -222,6 +222,7 @@ const ProjectPage: FC = () => {
                 {token && canIEditThis() ? (
                   <ImageUploader
                     xs={5}
+                    lg={5}
                     component="project-page"
                     handleChange={changeHandlerPhoto}
                     imageUrl={project.logoImgUrl}

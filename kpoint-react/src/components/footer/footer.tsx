@@ -107,7 +107,7 @@ const Footer: FC = () => {
             {t('footer_sign')}
           </Typography>
         </Box>
-        <Box>
+        <Box sx={{ display: { xs: 'flex', lg: 'block' } }}>
           <Link href="/" underline="none" color="#FFFFFF" sx={{ margin: 1 }} fontSize={16} padding={'2px'}>
             {t('projects')}
           </Link>

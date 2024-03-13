@@ -133,10 +133,18 @@ export const ProfilePassword: FC = () => {
             error={errors.confirmPassword}
           />
         </Grid>
-        <Grid>
+        <Grid marginTop={'20px'}>
           <Button
             type="submit"
             onClick={handleSubmit}
+            variant="contained"
+            sx={{
+              backgroundColor: '#535365',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: 'rgb(84, 84, 160)',
+              },
+            }}
           >
             {t('buttons.save')}
           </Button>

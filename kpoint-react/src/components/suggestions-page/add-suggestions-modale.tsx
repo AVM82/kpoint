@@ -16,19 +16,6 @@ import { suggestionAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/hooks';
 
-const style = {
-  position: 'absolute' as const,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-  width: '540px',
-  height: '340px',
-  borderRadius: '6px',
-};
-
 const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: number, }> = ({
   handleCloseModal,
 
@@ -71,7 +58,19 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 4,
+          minWidth: { xs: '350px', lg: '600px' },
+          maxWidth: { xs: '350px', lg: '600px' },
+          height: '340px',
+          borderRadius: '6px',
+        }}>
           <IconButton
             aria-label="Close"
             onClick={handleCloseModal}
@@ -105,8 +104,8 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
               position: 'absolute',
               right: 33,
             }}>{`${inputText.length}/200`}</Typography>
-            <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
-              <Button type="submit" variant="contained" sx={{ mt: 2, bgcolor: '#535365',
+            <Grid container justifyContent="flex-end" marginTop={'25px'}>
+              <Button type="submit" variant="contained" sx={{ bgcolor: '#535365',
                 '&:hover': {
                   backgroundColor: 'rgb(84, 84, 160)',
                 } }}>
