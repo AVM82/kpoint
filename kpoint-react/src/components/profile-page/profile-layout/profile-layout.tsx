@@ -1,11 +1,14 @@
 import { Box, Typography } from '@mui/material';
 import { StorageKey } from 'common/enums/enums';
 import { ImageUploader } from 'components/common/common';
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { storage } from 'services/services';
+import { profileAction } from 'store/actions';
 
+import { useAppDispatch } from '../../../hooks/hooks';
 import { MyProfileMenuButton } from '../my-profile/my-profile-button';
 
 type Props = {
@@ -14,6 +17,18 @@ type Props = {
 
 export const ProfileLayout:FC<Props> = ({ children })=> {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+
+  const [ avatarImgUrl, setAvatarImgUrl ] = useState('');
+
+  useEffect(() => {
+    const currentUser = storage.getItem(StorageKey.USER);
+
+    if (currentUser) {
+      setAvatarImgUrl(JSON.parse(currentUser).avatarImgUrl);
+    }
+  }, []);
 
   const handleLogout = (): void => {
     storage.removeItem(StorageKey.TOKEN);
@@ -21,8 +36,20 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
     window.location.href = '/';
   };
 
-  const handleChangeImage = (field: string, value: string | File): void => {
-    toast.success(value.toString());
+  const changeHandlerAvatar = (field: string, file: string | File): void => {
+    const logo = file as File;
+    dispatch(profileAction.updateAvatar({ logo }))
+      .unwrap()
+      .then((action): void => {
+        const currentUser = storage.getItem(StorageKey.USER);
+
+        if (currentUser) {
+          const user = JSON.parse(currentUser);
+          user.avatarImgUrl = action.message;
+          storage.setItem(StorageKey.USER, JSON.stringify(user));
+          toast.success(t('success.profile_avatar_updated'));
+        }
+      });
   };
 
   const handleClick = (itemName: string): void => {
@@ -79,11 +106,25 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
         gap={'150px'}
         margin={'0 50px'}
       >
-        <Box display={'flex'} flexDirection={'column'} minWidth={'221px'} minHeight={'430px'}
+        <Box
+          display={'flex'}
+          flexDirection={'column'}
+          minWidth={'221px'}
+          minHeight={'430px'}
           justifyContent={'space-between'}>
-          <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'200px'}>
+          <Box
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            height={'200px'}
+            width={'200px'}
+          >
             {/* <Box component={'img'} alt="avatar" src={profileImg}></Box> */}
-            <ImageUploader component="profile-page" xs={12} handleChange={handleChangeImage}/>
+            <ImageUploader
+              component="profile-page"
+              xs={12}
+              handleChange={changeHandlerAvatar}
+              imageUrl={avatarImgUrl}/>
           </Box>
           <Box
             sx={{

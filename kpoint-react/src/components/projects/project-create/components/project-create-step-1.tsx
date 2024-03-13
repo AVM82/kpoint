@@ -56,7 +56,7 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
   return (
     <Grid container rowSpacing={3}>
       <Grid container justifyContent={'space-between'}>
-        <ImageUploader handleChange={handleChange} component="default" xs={3}/>
+        <ImageUploader handleChange={handleChange} component="default" xs={3} imageUrl={''}/>
         <Grid item xs={8}>
           <Grid item xs={true}>
             <TextField
@@ -174,7 +174,7 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
                 projectData.tags.indexOf(tag.trim()) === -1
               ) {
                 projectData.tags.push(tag);
-                setChipTags(getChipTags);
+                setChipTags(getChipTags());
                 setTag('');
               }
               event.preventDefault();

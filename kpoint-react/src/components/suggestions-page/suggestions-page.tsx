@@ -19,7 +19,7 @@ import { SuggestionCard } from './suggestion-card';
 const SuggestionsPage: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const maxPageElements = 5;
+  const maxPageElements = 10;
   const { suggestions } = useAppSelector(({ suggestion }) => ({
     suggestions: suggestion.suggestions,
   }));
@@ -104,7 +104,10 @@ const SuggestionsPage: FC = () => {
             </Box>
           </Box>
           {modalOpen && (
-            <AddSuggestionModal handleCloseModal={handleCloseModal} currentPage={page} />
+            <AddSuggestionModal
+              handleCloseModal={handleCloseModal}
+              currentPage={page}
+            />
           )}
           <Grid item>
             {suggestions?.content.map((suggestion) => (
@@ -112,7 +115,6 @@ const SuggestionsPage: FC = () => {
                 <SuggestionCard
                   createdAt={suggestion.createdAt}
                   likeCount={suggestion.likeCount}
-                  logoImgUrl="kjv"
                   suggestion={suggestion.suggestion}
                   user={suggestion.user}
                   id={suggestion.id}
@@ -175,7 +177,10 @@ const SuggestionsPage: FC = () => {
               </Button>
             </Box>
             {modalOpen && (
-              <AddSuggestionModal handleCloseModal={handleCloseModal} currentPage={page}/>
+              <AddSuggestionModal
+                handleCloseModal={handleCloseModal}
+                currentPage={page}
+              />
             )}
           </Box>
           <Box component={'img'} src={suggestionsImage}></Box>

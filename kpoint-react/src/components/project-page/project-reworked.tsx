@@ -1,26 +1,45 @@
+import AddIcon from '@mui/icons-material/Add';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import RemoveIcon from '@mui/icons-material/Remove';
 import {
   Box,
   Button,
   Chip,
   Container,
   Grid,
-  TextField,
   Typography,
 } from '@mui/material';
 import Link from '@mui/material/Link';
-import { CustomTimeline, ImageUploader } from 'components/common/common';
+import { StorageKey } from 'common/enums/app/storage-key.enum';
+import {
+  CustomTimeline,
+  ImageUploader,
+  InputField,
+} from 'components/common/common';
 import { useAppDispatch } from 'hooks/hooks';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
-import { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { storage } from 'services/services';
 import { projectAction } from 'store/actions';
+import { editLogo, editProject } from 'store/projects/actions';
+import {
+  addTagLocally,
+  deleteTagLocally,
+  editDescriptionLocally,
+  editTitleLocally,
+} from 'store/projects/reducer';
 
 import { generateGoogleMapsLink } from '../../utils/function-generate-google-maps-link';
 import { ProjectSocials } from './project-socials';
+import { Comments } from './project-tabs/comments';
+import { Contacts } from './project-tabs/contacts';
+import { Description } from './project-tabs/description';
+import { HelpProject } from './project-tabs/help-project';
+import { OurTeam } from './project-tabs/our-team';
 
 // function getTabAccessibilityProps(index: number): {
 //   id: string;
@@ -36,47 +55,34 @@ const ProjectReworked: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { projectId } = useParams();
-  const { project } = useAppSelector(({ project }) => ({
-    project: project.project,
-  }));
+  const project = useAppSelector((state) => state.project.project);
+  const [editFieldClicked, setEditFieldClicked] = useState(false);
+  const [tagsClicked, setTagsClicked] = useState(false);
+  const [testEditForm, setTestEditForm] = useState<object>({});
+  const [showButton, setShowButton] = useState(false);
+  const [tabClicked, setTabClicked] = useState('about');
+  const user = storage.getItem(StorageKey.TOKEN);
 
-  /*All logic from previous version below !!!DON'T DELETE DEPRECATED FILES!!!*/
+  const handleDeleteTag = (tag: string): void => {
+    const bodyData = [];
+    bodyData.push({ op: 'replace', path: '/tags', value: [] });
 
-  // const projectImage: string =
-  // project.logoImgUrl === null
-  //   ? { logo }.logo
-  //   : `data:image/png;base64,${project.logoImgUrl}`;
+    project.tags.forEach((item) => {
+      if (item !== tag) {
+        bodyData.push({ op: 'add', path: '/tags/-', value: item });
+      }
+    });
 
-  // const handleLogoPreview = (e: React.ChangeEvent<HTMLInputElement>): void => {
-  //   if (e.currentTarget.files?.[0]) {
-  //     const projectLogo = e.currentTarget.files?.[0];
-
-  //     if (projectLogo.size > 5000000) {
-  //       toast.warn('File is to big');
-
-  //       return;
-  //     }
-  //     const previewUrl = URL.createObjectURL(projectLogo);
-  //     setPreviewUrl(previewUrl);
-  //   }
-  // };
-
-  // const handleChange = (
-  //   event: React.SyntheticEvent,
-  //   newValue: number,
-  // ): void => {
-  //   setValue(newValue);
-  // };
-
-  const handleChange = (field: string, value: string | File): void => {
-    toast.success(value.toString());
+    const id = project.projectId;
+    dispatch(editProject({ id, bodyData }));
+    dispatch(deleteTagLocally(tag));
   };
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       try {
         if (projectId) {
-          await dispatch(projectAction.getById({ id: projectId }));
+          await dispatch(projectAction.getByUrl({ id: projectId }));
         }
       } catch (error) {
         toast.error('Error fetching project:', error);
@@ -86,9 +92,96 @@ const ProjectReworked: FC = () => {
     fetchData();
   }, [dispatch, projectId]);
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        setEditFieldClicked(false);
+        setTagsClicked(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
+  const changeHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ): void => {
+    setTestEditForm({ [e.target.name]: e.target.value });
+  };
+
+  const changeHandlerPhoto = (field: string, file: string | File): void => {
+    const id = project.projectId;
+    const logo = file as File;
+    dispatch(editLogo({ id, logo }));
+  };
+
+  const createBodyData = (
+    itemName: string,
+  ): { op: string; path: string; value: string | string[] }[] => {
+    const bodyData = [];
+
+    if (itemName === 'tags') {
+      bodyData.push({ op: 'replace', path: '/tags', value: project.tags });
+      Object.keys(testEditForm).forEach((item) => {
+        const key: string = item;
+
+        bodyData.push({
+          op: 'add',
+          path: '/tags/-',
+          value: testEditForm[key as keyof typeof testEditForm] || null,
+        });
+      });
+    } else {
+      Object.keys(testEditForm).forEach((item) => {
+        const key: string = item;
+
+        bodyData.push({
+          op: 'replace',
+          path: `/${key}`,
+          value: testEditForm[key as keyof typeof testEditForm] || null,
+        });
+      });
+    }
+
+    return bodyData;
+  };
+
+  const submitHandler = async (
+    event: React.FormEvent<HTMLFormElement>,
+    itemName: string,
+  ): Promise<void> => {
+    event.preventDefault();
+
+    const bodyData = createBodyData(itemName);
+
+    const id = project.projectId;
+
+    if (project.tags.length >= 5) {
+      toast.warn('Тегів може бути не більше 5');
+
+      return;
+    }
+
+    dispatch(editProject({ id, bodyData }));
+
+    if (itemName === 'title') {
+      dispatch(editTitleLocally(bodyData[0].value));
+      setEditFieldClicked(!editFieldClicked);
+    } else if (itemName === 'description') {
+      dispatch(editDescriptionLocally(bodyData[0].value));
+    } else if (itemName === 'tags') {
+      dispatch(addTagLocally(bodyData[1].value as string));
+      setTagsClicked(!tagsClicked);
+    }
+  };
+
   return (
     <>
-      <Box sx={{ bgcolor: '#A8A8A9', width: '100%' }}>
+      <Box sx={{ bgcolor: '#E4E5E9', width: '100%' }}>
         <Container
           maxWidth={false}
           sx={{
@@ -104,30 +197,59 @@ const ProjectReworked: FC = () => {
             flexDirection={'column'}
             padding={'72px 0 44px 0'}
           >
-            <ProjectSocials project={project} />
+            <Box
+              display={'flex'}
+              justifyContent={'space-between'}
+              alignItems={'center'}
+            >
+              <ProjectSocials project={project} />
+            </Box>
             <Box
               display={'flex'}
               justifyContent={'space-between'}
               alignItems={'center'}
             >
               <Grid maxWidth={390} width={390} container>
-                <ImageUploader
-                  handleChange={handleChange}
-                  component="project-page"
-                  xs={5}
-                />
-                <Grid item xs={7}>
-                  <Typography
-                    variant="h2"
-                    color={'rgb(0, 29, 108)'}
-                    fontSize={32}
-                    fontWeight={700}
-                    lineHeight={'100%'}
-                    letterSpacing={'1px'}
-                    textAlign={'center'}
-                  >
-                    {project && project.title}
-                  </Typography>
+                {user ? (
+                  <ImageUploader
+                    xs={5}
+                    component="project-page"
+                    handleChange={changeHandlerPhoto}
+                    imageUrl={project.logoImgUrl}
+                  />
+                ) : (
+                  <Grid item xs={5}>
+                    <Box component={'img'} maxWidth={'100%'} maxHeight={'100%'}
+                      sx={{ objectFit: 'cover', borderRadius: '6px' }} src={project.logoImgUrl}></Box>
+                  </Grid>
+                )}
+                <Grid item xs={7} paddingLeft={'30px'}>
+                  {editFieldClicked && user ? (
+                    <InputField
+                      onChange={changeHandler}
+                      onSubmit={submitHandler}
+                      placeholder={project && project.title}
+                      itemName="title"
+                    />
+                  ) : (
+                    <Typography
+                      variant="h2"
+                      color={'rgb(0, 29, 108)'}
+                      fontSize={32}
+                      fontWeight={700}
+                      lineHeight={'100%'}
+                      letterSpacing={'1px'}
+                      textAlign={'start'}
+                      sx={{
+                        cursor: 'pointer',
+                      }}
+                      onClick={(): void =>
+                        setEditFieldClicked(!editFieldClicked)
+                      }
+                    >
+                      {project && project.title}
+                    </Typography>
+                  )}
                   <Link href={generateGoogleMapsLink(project)}>
                     <Typography
                       variant="h6"
@@ -150,29 +272,92 @@ const ProjectReworked: FC = () => {
                     lineHeight={'100%'}
                     letterSpacing={'0.5px'}
                     textAlign={'start'}
-                    padding={'100px 0 0 14px'}
+                    padding={'80px 0 0 0'}
                   >
                     Послідовників: 123
                   </Typography>
                 </Grid>
-                <Grid item xs={12} padding={'10px 0 0 0'}>
-                  {project &&
-                    project.tags.map((tag, index) => (
-                      <Chip
-                        key={index}
-                        label={tag}
-                        variant="outlined"
-                        sx={{
-                          fontFamily: 'Roboto',
-                          fontWeight: 400,
-                          fontSize: '13px',
-                          lineHeight: '18px',
-                          letterSpacing: '0.16px',
-                          color: '#4F4F4F',
-                          margin: '5px',
-                        }}
-                      />
+                <Grid item xs={12} container>
+                  <Box
+                    display={'flex'}
+                    justifyContent={'start'}
+                    alignItems={'center'}
+                    gap={'5px'}
+                    flexGrow={1}
+                    flexShrink={0}
+                    padding={'10px 0 10px 0'}
+                  >
+                    {project.tags.length < 5 &&
+                    <Box
+                      display={'flex'}
+                      alignItems={'center'}
+                      justifyContent={'center'}
+                      alignSelf={'center'}
+                      minWidth={'55px'}
+                      maxHeight={'24px'}
+                      position={'relative'}
+                      sx={{ cursor: 'pointer',
+                        borderRadius: '10px',
+                        border: '1px solid black' }}
+                      onClick={(): void => setTagsClicked(true)}
+                    >
+                      <AddIcon fontSize="small"/>
+                      <Box display={'flex'} justifyContent={'center'} alignItems={'center'}
+                        position={'absolute'} top={'25px'} width={'100%'} left={'115%'}>
+                        {tagsClicked && user && (
+                          <InputField
+                            onSubmit={submitHandler}
+                            onChange={changeHandler}
+                            itemName="tags"
+                            placeholder="Введіть назву тега"
+                          />
+                        )}
+                      </Box>
+                    </Box>}
+                    {project.tags.map((tag, index) => (
+                      <Box display={'flex'} justifyContent={'space-between'}
+                        alignItems={'center'} minWidth={'55px'} flexDirection={'column'} position={'relative'}>
+                        <Chip
+                          key={index}
+                          label={tag}
+                          variant="outlined"
+                          sx={{
+                            fontFamily: 'Roboto',
+                            fontWeight: 400,
+                            fontSize: '13px',
+                            lineHeight: '18px',
+                            letterSpacing: '0.16px',
+                            color: '#4F4F4F',
+                            margin: '5px',
+                            cursor: 'pointer',
+                            maxHeight: '24px',
+                          }}
+                          onMouseEnter={(): void => setShowButton(!showButton)}
+                        />
+                        {showButton && user && (
+                          <Box
+                            display={'flex'}
+                            alignItems={'center'}
+                            justifyContent={'center'}
+                            alignSelf={'center'}
+                            minWidth={'20px'}
+                            maxHeight={'24px'}
+                            position={'absolute'}
+                            top={'40px'}
+                            sx={{ cursor: 'pointer',
+                              borderRadius: '10px',
+                              border: '1px solid black' }}
+                            onClick={(): void => {
+                              setShowButton(!showButton);
+                              handleDeleteTag(tag);
+                            }}
+                          >
+                            <RemoveIcon fontSize="small"/>
+                          </Box>
+                        )}
+                      </Box>
                     ))}
+                  </Box>
                 </Grid>
               </Grid>
               <Box
@@ -180,17 +365,16 @@ const ProjectReworked: FC = () => {
                 alignItems={'center'}
                 flexDirection={'column'}
                 alignSelf={'end'}
+                maxWidth={'231px'}
                 gap={'16px'}
               >
-                {/*{<SubscribeButton projectId={projects?.content.map((project) => project.projectId)}*/}
-                {/*  isAuthenticated={isAuthenticated}*/}
-                {/*  isFollowed={projects?.content.map((project) => project.isFollowed) ?? false}/>}*/}
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
                     borderRadius: '5px',
                     background: 'rgb(255, 255, 255)',
                     width: '100%',
+                    maxHeight: '46px',
                     color: 'rgb(130, 130, 130)',
                     fontSize: '14px',
                     fontWeight: 500,
@@ -198,16 +382,15 @@ const ProjectReworked: FC = () => {
                     letterSpacing: '0.5px',
                   }}
                 >
-                  <PersonAddIcon /> {t('buttons.support')}
+                  <PersonAddIcon fontSize="small"/> {t('buttons.support')}
                 </Button>
-                {/*{project &&<SubscribeButton projectId={project.projectId}*/}
-                {/*  isAuthenticated={isAuthenticated} isFollowed={isFollowed}/>}*/}
                 <Button
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
                     borderRadius: '5px',
                     background: 'rgb(255, 255, 255)',
                     width: '100%',
+                    maxHeight: '46px',
                     color: 'rgb(130, 130, 130)',
                     fontSize: '14px',
                     fontWeight: 500,
@@ -215,7 +398,7 @@ const ProjectReworked: FC = () => {
                     letterSpacing: '0.5px',
                   }}
                 >
-                  <AttachMoneyIcon />
+                  <AttachMoneyIcon fontSize="small"/>
                   {t('buttons.donate')}
                 </Button>
               </Box>
@@ -251,12 +434,14 @@ const ProjectReworked: FC = () => {
                   fontWeight: 500,
                   lineHeight: '140%',
                   textAlign: 'center',
+                  textTransform: 'none',
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
                 }}
+                onClick={(): void => setTabClicked('about')}
               >
-                Про проєкт
+                {t('about')}
               </Button>
               <Button
                 sx={{
@@ -266,13 +451,15 @@ const ProjectReworked: FC = () => {
                   fontSize: '16px',
                   fontWeight: 500,
                   lineHeight: '140%',
+                  textTransform: 'none',
                   textAlign: 'center',
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
                 }}
+                onClick={(): void => setTabClicked('team')}
               >
-                Команда
+                {t('team')}
               </Button>
               <Button
                 sx={{
@@ -282,13 +469,15 @@ const ProjectReworked: FC = () => {
                   fontSize: '16px',
                   fontWeight: 500,
                   lineHeight: '140%',
+                  textTransform: 'none',
                   textAlign: 'center',
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
                 }}
+                onClick={(): void => setTabClicked('help')}
               >
-                Допомогти проєкту
+                {t('help_project')}
               </Button>
               <Button
                 sx={{
@@ -298,41 +487,43 @@ const ProjectReworked: FC = () => {
                   fontSize: '16px',
                   fontWeight: 500,
                   lineHeight: '140%',
+                  textTransform: 'none',
                   textAlign: 'center',
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
                 }}
+                onClick={(): void => setTabClicked('contacts')}
               >
-                Коментарі
+                Контакти
+              </Button>
+              <Button
+                sx={{
+                  borderRadius: '6px',
+                  padding: '6px',
+                  color: 'rgb(33, 39, 42)',
+                  fontSize: '16px',
+                  fontWeight: 500,
+                  lineHeight: '140%',
+                  textTransform: 'none',
+                  textAlign: 'center',
+                  '&:hover': {
+                    background: 'rgb(221, 225, 230)',
+                  },
+                }}
+                onClick={(): void => setTabClicked('comments')}
+              >
+                {t('comments')}
               </Button>
             </Box>
           </Grid>
-          <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
-            <Box component={'article'} maxWidth={'620px'}>
-              Ідея: Ми віримо у потенціал кожної ідеї та важливість підтримки та
-              розвитку цих ідей. Наша мета - зробити інвестування доступним та
-              простим для всіх, незалежно від їхнього ... досвіду чи фінансових
-              можливостей. Проблема, яку вирішує ваш проєкт: Ми віримо у
-              потенціал кожної ідеї та важливість підтримки та розвитку цих
-              ідей. Наша мета - зробити інвестування доступним та простим для
-              всіх, незалежно від їхнього ... досвіду чи фінансових можливостей.
-              Як доказ ідеї - сам цей проєкт буде першим, що реалізується на цій
-              ідеї: “зробіть щось для нас, і ми не забудемо”. Приєднатись до
-              проєкта: Потрібні фахівці: -текст -текст -текст Гроші будуть
-              використанні на: Ми віримо у потенціал кожної ідеї та важливість
-              підтримки та розвитку цих ідей. Наша мета - зробити інвестування
-              доступним та простим для всіх, незалежно від їхнього ... досвіду
-              чи фінансових можливостей. Як доказ ідеї - сам цей проєкт буде
-              першим, що реалізується на цій ідеї: “зробіть щось для нас, і ми
-              не забудемо”. Пропозиція до інвесторів: Ми віримо у потенціал
-              кожної ідеї та важливість підтримки та розвитку цих ідей. Наша
-              мета - зробити інвестування доступним та простим для всіх,
-              незалежно від їхнього ... досвіду чи фінансових можливостей. Як
-              доказ ідеї - сам цей проєкт буде першим, що реалізується на цій
-              ідеї: “зробіть щось для нас, і ми не забудемо”.
-            </Box>
-          </Grid>
+          {tabClicked === 'about' &&
+           <Description description={project.description} onChange={changeHandler} onSubmit={submitHandler}/>}
+          {tabClicked === 'team' && <OurTeam firstName={project.owner.firstName} lastName={project.owner.lastName}
+            avatarImgUrl={project.owner.avatarImgUrl}/>}
+          {tabClicked === 'help' && <HelpProject />}
+          {tabClicked === 'contacts' && <Contacts project={project}/>}
+          {tabClicked === 'comments' && <Comments />}
           <Grid item xs={4} container justifyContent={'end'}>
             <Box
               maxWidth={'160px'}
@@ -343,7 +534,9 @@ const ProjectReworked: FC = () => {
             >
               <Box>
                 <Typography>Всього зібрано</Typography>
-                <Typography>100/700</Typography>
+                <Typography>
+                  {project && `${project.collectedSum}/${project.goalSum}`}
+                </Typography>
               </Box>
               <Box>
                 <CustomTimeline
@@ -361,53 +554,6 @@ const ProjectReworked: FC = () => {
             </Box>
           </Grid>
         </Grid>
-        <Box width={'100%'} maxHeight={'250px'} height={'250px'}>
-          <Typography>Наша команда</Typography>
-        </Box>
-        <Box display={'flex'} flexDirection={'column'} maxWidth={'513px'}>
-          <Typography>Допомогти проєкту</Typography>
-          <Box
-            display={'flex'}
-            alignItems={'center'}
-            gap={'16px'}
-            padding={'50px 0 50px 0'}
-          >
-            <Button
-              sx={{
-                border: '2px solid rgb(130, 130, 130)',
-                borderRadius: '5px',
-                background: 'rgb(255, 255, 255)',
-                width: '100%',
-                color: 'rgb(130, 130, 130)',
-                fontSize: '14px',
-                fontWeight: 500,
-                lineHeight: '100%',
-                letterSpacing: '0.5px',
-              }}
-            >
-              <PersonAddIcon /> Приєднатись
-            </Button>
-            <Button
-              sx={{
-                border: '2px solid rgb(130, 130, 130)',
-                borderRadius: '5px',
-                background: 'rgb(255, 255, 255)',
-                width: '100%',
-                color: 'rgb(130, 130, 130)',
-                fontSize: '14px',
-                fontWeight: 500,
-                lineHeight: '100%',
-                letterSpacing: '0.5px',
-              }}
-            >
-              <AttachMoneyIcon /> Зробити внесок
-            </Button>
-          </Box>
-        </Box>
-        <Box paddingBottom={'146px'}>
-          <Typography>Коментарі</Typography>
-          <TextField></TextField>
-        </Box>
       </Container>
     </>
   );

@@ -124,8 +124,7 @@ const SignUpPage: FC = () => {
     setErrors(formErrors);
 
     if (
-      Object.keys(formErrors).length !== 0 ||
-      Object.keys(errors).length !== 0
+      Object.keys(formErrors).length !== 0
     ) {
       return;
     }
@@ -144,8 +143,7 @@ const SignUpPage: FC = () => {
         }
       })
       .catch((error) => {
-        toast.error(`Невірно введені дані: ${error.message}`);
-        setRegisterError('Невірно введені дані');
+        setRegisterError('Невірно введені дані: ' + error.message);
       });
   };
 

@@ -20,12 +20,11 @@ function getProperStyles({
           `,
     ) as typeof Grid;
     CustomBox = {
-      border: '2px dotted #757575',
-      borderRadius: '4px',
+      borderRadius: '6px',
       padding: '8px',
-      width: '100%',
+      maxWidth: '150px',
       overflow: 'hidden',
-      height: '100%',
+      maxHeight: '150px',
       flexGrow: 1,
       flexShrink: 0,
     };

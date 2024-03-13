@@ -1,5 +1,4 @@
 import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
-import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import MonetizationOnTwoToneIcon from '@mui/icons-material/MonetizationOnTwoTone';
 import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
 import ShareTwoToneIcon from '@mui/icons-material/ShareTwoTone';
@@ -30,7 +29,7 @@ interface ProjectsProps {
   isFollowed: boolean;
 }
 
-const ProjectCard: FC<ProjectsProps> = ({
+const ProjectCardReworked: FC<ProjectsProps> = ({
   projectId,
   url,
   title,
@@ -43,7 +42,7 @@ const ProjectCard: FC<ProjectsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Card sx={{ maxWidth: 500 }}>
+    <Card sx={{ minWidth: '370px' }}>
       <CardMedia sx={{ height: 200 }} image={logoImgUrl} title={title}>
         <Grid
           container
@@ -51,20 +50,17 @@ const ProjectCard: FC<ProjectsProps> = ({
           justifyContent="space-between"
           alignItems="flex-start"
         >
-          <Grid item>
-            <IconButton href="#">
-              <BookmarkTwoToneIcon sx={{ margin: 1, color: 'blue' }} />
-            </IconButton>
-            <IconButton href="#">
-              <ShareTwoToneIcon sx={{ margin: 1, color: 'blue' }} />
-            </IconButton>
-          </Grid>
+          <IconButton href="#"
+            sx={{ margin: 1,
+              backgroundColor: 'rgba(242, 244, 248, 0.75)' }}>
+            <ShareTwoToneIcon sx={{ margin: 1, color: 'blue' }} />
+          </IconButton>
           <Grid item>
             <ButtonGroup
               orientation="vertical"
               variant="text"
               aria-label="outlined button group"
-              sx={{ margin: 1 }}
+              sx={{ margin: 1, backgroundColor: 'rgba(242, 244, 248, 0.75)' }}
             >
               <Button
                 size="small"
@@ -117,4 +113,4 @@ const ProjectCard: FC<ProjectsProps> = ({
   );
 };
 
-export { ProjectCard };
+export { ProjectCardReworked };
