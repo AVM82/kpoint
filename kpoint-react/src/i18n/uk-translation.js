@@ -29,6 +29,10 @@ const ukTranslation = {
   subscribe_message: 'Ви успішно підписані на проект',
   register_message: 'Ви успішно зареєстровані',
   follow_unauthenticated_message: 'Увійдіть, щоб мати можливість стежити за проектом',
+  profile: {
+    no_my_projects: 'Ви ще не створили жодного проєкту',
+    no_followed_projects: 'Ви ще не слідкуєте за жодним проєктом',
+  },
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',

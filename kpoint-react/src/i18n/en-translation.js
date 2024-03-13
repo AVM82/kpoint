@@ -29,6 +29,10 @@ const enTranslation = {
   subscribe_message: 'You successfully subscribed',
   register_message: 'You are successfully registered',
   follow_unauthenticated_message: 'Sign in to be able to follow the project',
+  profile: {
+    no_my_projects: 'You have not created any projects yet',
+    no_followed_projects: 'You are not following any projects yet',
+  },
   statuses: {
     NEW: 'New',
     GATHERING_FOR_START: 'Gathering for start',
