@@ -2,7 +2,7 @@ import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import ShareIcon from '@mui/icons-material/Share';
-import { Box } from '@mui/material';
+import { Box, Link } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -167,7 +167,8 @@ const ProjectCard: FC<ProjectCardProps> = ({
       </CardMedia>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          {project.title}
+          <Link underline="none" href={'projects/'.concat(project.url)}
+            sx={{ cursor: 'pointer', color: 'black' }}>{project.title}</Link>
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {project.summary}
