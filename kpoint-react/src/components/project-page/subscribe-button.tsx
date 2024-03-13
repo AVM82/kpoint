@@ -31,6 +31,10 @@ const SubscribeButton: FC<SubscribeButtonProps> = ({
     if (isProcessing) return;
     setIsProcessing(true);
 
+    if (!user) {
+      toast.info(t('follow_unauthenticated_message'));
+    }
+
     if (user && !isFollowed) {
       await dispatch(
         projectAction.subscribeToProject({ projectId: projectId }),
