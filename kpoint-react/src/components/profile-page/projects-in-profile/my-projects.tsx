@@ -15,7 +15,6 @@ const MyProjects: FC = () => {
   const dispatch = useAppDispatch();
   const [activeButton, setActiveButton] = useState('myProjects');
   const maxPageElements = 4;
-  const { t } = useTranslation();
   const [pages, setPages]
     = useState<Record<string, number>>(
       {

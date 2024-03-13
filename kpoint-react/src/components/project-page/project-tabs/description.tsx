@@ -61,6 +61,7 @@ const Description: FC<DescriptionProps> = ({
       }
       restoreDescription();
       dispatch(editDescriptionLocally(descValue));
+      toast.success(t('success.description_updated'));
     } else {
       if (descValue.length < 1) { 
         toast.warn(t('errors.summary_length'));
