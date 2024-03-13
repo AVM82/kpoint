@@ -1,6 +1,6 @@
 import { Box, Button, Container, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { TestRequest } from 'common/types/projects/testRequest';
-import React, { FC, ReactElement, useState } from 'react';
+import React, { FC, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { projectAction } from 'store/actions';
@@ -32,6 +32,9 @@ export const ProjectCreate: FC = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    document.body.style.backgroundColor = '#E4E5E9';
+  }, []);
   const handleNext = (): void => {
     const validationErrors = validateForm(projectData);
 
@@ -176,14 +179,25 @@ export const ProjectCreate: FC = () => {
               {getStepContent(activeStep)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 1 && (
-                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1,
+                    backgroundColor: '#535365',
+                    color: '#fff',
+                    letterSpacing: '1.25px',
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    } }}>
                     {t('buttons.back')}
                   </Button>
                 )}
                 <Button
                   variant="contained"
                   onClick={handleNext}
-                  sx={{ mt: 3, ml: 1 }}
+                  sx={{ mt: 3, ml: 1,
+                    backgroundColor: '#535365',
+                    letterSpacing: '1.25px',                    
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    } }}
                 >
                   {activeStep === steps.length
                     ? t('buttons.save')
