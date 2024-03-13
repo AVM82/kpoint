@@ -27,6 +27,8 @@ const ukTranslation = {
   add_suggestion: 'Додати',
   send_suggestion: 'Надіслати',
   subscribe_message: 'Ви успішно підписані на проект',
+  register_message: 'Ви успішно зареєстровані',
+  follow_unauthenticated_message: 'Увійдіть, щоб мати можливість стежити за проектом',
   statuses: {
     NEW: 'Новий',
     GATHERING_FOR_START: 'Збирає на старт',
@@ -114,14 +116,22 @@ const ukTranslation = {
     sign_up_password_not_same: 'Введені паролі не збігаються',
     password_short: 'Введений пароль короткий',
     invalid_email: 'Невірна електронна пошта',
-    invalid_username: 'Невірне іʼмя користувача. Поле повинне містити від 1 символа',
-    invalid_firstname: 'Невірне іʼмя',
+    invalid_username: 'Невірне імʼя користувача. Поле повинне містити від 1 символа',
+    invalid_firstname: 'Невірне імʼя',
     invalid_lastname: 'Невірне прізвище',
   },
   success: {
     profile_email_updated: 'Електронна пошта змінена. Щоб продовжити, увійдіть з новою поштою',
     profile_updated: 'Данні профілю успішно змінені',
     profile_avatar_updated: 'Аватар профілю успішно змінено',
+    tag_deleted: 'Тег успішно видалений',
+    tag_added: 'Новий тег був успішно доданий',
+    description_updated: 'Опис проєкту успішно змінено',
+    title_updated: 'Назву проєкту успішно змінено',
+    logo_updated: 'Лого проєкту успішно змінено',
+  },
+  warn: {
+    tag_unique: 'Теги проєкту мають бути унікальні',
   },
   menu: {
     account_settings: 'Налаштування аккаунта',

@@ -27,6 +27,8 @@ const enTranslation = {
   add_suggestion: 'Add',
   send_suggestion: 'Send',
   subscribe_message: 'You successfully subscribed',
+  register_message: 'You are successfully registered',
+  follow_unauthenticated_message: 'Sign in to be able to follow the project',
   statuses: {
     NEW: 'New',
     GATHERING_FOR_START: 'Gathering for start',
@@ -122,6 +124,14 @@ const enTranslation = {
     profile_email_updated: 'Email address changed. Please sign in with your new email to continue',
     profile_updated: 'Profile data changed successfully',
     profile_avatar_updated: 'Profile avatar successfully changed',
+    tag_deleted: 'Tag was successfully deleted',
+    tag_added: 'New tag was successfully added',
+    description_updated: 'Description was successfully updated',
+    title_updated: 'Title was successfully updated',
+    logo_updated: 'Logo was successfully updated',
+  },
+  warn: {
+    tag_unique: 'Project tags must be unique',
   },
   menu: {
     account_settings: 'Account settings',
