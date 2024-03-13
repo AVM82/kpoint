@@ -1,5 +1,6 @@
 package ua.in.kp.security;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,20 +30,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer")) {
-            String jwt = jwtUtil.getTokenFromRequest(request);
-            if (jwt != null && !jwt.isBlank() && !jwt.equals("null")) {
-                if (!jwtUtil.validate(jwt)) {
-                    log.warn("Invalid JWT Token");
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                } else {
-                    String subject = jwtUtil.getSubjectFromToken(jwt);
-                    Authentication authentication = getAuthentication(subject);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer")) {
+                String jwt = jwtUtil.getTokenFromRequest(request);
+                if (jwt != null && !jwt.isBlank() && !jwt.equals("null")) {
+                    if (!jwtUtil.validate(jwt)) {
+                        log.warn("Invalid JWT Token");
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    } else {
+                        String subject = jwtUtil.getSubjectFromToken(jwt);
+                        Authentication authentication = getAuthentication(subject);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
             }
+            filterChain.doFilter(request, response);
+        } catch (JwtException ex) {
+            log.warn("Invalid JWT Token", ex);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (RuntimeException ex) {
+            log.error("RuntimeException", ex);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Runtime Exception");
         }
-        filterChain.doFilter(request, response);
+
     }
 
     private Authentication getAuthentication(String subject) {

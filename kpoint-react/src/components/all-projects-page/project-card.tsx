@@ -172,7 +172,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
       <CardActions>
         <Stack direction="row" spacing={1} width={'70%'}>
           {project.tags.map((tag, index) =>
-            index < 3 ? (
+            index < 2 ? (
               <Chip
                 label={tag}
                 key={tag}

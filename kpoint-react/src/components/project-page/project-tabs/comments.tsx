@@ -1,5 +1,6 @@
 import { Box, Button, Grid } from '@mui/material';
 import { FC, useState } from 'react';
+import { Id, toast } from 'react-toastify';
 
 import emptyCommentBg from '../../../emptyCommentBg.png';
 
@@ -34,7 +35,7 @@ const Comments: FC = () => {
           lineHeight: '100%', letterSpacing: '0.5px',
           fontSize: '16px', textAlign: 'center', '&:hover': {
             backgroundColor: '#535365',
-          } }} onClick={(): void => setAddCommentClicked(!addCommentClicked)}>Залишити перший коментар</Button>
+          } }} onClick={(): Id => toast.info('В розробці')}>Залишити перший коментар</Button>
       )}
     </Box>
   </Grid>;
