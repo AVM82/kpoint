@@ -23,7 +23,6 @@ import { editLogo, editProject } from 'store/projects/actions';
 import {
   addTagLocally,
   deleteTagLocally,
-  editDescriptionLocally,
   editTitleLocally,
 } from 'store/projects/reducer';
 
@@ -47,44 +46,34 @@ const ProjectPage: FC = () => {
   const [tabClicked, setTabClicked] = useState('about');
   const token = storage.getItem(StorageKey.TOKEN);
   const user: UserType = JSON.parse(storage.getItem(StorageKey.USER) as string);
-  const user2 = storage.getItem(StorageKey.USER);
-  const isMyProject = project?.owner.ownerId === JSON.parse(user2 || '{}').id;
 
-  const handleDelete = (itemName: string, value: string): void => {
+  const handleHelpButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
+
+  const handleDonateButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
+
+  useEffect(() => {
+    document.body.style.backgroundColor = '#fff';
+  }, []);
+
+  const handleDeleteTag = (value: string): void => {
     const bodyData = [];
+    const id = project.projectId;
 
-    if (itemName === 'tag') {
-      bodyData.push({ op: 'replace', path: '/tags', value: [] });
+    bodyData.push({ op: 'replace', path: '/tags', value: [] });
 
-      project.tags.forEach((item) => {
-        if (item !== value) {
-          bodyData.push({ op: 'add', path: '/tags/-', value: item });
-        }
-      });
+    project.tags.forEach((item) => {
+      if (item !== value) {
+        bodyData.push({ op: 'add', path: '/tags/-', value: item });
+      }
+    });
 
-      const id = project.projectId;
-      dispatch(editProject({ id, bodyData }));
-      dispatch(deleteTagLocally(value));
-      toast.success('Тег видалено');
-    } else if (itemName === 'link') {
-      bodyData.push({
-        op: 'replace',
-        path: '/networksLinks',
-        value: project.networksLinks,
-      });
-
-      const newLinks = { ...project.networksLinks };
-      delete (newLinks as { [key: string]: string })[value];
-
-      bodyData.push({
-        op: 'replace',
-        path: '/networksLinks',
-        value: newLinks,
-      });
-
-      const id = project.projectId;
-      dispatch(editProject({ id, bodyData }));
-    }
+    dispatch(editProject({ id, bodyData }));
+    dispatch(deleteTagLocally(value));
+    toast.success(t('success.tag_deleted'));
   };
 
   useEffect(() => {
@@ -128,16 +117,7 @@ const ProjectPage: FC = () => {
     const id = project.projectId;
     const logo = file as File;
     dispatch(editLogo({ id, logo }));
-  };
-
-  const extractWordBetweenWWWAndCom = (url: string): string => {
-    const startIndex = url.indexOf('www.') + 'www.'.length;
-
-    const endIndex = url.indexOf('.com');
-
-    const extractedWord = url.substring(startIndex, endIndex);
-
-    return extractedWord;
+    toast.success(t('success.logo_updated'));
   };
 
   const createBodyDataForPost = (
@@ -150,13 +130,9 @@ const ProjectPage: FC = () => {
     Object.keys(testEditForm).forEach((item) => {
       const key: string = item;
 
-      const linkName = itemName === 'networksLink' ? extractWordBetweenWWWAndCom(
-        testEditForm[key as keyof typeof testEditForm],
-      ).toUpperCase() : '';
+      const op = itemName !== 'tags' ? 'replace' : 'add';
 
-      const op = itemName !== 'tags' && itemName !== 'networksLinks' ? 'replace' : 'add';
-
-      const path = itemName === 'tags' ? `/${key}/-` : itemName === 'networksLinks' ? `/${key}/${linkName}` : `/${key}`;
+      const path = itemName === 'tags' ? `/${key}/-` : `/${key}`;
 
       bodyData.push({
         op,
@@ -182,21 +158,19 @@ const ProjectPage: FC = () => {
     case 'title':
       dispatch(editTitleLocally(bodyData[0].value));
       setEditFieldClicked(!editFieldClicked);
-      break;
-
-    case 'description':
-      dispatch(editDescriptionLocally(bodyData[0].value));
+      toast.success(t('success.title_updated'));
       break;
 
     case 'tags':
       if (project.tags.includes(bodyData[0].value as string)) {
-        toast.warn('Теги проєкту мають бути унікальні');
+        toast.warn(t('warn.tag_unique'));
 
         return;
       }
 
       dispatch(addTagLocally(bodyData[0].value as string));
       setTagsClicked(!tagsClicked);
+      toast.success(t('success.tag_added'));
       break;
 
     default:
@@ -419,7 +393,7 @@ const ProjectPage: FC = () => {
                             }}
                             onClick={(): void => {
                               setShowButton(!showButton);
-                              handleDelete('tag', tag);
+                              handleDeleteTag(tag);
                             }}
                           >
                             <RemoveIcon fontSize="small" />
@@ -438,8 +412,9 @@ const ProjectPage: FC = () => {
                 maxWidth={'231px'}
                 gap={'16px'}
               >
-                {project && !isMyProject &&
+                {project && !canIEditThis() &&
                 <Button
+                  onClick={handleHelpButtonClick}
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
                     borderRadius: '5px',
@@ -459,8 +434,9 @@ const ProjectPage: FC = () => {
                   <PersonAddIcon fontSize="small" /> {t('buttons.support')}
                 </Button>
                 }
-                {project && !isMyProject &&
+                {project && !canIEditThis() &&
                 <Button
+                  onClick={handleDonateButtonClick}
                   sx={{
                     border: '2px solid rgb(130, 130, 130)',
                     borderRadius: '5px',
@@ -603,6 +579,7 @@ const ProjectPage: FC = () => {
               onSubmit={submitHandler}
               canIEditThis={canIEditThis}
               id={project.projectId}
+              summary={project.summary}
               addCursorPointer={addCursorPointer}
             />
           )}
@@ -617,10 +594,7 @@ const ProjectPage: FC = () => {
           {tabClicked === 'contacts' && (
             <Contacts
               project={project}
-              onChange={changeHandler}
-              onSubmit={submitHandler}
-              canIEditThis={canIEditThis}
-              handleDelete={handleDelete}
+              canIEditThis={canIEditThis}              
             />
           )}
           {tabClicked === 'comments' && <Comments />}

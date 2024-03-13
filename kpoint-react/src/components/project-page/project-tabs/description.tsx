@@ -1,12 +1,13 @@
-
 import '../../../lexical/lexical-components/lexical.css';
 
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'hooks/hooks';
 import { Editor } from 'lexical/lexical-components/lexical-editor/lexical-editor';
 import { FC, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { editProject } from 'store/projects/actions';
-import { editDescriptionLocally } from 'store/projects/reducer';
+import { editDescriptionLocally, editSummaryLocally } from 'store/projects/reducer';
 
 interface DescriptionProps {
   description: string;
@@ -16,6 +17,7 @@ interface DescriptionProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>, itemName: string) => void;
   canIEditThis: () => boolean;
   id: string;
+  summary: string;
   addCursorPointer: () => string;
 }
 
@@ -23,25 +25,58 @@ const Description: FC<DescriptionProps> = ({
   description,
   canIEditThis,
   id,
+  summary,
   addCursorPointer,
 }) => {
   const [descValue, setDescValue] = useState('');
-  const [descriptionClicked, setDescriptionClicked] = 
+  const [descriptionClicked, setDescriptionClicked] =
   useState(false);
   const dispatch = useAppDispatch();
   const descriptionRef = useRef<HTMLDivElement>(null);
   const handleChange = (htmlString: string): void => {
     setDescValue(htmlString);
   };
+  const [summaryClicked, setSummaryClicked] = useState(false);
+  const { t } = useTranslation();
 
-  const handleSubmit = async (): Promise<void> => {
-    const bodyData = [{ op: 'replace', path: '/description', value: descValue }];
+  const restoreDescription = (): void => {
+    setDescriptionClicked(!descriptionClicked);
 
-    setDescriptionClicked(descValue.replace(/<[^>]*>/g, '').length < 1 ? true : !descriptionClicked);
-    dispatch(editDescriptionLocally(descValue));
+    setTimeout(() => {
+      if (descriptionRef.current) {
+
+        descriptionRef.current.innerHTML = description;
+      }
+    }, 0);
+  };
+
+  const handleSubmit = async (itemName: string): Promise<void> => {
+    const bodyData = [{ op: 'replace', path: `/${itemName}`, value: descValue }];
+
+    if (itemName === 'description') {
+      if (descValue.replace(/<[^>]*>/g, '').length < 1) {
+        toast.warn(t('errors.description_length'));
+
+        return;
+      }
+      restoreDescription();
+      dispatch(editDescriptionLocally(descValue));
+      toast.success(t('success.description_updated'));
+    } else {
+      if (descValue.length < 1) {
+        toast.warn(t('errors.summary_length'));
+
+        return;
+      }
+      setSummaryClicked(!summaryClicked);
+      restoreDescription();
+      dispatch(editSummaryLocally(descValue));
+      toast.success(t('success.description_updated'));
+    }
+
     await dispatch(editProject({ id, bodyData }));
   };
-  
+
   useEffect(() => {
     setTimeout(() => {
       if (descriptionRef.current) {
@@ -50,49 +85,92 @@ const Description: FC<DescriptionProps> = ({
       }
     }, 0);
   }, [description]);
-  
+
   return (
     <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
-      {(descriptionClicked || description.replace(/<[^>]*>/g, '').length < 1) && canIEditThis() ? (
+      {descriptionClicked && canIEditThis() ? (
         <>
-          <Editor onChange={handleChange} description={description}/>
-          <Box display={'flex'} justifyContent={'start'} alignItems={'center'} gap={'16px'}>
-            {description.replace(/<[^>]*>/g, '').length > 0 && 
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: '#535365',
-              textTransform: 'none',
-              '&:hover': {
-                backgroundColor: 'rgb(84, 84, 160)',
-              },
-            }}
-            onClick={(): void => { setDescriptionClicked(!descriptionClicked);
-
-              setTimeout(() => {
-                if (descriptionRef.current) {
-      
-                  descriptionRef.current.innerHTML = description;
-                }
-              }, 0);
-            }}
-          >
-            <Typography>Відмінити</Typography>
-          </Button>}
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: '#535365',
-                textTransform: 'none',
-                '&:hover': {
-                  backgroundColor: 'rgb(84, 84, 160)',
-                },
-              }}
-              onClick={handleSubmit}
-            >
-              <Typography>Зберегти</Typography>
-            </Button>
-          </Box>
+          { summaryClicked ? (<>
+            <TextField multiline defaultValue={summary} fullWidth sx={{ marginBottom: '20px' }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>): void => handleChange(e.target.value)}></TextField>
+            <Box display={'flex'} justifyContent={'start'} alignItems={'center'} gap={'16px'}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: '#535365',
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: 'rgb(84, 84, 160)',
+                  },
+                }}
+                onClick={(): void => setSummaryClicked(!summaryClicked)}
+              >
+                <Typography>Відмінити</Typography>
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: '#535365',
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: 'rgb(84, 84, 160)',
+                  },
+                }}
+                onClick={(): void => {
+                  handleSubmit('summary');}}
+              >
+                <Typography>Зберегти</Typography>
+              </Button>
+            </Box></>
+          ) : (
+            <>
+              <Editor onChange={handleChange} description={description} />
+              <Box display={'flex'} justifyContent={'start'} alignItems={'center'} gap={'16px'}>
+                {description.replace(/<[^>]*>/g, '').length > 0 &&
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: '#535365',
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    },
+                  }}
+                  onClick={(): void => {
+                    restoreDescription();
+                  } }
+                >
+                  <Typography>Відмінити</Typography>
+                </Button>}
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: '#535365',
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    },
+                  }}
+                  onClick={(): Promise<void> => handleSubmit('description')}
+                >
+                  <Typography>Зберегти</Typography>
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: '#535365',
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    },
+                  }}
+                  onClick={(): void => setSummaryClicked(!summaryClicked)}
+                >
+                  <Typography>Редагувати короткий опис</Typography>
+                </Button>
+              </Box>
+            </>
+          )}
         </>
       ) : (
         <Box

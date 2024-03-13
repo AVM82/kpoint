@@ -22,6 +22,10 @@ const ProfilePage: FC = () => {
   }, []);
 
   useEffect(() => {
+    document.body.style.backgroundColor = '#fff';
+  }, []);
+
+  useEffect(() => {
     const fetchData = async (): Promise<void> => {
       if (testUser) {
         try {

@@ -50,7 +50,7 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
 
   const handleClick = (itemName: string): void => {
     switch (itemName) {
-    case 'profile':
+    case 'backToProjects':
       navigate(`/${user.username}`);
       break;
     case 'params':
@@ -130,8 +130,8 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
             }}
           >
             <MyProfileMenuButton
-              label={t('menu.profile')}
-              onClick={(): void => handleClick('profile')}
+              label={t('menu.back_to_projects')}
+              onClick={(): void => handleClick('backToProjects')}
             />
             <MyProfileMenuButton
               label={t('menu.profile_settings')}

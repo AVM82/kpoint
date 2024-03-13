@@ -5,6 +5,7 @@ export type GetAllProjectsType = {
   title: string,
   summary: string,
   logoImgUrl: string,
+  collectedSum: number,
   tags: [],
   isFollowed: boolean,
 };
