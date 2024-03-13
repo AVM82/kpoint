@@ -144,6 +144,7 @@ const enTranslation = {
     description_updated: 'Description was successfully updated',
     title_updated: 'Title was successfully updated',
     logo_updated: 'Logo was successfully updated',
+    copy_project_url: 'Project URL was successfully copied to the clipboard',
   },
   warn: {
     tag_unique: 'Project tags must be unique',

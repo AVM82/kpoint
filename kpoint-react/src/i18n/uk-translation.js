@@ -145,6 +145,7 @@ const ukTranslation = {
     description_updated: 'Опис проєкту успішно змінено',
     title_updated: 'Назву проєкту успішно змінено',
     logo_updated: 'Лого проєкту успішно змінено',
+    copy_project_url: 'URL проєкта був успішно скопійований в буфер обміну',
   },
   warn: {
     tag_unique: 'Теги проєкту мають бути унікальні',

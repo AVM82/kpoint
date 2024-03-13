@@ -1,7 +1,7 @@
 import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
+import ShareIcon from '@mui/icons-material/Share';
 import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -64,7 +64,11 @@ const ProjectCard: FC<ProjectCardProps> = ({
             sx={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
           >
             <IconButton
-              href="#"
+              onClick={():void => {
+                navigator.clipboard
+                  .writeText('https://k-points.in.ua/projects/'.concat(project.url));
+                toast.success(t('success.copy_project_url'));
+              }}
               sx={{
                 margin: 1,
                 backgroundColor: '#e9eff4',
@@ -75,7 +79,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
               }}
               size="small"
             >
-              <BookmarkIcon
+              <ShareIcon
                 sx={{
                   margin: 1,
                   color: '#828282',
