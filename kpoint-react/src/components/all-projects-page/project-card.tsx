@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import { GetAllProjectsType } from 'common/types/types';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 import { SubscribeButton } from './subscribe-button';
 
@@ -27,6 +28,13 @@ interface ProjectCardProps {
 const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
   const { t } = useTranslation();
   const [showControls, setShowControls] = useState(false);
+  const handleHelpButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
+
+  const handleDonateButtonClick = (): void => {
+    toast.info(t('info.develop'));
+  };
 
   return (
     <Card sx={{ maxWidth: '370px' }}>
@@ -81,6 +89,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
                 }}
               >
                 <Button
+                  onClick={handleHelpButtonClick}
                   size="medium"
                   startIcon={
                     <PeopleOutlineIcon
@@ -113,6 +122,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
                   />
                 }
                 <Button
+                  onClick={handleDonateButtonClick}
                   size="medium"
                   startIcon={
                     <AttachMoneyIcon
