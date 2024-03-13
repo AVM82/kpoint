@@ -1,4 +1,4 @@
-/* eslint-disable indent */
+import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { useAppSelector } from 'hooks/use-app-selector/use-app-selector.hook';
@@ -35,33 +35,78 @@ const HeaderButtons: FC<HeaderButtonsProps> = ({ isTitleClicked }) => {
   let buttonsBlock: ReactNode;
 
   switch (true) {
-    case loggedIn || isStillLoggedIn:
-      buttonsBlock = (
-        <>
-          <AccountMenu onClick={setProfileClicked} />
-          <Button href="/projects/new" variant="outlined"
-         sx={{ margin: 1 }}>
-            {t('buttons.create_project')}
-          </Button>
-          <Button onClick={handleLogout} variant="contained" sx={{ margin: 1 }}>
-            {t('buttons.log_out')}
-          </Button>
-        </>
-      );
-      break;
+  case loggedIn || isStillLoggedIn:
+    buttonsBlock = (
+      <>
+        <AccountMenu onClick={setProfileClicked} />
+        <Button
+          href="/projects/new"
+          variant="contained"
+          sx={{
+            margin: 1,
+            backgroundColor: '#535365',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: 'rgb(84, 84, 160)',
+            },
+          }}
+        >
+          <Typography>{t('buttons.create_project')}</Typography>
+        </Button>
+        <Button
+          onClick={handleLogout}
+          variant="contained"
+          sx={{
+            margin: 1,
+            backgroundColor: '#535365',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: 'rgb(84, 84, 160)',
+            },
+          }}
+        >
+          <Typography>{t('buttons.log_out')}</Typography>
+        </Button>
+      </>
+    );
+    break;
 
-    default:
-      buttonsBlock = (
-        <>
-          <Button href="/sign-in" variant="outlined" sx={{ margin: 1 }}>
-            {t('buttons.log_in')}
-          </Button>
-          <Button href="/sign-up" variant="contained" sx={{ margin: 1 }}>
-            {t('buttons.sign_in')}
-          </Button>
-        </>
-      );
-      break;
+  default:
+    buttonsBlock = (
+      <>
+        <Button
+          href="/sign-in"
+          variant="contained"
+          sx={{
+            margin: 1,
+            backgroundColor: '#535365',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: 'rgb(84, 84, 160)',
+            },
+          }}
+          onClick={(): void => {
+            document.body.style.backgroundColor = '#E4E5E9';}}
+        >
+          {t('buttons.log_in')}
+        </Button>
+        <Button
+          href="/sign-up"
+          variant="contained"
+          sx={{
+            margin: 1,
+            backgroundColor: '#535365',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: 'rgb(84, 84, 160)',
+            },
+          }}
+        >
+          {t('buttons.sign_in')}
+        </Button>
+      </>
+    );
+    break;
   }
 
   return (

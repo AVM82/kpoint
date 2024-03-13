@@ -3,20 +3,21 @@ import { Container } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
-import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Masonry from 'react-responsive-masonry';
 import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
 import { useAppSelector } from '../../hooks/use-app-selector/use-app-selector.hook';
-import { ProjectCardReworked } from './project-card-reworked';
+import { ProjectCard } from './project-card';
 import { ProjectsPageHeader } from './projects-page-haeder';
 
 const ProjectsPage: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  const maxPageElements = 5;
+  const maxPageElements = 8;
 
   const projects = useAppSelector((state) => state.project.projects);
 
@@ -33,6 +34,10 @@ const ProjectsPage: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
+  useEffect(() => {
+    document.body.style.backgroundColor = '#fff';
+  }, []);
+  
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
       projectAction.getAllProjectsDefault({
@@ -44,41 +49,34 @@ const ProjectsPage: FC = () => {
   };
 
   const handleAddMoreClick = (): void => {
-    dispatch(
-      projectAction.getAllProjectsAddMore({
-        size: maxPageElements,
-        number: page,
-      }),
-    );
-    setPage(page + 1);
+    if (projects && page < projects.totalPages) {
+      dispatch(
+        projectAction.getAllProjectsAddMore({
+          size: maxPageElements,
+          number: page,
+        }),
+      );
+      setPage((prevPage) =>
+        prevPage < projects.totalPages ? prevPage + 1 : prevPage,
+      );
+    }
   };
 
   return (
     <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
-      <ProjectsPageHeader />
-      <Grid
-        container
-        spacing={5}
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-      >
-        {projects &&
-          projects.content.map((project) => (
-            <Grid item key={project.projectId}>
-              <ProjectCardReworked
-                projectId={project.projectId}
-                url={project.url}
-                title={project.title}
-                summary={project.summary}
-                logoImgUrl={project.logoImgUrl}
-                tags={project.tags}
-                isAuthenticated={isAuthenticated}
-                isFollowed={project.isFollowed}
-              />
-            </Grid>
+      <ProjectsPageHeader key={'proj-page-header'}/>
+      <Masonry columnsCount={4} gutter={'10px'}>
+        {
+          (projects?.content || []).map((project) => (
+            <ProjectCard
+              project={project}
+              isAuthenticated={isAuthenticated}
+              maxPageElements={maxPageElements}
+              page={page}
+              key={project.title}
+            />
           ))}
-      </Grid>
+      </Masonry>
       <Grid
         container
         direction="row"
@@ -90,7 +88,7 @@ const ProjectsPage: FC = () => {
             variant="text"
             onClick={handleAddMoreClick}
             startIcon={<SyncTwoToneIcon />}
-            sx={{ margin: 2 }}
+            sx={{ margin: 2, color: '#636B74' }}
           >
             {t('buttons.show_more')}
           </Button>
@@ -100,8 +98,6 @@ const ProjectsPage: FC = () => {
         count={projects?.totalPages}
         page={page}
         onChange={handleChange}
-        showFirstButton
-        showLastButton
         sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
       />
     </Container>

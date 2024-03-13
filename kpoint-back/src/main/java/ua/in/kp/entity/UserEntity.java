@@ -46,7 +46,6 @@ public class UserEntity implements UserDetails {
     private String description;
 
     @ManyToMany
-    @SoftDelete
     private Set<TagEntity> tags;
 
     @ElementCollection

@@ -21,7 +21,7 @@ const Header: FC = () => {
   return (
     <AppBar
       sx={{
-        backgroundColor: '#E9EFF4',
+        backgroundColor: '#fff',
         width: '100%',
         padding: '16px 80px',
         flexShrink: 0,
@@ -41,7 +41,8 @@ const Header: FC = () => {
               <Link href="/" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
                 {t('projects')}
               </Link>
-              <Link href="#" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
+              <Link href="https://github.com/AVM82/kpoint/blob/main/README.md"
+                underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
                 {t('about_us')}
               </Link>
             </Box>
@@ -53,7 +54,7 @@ const Header: FC = () => {
               fontSize={24}
               fontWeight={700}
               color={'black'}
-              sx={{ cursor: 'pointer', textAlign: 'center' }} // Center the title within the grid cell
+              sx={{ cursor: 'pointer', textAlign: 'center' }}
               onClick={handleTitleClick}
             >
         K-POINTS

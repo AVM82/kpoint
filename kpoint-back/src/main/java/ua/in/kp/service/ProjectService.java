@@ -5,6 +5,9 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,11 +48,14 @@ public class ProjectService {
     private final Translator translator;
     private final UserRepository userRepository;
     private final MeterRegistry meterRegistry;
+    private final ValidatorFactory factory;
+    private final Validator validator;
 
     public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper,
                           UserService userService, TagRepository tagRepository, S3Service s3Service,
                           SubscriptionRepository subscriptionRepository, EmailServiceKp emailService,
-                          Translator translator, UserRepository userRepository, MeterRegistry meterRegistry) {
+                          Translator translator, UserRepository userRepository, MeterRegistry meterRegistry,
+                          ValidatorFactory factory, Validator validator) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userService = userService;
@@ -60,6 +66,8 @@ public class ProjectService {
         this.translator = translator;
         this.userRepository = userRepository;
         this.meterRegistry = meterRegistry;
+        this.factory = factory;
+        this.validator = validator;
 
         Gauge.builder("projects_count", projectRepository::count)
                 .description("A current number of projects in the system")
@@ -104,7 +112,10 @@ public class ProjectService {
                 .orElseThrow(() -> {
                     log.warn("User {} does not have project with id {}", user.getUsername(), projectId);
                     return new ApplicationException(HttpStatus.NOT_FOUND,
-                            String.format("User %s does not have project with id %s", user.getUsername(), projectId));
+                            translator.getLocaleMessage("exception.user.has.not.defined.project",
+                                    user.getUsername(), projectId));
+//                    return new ApplicationException(HttpStatus.NOT_FOUND,
+//                            String.format("User %s does not have project with id %s", user.getUsername(), projectId));
                 });
         String oldLogoUrl = project.getLogoImgUrl();
         project.setLogoImgUrl(s3Service.uploadLogo(file));
@@ -132,7 +143,7 @@ public class ProjectService {
             Optional<UserEntity> userOpt = userRepository.findByEmail(auth.getName());
             if (userOpt.isPresent()) {
                 UserEntity user = userOpt.get();
-                return subscriptionRepository.existsByUserIdAndProjectId(user.getId(), project.getProjectId());
+                return subscriptionRepository.existsByUserIdAndProjectProjectId(user.getId(), project.getProjectId());
             }
         }
         return false;
@@ -219,11 +230,13 @@ public class ProjectService {
         Optional<ProjectSubscribeEntity> existingSubscription =
                 subscriptionRepository.findByUserIdAndProjectId(user.getId(), projectId);
         if (existingSubscription.isPresent()) {
-            return new MessageResponseDto("User is already subscribed to project " + projectId);
+            return unsubscribeUserFromProject(projectId);
         } else {
             saveSubscription(projectId);
+            log.info("User {} has been subscribed to project with id {}", user.getUsername(), projectId);
             emailService.sendProjectSubscriptionMessage(project, user);
-            return new MessageResponseDto("User subscribed to project " + project.getTitle() + " successfully");
+            return new MessageResponseDto(translator.getLocaleMessage("project.subscribed",
+                    user.getUsername(), project.getTitle()));
         }
     }
 
@@ -240,15 +253,16 @@ public class ProjectService {
     private ProjectEntity getProjectIfExist(String projectId) {
         Optional<ProjectEntity> projectForUpdate = projectRepository.findBy(projectId);
         if (projectForUpdate.isEmpty()) {
-            throw new RuntimeException("Project not found");
+            throw new ApplicationException(HttpStatus.NOT_FOUND,
+                    translator.getLocaleMessage("exception.project.not-found"));
         }
         return projectForUpdate.get();
     }
 
     private void saveSubscription(String projectId) {
         ProjectSubscribeEntity subscription = new ProjectSubscribeEntity();
-        subscription.setUserId(userService.getAuthenticated().getId());
-        subscription.setProjectId(projectId);
+        subscription.setUser(userService.getAuthenticated());
+        subscription.setProject(getProjectIfExist(projectId));
         subscriptionRepository.save(subscription);
     }
 
@@ -303,12 +317,23 @@ public class ProjectService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.project.cannot-updated"));
         }
+
+        Set<ConstraintViolation<ProjectChangeDto>> violations = validator.validate(patchedDto);
+        String error = "";
+        if (!violations.isEmpty()) {
+            for (ConstraintViolation<ProjectChangeDto> violation : violations) {
+                log.warn(violation.getMessage());
+                error = violation.getMessage();
+            }
+            throw new ApplicationException(HttpStatus.BAD_REQUEST, error);
+        }
+
         List<String> changedFields = findChangedFields(projectDto, patchedDto);
         patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         ProjectEntity updatedProject = projectMapper.changeDtoToEntity(patchedDto, projectEntity);
-        ProjectEntity updatedUser = projectRepository.save(updatedProject);
-        emailService.sendProjectUpdateEmail(projectId, changedFields, updatedUser);
-        return projectMapper.toChangeDto(updatedUser);
+        ProjectEntity savedProject = projectRepository.save(updatedProject);
+        emailService.sendProjectUpdateEmail(projectId, changedFields, savedProject);
+        return projectMapper.toChangeDto(savedProject);
     }
 
     private List<String> findChangedFields(ProjectChangeDto originalDto, ProjectChangeDto patchedDto) {

@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Button, Input } from '@mui/material';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -6,7 +6,7 @@ interface IInputField {
   id?: number;
   placeholder: string;
   onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>, itemName: string) => void;
   itemName: string;
@@ -27,42 +27,58 @@ export const InputField: FC<IInputField> = ({
       justifyContent={'center'}
       alignItems={'center'}
       flexDirection={'column'}
+      position={`${itemName === 'title' ? 'absolute' : 'static'}`}
+      top={`${itemName === 'title' ? '-15px' : '0'}`}
     >
       <form
         id={id ? `${id}` : ''}
         name={itemName}
-        className="input__form"
         onSubmit={(e): void => onSubmit(e, itemName)}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '100%',
+        }}
       >
-        {itemName === 'description' ? (
-          <textarea
-            className="form__input"
-            placeholder={placeholder}
-            name={itemName}
-            required
-            onChange={(
-              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-            ): void => onChange(e)}
-            rows={30}
-            cols={60}
-          ></textarea>
-        ) : (
-          <input
-            className="form__input"
+        {itemName === 'tags' ? (
+          <Input
             type="text"
             placeholder={placeholder}
             name={itemName}
-            maxLength={16}
-            minLength={1}
+            inputProps={{
+              maxLength: '10',
+            }}
             required
             onChange={(
-              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+              e: React.ChangeEvent<HTMLInputElement>,
+            ): void => onChange(e)}
+          />
+        ) : (
+          <Input
+            type="text"
+            defaultValue={placeholder}
+            name={itemName}
+            inputProps={{
+              maxLength: '30',
+            }}
+            required
+            onChange={(
+              e: React.ChangeEvent<HTMLInputElement>,
             ): void => onChange(e)}
           />
         )}
-        <button className="add" type="submit">
+        <Button type="submit"
+          variant="contained"
+          sx={{
+            margin: 1,
+            backgroundColor: '#535365',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: 'rgb(84, 84, 160)',
+            },
+          }}>
           {t('buttons.edit')}
-        </button>
+        </Button>
       </form>
     </Box>
   );

@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
-import { ChangeEvent, FC, useLayoutEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { suggestionAction } from 'store/actions';
@@ -20,9 +20,7 @@ const SuggestionsPage: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const maxPageElements = 10;
-  const { suggestions } = useAppSelector(({ suggestion }) => ({
-    suggestions: suggestion.suggestions,
-  }));
+  const suggestions = useAppSelector((state) => state.suggestion.suggestions);
 
   const status = useAppSelector((state) => state.suggestion.status);
 
@@ -39,6 +37,10 @@ const SuggestionsPage: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, status]);
 
+  useEffect(() => {
+    document.body.style.backgroundColor = '#fff';
+  }, []);
+  
   const handleChange = (event: ChangeEvent<unknown>, value: number): void => {
     dispatch(
       suggestionAction.getAllSuggestionsDefault({
@@ -51,13 +53,16 @@ const SuggestionsPage: FC = () => {
   };
 
   const handleAddMoreClick = (): void => {
-    dispatch(
-      suggestionAction.getAllSuggestionsAddMore({
-        size: maxPageElements,
-        number: page,
-      }),
-    );
-    setPage(page + 1);
+    if (suggestions && page < suggestions.totalPages) {
+      dispatch(
+        suggestionAction.getAllSuggestionsAddMore({
+          size: maxPageElements,
+          number: page,
+        }),
+      );
+      setPage(page + 1);
+      setPage((prevPage) => (prevPage < suggestions.totalPages ? prevPage + 1 : prevPage));
+    }
   };
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -83,32 +88,46 @@ const SuggestionsPage: FC = () => {
     <Container maxWidth={'lg'} sx={{ flexGrow: 1 }}>
       {suggestions && suggestions.content.length > 0 ? (
         <Box sx={{ width: '100%', margin: '60px 0 140px 0' }}>
-          <Box
+          <Grid
             display={'flex'}
             justifyContent={'center'}
             alignItems={'center'}
             width={'100%'}
-            marginBottom={'107px'}
-          >
-            <Typography variant="h3" align="center" width={'100%'}>
-              {t('suggestions')}
-            </Typography>
-            <Box display={'flex'} justifyContent={'end'}>
-              <Button
-                onClick={handleOpenModal}
-                variant="contained"
-                color="primary"
-              >
-                {t('add_suggestion')}
-              </Button>
-            </Box>
-          </Box>
-          {modalOpen && (
-            <AddSuggestionModal
-              handleCloseModal={handleCloseModal}
-              currentPage={page}
-            />
-          )}
+            position={'relative'}
+          > 
+            <Grid
+              item xs={12} container justifyContent="center" alignItems={'center'}>
+              <Typography variant="h3" align={'center'} width={'100%'} fontSize={'36px'}
+                fontWeight={700} letterSpacing={'1px'} lineHeight={'110%'}>
+                {t('suggestions')}
+              </Typography>
+            </Grid>
+            <Grid
+              item xs={2}>
+              <Box display={'flex'} justifyContent={'end'}>
+                <Button
+                  onClick={handleOpenModal}
+                  variant="contained"
+                  sx={{
+                    bgcolor: '#535365',
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    },
+                    position: 'absolute',
+                    top: '5%',
+                  }}
+                >
+                  {t('add_suggestion')}
+                </Button>
+              </Box>
+            </Grid>
+            {modalOpen && (
+              <AddSuggestionModal
+                handleCloseModal={handleCloseModal}
+                currentPage={page}
+              />
+            )}
+          </Grid>
           <Grid item>
             {suggestions?.content.map((suggestion) => (
               <Grid item key={suggestion.id}>
@@ -135,7 +154,7 @@ const SuggestionsPage: FC = () => {
                 variant="text"
                 onClick={handleAddMoreClick}
                 startIcon={<SyncTwoToneIcon />}
-                sx={{ margin: 2 }}
+                sx={{ margin: 2, color: '#636B74' }}
               >
                 {t('buttons.show_more')}
               </Button>
@@ -145,8 +164,6 @@ const SuggestionsPage: FC = () => {
             count={suggestions?.totalPages}
             page={page}
             onChange={handleChange}
-            showFirstButton
-            showLastButton
             sx={{ margin: 2, display: 'flex', justifyContent: 'center' }}
           />
         </Box>
@@ -158,31 +175,46 @@ const SuggestionsPage: FC = () => {
           margin={'60px 0 140px 0'}
           flexDirection={'column'}
         >
-          <Box
+          <Grid
             display={'flex'}
             justifyContent={'center'}
             alignItems={'center'}
             width={'100%'}
-          >
-            <Typography variant="h3" align="center" width={'100%'}>
-              {t('suggestions')}
-            </Typography>
-            <Box display={'flex'} justifyContent={'end'}>
-              <Button
-                onClick={handleOpenModal}
-                variant="contained"
-                color="primary"
-              >
-                {t('add_suggestion')}
-              </Button>
-            </Box>
+            position={'relative'}
+          > 
+            <Grid
+              item xs={12} container justifyContent="center" alignItems={'center'}>
+              <Typography variant="h3" align={'center'} width={'100%'} fontSize={'36px'}
+                fontWeight={700} letterSpacing={'1px'} lineHeight={'110%'}>
+                {t('suggestions')}
+              </Typography>
+            </Grid>
+            <Grid
+              item xs={2}>
+              <Box display={'flex'} justifyContent={'end'}>
+                <Button
+                  onClick={handleOpenModal}
+                  variant="contained"
+                  sx={{
+                    bgcolor: '#535365',
+                    '&:hover': {
+                      backgroundColor: 'rgb(84, 84, 160)',
+                    },
+                    position: 'absolute',
+                    top: '5%',
+                  }}
+                >
+                  {t('add_suggestion')}
+                </Button>
+              </Box>
+            </Grid>
             {modalOpen && (
               <AddSuggestionModal
                 handleCloseModal={handleCloseModal}
                 currentPage={page}
               />
             )}
-          </Box>
+          </Grid>
           <Box component={'img'} src={suggestionsImage}></Box>
         </Box>
       )}

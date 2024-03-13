@@ -26,10 +26,10 @@ import ua.in.kp.locale.Translator;
 import ua.in.kp.mapper.ProjectMapper;
 import ua.in.kp.mapper.UserMapper;
 import ua.in.kp.repository.SubscriptionRepository;
+import ua.in.kp.repository.TagRepository;
 import ua.in.kp.repository.UserRepository;
 import ua.in.kp.util.PatchUtil;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +42,7 @@ public class ProfileService {
     private final ProjectMapper projectMapper;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final S3Service s3Service;
     private final Translator translator;
@@ -56,19 +57,20 @@ public class ProfileService {
     public Page<GetAllProjectsDto> getFavouriteProjects(Pageable pageable) {
         UserEntity user = userService.getAuthenticated();
         log.info("Get favourite projects for user {}", user.getUsername());
-        return userService.getUserEntityByUsernameFetchedFavouriteProjects(user.getUsername(), pageable)
+        Page<GetAllProjectsDto> dtos = userService
+                .getUserEntityByUsernameFetchedFavouriteProjects(user.getUsername(), pageable)
                 .map(projectMapper::getAllToDto);
+        log.info("{}", dtos.getTotalElements());
+        return dtos;
     }
 
     @Transactional(readOnly = true)
     public Page<GetAllProjectsDto> getSubscribedProjects(Pageable pageable) {
         UserEntity user = userService.getAuthenticated();
-        log.info("Get favourite projects for user {}", user.getUsername());
-        List<String> projectIds =
-                subscriptionRepository.findByUserId(user.getId(), pageable)
-                        .map(ProjectSubscribeEntity::getProjectId)
-                        .toList();
-        return projectService.getProjectByIds(projectIds, pageable);
+        log.info("Get subscribed projects for user {}", user.getUsername());
+        return subscriptionRepository.findByUserId(user.getId(), pageable)
+                .map(ProjectSubscribeEntity::getProject)
+                .map(projectMapper::getAllToDto);
     }
 
     @Transactional(readOnly = true)
@@ -90,7 +92,7 @@ public class ProfileService {
         log.info("Get recommended projects for user {}", user.getUsername());
         Set<String> subscribedProjectIds =
                 subscriptionRepository.findByUserId(user.getId(), pageable).stream()
-                        .map(ProjectSubscribeEntity::getProjectId)
+                        .map(projectSubscribeEntity -> projectSubscribeEntity.getProject().getProjectId())
                         .collect(Collectors.toSet());
         Set<String> ownedProjectIds =
                 projectService.getProjectsByUser(user, pageable).stream()
@@ -108,6 +110,7 @@ public class ProfileService {
                 });
     }
 
+    @Transactional
     public UserChangeDto updateUserData(String email, JsonPatch patch) {
         log.info("update user data by user with email {}", email);
         UserEntity userEntity = userService.getByEmail(email);
@@ -120,8 +123,15 @@ public class ProfileService {
             throw new ApplicationException(HttpStatus.BAD_REQUEST,
                     translator.getLocaleMessage("exception.user.cannot-updated"));
         }
+        if (!email.equals(patchedDto.email()) && userRepository.existsByEmail(patchedDto.email())) {
+            log.warn("cannot update user data: email {} already", patchedDto.email());
+            throw new ApplicationException(HttpStatus.BAD_REQUEST,
+                    translator.getLocaleMessage("exception.user.register-email-failed", patchedDto.email()));
+        }
+        patchedDto.tags().forEach(tag -> tagRepository.saveByNameIfNotExist(tag.toLowerCase()));
         UserEntity updatedUser = userRepository.save(userMapper.changeDtoToEntity(patchedDto, userEntity));
-        return userMapper.toChangeDto(updatedUser);
+        UserEntity savedUser = userRepository.save(updatedUser);
+        return userMapper.toChangeDto(savedUser);
     }
 
     public void changePassword(String email, PasswordDto dto) {
