@@ -124,6 +124,14 @@ const ukTranslation = {
     profile_email_updated: 'Електронна пошта змінена. Щоб продовжити, увійдіть з новою поштою',
     profile_updated: 'Данні профілю успішно змінені',
     profile_avatar_updated: 'Аватар профілю успішно змінено',
+    tag_deleted: 'Тег успішно видалений',
+    tag_added: 'Новий тег був успішно доданий',
+    description_updated: 'Опис проєкту успішно змінено',
+    title_updated: 'Назву проєкту успішно змінено',
+    logo_updated: 'Лого проєкту успішно змінено',
+  },
+  warn: {
+    tag_unique: 'Теги проєкту мають бути унікальні',
   },
   menu: {
     account_settings: 'Налаштування аккаунта',

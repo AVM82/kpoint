@@ -73,7 +73,7 @@ const ProjectPage: FC = () => {
       const id = project.projectId;
       dispatch(editProject({ id, bodyData }));
       dispatch(deleteTagLocally(value));
-      toast.success('Тег видалено');
+      toast.success(t('success.tag_deleted'));
     } else if (itemName === 'link') {
       bodyData.push({
         op: 'replace',
@@ -136,6 +136,7 @@ const ProjectPage: FC = () => {
     const id = project.projectId;
     const logo = file as File;
     dispatch(editLogo({ id, logo }));
+    toast.success(t('success.logo_updated'));
   };
 
   const extractWordBetweenWWWAndCom = (url: string): string => {
@@ -190,21 +191,24 @@ const ProjectPage: FC = () => {
     case 'title':
       dispatch(editTitleLocally(bodyData[0].value));
       setEditFieldClicked(!editFieldClicked);
+      toast.success(t('success.title_updated'));
       break;
 
     case 'description':
       dispatch(editDescriptionLocally(bodyData[0].value));
+      toast.success(t('success.description_updated'));
       break;
 
     case 'tags':
       if (project.tags.includes(bodyData[0].value as string)) {
-        toast.warn('Теги проєкту мають бути унікальні');
+        toast.warn(t('warn.tag_unique'));
 
         return;
       }
 
       dispatch(addTagLocally(bodyData[0].value as string));
       setTagsClicked(!tagsClicked);
+      toast.success(t('success.tag_added'));
       break;
 
     default:
