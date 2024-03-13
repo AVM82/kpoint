@@ -255,10 +255,10 @@ const SignUpPage: FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               borderRadius: '8px',
-              padding: '80px',
               bgcolor: '#fff',
-              minWidth: '600px',
-              maxWidth: '600px',
+              padding: { xs: '20px', lg: '80px' },
+              minWidth: { xs: '350px', lg: '600px' },
+              maxWidth: { xs: '350px', lg: '600px' },
               marginBottom: '50px',
             }}>
             <Avatar sx={{ m: 1, bgcolor: '#757575' }}>

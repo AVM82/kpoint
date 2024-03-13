@@ -18,24 +18,47 @@ const ProjectsPageHeader: FC = () => {
       marginBottom={'50px'}
       gap={'20px'}
     >
-      <Typography variant="h3" align="center">
+      <Typography variant="h3" align="center" fontWeight={700} color={'#21272A'} sx={{
+        fontSize: { xs: '24px', lg: '42px' },
+      }}>
         {t('projects')}
       </Typography>
-      <Box display={'flex'} justifyContent={'space-between'} width={'100%'}>
+      <Box display={'flex'} justifyContent={'space-between'} width={'100%'} 
+        sx={{ flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: '10px' } }}>
+        <Box sx={{ display: { xs: 'flex', lg: 'none' } }} justifyContent={'space-between'} alignItems={'center'}>
+          <Button
+            sx={{
+              border: '2px solid rgb(71, 66, 66)',
+              borderRadius: '4px',
+              color: '#474242',
+              textTransform: 'none',
+              width: '100%',
+              marginRight: '5px',
+            }}
+            onClick={(): Id => toast.info('В розробці')}
+          >
+            Фільтр
+          </Button>
+          <Button sx={{ border: '2px solid rgb(130, 130, 130)',
+            color: '#474242', textTransform: 'none', width: '100%', marginLeft: '5px' }}
+          onClick={(): Id => toast.info('В розробці')}>
+          Сортування
+          </Button>
+        </Box>
         <TextField
           label={t('search_field')}
           disabled
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
             width: '100%',
           }}
         ></TextField>
         <Box
-          display={'flex'}
           alignItems={'center'}
           width={'10%'}
           justifyContent={'center'}
+          sx={{
+            display: { xs: 'none', lg: 'flex' },
+          }}
         >
           <Button
             sx={{
@@ -85,10 +108,12 @@ const ProjectsPageHeader: FC = () => {
         </Box>
       )}
       <Box
-        display={'flex'}
         alignItems={'center'}
         justifyContent={'end'}
         width={'100%'}
+        sx={{
+          display: { xs: 'none', lg: 'flex' },
+        }}
       >
         <Button sx={{ border: '2px solid rgb(130, 130, 130)',
           color: '#474242', textTransform: 'none' }} onClick={(): Id => toast.info('В розробці')}>

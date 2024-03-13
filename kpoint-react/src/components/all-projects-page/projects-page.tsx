@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
 import { ChangeEvent, FC, useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Masonry from 'react-responsive-masonry';
+import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import { projectAction } from 'store/actions';
 
 import { useAppDispatch } from '../../hooks/use-app-dispatch/use-app-dispatch.hook';
@@ -65,12 +65,14 @@ const ProjectsPage: FC = () => {
   return (
     <Container maxWidth={'xl'} sx={{ flexGrow: 1 }}>
       <ProjectsPageHeader key={'proj-page-header'}/>
-      <Masonry columnsCount={4} gutter={'10px'}>
-        {
-          (projects?.content || []).map((project) => (
-            <ProjectCard project={project} isAuthenticated={isAuthenticated} key={project.title}/>
-          ))}
-      </Masonry>
+      <ResponsiveMasonry columnsCountBreakPoints={{ 900: 4, 400: 1 }}>
+        <Masonry columnsCount={4} gutter={'10px'}>
+          {
+            (projects?.content || []).map((project) => (
+              <ProjectCard project={project} isAuthenticated={isAuthenticated} key={project.title}/>
+            ))}
+        </Masonry>
+      </ResponsiveMasonry>
       <Grid
         container
         direction="row"

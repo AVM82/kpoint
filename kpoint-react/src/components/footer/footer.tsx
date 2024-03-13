@@ -34,7 +34,7 @@ const Footer: FC = () => {
   return (
     <Box
       component={'footer'}
-      sx={{ backgroundColor: '#535365', padding: '48px 80px' }}
+      sx={{ backgroundColor: '#535365', padding: { xs: '16px', lg: '48px 80px' } }}
       flexShrink={0}
     >
       <Box
@@ -95,7 +95,7 @@ const Footer: FC = () => {
       <Divider
         variant="fullWidth"
         orientation="horizontal"
-        sx={{ bgcolor: '#FFFFFF', marginTop: '48px', marginBottom: '48px' }}
+        sx={{ bgcolor: '#FFFFFF', margin: { xs: '24px 0', lg: '48px 0' } }}
       />
       <Box
         display={'flex'}
