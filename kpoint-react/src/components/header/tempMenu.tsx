@@ -16,7 +16,6 @@ import * as React from 'react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { storage } from 'services/services';
 
 interface MenuProps {
@@ -36,18 +35,6 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
 
   const handleClose = (): void => {
     setAnchorEl(null);
-  };
-
-  const handleMyAccountClick = (): void => {
-    toast.info(t('info.develop'));
-  };
-
-  const handleAddAnotherAccountClick = (): void => {
-    toast.info(t('info.develop'));
-  };
-
-  const handleSettingsClick = (): void => {
-    toast.info(t('info.develop'));
   };
 
   const handleClickProfile = (): void => {
@@ -120,17 +107,17 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
         <MenuItem onClick={handleClickProfile}>
           <Avatar /> {t('menu.profile')}
         </MenuItem>
-        <MenuItem onClick={handleMyAccountClick}>
+        <MenuItem onClick={handleClose}>
           <Avatar /> {t('menu.my_account')}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleAddAnotherAccountClick}>
+        <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
           {t('menu.add_another_account')}
         </MenuItem>
-        <MenuItem onClick={handleSettingsClick}>
+        <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
