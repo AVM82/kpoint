@@ -117,6 +117,8 @@ const ukTranslation = {
       'Опис проєкта не може бути пуста або мати більше 3000 символів',
     project_deadline:
       'Дата дедлайну збору не може бути більшою за дату дедлайну повернення',
+    project_start_sum_negative:
+      'Сумма старту не може бути відʼємною',
     suggestion_size: 'Поле повинне містити від 1 до 200 символів',
     profile_password_not_same: 'Введені нові паролі не збігаються',
     profile_password_new_current:
@@ -124,7 +126,7 @@ const ukTranslation = {
     can_not_login: 'Не можу увійти',
     profile_can_not_update: 'Не вдається оновити профіль',
     sign_up_password_not_same: 'Введені паролі не збігаються',
-    password_short: 'Введений пароль короткий',
+    password_short: 'Введений пароль пустий',
     invalid_email: 'Невірна електронна пошта',
     invalid_username: 'Невірне імʼя користувача. Поле повинне містити від 1 символа',
     invalid_firstname: 'Невірне імʼя',
@@ -143,8 +145,11 @@ const ukTranslation = {
     tag_deleted: 'Тег успішно видалений',
     tag_added: 'Новий тег був успішно доданий',
     description_updated: 'Опис проєкту успішно змінено',
+    summary_updated: 'Короткий опис проєкту успішно змінено',
+    contact_added: 'Контакт успішно додано',
     title_updated: 'Назву проєкту успішно змінено',
     logo_updated: 'Лого проєкту успішно змінено',
+    copy_project_url: 'URL проєкта був успішно скопійований в буфер обміну',
   },
   warn: {
     tag_unique: 'Теги проєкту мають бути унікальні',

@@ -1,10 +1,4 @@
-import {
-  AcceptLanguage,
-  ContentType,
-  HttpHeader,
-  HttpMethod,
-  StorageKey,
-} from 'common/enums/enums';
+import { AcceptLanguage, ContentType, HttpHeader, HttpMethod, StorageKey } from 'common/enums/enums';
 import { HttpOptions } from 'common/types/types';
 import { HttpError } from 'exceptions/exceptions';
 import { Storage } from 'services/storage/storage.service';
@@ -39,7 +33,7 @@ class Http {
       headers,
       body: payload,
     })
-      .then(this.checkStatus)
+      .then((res) => this.checkStatus(res))
       .then((res) => this.parseJSON<T>(res))
       .catch(this.throwError);
   }
@@ -82,6 +76,13 @@ class Http {
       const parsedException = await response.json().catch(() => ({
         message: response.statusText,
       }));
+
+      if (response.status === 401) {
+        this.#storage.removeItem(StorageKey.USER);
+        this.#storage.removeItem(StorageKey.TOKEN);
+        window.location.href = '/sign-in';
+        parsedException.message = 'Дія токена закінчилась. Перелогіньтесь';
+      }
 
       throw new HttpError({
         status: response.status,

@@ -28,29 +28,20 @@ export const ProfilePassword: FC = () => {
   const handleChangeIsValid = (): Record<string, boolean> => {
     const errors: Record<string, boolean> = {};
 
-    if (!passwordsValues.newPassword) {
-      errors.newPassword = true;
-    }
-
-    if(!passwordsValues.oldPassword) {
+    if(!passwordsValues.oldPassword || passwordsValues.oldPassword.trim().length === 0) {
       errors.oldPassword = true;
-    }
-
-    if(!passwordsValues.confirmPassword) {
-      errors.confirmPassword = true;
-    }
-
-    if (passwordsValues.newPassword.trim().length === 0) {
+      toast.error(t('errors.password_short'), { position: 'top-right' });
+    } else if (!passwordsValues.newPassword || passwordsValues.newPassword.trim().length === 0) {
       errors.newPassword = true;
+      toast.error(t('errors.password_short'), { position: 'top-right' });
+    } else if(!passwordsValues.confirmPassword || passwordsValues.confirmPassword.trim().length === 0) {
       errors.confirmPassword = true;
       toast.error(t('errors.password_short'), { position: 'top-right' });
     } else if (passwordsValues.newPassword.trim() !== passwordsValues.confirmPassword.trim()) {
       errors.newPassword = true;
       errors.confirmPassword = true;
       toast.error(t('errors.profile_password_not_same'), { position: 'top-right' });
-    }
-
-    if (passwordsValues.newPassword.trim() === passwordsValues.oldPassword.trim()) {
+    } else if (passwordsValues.newPassword.trim() === passwordsValues.oldPassword.trim()) {
       errors.newPassword = true;
       errors.confirmPassword = true;
       toast.error(t('errors.profile_password_new_current'), { position: 'top-right' });

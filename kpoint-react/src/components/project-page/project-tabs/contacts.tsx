@@ -57,12 +57,12 @@ const Contacts: FC<ContactsProps> = ({
     setAddContactClicked(!addContactClicked);
     await dispatch(editProject({ id, bodyData }));
     dispatch(addContactLocally({ linkName, link: newContact }));
-
+    toast.success(t('success.contact_added'));
   };
 
   const handleDelete = async (value: string): Promise<void> => {
     const bodyData = [];
-    
+
     bodyData.push({
       op: 'replace',
       path: '/networksLinks',
@@ -158,7 +158,7 @@ const Contacts: FC<ContactsProps> = ({
               }}
               onClick={handleSubmit}
             >
-              <Typography>{t('buttons.add')}</Typography>              
+              <Typography>{t('buttons.add')}</Typography>
             </Button></>
         )}
       </Box>}
