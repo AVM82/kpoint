@@ -11,6 +11,7 @@ import { StorageKey } from 'common/enums/app/storage-key.enum';
 import { FC, useEffect, useState } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { storage } from 'services/services';
 
 import footerImg from '../../footer-rect.png';
@@ -20,6 +21,9 @@ const Footer: FC = () => {
   const { t } = useTranslation();
   const loggedIn = useAppSelector((state) => state.token.isloggedIn);
   const [isStillLoggedIn, setStillLoggedIn] = useState(false);
+  const handleSocialNetworksClick = (): void => {
+    toast.info(t('info.develop'));
+  };
 
   useEffect(() => {
     const token = storage.getItem(StorageKey.TOKEN);
@@ -71,19 +75,19 @@ const Footer: FC = () => {
           gap={'5px'}
           alignItems={'center'}
         >
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+          <Link onClick={handleSocialNetworksClick} underline="none" color="#FFFFFF" padding={'2px'}>
             <YouTubeIcon />
           </Link>
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+          <Link onClick={handleSocialNetworksClick} underline="none" color="#FFFFFF" padding={'2px'}>
             <FacebookIcon />
           </Link>
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+          <Link onClick={handleSocialNetworksClick} underline="none" color="#FFFFFF" padding={'2px'}>
             <TwitterIcon />
           </Link>
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+          <Link onClick={handleSocialNetworksClick} underline="none" color="#FFFFFF" padding={'2px'}>
             <InstagramIcon />
           </Link>
-          <Link href="#" underline="none" color="#FFFFFF" padding={'2px'}>
+          <Link onClick={handleSocialNetworksClick} underline="none" color="#FFFFFF" padding={'2px'}>
             <LinkedInIcon />
           </Link>
         </Box>
@@ -107,7 +111,8 @@ const Footer: FC = () => {
           <Link href="/" underline="none" color="#FFFFFF" sx={{ margin: 1 }} fontSize={16} padding={'2px'}>
             {t('projects')}
           </Link>
-          <Link href="#" underline="none" color="#FFFFFF" sx={{ margin: 1 }} fontSize={16} padding={'2px'}>
+          <Link href="https://github.com/AVM82/kpoint/blob/main/README.md"
+            underline="none" color="#FFFFFF" sx={{ margin: 1 }} fontSize={16} padding={'2px'}>
             {t('about_us')}
           </Link>
           {loggedIn || isStillLoggedIn ? (

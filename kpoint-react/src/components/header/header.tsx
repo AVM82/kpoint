@@ -41,7 +41,8 @@ const Header: FC = () => {
               <Link href="/" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
                 {t('projects')}
               </Link>
-              <Link href="#" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
+              <Link href="https://github.com/AVM82/kpoint/blob/main/README.md"
+                underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
                 {t('about_us')}
               </Link>
             </Box>
