@@ -70,12 +70,12 @@ const ProjectsPage: FC = () => {
           {
             (projects?.content || []).map((project) => (
               <ProjectCard
-              project={project}
-              isAuthenticated={isAuthenticated}
-              maxPageElements={maxPageElements}
-              page={page}
-              key={project.title}
-            />
+                project={project}
+                isAuthenticated={isAuthenticated}
+                maxPageElements={maxPageElements}
+                page={page}
+                key={project.title}
+              />
             ))}
         </Masonry>
       </ResponsiveMasonry>
