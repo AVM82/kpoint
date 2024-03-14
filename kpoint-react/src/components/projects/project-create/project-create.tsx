@@ -112,6 +112,10 @@ export const ProjectCreate: FC = () => {
       if (new Date(data.goalDeadline) < new Date(data.collectDeadline)) {
         errors.deadline = t('errors.project_deadline');
       }
+
+      if (data.startSum < 0) {
+        errors.startSum = t('errors.project_start_sum_negative');
+      }
       break;
     }
     }

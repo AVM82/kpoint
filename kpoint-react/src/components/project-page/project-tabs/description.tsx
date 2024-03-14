@@ -29,7 +29,7 @@ const Description: FC<DescriptionProps> = ({
   addCursorPointer,
 }) => {
   const [descValue, setDescValue] = useState('');
-  const [descriptionClicked, setDescriptionClicked] = 
+  const [descriptionClicked, setDescriptionClicked] =
   useState(false);
   const dispatch = useAppDispatch();
   const descriptionRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,7 @@ const Description: FC<DescriptionProps> = ({
     const bodyData = [{ op: 'replace', path: `/${itemName}`, value: descValue }];
 
     if (itemName === 'description') {
-      if (descValue.replace(/<[^>]*>/g, '').length < 1) { 
+      if (descValue.replace(/<[^>]*>/g, '').length < 1) {
         toast.warn(t('errors.description_length'));
 
         return;
@@ -64,7 +64,7 @@ const Description: FC<DescriptionProps> = ({
       dispatch(editDescriptionLocally(descValue));
       toast.success(t('success.description_updated'));
     } else {
-      if (descValue.length < 1) { 
+      if (descValue.length < 1) {
         toast.warn(t('errors.summary_length'));
 
         return;
@@ -73,11 +73,12 @@ const Description: FC<DescriptionProps> = ({
       setDescriptionClicked(!descriptionClicked);
       restoreDescription();
       dispatch(editSummaryLocally(descValue));
+      toast.success(t('success.description_updated'));
     }
-    
+
     await dispatch(editProject({ id, bodyData }));
   };
-  
+
   useEffect(() => {
     setTimeout(() => {
       if (descriptionRef.current) {
@@ -86,7 +87,7 @@ const Description: FC<DescriptionProps> = ({
       }
     }, 0);
   }, [description]);
-  
+
   return (
     <Grid item xs={12} lg={8} marginTop={'10px'} sx={{
       height: { xs: '100dvh', lg: '100dvh' },

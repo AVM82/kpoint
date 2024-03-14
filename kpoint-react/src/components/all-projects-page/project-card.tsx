@@ -1,8 +1,8 @@
 import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import { Box } from '@mui/material';
+import ShareIcon from '@mui/icons-material/Share';
+import { Box, Link } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -23,9 +23,16 @@ import { SubscribeButton } from './subscribe-button';
 interface ProjectCardProps {
   project: GetAllProjectsType;
   isAuthenticated: boolean;
+  maxPageElements: number;
+  page: number;
 }
 
-const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
+const ProjectCard: FC<ProjectCardProps> = ({
+  project,
+  isAuthenticated,
+  maxPageElements,
+  page,
+}) => {
   const { t } = useTranslation();
   const [showControls, setShowControls] = useState(false);
   const handleHelpButtonClick = (): void => {
@@ -57,7 +64,11 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
             sx={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
           >
             <IconButton
-              href="#"
+              onClick={():void => {
+                navigator.clipboard
+                  .writeText('https://k-points.in.ua/projects/'.concat(project.url));
+                toast.success(t('success.copy_project_url'));
+              }}
               sx={{
                 margin: 1,
                 backgroundColor: '#e9eff4',
@@ -68,7 +79,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
               }}
               size="small"
             >
-              <BookmarkIcon
+              <ShareIcon
                 sx={{
                   margin: 1,
                   color: '#828282',
@@ -119,6 +130,8 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
                     projectId={project.projectId}
                     isAuthenticated={isAuthenticated}
                     isFollowed={project.isFollowed ?? false}
+                    maxPageElements={maxPageElements}
+                    page={page}
                   />
                 }
                 <Button
@@ -154,7 +167,8 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, isAuthenticated }) => {
       </CardMedia>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          {project.title}
+          <Link underline="none" href={'projects/'.concat(project.url)}
+            sx={{ cursor: 'pointer', color: 'black' }}>{project.title}</Link>
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {project.summary}

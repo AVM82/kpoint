@@ -100,7 +100,7 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
               right: 14,
               width: 10,
               height: 10,
-              bgcolor: '#DCDEEE',
+              bgcolor: 'background.paper',
               transform: 'translateY(-50%) rotate(45deg)',
               zIndex: 0,
             },
