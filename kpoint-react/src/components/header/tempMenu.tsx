@@ -41,6 +41,10 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
     navigate('/settings/profile');
   };
 
+  const handleCreateProjectClick = (): void => {
+    navigate('/projects/new');
+  };
+
   const handleLogout = (): void => {
     storage.removeItem(StorageKey.TOKEN);
     storage.removeItem(StorageKey.USER);
@@ -110,7 +114,13 @@ const AccountMenu: FC<MenuProps> = ({ onClick }) => {
         }} onClick={handleClickProfile}>
           <Avatar src={user.avatarImgUrl} /> {t('menu.my_profile')}
         </MenuItem>
-        <MenuItem
+        <MenuItem sx={{
+          marginBottom: '5px',
+          display: { xs: 'block', lg: 'none' },
+        }}
+        onClick={handleCreateProjectClick}
+        >{t('buttons.create_project')}</MenuItem>
+        <MenuItem 
           sx={{
             marginBottom: '5px',
           }}

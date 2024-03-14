@@ -97,8 +97,9 @@ const SuggestionsPage: FC = () => {
           > 
             <Grid
               item xs={12} container justifyContent="center" alignItems={'center'}>
-              <Typography variant="h3" align={'center'} width={'100%'} fontSize={'36px'}
-                fontWeight={700} letterSpacing={'1px'} lineHeight={'110%'}>
+              <Typography variant="h3" width={'100%'} fontSize={'36px'}
+                fontWeight={700} letterSpacing={'1px'} lineHeight={'110%'}
+                sx={{ textAlign: { xs: 'start', lg: 'center' } }}>
                 {t('suggestions')}
               </Typography>
             </Grid>
@@ -128,7 +129,7 @@ const SuggestionsPage: FC = () => {
               />
             )}
           </Grid>
-          <Grid item>
+          <Grid item sx={{ marginTop: { xs: '20px', lg: 0 } }}>
             {suggestions?.content.map((suggestion) => (
               <Grid item key={suggestion.id}>
                 <SuggestionCard

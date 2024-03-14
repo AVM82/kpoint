@@ -44,7 +44,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
   };
 
   return (
-    <Card sx={{ maxWidth: '370px' }}>
+    <Card sx={{ maxWidth: { xs: '100%', lg: '370px' } }}>
       <CardMedia
         sx={{ height: 200, position: 'relative' }}
         image={project.logoImgUrl}

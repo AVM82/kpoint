@@ -101,7 +101,7 @@ export const ProjectCreateStep1Form: FC<EditProjectsPropsType> = ({
   return (
     <Grid container rowSpacing={1}>
       <Grid container justifyContent={'space-between'}>
-        <ImageUploader handleChange={handleChange} component="default" xs={3} imageUrl={''}/>
+        <ImageUploader handleChange={handleChange} component="default" xs={3} lg={3} imageUrl={''}/>
         <Grid item xs={8}>
           <Grid item xs={true}>
             <FormLabel required>{t('project_name')}</FormLabel>

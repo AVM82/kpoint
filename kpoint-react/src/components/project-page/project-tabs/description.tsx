@@ -59,6 +59,7 @@ const Description: FC<DescriptionProps> = ({
 
         return;
       }
+      setDescriptionClicked(!descriptionClicked);
       restoreDescription();
       dispatch(editDescriptionLocally(descValue));
       toast.success(t('success.description_updated'));
@@ -69,6 +70,7 @@ const Description: FC<DescriptionProps> = ({
         return;
       }
       setSummaryClicked(!summaryClicked);
+      setDescriptionClicked(!descriptionClicked);
       restoreDescription();
       dispatch(editSummaryLocally(descValue));
       toast.success(t('success.description_updated'));
@@ -87,7 +89,10 @@ const Description: FC<DescriptionProps> = ({
   }, [description]);
 
   return (
-    <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}>
+    <Grid item xs={12} lg={8} marginTop={'10px'} sx={{
+      height: { xs: '100dvh', lg: '100dvh' },
+      maxWidth: { xs: '100%', lg: '620px' },
+    }}>
       {descriptionClicked && canIEditThis() ? (
         <>
           { summaryClicked ? (<>
@@ -103,7 +108,7 @@ const Description: FC<DescriptionProps> = ({
                     backgroundColor: 'rgb(84, 84, 160)',
                   },
                 }}
-                onClick={(): void => setSummaryClicked(!summaryClicked)}
+                onClick={(): void =>  setSummaryClicked(!summaryClicked)}
               >
                 <Typography>Відмінити</Typography>
               </Button>
@@ -125,8 +130,12 @@ const Description: FC<DescriptionProps> = ({
           ) : (
             <>
               <Editor onChange={handleChange} description={description} />
-              <Box display={'flex'} justifyContent={'start'} alignItems={'center'} gap={'16px'}>
-                {description.replace(/<[^>]*>/g, '').length > 0 &&
+              <Box display={'flex'} alignItems={'center'}
+                sx={{
+                  flexWrap: { xs: 'wrap', lg: 'nowrap' },
+                  gap: { xs: 0, lg: '16px' },
+                  justifyContent: { xs: 'space-between', lg: 'start' },
+                }}>
                 <Button
                   variant="contained"
                   sx={{
@@ -135,13 +144,14 @@ const Description: FC<DescriptionProps> = ({
                     '&:hover': {
                       backgroundColor: 'rgb(84, 84, 160)',
                     },
+                    width: { xs: '45%', lg: 'inherit' },
                   }}
                   onClick={(): void => {
                     restoreDescription();
                   } }
                 >
                   <Typography>Відмінити</Typography>
-                </Button>}
+                </Button>
                 <Button
                   variant="contained"
                   sx={{
@@ -150,6 +160,7 @@ const Description: FC<DescriptionProps> = ({
                     '&:hover': {
                       backgroundColor: 'rgb(84, 84, 160)',
                     },
+                    width: { xs: '45%', lg: 'inherit' },
                   }}
                   onClick={(): Promise<void> => handleSubmit('description')}
                 >
@@ -163,6 +174,8 @@ const Description: FC<DescriptionProps> = ({
                     '&:hover': {
                       backgroundColor: 'rgb(84, 84, 160)',
                     },
+                    width: { xs: '100%', lg: 'inherit' },
+                    marginTop: { xs: '10px', lg: 0 },
                   }}
                   onClick={(): void => setSummaryClicked(!summaryClicked)}
                 >

@@ -29,6 +29,10 @@ export const InputField: FC<IInputField> = ({
       flexDirection={'column'}
       position={`${itemName === 'title' ? 'absolute' : 'static'}`}
       top={`${itemName === 'title' ? '-15px' : '0'}`}
+      sx={{
+        bgcolor: { xs: '#fff', lg: 'transparent' },
+      }}
+      zIndex={999}
     >
       <form
         id={id ? `${id}` : ''}

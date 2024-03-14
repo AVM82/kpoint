@@ -107,6 +107,7 @@ const SignInPage: FC = () => {
             justifyContent: 'center',
             alignItems: 'center',
             height: '100dvh',
+            margin: { xs: '15px 0', lg: '0' },
           }}
         >
           <Box
@@ -115,10 +116,10 @@ const SignInPage: FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               borderRadius: '8px',
-              padding: '80px',
               bgcolor: '#fff',
-              minWidth: '600px',
-              maxWidth: '600px',
+              padding: { xs: '20px', lg: '80px' },
+              minWidth: { xs: '350px', lg: '600px' },
+              maxWidth: { xs: '350px', lg: '600px' },
             }}>
             <Avatar sx={{ m: 1, bgcolor: '#757575' }}>
               <LockOutlinedIcon />
@@ -167,7 +168,8 @@ const SignInPage: FC = () => {
                     label={t('remember_me')}
                   />
                 </Grid>
-                <Grid item xs alignSelf={'center'} justifyContent={'end'} container>
+                <Grid item xs container
+                  sx={{ justifyContent: { xs: 'center', lg: 'end' } } }>
                   <Link href="#" variant="body2">
                     {t('forgot_password')}
                   </Link>
@@ -207,9 +209,9 @@ const SignInPage: FC = () => {
                   width: '100%',
                   margin: '20px 0',
                 }}/>
-                <Grid item container justifyContent={'space-between'}>
+                <Grid item container sx={{ justifyContent: { xs: 'center', lg: 'space-between' } }}>
                   {t('dont_have_an_account')}
-                  <Link href={'sign-up'} variant="body2" sx={{ ml: 3 }}>
+                  <Link href={'sign-up'} variant="body2" sx={{ ml: { xs: 0, lg: 3 } }}>
                     {t('sign_up')}
                   </Link>
                 </Grid>

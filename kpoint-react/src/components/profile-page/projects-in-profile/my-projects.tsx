@@ -43,7 +43,8 @@ const MyProjects: FC = () => {
   };
 
   return (
-    <Box height={'100dvh'} width={'60%'}>
+    <Box 
+      sx={{ width: { xs: '100%', lg: '60%' }, padding: { xs: '0 8px', lg: 0 }, height: { xs: '75dvh', lg: '100dvh' } }}>
       <Box
         display={'flex'}
         justifyContent={'space-around'}
@@ -60,8 +61,8 @@ const MyProjects: FC = () => {
           justifyContent={'start'}
           padding={'0px 16px 16px 16px'}
           borderBottom={'1px solid rgb(189, 189, 189)'}
-          width={'80%'}
           position={'relative'}
+          sx={ { width: { xs: '100%', lg: '80%' } } }
         >
         </Box>
         <Navbar
