@@ -31,12 +31,12 @@ const AddSuggestionModal: React.FC<{ handleCloseModal: () => void, currentPage: 
     event.preventDefault();
 
     try {
+      handleCloseModal();
       await dispatch(
         suggestionAction.createNew({
           suggestionData: { suggestion: inputText },
         }),
       );
-      handleCloseModal();
     } catch (error) {
       toast.error(`Can\\'t add suggestion because: ${error.message}`);
     }

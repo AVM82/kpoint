@@ -15,7 +15,7 @@ const Progress: FC<ProgressProps> = ({ project }) => {
   return <Grid 
     item xs={12} lg={8} marginTop={'42px'} container
     justifyContent={'space-between'} alignContent={'start'} sx={{
-      height: { xs: '50dvh', lg: 'inherit' },
+      height: { xs: '80dvh', lg: 'inherit' },
       maxWidth: { xs: '100%', lg: '620px' },
       display: { xs: 'flex', lg: 'none' },
     }}
