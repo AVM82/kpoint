@@ -86,12 +86,16 @@ const Contacts: FC<ContactsProps> = ({
   return (
     <Grid
       item
-      xs={8}
-      maxWidth={'620px'}
+      xs={12}
+      lg={8}
       marginTop={'32px'}
       container
       gap={'100px'}
       direction={'column'}
+      sx={{
+        height: { xs: '100dvh', lg: 'inherit' },
+        maxWidth: { xs: '100%', lg: '620px' },
+      }}
     >
       <Box display={'flex'} gap={'20px'}>
         {project &&
@@ -104,7 +108,10 @@ const Contacts: FC<ContactsProps> = ({
           />
         ))}
       </Box>
-      {canIEditThis() && <Box display={'flex'} flexDirection={'column'}>
+      {canIEditThis() && 
+      <Box display={'flex'} flexDirection={'column'} width={'100%'} sx={{
+        alignItems: { xs: 'center', lg: 'end' },
+      }}>
         <Button
           variant="contained"
           sx={{
@@ -114,7 +121,7 @@ const Contacts: FC<ContactsProps> = ({
             '&:hover': {
               backgroundColor: 'rgb(84, 84, 160)',
             },
-            width: '30%',
+            width: { xs: '100%', lg: '30%' },
             display: `${addContactClicked ? 'none' : 'block'}`,
           }}
           onClick={(): void => setAddContactClicked(!addContactClicked)}
@@ -127,7 +134,8 @@ const Contacts: FC<ContactsProps> = ({
             <Input
               onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
                 setNewContact(e.target.value)}
-              placeholder="Вставте посилання типу: https://www.linkName.com/..." />
+              placeholder="https://www.linkName.com/..." 
+              sx={{ alignSelf: 'start' }} fullWidth/>
             <Button
               variant="contained"
               sx={{
@@ -137,8 +145,8 @@ const Contacts: FC<ContactsProps> = ({
                 '&:hover': {
                   backgroundColor: 'rgb(84, 84, 160)',
                 },
-                width: '19.3%',
-                alignSelf: 'end',
+                width: { xs: '100%', lg: '19.3%' },
+                alignSelf: { xs: 'center', lg: 'end' },
               }}
               onClick={(): void => setAddContactClicked(!addContactClicked)}
             >
@@ -153,13 +161,14 @@ const Contacts: FC<ContactsProps> = ({
                 '&:hover': {
                   backgroundColor: 'rgb(84, 84, 160)',
                 },
-                width: '19.3%',
-                alignSelf: 'end',
+                width: { xs: '100%', lg: '19.3%' },
+                alignSelf: { xs: 'center', lg: 'end' },
               }}
               onClick={handleSubmit}
             >
               <Typography>{t('buttons.add')}</Typography>              
-            </Button></>
+            </Button>
+          </>
         )}
       </Box>}
     </Grid>

@@ -94,6 +94,7 @@ const ukTranslation = {
   start_sum: 'Сума для реалізації проєкта',
   stage: 'Етап',
   project_page:{
+    progress: 'Прогрес',
     followers: 'Послідовників',
     total_collected: 'Всього зібрано',
     about: 'Про проєкт',

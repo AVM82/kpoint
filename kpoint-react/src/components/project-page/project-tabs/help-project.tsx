@@ -16,8 +16,11 @@ const HelpProject: FC = () => {
     toast.info(t('info.develop'));
   };
 
-  return <Grid item xs={8} maxWidth={'620px'} marginTop={'42px'} container
-    justifyContent={'space-between'} alignContent={'start'}>
+  return <Grid item xs={12} lg={8} marginTop={'42px'} container
+    justifyContent={'space-between'} alignContent={'start'} sx={{
+      height: { xs: '50dvh', lg: 'inherit' },
+      maxWidth: { xs: '100%', lg: '620px' },
+    }}>
     <Box
       display={'flex'}
       alignItems={'center'}
