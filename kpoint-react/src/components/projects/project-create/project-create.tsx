@@ -3,6 +3,7 @@ import { TestRequest } from 'common/types/projects/testRequest';
 import React, { FC, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { projectAction } from 'store/actions';
 
 import { ProjectsEditType } from '../../../common/types/types';
@@ -105,7 +106,10 @@ export const ProjectCreate: FC = () => {
     case 2: {
       if (!data.description.trim() || data.description.trim().length > 3000) {
         errors.description = t('errors.project_description');
-      }
+      } else if (data.description.replace(/<[^>]*>/g, '').length < 1) {
+        toast.warn(t('errors.description_length'));
+        errors.description = t('errors.project_description');
+      } 
       break;
     }
     case 3: {
