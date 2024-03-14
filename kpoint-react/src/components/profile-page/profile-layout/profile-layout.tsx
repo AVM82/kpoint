@@ -71,7 +71,7 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
     <Box
       display={'flex'}
       flexDirection={'column'}
-      sx={{ width: '100%', padding: '0 80px', margin: '75px 0 220px 0' }}
+      sx={{ width: '100%', padding: { xs: '0 8px', lg: '0 80px' }, margin: '75px 0 220px 0' }}
       flexGrow={1}
     >
       <Box
@@ -81,7 +81,7 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
         sx={{
           borderBottom: '2px solid black',
           width: '100%',
-          marginBottom: '60px',
+          marginBottom: { xs: 0, lg: '60px' },
         }}
       >
         <Typography
@@ -91,23 +91,26 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
           color={'#21272A'}
           paddingBottom={'16px'}
           textAlign={'center'}
-          width={'30%'}
+          sx={{ width: { xs: '100%', lg: '30%' } }}
         >
           {t('menu.my_profile')}
         </Typography>
       </Box>
       <Box
         display={'flex'}
-        alignItems={'center'}
         gap={'150px'}
         margin={'0 50px'}
+        sx={{ flexDirection: { xs: 'column', lg: 'row' },
+          margin: { xs: 0, lg: '0 50px' }, gap: { xs: '20px', lg: '150px' },
+          alignItems: { xs: 'center', lg: 'center' }, justifyContent: { xs: 'start', lg: 'center' } }}
       >
         <Box
           display={'flex'}
-          flexDirection={'column'}
           minWidth={'221px'}
           minHeight={'430px'}
-          justifyContent={'space-between'}>
+          sx={{ justifyContent: { xs: 'center', lg: 'space-between' },
+            flexDirection: { xs: 'column', lg: 'column' }, alignItems: { xs: 'start', lg: 'center' } }}
+        >
           <Box
             display={'flex'}
             justifyContent={'center'}
@@ -117,14 +120,15 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
           >
             <ImageUploader
               component="profile-page"
-              xs={12}
+              xs={6}
+              lg={12}
               handleChange={changeHandlerAvatar}
               imageUrl={avatarImgUrl}/>
           </Box>
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: { xs: 'column', lg: 'column' },
               gap: '5px',
               marginTop: '20px',
             }}
@@ -145,9 +149,11 @@ export const ProfileLayout:FC<Props> = ({ children })=> {
               label={t('menu.change_password')}
               onClick={(): void => handleClick('changePassword')}
             />
-            <MyProfileMenuButton
-              label={t('menu.logout')}
-              onClick={handleLogout} />
+            <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
+              <MyProfileMenuButton
+                label={t('menu.logout')}
+                onClick={handleLogout} />
+            </Box>
           </Box>
         </Box>
         <Box>

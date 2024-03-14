@@ -23,7 +23,7 @@ const Header: FC = () => {
       sx={{
         backgroundColor: '#fff',
         width: '100%',
-        padding: '16px 80px',
+        padding: { xs: '8px', lg: '16px 80px' },
         flexShrink: 0,
       }}
       elevation={0}
@@ -36,7 +36,7 @@ const Header: FC = () => {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Grid item xs={5}>
+          <Grid item xs={5} sx={{ display: { xs: 'none', lg: 'block' } }}>
             <Box display="flex" alignItems="center">
               <Link href="/" underline="none" color="#21272A" sx={{ margin: 1 }} fontSize={16}>
                 {t('projects')}
@@ -47,20 +47,20 @@ const Header: FC = () => {
               </Link>
             </Box>
           </Grid>
-          <Grid item xs={2} container justifyContent="center">
+          <Grid item xs={4} lg={2} container justifyContent="center">
             <Typography
               variant="h1"
               align="center"
               fontSize={24}
               fontWeight={700}
               color={'black'}
-              sx={{ cursor: 'pointer', textAlign: 'center' }}
+              sx={{ cursor: 'pointer', textAlign: 'center', fontSize: { xs: '16px', lg: '24px' } }}
               onClick={handleTitleClick}
             >
         K-POINTS
             </Typography>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={7} lg={5}>
             <Box display="flex" justifyContent="flex-end" alignItems="center">
               <HeaderButtons isTitleClicked={isTitleClicked} />
             </Box>

@@ -9,6 +9,7 @@ interface ImageUploaderProps {
   handleChange: (field: string, value: string | File) => void;
   component: string;
   xs: number;
+  lg: number;
   imageUrl: string;
 }
 
@@ -16,6 +17,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
   handleChange,
   component,
   xs,
+  lg,
   imageUrl,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string>('');
@@ -50,7 +52,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
   const { CustomGrid, CustomBox, CustomFormLabel }= getProperStyles({ component: component });
 
   return (
-    <CustomGrid item container xs={xs} >
+    <CustomGrid item container xs={xs} lg={lg}>
       <div style={CustomBox} >
         <Box display={'flex'} justifyContent="center" >
           <Box

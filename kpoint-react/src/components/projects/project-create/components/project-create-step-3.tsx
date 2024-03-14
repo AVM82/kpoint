@@ -13,8 +13,8 @@ export const ProjectCreateStep3Form: FC<EditProjectsPropsType> = (
   return (
     <Grid container rowSpacing={3} sx={{ mt: 2 }}>
       {t('deadline')}
-      <Grid container columnSpacing={10} sx={{ mt: 1, mb: 2 }}>
-        <Grid item xs={6}>
+      <Grid container columnSpacing={2} sx={{ mt: 1, mb: 2 }}>
+        <Grid item xs={6} mb={3}>
           <FormLabel>{t('collect_deadline')}</FormLabel>
           <TextField
             fullWidth
