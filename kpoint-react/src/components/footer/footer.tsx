@@ -34,7 +34,7 @@ const Footer: FC = () => {
   return (
     <Box
       component={'footer'}
-      sx={{ backgroundColor: '#535365', padding: '48px 80px' }}
+      sx={{ backgroundColor: '#535365', padding: { xs: '16px', lg: '48px 80px' } }}
       flexShrink={0}
     >
       <Box
@@ -95,7 +95,7 @@ const Footer: FC = () => {
       <Divider
         variant="fullWidth"
         orientation="horizontal"
-        sx={{ bgcolor: '#FFFFFF', marginTop: '48px', marginBottom: '48px' }}
+        sx={{ bgcolor: '#FFFFFF', margin: { xs: '24px 0', lg: '48px 0' } }}
       />
       <Box
         display={'flex'}
@@ -107,7 +107,7 @@ const Footer: FC = () => {
             {t('footer_sign')}
           </Typography>
         </Box>
-        <Box>
+        <Box sx={{ display: { xs: 'flex', lg: 'block' } }}>
           <Link href="/" underline="none" color="#FFFFFF" sx={{ margin: 1 }} fontSize={16} padding={'2px'}>
             {t('projects')}
           </Link>

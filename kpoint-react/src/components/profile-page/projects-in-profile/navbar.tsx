@@ -13,11 +13,11 @@ const Navbar: FC<NavbarProps> = ({ activeButton, handleOnClick }) => {
   return (
     <Box
       display={'flex'}
-      width={'80%'}
       justifyContent={'start'}
       alignItems={'center'}
       padding={'8px'}
       gap={'56px'}
+      sx={ { width: { xs: '100%', lg: '80%' }, gap: { xs: '15px', lg: '56px' } } }
     >
       <NavbarButton
         label="Мої Проєкти"

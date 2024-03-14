@@ -49,6 +49,7 @@ const HeaderButtons: FC<HeaderButtonsProps> = ({ isTitleClicked }) => {
             '&:hover': {
               backgroundColor: 'rgb(84, 84, 160)',
             },
+            display: { xs: 'none', lg: 'block' },
           }}
         >
           <Typography>{t('buttons.create_project')}</Typography>
@@ -63,6 +64,7 @@ const HeaderButtons: FC<HeaderButtonsProps> = ({ isTitleClicked }) => {
             '&:hover': {
               backgroundColor: 'rgb(84, 84, 160)',
             },
+            display: { xs: 'none', lg: 'block' },
           }}
         >
           <Typography>{t('buttons.log_out')}</Typography>

@@ -33,6 +33,7 @@ import { Contacts } from './project-tabs/contacts';
 import { Description } from './project-tabs/description';
 import { HelpProject } from './project-tabs/help-project';
 import { OurTeam } from './project-tabs/our-team';
+import { Progress } from './project-tabs/progress';
 
 const ProjectPage: FC = () => {
   const { t } = useTranslation();
@@ -216,12 +217,70 @@ const ProjectPage: FC = () => {
             <Box
               display={'flex'}
               justifyContent={'space-between'}
-              alignItems={'center'}
+              sx={{
+                flexDirection: { xs: 'column', lg: 'row' },
+                alignItems: { xs: 'start', lg: 'center' },
+              }}
             >
-              <Grid maxWidth={500} width={500} container>
+              <Box
+                paddingBottom={'20px'}
+                position={'relative'}
+                minHeight={'52px'}
+                width={'100%'}
+                sx={{
+                  display: { xs: 'block', lg: 'none' },
+                }}
+              >
+                {editFieldClicked && canIEditThis() ? (<InputField
+                  onChange={changeHandler}
+                  onSubmit={submitHandler}
+                  placeholder={project && project.title}
+                  itemName="title"
+                />) : (
+                  <Typography
+                    variant="h2"
+                    color={'rgb(0, 29, 108)'}
+                    fontSize={32}
+                    fontWeight={700}
+                    lineHeight={'100%'}
+                    letterSpacing={'1px'}
+                    textAlign={'start'}
+                    width={'100%'}
+                    sx={{
+                      cursor: addCursorPointer(),
+                    }}
+                    onClick={(): void =>
+                      setEditFieldClicked(!editFieldClicked)
+                    }
+                  >
+
+                    {project && project.title}
+                  </Typography>
+                )}
+                <Link href={generateGoogleMapsLink(project)} sx={{
+                  width: 'fit-content;',
+                  display: { xs: 'block', lg: 'none' },
+                }}>
+                  <Typography
+                    variant="h6"
+                    color={'rgb(0, 31, 63)'}
+                    fontSize={14}
+                    fontWeight={500}
+                    lineHeight={'100%'}
+                    letterSpacing={'0.5px'}
+                    textAlign={'start'}
+                  >
+                    {t('project_page.country')}
+                  </Typography>
+                </Link>
+              </Box>
+              <Grid container sx={{
+                width: { xs: '300px', lg: '500px' },
+              }}>
                 {token && canIEditThis() ? (
                   <ImageUploader
                     xs={5}
+                    lg={5}
                     component="project-page"
                     handleChange={changeHandlerPhoto}
                     imageUrl={project.logoImgUrl}
@@ -235,15 +294,20 @@ const ProjectPage: FC = () => {
                         maxHeight={'100%'}
                         sx={{ objectFit: 'cover', borderRadius: '6px' }}
                         src={project.logoImgUrl}
-                      ></Box></Box>
+                      >
+                      </Box>
+                    </Box>
                   </Grid>
                 )}
-                <Grid item xs={7} container direction={'column'}>
+                <Grid item xs={7} container direction={'column'} gap={'10px'}>
                   <Box
                     paddingBottom={'20px'}
                     position={'relative'}
                     minHeight={'52px'}
                     width={'100%'}
+                    sx={{
+                      display: { xs: 'none', lg: 'block' },
+                    }}
                   >
                     {editFieldClicked && canIEditThis() ? (<InputField
                       onChange={changeHandler}
@@ -274,7 +338,7 @@ const ProjectPage: FC = () => {
                   </Box>
                   <Link href={generateGoogleMapsLink(project)} sx={{
                     width: 'fit-content;',
-                    display: 'block',
+                    display: { xs: 'none', lg: 'block' },
                   }}>
                     <Typography
                       variant="h6"
@@ -295,8 +359,10 @@ const ProjectPage: FC = () => {
                     fontWeight={500}
                     lineHeight={'100%'}
                     letterSpacing={'0.5px'}
-                    textAlign={'start'}
                     padding={'80px 0 0 0'}
+                    sx={{
+                      textAlign: { xs: 'end', lg: 'start' },
+                    }}
                   >
                     {t('project_page.followers')}: 0
                   </Typography>
@@ -429,6 +495,7 @@ const ProjectPage: FC = () => {
                     letterSpacing: '0.5px',
                     textTransform: 'none',
                     gap: '5px',
+                    display: { xs: 'none', lg: 'block' },
                   }}
                 >
                   <PersonAddIcon fontSize="small" /> {t('buttons.support')}
@@ -450,6 +517,7 @@ const ProjectPage: FC = () => {
                     lineHeight: '100%',
                     letterSpacing: '0.5px',
                     textTransform: 'none',
+                    display: { xs: 'none', lg: 'block' },
                   }}
                 >
                   <AttachMoneyIcon fontSize="small" />
@@ -470,15 +538,23 @@ const ProjectPage: FC = () => {
           flexGrow: 1,
         }}
       >
-        <Grid marginTop={'44px'} container>
-          <Grid item xs={8} maxWidth={'620px'}>
+        <Grid marginTop={'44px'} container sx={{
+        }}>
+          <Grid item xs={12} lg={8} sx={{
+            maxWidth: { xs: '100%', lg: '620px' },
+            maxHeight: { xs: '80px', lg: 'inherit' },
+          }}>
             <Box
               display={'flex'}
-              gap={'10px'}
+              
               alignItems={'center'}
               borderBottom={'1px solid rgb(217, 217, 217)'}
               padding={'8px 0 8px 0'}
-              maxWidth={'620px'}
+              sx={{
+                overflow: { xs: 'scroll', lg: 'hidden' },
+                maxWidth: { xs: '100%', lg: '620px' },
+                justifyContent: { xs: 'space-between', lg: 'center' },
+              }}
             >
               <Button
                 sx={{
@@ -490,6 +566,8 @@ const ProjectPage: FC = () => {
                   lineHeight: '140%',
                   textAlign: 'center',
                   textTransform: 'none',
+                  width: { xs: '100%', lg: '20%' },
+                  flexShrink: 0,
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
@@ -508,6 +586,8 @@ const ProjectPage: FC = () => {
                   lineHeight: '140%',
                   textTransform: 'none',
                   textAlign: 'center',
+                  width: { xs: '100%', lg: '16%' },
+                  flexShrink: 0,
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
@@ -526,6 +606,8 @@ const ProjectPage: FC = () => {
                   lineHeight: '140%',
                   textTransform: 'none',
                   textAlign: 'center',
+                  width: { xs: '100%', lg: '30%' },
+                  flexShrink: 0,
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
@@ -544,6 +626,8 @@ const ProjectPage: FC = () => {
                   lineHeight: '140%',
                   textTransform: 'none',
                   textAlign: 'center',
+                  width: { xs: '100%', lg: '16%' },
+                  flexShrink: 0,
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
@@ -562,6 +646,8 @@ const ProjectPage: FC = () => {
                   lineHeight: '140%',
                   textTransform: 'none',
                   textAlign: 'center',
+                  width: { xs: '100%', lg: '18%' },
+                  flexShrink: 0,
                   '&:hover': {
                     background: 'rgb(221, 225, 230)',
                   },
@@ -569,6 +655,27 @@ const ProjectPage: FC = () => {
                 onClick={(): void => setTabClicked('comments')}
               >
                 {t('project_page.comments')}
+              </Button>
+              <Button
+                sx={{
+                  borderRadius: '6px',
+                  padding: '6px',
+                  color: 'rgb(33, 39, 42)',
+                  fontSize: '16px',
+                  fontWeight: 500,
+                  lineHeight: '140%',
+                  textTransform: 'none',
+                  textAlign: 'center',
+                  width: { xs: '100%', lg: '18%' },
+                  flexShrink: 0,
+                  '&:hover': {
+                    background: 'rgb(221, 225, 230)',
+                  },
+                  display: { xs: 'block', lg: 'none' },
+                }}
+                onClick={(): void => setTabClicked('progress')}
+              >
+                {t('project_page.progress')}
               </Button>
             </Box>
           </Grid>
@@ -598,7 +705,10 @@ const ProjectPage: FC = () => {
             />
           )}
           {tabClicked === 'comments' && <Comments />}
-          <Grid item xs={4} container justifyContent={'end'}>
+          {tabClicked === 'progress' && <Progress project={project}/>}
+          <Grid item xs={4} container justifyContent={'end'} sx={{
+            display: { xs: 'none', lg: 'flex' },
+          }}>
             <Box
               maxWidth={'160px'}
               display={'flex'}

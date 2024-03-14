@@ -94,6 +94,7 @@ const enTranslation = {
   start_sum: 'Amount for project implementation',
   stage: 'Stage',
   project_page:{
+    progress: 'Progress',
     followers: 'Followers',
     total_collected: 'Collected sum',
     about: 'About project',
