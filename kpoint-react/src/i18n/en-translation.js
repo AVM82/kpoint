@@ -94,6 +94,7 @@ const enTranslation = {
   start_sum: 'Amount for project implementation',
   stage: 'Stage',
   project_page:{
+    progress: 'Progress',
     followers: 'Followers',
     total_collected: 'Collected sum',
     about: 'About project',
@@ -144,8 +145,11 @@ const enTranslation = {
     tag_deleted: 'Tag was successfully deleted',
     tag_added: 'New tag was successfully added',
     description_updated: 'Description was successfully updated',
+    summary_updated: 'Summary was successfully updated',
+    contact_added: 'Contact was successfully added',
     title_updated: 'Title was successfully updated',
     logo_updated: 'Logo was successfully updated',
+    copy_project_url: 'Project URL was successfully copied to the clipboard',
   },
   warn: {
     tag_unique: 'Project tags must be unique',

@@ -1,8 +1,8 @@
 import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import { Box } from '@mui/material';
+import ShareIcon from '@mui/icons-material/Share';
+import { Box, Link } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -44,7 +44,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
   };
 
   return (
-    <Card sx={{ maxWidth: '370px' }}>
+    <Card sx={{ maxWidth: { xs: '100%', lg: '370px' } }}>
       <CardMedia
         sx={{ height: 200, position: 'relative' }}
         image={project.logoImgUrl}
@@ -64,7 +64,11 @@ const ProjectCard: FC<ProjectCardProps> = ({
             sx={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
           >
             <IconButton
-              href="#"
+              onClick={():void => {
+                navigator.clipboard
+                  .writeText('https://k-points.in.ua/projects/'.concat(project.url));
+                toast.success(t('success.copy_project_url'));
+              }}
               sx={{
                 margin: 1,
                 backgroundColor: '#e9eff4',
@@ -75,7 +79,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
               }}
               size="small"
             >
-              <BookmarkIcon
+              <ShareIcon
                 sx={{
                   margin: 1,
                   color: '#828282',
@@ -163,7 +167,8 @@ const ProjectCard: FC<ProjectCardProps> = ({
       </CardMedia>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          {project.title}
+          <Link underline="none" href={'projects/'.concat(project.url)}
+            sx={{ cursor: 'pointer', color: 'black' }}>{project.title}</Link>
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {project.summary}

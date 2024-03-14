@@ -41,6 +41,7 @@ const ProfileMenu: FC = () => {
       padding={'13px 0'}
       alignSelf={'start'}
       gap={'20px'}
+      sx={{ display: { xs: 'none', lg: 'flex' } }}
     >
       <MenuButton
         label="Розпочати новий проєкт"

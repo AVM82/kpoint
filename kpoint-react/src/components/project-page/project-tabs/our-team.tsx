@@ -9,7 +9,10 @@ interface OurTeamProps {
     avatarImgUrl: string;
 }
 const OurTeam: FC<OurTeamProps> = ({ firstName , lastName, avatarImgUrl }) => {
-  return <Grid item xs={8} maxWidth={'620px'} marginTop={'42px'} container justifyContent={'space-between'}>
+  return <Grid item xs={12} lg={8} marginTop={'42px'} container justifyContent={'space-between'}
+    sx={{
+      maxWidth: { xs: '100%', lg: '620px' },
+    }}>
     <Grid item xs={3}>
       <Box display={'flex'} flexDirection={'column'} maxWidth={'150px'} maxHeight={'150px'}>
         <Typography variant="h5" fontSize={'16px'} fontWeight={500} lineHeight={'140%'}

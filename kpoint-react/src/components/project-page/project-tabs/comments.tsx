@@ -7,8 +7,11 @@ import emptyCommentBg from '../../../emptyCommentBg.png';
 const Comments: FC = () => {
   const [addCommentClicked, setAddCommentClicked] = useState(false);
   
-  return <Grid item xs={8} maxWidth={'620px'} marginTop={'10px'}
-    container alignItems={'center'} justifyContent={'center'}>
+  return <Grid item xs={12} lg={8} marginTop={'10px'}
+    container alignItems={'center'} justifyContent={'center'} sx={{
+      height: { xs: '100dvh', lg: 'inherit' },
+      maxWidth: { xs: '100%', lg: '620px' },
+    }}>
     <Box component={'img'} src={emptyCommentBg} maxHeight={'100%'} maxWidth={'100%'}></Box>
     <Box display={'flex'} justifyContent={'center'} alignItems={'center'}
       flexDirection={'column'} gap={'10px'} width={'100%'}>

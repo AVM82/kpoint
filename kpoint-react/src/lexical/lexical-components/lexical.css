@@ -347,6 +347,44 @@
     vertical-align: middle;
   }
 
+  @media  screen and (max-width: 400px) {
+    .toolbar {
+      grid-template-columns: repeat(3, minmax(40px, 80px));
+    }
+
+    .toolbar button.toolbar-item {
+      max-width: 90px;
+    }
+
+    .toolbar button.toolbar-item.spaced.bold {
+      max-width: 40px;
+    }
+
+    .toolbar button.toolbar-item.spaced.italic {
+      max-width: 40px;
+    }
+
+    .toolbar button.toolbar-item.spaced.underline {
+      max-width: 40px;
+    }
+
+    .toolbar button.toolbar-item.spaced.code {
+      max-width: 40px;
+    }
+
+    .toolbar button.toolbar-item.spaced.link {
+      max-width: 40px;
+    }
+
+    .toolbar button.toolbar-item.spaced.undo {
+      max-width: 40px;
+    }
+
+    .toolbar button.toolbar-item.redo {
+      max-width: 40px;
+    }
+  }
+
   .toolbar.proj-create-page {
     border: 1px solid gray;
   }

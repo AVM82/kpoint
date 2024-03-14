@@ -248,14 +248,18 @@ const MyProfile: FC = () => {
   return (
     <ProfileLayout>
       <Box
-        display={'flex'}
+        justifyContent={'center'}
+        sx={{ display: { xs: 'block', lg: 'flex' } }}
         component={'form'}
         onSubmit={(e: React.MouseEvent<HTMLFormElement>): Promise<void> =>
           handleSubmit(e)
         }
       >
-        <Grid container spacing={2} justifyContent={'center'} alignItems={'center'} position={'relative'}>
-          <Grid item xs={3} md={6}>
+        <Grid container position={'relative'} spacing={2}
+          sx={{ flexDirection: { xs: 'column', lg: 'row' },
+            justifyContent: { xs: 'center', lg: 'center' }, alignItems: { xs: 'start', lg: 'center' } }}
+        >
+          <Grid item xs={12} md={6} lg={6} sx={{ minWidth: { xs: '100%', lg: 'inherit' } }}>
             <FormLabel required>{t('email')}</FormLabel>
             <TextField
               fullWidth
@@ -267,7 +271,7 @@ const MyProfile: FC = () => {
               helperText={errors.email}
             />
           </Grid>
-          <Grid item xs={3} md={6}>
+          <Grid item xs={12} md={6} lg={6} sx={{ minWidth: { xs: '100%', lg: 'inherit' } }}>
             <FormLabel required>{t('username')}</FormLabel>
             <TextField
               fullWidth
@@ -279,7 +283,7 @@ const MyProfile: FC = () => {
               helperText={errors.username}
             />
           </Grid>
-          <Grid item xs={3} md={6}>
+          <Grid item xs={12} md={6} lg={6} sx={{ minWidth: { xs: '100%', lg: 'inherit' } }}>
             <FormLabel required>{t('first_name')}</FormLabel>
             <TextField
               fullWidth
@@ -291,7 +295,7 @@ const MyProfile: FC = () => {
               helperText={errors.firstName}
             />
           </Grid>
-          <Grid item xs={3} md={6}>
+          <Grid item xs={12} md={6} lg={6} sx={{ minWidth: { xs: '100%', lg: 'inherit' } }}>
             <FormLabel required>{t('last_name')}</FormLabel>
             <TextField
               fullWidth
@@ -303,7 +307,7 @@ const MyProfile: FC = () => {
               helperText={errors.lastName}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} lg={6} sx={{ flexDirection: { xs: 'column', lg: 'row' } }}>
             <FormLabel required>{t('tags')}</FormLabel>
             <Box
               display={'flex'}
@@ -326,18 +330,22 @@ const MyProfile: FC = () => {
                       cursor: 'pointer',
                       borderRadius: '10px',
                       border: '1px solid black',
+                      position: 'relative',
                     }}
-                    onClick={(): void => setTagsClicked(!tagsClicked)}
                   >
-                    {tagsClicked ? (<RemoveIcon fontSize="small" />) : (<AddIcon fontSize="small" />)}
-                  </Box>
-                  {tagsClicked && 
+                    {tagsClicked ? (<RemoveIcon onClick={(): void => setTagsClicked(false)} fontSize="small" />)
+                      : 
+                      (<AddIcon onClick={(): void => setTagsClicked(true)} fontSize="small" />)}
+                    {tagsClicked && 
                   <Box
                     display={'flex'}
                     justifyContent={'center'}
                     alignItems={'center'}
                     gap={'5px'}
                     width={'250px'}
+                    position={'absolute'}
+                    top={'40px'}
+                    left={0}
                   > 
                     <Input placeholder="Введіть назву тега" name="tags" inputProps={{
                       maxLength: 10,
@@ -354,6 +362,7 @@ const MyProfile: FC = () => {
                       {t('buttons.save')}
                     </Button>                   
                   </Box>}
+                  </Box>
                 </>
               )}
               {user && user.tags.map((tag, index) => (

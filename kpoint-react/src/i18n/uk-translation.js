@@ -94,6 +94,7 @@ const ukTranslation = {
   start_sum: 'Сума для реалізації проєкта',
   stage: 'Етап',
   project_page:{
+    progress: 'Прогрес',
     followers: 'Послідовників',
     total_collected: 'Всього зібрано',
     about: 'Про проєкт',
@@ -145,8 +146,11 @@ const ukTranslation = {
     tag_deleted: 'Тег успішно видалений',
     tag_added: 'Новий тег був успішно доданий',
     description_updated: 'Опис проєкту успішно змінено',
+    summary_updated: 'Короткий опис проєкту успішно змінено',
+    contact_added: 'Контакт успішно додано',
     title_updated: 'Назву проєкту успішно змінено',
     logo_updated: 'Лого проєкту успішно змінено',
+    copy_project_url: 'URL проєкта був успішно скопійований в буфер обміну',
   },
   warn: {
     tag_unique: 'Теги проєкту мають бути унікальні',
