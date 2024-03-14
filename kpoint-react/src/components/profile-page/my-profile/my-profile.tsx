@@ -330,18 +330,22 @@ const MyProfile: FC = () => {
                       cursor: 'pointer',
                       borderRadius: '10px',
                       border: '1px solid black',
+                      position: 'relative',
                     }}
-                    onClick={(): void => setTagsClicked(!tagsClicked)}
                   >
-                    {tagsClicked ? (<RemoveIcon fontSize="small" />) : (<AddIcon fontSize="small" />)}
-                  </Box>
-                  {tagsClicked && 
+                    {tagsClicked ? (<RemoveIcon onClick={(): void => setTagsClicked(false)} fontSize="small" />)
+                      : 
+                      (<AddIcon onClick={(): void => setTagsClicked(true)} fontSize="small" />)}
+                    {tagsClicked && 
                   <Box
                     display={'flex'}
                     justifyContent={'center'}
                     alignItems={'center'}
                     gap={'5px'}
                     width={'250px'}
+                    position={'absolute'}
+                    top={'40px'}
+                    left={0}
                   > 
                     <Input placeholder="Введіть назву тега" name="tags" inputProps={{
                       maxLength: 10,
@@ -358,6 +362,7 @@ const MyProfile: FC = () => {
                       {t('buttons.save')}
                     </Button>                   
                   </Box>}
+                  </Box>
                 </>
               )}
               {user && user.tags.map((tag, index) => (
