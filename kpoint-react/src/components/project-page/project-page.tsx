@@ -391,9 +391,9 @@ const ProjectPage: FC = () => {
                           borderRadius: '10px',
                           border: '1px solid black',
                         }}
-                        onClick={(): void => setTagsClicked(true)}
+                        onClick={(): void => setTagsClicked(!tagsClicked)}
                       >
-                        <AddIcon fontSize="small" />
+                        {tagsClicked ? (<RemoveIcon fontSize="small" />) : (<AddIcon fontSize="small" />)}
                         <Box
                           display={'flex'}
                           justifyContent={'center'}
