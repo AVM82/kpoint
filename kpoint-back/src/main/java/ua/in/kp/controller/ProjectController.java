@@ -36,7 +36,7 @@ public class ProjectController {
                 .createProject(createdProject, file), HttpStatus.CREATED);
     }
 
-    @PatchMapping (path = "/{projectId}/logo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(path = "/{projectId}/logo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<MessageResponseDto> updateProjectLogo(@PathVariable String projectId,
                                                                 @RequestPart(value = "file") MultipartFile file) {
         return new ResponseEntity<>(projectService
@@ -52,6 +52,12 @@ public class ProjectController {
                     .getRecommendedProjectsById(pageable), HttpStatus.OK);
         }
         return new ResponseEntity<>(projectService.getAllProjects(pageable, auth), HttpStatus.OK);
+    }
+
+    @GetMapping("/find")
+    public ResponseEntity<Page<GetAllProjectsDto>> getAllBySpec(ProjectSpecDto projectSpecDto, Pageable pageable) {
+        return new ResponseEntity<>(
+                projectService.getAllProjectsBySpec(projectSpecDto, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/id/{projectId}")

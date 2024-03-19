@@ -2,8 +2,10 @@ package ua.in.kp.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ua.in.kp.entity.ProjectEntity;
@@ -14,7 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ProjectRepository extends JpaRepository<ProjectEntity, String> {
+public interface ProjectRepository
+        extends JpaRepository<ProjectEntity, String>, JpaSpecificationExecutor<ProjectEntity> {
 
     @Query("FROM ProjectEntity p LEFT JOIN FETCH p.tags "
             + "LEFT JOIN FETCH p.networksLinks WHERE p.projectId=:id")
@@ -29,6 +32,9 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, String> 
     @Query(value = "SELECT distinct p FROM ProjectEntity p LEFT JOIN FETCH p.tags "
             + "LEFT JOIN FETCH p.networksLinks")
     Page<ProjectEntity> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"tags", "networksLinks"})
+    Page<ProjectEntity> findAll(Specification<ProjectEntity> specification, Pageable pageable);
 
     @Query("SELECT DISTINCT p FROM ProjectEntity p LEFT JOIN FETCH p.tags t "
             + "LEFT JOIN FETCH p.networksLinks WHERE t.name IN :tags")
